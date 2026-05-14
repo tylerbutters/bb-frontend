@@ -47,7 +47,7 @@ export default function Element({ element, mouse, replaceElement, deleteElement 
 			)}
 			{element?.type === "adjective" && (
 				<Adjective
-					text={element?.value}
+					element={element}
 					mouse={mouse}
 					onClickSelf={() => setIsModalOpen(true)}
 					replaceElement={replaceElement}
@@ -55,7 +55,7 @@ export default function Element({ element, mouse, replaceElement, deleteElement 
 			)}
 			{element?.type === "verb" && (
 				<Verb
-					text={element?.value}
+					element={element}
 					mouse={mouse}
 					onClickSelf={() => setIsModalOpen(true)}
 					replaceElement={replaceElement}
@@ -63,7 +63,7 @@ export default function Element({ element, mouse, replaceElement, deleteElement 
 			)}
 			{element?.type === "coupla" && (
 				<Coupla
-					text={element?.value}
+					element={element}
 					mouse={mouse}
 					onClickSelf={() => setIsModalOpen(true)}
 					replaceElement={replaceElement}
@@ -71,7 +71,7 @@ export default function Element({ element, mouse, replaceElement, deleteElement 
 			)}
 			{element?.type === "punctuation" && (
 				<Punctuation
-					text={element?.value}
+					element={element}
 					mouse={mouse}
 					onClickSelf={() => setIsModalOpen(true)}
 					replaceElement={replaceElement}

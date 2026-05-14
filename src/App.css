@@ -107,6 +107,7 @@
 .verbElement {
 	background: blue;
 }
+
 .couplaElement {
 	background: salmon;
 }
@@ -122,7 +123,7 @@
 	font-size: 40px;
 	height: 80px;
 	padding: 0 10px 0 10px;
-	overflow: hidden;
+	/* overflow: hidden; */
 	border-radius: 5px;
 	cursor: pointer;
 }
@@ -138,6 +139,10 @@
 .verbLastChar {
 	background-color: darkblue;
 }
+.verbConj {
+	background-color: red;
+}
+
 .couplaLastChar {
 	background-color: sandybrown;
 }

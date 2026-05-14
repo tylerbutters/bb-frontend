@@ -43,9 +43,7 @@ export default function AddElementModal({
 
 	if (!isModalOpen) return null
 
-	if (Object?.keys(elements).length === 1) {
-		const onlyKey = Object.keys(elements)[0]
-
+	if (Array.isArray(elements)) {
 		return (
 			<div
 				ref={modalRef}
@@ -58,7 +56,7 @@ export default function AddElementModal({
 				}}
 			>
 				<div className="secondModal">
-					{elements[onlyKey]?.map((value) => (
+					{elements?.map((value) => (
 						<button
 							className="addElementModalButton"
 							key={value}

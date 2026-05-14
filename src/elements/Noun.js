@@ -12,15 +12,6 @@ export default function Noun({ mouse, element, onClickSelf, replaceElement }) {
 	const [particle, setParticle] = useState(null)
 	const [isOpen, setIsOpen] = useState(false)
 	const allElements = useElementsStore((state) => state)
-	const prefixElements = {
-		prefix: allElements.prefix,
-	}
-	const suffixElements = {
-		suffix: allElements.suffix,
-	}
-	const particleElements = {
-		particle: allElements.particle,
-	}
 	const defaultElements = {
 		noun: allElements.noun,
 		verb: allElements.verb,
@@ -44,11 +35,11 @@ export default function Noun({ mouse, element, onClickSelf, replaceElement }) {
 			{element.prefix ? (
 				<SuffixPrefix
 					value={element.prefix}
-					elements={prefixElements}
+					elements={allElements.prefix}
 					replaceElement={addElement}
 				/>
 			) : (
-				<AddButton mouse={mouse} elements={prefixElements} addElement={addElement} />
+				<AddButton mouse={mouse} elements={allElements.prefix} addElement={addElement} />
 			)}
 			<div className="elementText" onClick={onClickSelf}>
 				{element?.value}
@@ -56,20 +47,20 @@ export default function Noun({ mouse, element, onClickSelf, replaceElement }) {
 			{element.suffix ? (
 				<SuffixPrefix
 					value={element.suffix}
-					elements={suffixElements}
+					elements={allElements.suffix}
 					replaceElement={addElement}
 				/>
 			) : (
-				<AddButton mouse={mouse} elements={suffixElements} addElement={addElement} />
+				<AddButton mouse={mouse} elements={allElements.suffix} addElement={addElement} />
 			)}
 			{element.particle ? (
 				<Particle
 					value={element.particle}
-					elements={particleElements}
+					elements={allElements.particle}
 					replaceElement={addElement}
 				/>
 			) : (
-				<AddButton mouse={mouse} elements={particleElements} addElement={addElement} />
+				<AddButton mouse={mouse} elements={allElements.particle} addElement={addElement} />
 			)}
 		</div>
 	)

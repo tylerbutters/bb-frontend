@@ -78,7 +78,13 @@ const sentenceExample = [
 
 export default function App() {
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
-	const [addedElements, setAddedElements] = useState([])
+	const [addedElements, setAddedElements] = useState([
+		{
+			type: "verb",
+			value: "食べ",
+			conjugation: { type: "る", value: "る" },
+		},
+	])
 	const [sentenceString, setSentenceString] = useState("")
 	const allElements = useElementsStore((state) => state)
 	const defaultElements = {
@@ -126,9 +132,9 @@ export default function App() {
 		}
 
 		addedElements.forEach((element) => {
-			if (element.type === "noun") noun(element)
-			else if (element.type === "adjective") adjective(element)
-			else if (element.type === "verb") verb(element)
+			if (element?.type === "noun") noun(element)
+			else if (element?.type === "adjective") adjective(element)
+			else if (element?.type === "verb") verb(element)
 		})
 
 		setSentenceString(string)
@@ -142,6 +148,7 @@ export default function App() {
 		})
 	}
 	function replaceElement(index, newElement) {
+		// alert(JSON.stringify(newElement))
 		setAddedElements((prev) => {
 			const copy = [...prev]
 			copy[index] = newElement
