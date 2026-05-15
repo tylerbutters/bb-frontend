@@ -12,10 +12,7 @@ export default function Verb({ element, onClickSelf, replaceElement }) {
 			<div className="elementText" onClick={onClickSelf}>
 				{element.stem}
 			</div>
-			<Conjugation
-				parentConjugation={element}
-				updateConjugation={(newConjugation) => replaceElement(newConjugation)}
-			/>
+			<Conjugation parentConjugation={element} updateConjugation={replaceElement} />
 		</div>
 	)
 }
@@ -45,16 +42,18 @@ function Conjugation({ parentConjugation, updateConjugation }) {
 		const row = godanMap[parentConjugation.ending]
 		if (!row) return null
 
-		const [a, i, u, e, o, te, ta] = row
+		const [B1, B2, B3, B4, B5, Bte, Bta] = row
+
+		const old = allElements.conjugations.godanDefaults
 
 		return {
-			[a]: ["ない", "れる", "せる", "ず"],
-			[i]: [],
-			[u]: [],
-			[e]: ["ば", "る"],
-			[o]: ["う"],
-			[te]: [],
-			[ta]: [],
+			[B1]: old.B1,
+			[B2]: [...old.B2, B2],
+			[B3]: old.B3,
+			[B4]: old.B4,
+			[B5]: old.B5,
+			[Bte]: old.Bte,
+			[Bta]: old.Bta,
 		}
 	}
 
@@ -62,6 +61,7 @@ function Conjugation({ parentConjugation, updateConjugation }) {
 		// alert(JSON.stringify(parentConjugation))
 		switch (parentConjugation.verbType) {
 			case "suru":
+				// alert(JSON.stringify(allElements?.conjugations?.["する"].conjugationOptions))
 				return allElements?.conjugations?.["する"].conjugationOptions || []
 			case "ichidan":
 				return allElements?.conjugations?.["ichidanDefault"].conjugationOptions || []
@@ -78,10 +78,9 @@ function Conjugation({ parentConjugation, updateConjugation }) {
 	}
 
 	function getConjugationToReplace(selectedConjugation) {
-		// alert(JSON.stringify(selectedConjugation))
-
 		if (parentConjugation.verbType === "godan") {
-			if (!selectedConjugation.type) {
+			//only change the base (last character)
+			if (!selectedConjugation.type || selectedConjugation.type === selectedConjugation.value) {
 				updateConjugation({
 					...parentConjugation,
 					ending: selectedConjugation.value,
@@ -133,8 +132,11 @@ function Conjugation({ parentConjugation, updateConjugation }) {
 						parentConjugation={currentConjugation}
 						updateConjugation={(updatedChild) =>
 							updateConjugation({
-								...currentConjugation,
-								next: updatedChild,
+								...parentConjugation,
+								next: {
+									...currentConjugation,
+									...updatedChild,
+								},
 							})
 						}
 					/>
@@ -142,12 +144,15 @@ function Conjugation({ parentConjugation, updateConjugation }) {
 					currentConjugation?.ending && (
 						<ConjugationEnding
 							conjugation={currentConjugation}
-							addConjugation={(newEnd) =>
+							addConjugation={(newEnd) => {
 								updateConjugation({
-									...currentConjugation,
-									...newEnd,
+									...parentConjugation,
+									next: {
+										...currentConjugation,
+										...newEnd,
+									},
 								})
-							}
+							}}
 						/>
 					)
 				)}

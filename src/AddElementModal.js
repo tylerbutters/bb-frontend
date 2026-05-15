@@ -7,16 +7,18 @@ export default function AddElementModal({
 	setIsModalOpen,
 	onSelect,
 	elements,
+	hasSearch,
 	deleteElement,
 }) {
 	const modalRef = useRef(null)
-	const [selectedType, setSelectedType] = useState()
+	const [selectedCategory, setSelectedCategory] = useState()
+	const [searchText, setSearchText] = useState("")
+	const [elementResults, setElementResults] = useState([])
 
 	useEffect(() => {
 		function handleClickOutside(e) {
 			if (isModalOpen && modalRef.current && !modalRef.current.contains(e.target)) {
-				setIsModalOpen(false)
-				setSelectedType(null)
+				closeModal()
 			}
 		}
 
@@ -24,100 +26,117 @@ export default function AddElementModal({
 		return () => document.removeEventListener("mousedown", handleClickOutside)
 	}, [isModalOpen])
 
-	// useEffect(() => {
-	// 	if (Object.keys(elements).length === 1) {
-	// 		const onlyKey = Object.keys(elements)[0]
-	// 		setSelectedType(onlyKey)
-	// 	}
-	// }, [elements])
-
-	function onClickElement(selectedValue) {
-		// alert(JSON.stringify(selectedValue))
-		onSelect({ type: selectedType, value: selectedValue })
-		setSelectedType()
+	function closeModal() {
 		setIsModalOpen(false)
+		setSelectedCategory(null)
+		setSearchText("")
+		setElementResults([])
+	}
+
+	function updateSearchResults(e) {
+		const value = e.target.value
+
+		setSearchText(value)
+		// alert(JSON.stringify(searchResults))
+		const newResults = elements[selectedCategory].filter(
+			(element) => element.kana?.startsWith(value) || element.word?.startsWith(value),
+		)
+
+		setElementResults(newResults)
 	}
 
 	function onClickDelete() {
 		deleteElement()
-		setIsModalOpen(false)
+		closeModal()
 	}
 
-	function onClickOption(option) {
-		// alert(JSON.stringify(elements[option]))
-		if (Array.isArray(elements[option]) && elements[option].length !== 0) {
-			setSelectedType(option)
+	function onClickElement(selectedValue) {
+		// alert(JSON.stringify(selectedValue))
+		onSelect({ type: selectedCategory, value: selectedValue })
+		closeModal()
+	}
+
+	function onClickCategory(category) {
+		// alert(JSON.stringify(elements[category]))
+		if (Array.isArray(elements[category]) && elements[category].length !== 0) {
+			setSelectedCategory(category)
+			setElementResults(elements[category])
 		} else {
-			onClickElement(option)
+			onSelect({ type: null, value: category })
+			closeModal()
 		}
 	}
 
-	if (!isModalOpen || !elements) return null
+	if (!isModalOpen) return null
 
 	if (Array.isArray(elements)) {
+		// alert("yes")
 		return (
-			<div
-				ref={modalRef}
-				style={{
-					position: "absolute",
-					// backgroundColor: "white",
-					// display: "flex",
-					// justifySelf: "center",
-					bottom: "130%",
-				}}
-			>
-				<div className="secondModal">
-					{elements?.map((value) => (
-						<button
-							className="addElementModalButton"
-							key={value}
-							onClick={() => onClickElement(value)}
-						>
-							{value}
-						</button>
-					))}
+			<div ref={modalRef} className="addElementModalContainer">
+				<div className="elementListContainer">
+					<div className="elementListItemContainer">
+						{elements?.map((value) => (
+							<div
+								className="addElementModalButton"
+								key={value}
+								onClick={() => onClickElement(value)}
+							>
+								{value}
+							</div>
+						))}
+					</div>
 				</div>
 			</div>
 		)
 	}
 
 	return (
-		<div
-			ref={modalRef}
-			style={{
-				position: "absolute",
-				display: "flex",
-				justifySelf: "center",
-				bottom: "130%",
-			}}
-		>
-			{/* SECOND STEP MODAL */}
-			{selectedType && (
-				<div className="secondModal">
-					{elements[selectedType]?.map((value) => (
-						<button
-							className="addElementModalButton"
-							key={value.word}
-							onClick={() => onClickElement(value)}
-						>
-							{value.word || value}
-						</button>
-					))}
+		<div ref={modalRef} className="addElementModalContainer">
+			{selectedCategory && (
+				<div className="elementListContainer">
+					{hasSearch && (
+						<div className="searchInputContainer">
+							<input
+								type="text"
+								className="searchInput"
+								value={searchText}
+								onChange={updateSearchResults}
+								placeholder="Search..."
+							/>
+						</div>
+					)}
+					<div className="elementListItemContainer">
+						{elementResults?.map((element) => (
+							<div
+								className="addElementModalButton"
+								key={element.word}
+								onClick={() => onClickElement(element)}
+							>
+								{element.word || element}
+							</div>
+						))}
+					</div>
 				</div>
 			)}
-
-			{/* FIRST MODAL */}
-			<div className="addElementModal">
+			<div className="categoryModalContainer">
 				{elements &&
-					Object.keys(elements).map((el) => (
-						<view className="addElementModalButton" key={el} onClick={() => onClickOption(el)}>
-							{el}
-						</view>
+					Object.keys(elements).map((category) => (
+						<div
+							className="addElementModalButton"
+							style={{
+								backgroundColor: selectedCategory === category && "black",
+								color: selectedCategory === category && "white",
+							}}
+							key={category}
+							onClick={() => onClickCategory(category)}
+						>
+							{category}
+						</div>
 					))}
 				{isElement && (
-					<button style={{ backgroundColor: "red", color: "white" }} onClick={onClickDelete}>
+					<div className="addElementModalButton deleteButton" onClick={onClickDelete}>
 						Delete
-					</button>
+					</div>
 				)}
 			</div>
 		</div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState, useLayoutEffect } from "react"
 import AddElementModal from "../AddElementModal"
 import "../App.css"
 import Adjective from "./Adjective"
@@ -10,8 +10,9 @@ import Punctuation from "./Punctuation"
 
 export default function Element({ element, mouse, replaceElement, deleteElement }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const allElements = useElementsStore((state) => state)
 	const [selectedElements, setSelectedElements] = useState()
+	const [isClosing, setIsClosing] = useState(false)
+	const allElements = useElementsStore((state) => state)
 
 	const defaultElements = {
 		noun: allElements.noun,
@@ -19,12 +20,29 @@ export default function Element({ element, mouse, replaceElement, deleteElement 
 		adjective: allElements.adjective,
 	}
 
-	useEffect(() => {
-		if (selectedElements) {
-			replaceElement(selectedElements)
-			setSelectedElements(null)
+	function renderElement() {
+		const props = {
+			element,
+			mouse,
+			onClickSelf: () => setIsModalOpen(true),
+			replaceElement,
 		}
-	}, [isModalOpen])
+
+		switch (element?.type) {
+			case "noun":
+				return <Noun {...props} />
+			case "adjective":
+				return <Adjective {...props} />
+			case "verb":
+				return <Verb {...props} />
+			case "coupla":
+				return <Coupla {...props} />
+			case "punctuation":
+				return <Punctuation {...props} />
+			default:
+				return null
+		}
+	}
 
 	return (
 		<div className="modalContainer">
@@ -33,50 +51,79 @@ export default function Element({ element, mouse, replaceElement, deleteElement 
 				setIsModalOpen={setIsModalOpen}
 				elements={defaultElements}
 				onSelect={setSelectedElements}
-				deleteElement={deleteElement}
+				deleteElement={() => setIsClosing(true)}
 				isElement={true}
 			/>
-			{element?.type === "noun" && (
-				<Noun
-					element={element}
-					mouse={mouse}
-					defaultElements={defaultElements}
-					onClickSelf={() => setIsModalOpen(true)}
-					replaceElement={replaceElement}
-				/>
-			)}
-			{element?.type === "adjective" && (
-				<Adjective
-					element={element}
-					mouse={mouse}
-					onClickSelf={() => setIsModalOpen(true)}
-					replaceElement={replaceElement}
-				/>
-			)}
-			{element?.type === "verb" && (
-				<Verb
-					element={element}
-					mouse={mouse}
-					onClickSelf={() => setIsModalOpen(true)}
-					replaceElement={replaceElement}
-				/>
-			)}
-			{element?.type === "coupla" && (
-				<Coupla
-					element={element}
-					mouse={mouse}
-					onClickSelf={() => setIsModalOpen(true)}
-					replaceElement={replaceElement}
-				/>
-			)}
-			{element?.type === "punctuation" && (
-				<Punctuation
-					element={element}
-					mouse={mouse}
-					onClickSelf={() => setIsModalOpen(true)}
-					replaceElement={replaceElement}
-				/>
-			)}
+			<Resize
+				element={element}
+				isClosing={isClosing}
+				onCloseComplete={() => deleteElement(element)}
+			>
+				{renderElement()}
+			</Resize>
+		</div>
+	)
+}
+
+function Resize({ element, isClosing, onCloseComplete, children }) {
+	const [width, setWidth] = useState(0)
+	const [isOverflowVisible, setIsOverflowVisible] = useState(false)
+	const contentRef = useRef(null)
+
+	useLayoutEffect(() => {
+		if (!contentRef.current) return
+
+		const el = contentRef.current
+
+		const measure = () => {
+			setWidth(el.scrollWidth)
+		}
+		measure()
+		const observer = new ResizeObserver(() => {
+			measure()
+		})
+
+		observer.observe(el)
+
+		return () => observer.disconnect()
+	}, [element])
+
+	useEffect(() => {
+		if (isClosing) {
+			setIsOverflowVisible(false)
+			requestAnimationFrame(() => {
+				setWidth(0)
+			})
+		}
+	}, [isClosing])
+
+	return (
+		<div
+			className="elementContainer"
+			style={{
+				width,
+				overflow: isOverflowVisible ? "visible" : "hidden",
+				transition: `width 0.3s ease`,
+			}}
+			onTransitionEnd={(e) => {
+				if (e.propertyName !== "width") return
+
+				if (isClosing) {
+					onCloseComplete()
+				} else {
+					setIsOverflowVisible(true)
+				}
+			}}
+		>
+			<div
+				ref={contentRef}
+				style={{
+					display: "inline-block",
+					whiteSpace: "nowrap",
+				}}
+			>
+				{children}
+			</div>
 		</div>
 	)
 }

@@ -68,6 +68,16 @@ const useElementsStore = create((set) => ({
 			ending: "い",
 			conjugationOptions: ["い", "かった"],
 		},
+		した: {
+			stem: "した",
+			ending: null,
+			conjugationOptions: [],
+		},
+		して: {
+			stem: "して",
+			ending: null,
+			conjugationOptions: [],
+		},
 		したい: {
 			stem: "した",
 			ending: "い",
@@ -83,8 +93,8 @@ const useElementsStore = create((set) => ({
 			ending: null,
 			conjugationOptions: [],
 		},
-		ぜず: {
-			stem: "ず",
+		せず: {
+			stem: "せず",
 			ending: null,
 			conjugationOptions: [],
 		},
@@ -92,7 +102,7 @@ const useElementsStore = create((set) => ({
 		させる: {
 			stem: "させ",
 			ending: "る",
-			conjugationOptions: ["ない", "ます", "た", "よう"],
+			conjugationOptions: ["ない", "ます", "た", "よう", "られる"],
 		},
 		//ichidan
 		ichidanDefault: {
@@ -122,24 +132,29 @@ const useElementsStore = create((set) => ({
 			conjugationOptions: [],
 		},
 		//godan
-		godanDefault: {
+		godanDefaults: {
 			B1: ["ない", "れる", "せる", "ず"],
-			B2: [],
+			B2: ["ます"],
 			B3: [],
 			B4: ["ば", "る"],
 			B5: ["う"],
-			Bte: ["て"],
-			Bta: ["た"],
+			Bte: [],
+			Bta: [],
 		},
 		る: {
 			stem: null,
 			ending: "る",
 			conjugationOptions: ["ない", "ます", "た", "よう"],
 		},
+		れる: {
+			stem: "れ",
+			ending: "る",
+			conjugationOptions: ["ない", "ます", "た", "よう"],
+		},
 		せる: {
 			stem: "せ",
 			ending: "る",
-			conjugationOptions: ["ない", "たい", "た", "たり", "て", "よう", "ます", "ず"],
+			conjugationOptions: ["ない", "たい", "た", "たり", "て", "よう", "ます", "ず", "られる"],
 		},
 		う: {
 			stem: "う",
@@ -164,6 +179,11 @@ const useElementsStore = create((set) => ({
 		},
 		ず: {
 			stem: "ず",
+			ending: null,
+			conjugationOptions: [],
+		},
+		くて: {
+			stem: "くて",
 			ending: null,
 			conjugationOptions: [],
 		},
@@ -200,7 +220,12 @@ const useElementsStore = create((set) => ({
 		ます: {
 			stem: "ま",
 			ending: "す",
-			conjugationOptions: ["した", "せん"],
+			conjugationOptions: ["した", "せん", "して"],
+		},
+		せん: {
+			stem: "せん",
+			ending: null,
+			conjugationOptions: [],
 		},
 		よう: {
 			stem: "よう",

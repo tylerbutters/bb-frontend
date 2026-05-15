@@ -29,6 +29,7 @@ export default function AddButton({ locked, mouse, elements, addElement }) {
 				onSelect={addElement}
 				elements={elements}
 				isElement={false}
+				hasSearch={true}
 			/>
 
 			<div

@@ -9,7 +9,7 @@ const parser = new XMLParser({
 })
 
 const data = parser.parse(xml)
-const entries = data?.JMdict?.entry
+const entries = data?.JMdict?.entry || []
 
 function asArray(v) {
 	if (!v) return []
@@ -21,18 +21,21 @@ function clean(v) {
 }
 
 /**
- * TRUE common check
+ * Common word detection
  */
 function isCommon(entry) {
 	const k = asArray(entry?.k_ele)
 	const r = asArray(entry?.r_ele)
 
+	const COMMON = new Set(["ichi1", "ichi2", "news1", "news2", "spec1", "spec2"])
+
 	for (const x of [...k, ...r]) {
-		const pri = asArray(x?.ke_pri || x?.re_pri)
+		const pri = [...asArray(x?.ke_pri), ...asArray(x?.re_pri)]
 
 		for (const p of pri) {
-			const c = clean(p)
-			if (c === "ichi1" || c === "ichi2") return true
+			if (COMMON.has(clean(p))) {
+				return true
+			}
 		}
 	}
 
@@ -40,7 +43,7 @@ function isCommon(entry) {
 }
 
 /**
- * Verb detection
+ * Verb classification
  */
 function detectVerb(entry) {
 	const senses = asArray(entry?.sense)
@@ -65,6 +68,7 @@ const verbs = []
 
 for (const entry of entries) {
 	const verbType = detectVerb(entry)
+
 	if (!verbType) continue
 	if (!isCommon(entry)) continue
 
@@ -76,38 +80,35 @@ for (const entry of entries) {
 
 	if (!kanji && !reading) continue
 
-	const base = kanji || reading || ""
+	const word = kanji || reading
+	const kana = reading || kanji
 
-	const isSuru = verbType === "suru"
-	const isKuru = verbType === "kuru"
-
-	// FULL forms
-	const word = isSuru ? base + "する" : isKuru ? base + "くる" : base
-
-	const kana = isSuru
-		? (reading || base) + "する"
-		: isKuru
-			? (reading || base) + "くる"
-			: reading || base
-
-	// STEM LOGIC
 	let stem = ""
 	let stemKana = ""
 	let ending = ""
 
-	if (isSuru) {
-		stem = base
-		stemKana = reading || base
+	// SURU
+	if (verbType === "suru") {
 		ending = "する"
-	} else if (isKuru) {
-		stem = base
-		stemKana = reading || base
-		ending = "くる"
-	} else {
-		ending = word.slice(-1)
-		stem = word.slice(0, -1)
 
-		stemKana = (kana || word).slice(0, -1)
+		stem = word.slice(0, -2)
+		stemKana = kana.slice(0, -2)
+	}
+
+	// KURU
+	else if (verbType === "kuru") {
+		ending = "くる"
+
+		stem = word === "来る" ? "来" : word.slice(0, -2)
+		stemKana = kana.slice(0, -2)
+	}
+
+	// GODAN / ICHIDAN
+	else {
+		ending = word.slice(-1)
+
+		stem = word.slice(0, -1)
+		stemKana = kana.slice(0, -1)
 	}
 
 	verbs.push({
