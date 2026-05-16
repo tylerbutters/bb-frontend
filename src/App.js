@@ -7,7 +7,7 @@ import Verb from "./elements/Verb"
 import Particle from "./elements/Particle"
 import useElementsStore from "./useElementsStore"
 import Element from "./elements/Element"
-import verbs from "./verbs.json"
+import verbDictionary from "./verbs.json"
 
 export default function App() {
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
@@ -42,11 +42,11 @@ export default function App() {
 	const [sentenceString, setSentenceString] = useState("")
 	const allElements = useElementsStore((state) => state)
 	const defaultElements = {
-		// noun: allElements.noun,
-		verbs: verbs,
-		// adjective: allElements.adjective,
-		// punctuation: allElements.punctuation,
-		// coupla: allElements.coupla,
+		noun: allElements.noun,
+		verbs: verbDictionary,
+		adjective: allElements.adjective,
+		punctuation: allElements.punctuation,
+		coupla: allElements.coupla,
 	}
 
 	useEffect(() => {
@@ -86,7 +86,7 @@ export default function App() {
 
 		function noun(element) {
 			if (element.prefix) string += element.prefix
-			if (element.text) string += element.text
+			if (element.value) string += element.value
 			if (element.suffix) string += element.suffix
 			if (element.particle) string += element.particle
 		}
@@ -104,8 +104,7 @@ export default function App() {
 		switch (element.value.type) {
 			case "noun":
 				return {
-					type: "noun",
-					text: element.value,
+					...element.value,
 				}
 			case "verb":
 				// alert(
@@ -139,6 +138,8 @@ export default function App() {
 	}
 
 	function addElement(index, selectedElement) {
+		// alert(JSON.stringify(selectedElement))
+
 		setAddedElements((prev) => {
 			const copy = [...prev]
 			copy.splice(index, 0, initializeElement(selectedElement))
@@ -155,6 +156,7 @@ export default function App() {
 	}
 
 	function deleteElement(index) {
+		// alert(JSON.stringify(index))
 		setAddedElements((prev) => {
 			const copy = [...prev]
 			copy.splice(index, 1)

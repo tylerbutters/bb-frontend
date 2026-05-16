@@ -7,6 +7,7 @@ import Verb from "./Verb"
 import useElementsStore from "../useElementsStore"
 import Coupla from "./Coupla"
 import Punctuation from "./Punctuation"
+import verbsDictionary from "../verbs.json"
 
 export default function Element({ element, mouse, replaceElement, deleteElement }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
@@ -15,15 +16,21 @@ export default function Element({ element, mouse, replaceElement, deleteElement 
 	const allElements = useElementsStore((state) => state)
 	const defaultElements = {
 		noun: allElements.noun,
-		verb: allElements.verb,
+		verb: verbsDictionary,
 		adjective: allElements.adjective,
 	}
+
+	// useEffect(() => {
+	// 	alert("test")
+	// }, [element])
 
 	function renderElement() {
 		const props = {
 			element,
 			onClickSelf: () => setIsModalOpen(true),
 			replaceElement,
+			deleteElement: deleteElement,
+			mouse,
 		}
 
 		switch (element?.type) {
@@ -52,45 +59,9 @@ export default function Element({ element, mouse, replaceElement, deleteElement 
 				deleteElement={() => setIsClosing(true)}
 				isElement={true}
 			/>
-			<Resize
-				element={element}
-				isClosing={isClosing}
-				onCloseComplete={() => deleteElement(element)}
-			>
+			<Resize element={element} isClosing={isClosing} onCloseComplete={deleteElement}>
 				{renderElement()}
 			</Resize>
-			<DeleteButton deleteElement={() => setIsClosing(true)} mouse={mouse} />
-		</div>
-	)
-}
-
-function DeleteButton({ deleteElement, mouse }) {
-	const [isDeleteButtonVisible, setIsDeleteButtonVisible] = useState()
-	const deleteButtonRef = useRef()
-	const EDGE_SIZE = 30
-
-	useEffect(() => {
-		const rect = deleteButtonRef.current?.getBoundingClientRect()
-		if (!rect) return
-
-		const near =
-			mouse.x >= rect.left - EDGE_SIZE &&
-			mouse.x <= rect.right + EDGE_SIZE &&
-			mouse.y >= rect.top - EDGE_SIZE &&
-			mouse.y <= rect.bottom + EDGE_SIZE
-
-		setIsDeleteButtonVisible(near)
-	}, [mouse])
-
-	return (
-		<div ref={deleteButtonRef} className="deleteElementButtonBoundary">
-			<div
-				className="deleteElementButton"
-				style={{ bottom: isDeleteButtonVisible ? 0 : 100, zIndex: 0 }}
-				onClick={deleteElement}
-			>
-				x
-			</div>
 		</div>
 	)
 }
@@ -99,6 +70,7 @@ function Resize({ element, isClosing, onCloseComplete, children }) {
 	const [width, setWidth] = useState(0)
 	const [isOverflowVisible, setIsOverflowVisible] = useState(false)
 	const contentRef = useRef(null)
+	const hasClosedRef = useRef(false)
 
 	useLayoutEffect(() => {
 		if (!contentRef.current) return
@@ -119,6 +91,7 @@ function Resize({ element, isClosing, onCloseComplete, children }) {
 	}, [element])
 
 	useEffect(() => {
+		// alert(isClosing)
 		if (isClosing) {
 			setIsOverflowVisible(false)
 			requestAnimationFrame(() => {
@@ -138,7 +111,10 @@ function Resize({ element, isClosing, onCloseComplete, children }) {
 			onTransitionEnd={(e) => {
 				if (e.propertyName !== "width") return
 
+				if (hasClosedRef.current) return
+
 				if (isClosing) {
+					hasClosedRef.current = true
 					onCloseComplete()
 				} else {
 					setIsOverflowVisible(true)

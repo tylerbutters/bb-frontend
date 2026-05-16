@@ -30,18 +30,18 @@ export default function Noun({ mouse, element, onClickSelf, replaceElement }) {
 	function addElement(selectedElement) {
 		switch (selectedElement.type) {
 			case "prefix":
-				replaceElement({ ...element, prefix: selectedElement.value })
+				replaceElement({ ...element, prefix: selectedElement.value.value })
 				return
 			case "suffix":
-				replaceElement({ ...element, suffix: selectedElement.value })
+				replaceElement({ ...element, suffix: selectedElement.value.value })
 				return
 			case "particle":
-				replaceElement({ ...element, particle: selectedElement.value })
+				replaceElement({ ...element, particle: selectedElement.value.value })
 				return
 		}
-    }
-    
-    return (
+	}
+
+	return (
 		<div className="baseElement nounElement">
 			{element.prefix ? (
 				<SuffixPrefix
@@ -57,7 +57,7 @@ export default function Noun({ mouse, element, onClickSelf, replaceElement }) {
 				/>
 			)}
 			<div className="elementText" onClick={onClickSelf}>
-				{element?.text}
+				{element?.value}
 			</div>
 			{element.suffix ? (
 				<SuffixPrefix

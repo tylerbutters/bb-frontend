@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useMemo } from "react"
 import "./App.css"
 
 export default function AddElementModal({
@@ -6,12 +6,26 @@ export default function AddElementModal({
 	setIsModalOpen,
 	onSelect,
 	elements,
+	deleteElement,
 	hasSearch,
+	isElement,
+	isIrregularVerb,
 }) {
 	const modalRef = useRef(null)
 	const [selectedCategory, setSelectedCategory] = useState()
 	const [searchText, setSearchText] = useState("")
-	const [elementResults, setElementResults] = useState([])
+
+	const elementResults = useMemo(() => {
+		if (!selectedCategory) return []
+
+		const list = elements?.[selectedCategory] || []
+
+		if (!searchText) return list
+
+		const lower = searchText.toLowerCase()
+
+		return list.filter((element) => (element.value || element).toLowerCase().startsWith(lower))
+	}, [elements, selectedCategory, searchText])
 
 	useEffect(() => {
 		function handleClickOutside(e) {
@@ -28,19 +42,10 @@ export default function AddElementModal({
 		setIsModalOpen(false)
 		setSelectedCategory(null)
 		setSearchText("")
-		setElementResults([])
 	}
 
 	function updateSearchResults(e) {
-		const value = e.target.value
-
-		setSearchText(value)
-		// alert(JSON.stringify(searchResults))
-		const newResults = elements[selectedCategory].filter(
-			(element) => element.kana?.startsWith(value) || element.word?.startsWith(value),
-		)
-
-		setElementResults(newResults)
+		setSearchText(e.target.value)
 	}
 
 	function onClickElement(selectedValue) {
@@ -50,10 +55,9 @@ export default function AddElementModal({
 	}
 
 	function onClickCategory(category) {
-		// alert(JSON.stringify(elements[category]))
 		if (Array.isArray(elements[category]) && elements[category].length !== 0) {
 			setSelectedCategory(category)
-			setElementResults(elements[category])
+			setSearchText("")
 		} else {
 			onSelect({ type: null, value: category })
 			closeModal()
@@ -78,6 +82,11 @@ export default function AddElementModal({
 							</div>
 						))}
 					</div>
+					{isIrregularVerb && (
+						<div className="addElementModalButton deleteElementButton" onClick={deleteElement}>
+							Delete
+						</div>
+					)}
 				</div>
 			</div>
 		)
@@ -99,13 +108,13 @@ export default function AddElementModal({
 						</div>
 					)}
 					<div className="elementListItemContainer">
-						{elementResults?.map((element) => (
+						{elementResults?.map((element, index) => (
 							<div
 								className="addElementModalButton"
-								key={element.word}
+								key={index}
 								onClick={() => onClickElement(element)}
 							>
-								{element.word || element}
+								{element.value || element}
 							</div>
 						))}
 					</div>
@@ -126,6 +135,11 @@ export default function AddElementModal({
 							{category}
 						</div>
 					))}
+				{isElement && (
+					<div className="addElementModalButton deleteElementButton" onClick={deleteElement}>
+						Delete
+					</div>
+				)}
 			</div>
 		</div>
 	)

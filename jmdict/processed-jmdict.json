@@ -1,0 +1,829 @@
+{
+  "adjectives": [
+    {
+      "elementType": "adjective",
+      "adjectiveType": "na-type",
+      "text": "明白",
+      "textKana": "めいはく",
+      "stem": null,
+      "stemKana": null,
+      "ending": null,
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "adjective",
+      "adjectiveType": "na-type",
+      "text": "あべこべ",
+      "textKana": "あべこべ",
+      "stem": null,
+      "stemKana": null,
+      "ending": null,
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "adjective",
+      "adjectiveType": "na-type",
+      "text": "あやふや",
+      "textKana": "あやふや",
+      "stem": null,
+      "stemKana": null,
+      "ending": null,
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "adjective",
+      "adjectiveType": "i-type",
+      "text": "行けない",
+      "textKana": "いけない",
+      "stem": "行けな",
+      "stemKana": "いけな",
+      "ending": "い",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "adjective",
+      "adjectiveType": "na-type",
+      "text": "お喋りする",
+      "textKana": "おしゃべりする",
+      "stem": null,
+      "stemKana": null,
+      "ending": null,
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "adjective",
+      "adjectiveType": "na-type",
+      "text": "お洒落する",
+      "textKana": "おしゃれする",
+      "stem": null,
+      "stemKana": null,
+      "ending": null,
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "adjective",
+      "adjectiveType": "na-type",
+      "text": "カチカチ",
+      "textKana": "カチカチ",
+      "stem": null,
+      "stemKana": null,
+      "ending": null,
+      "conjugation": null,
+      "particle": null
+    }
+  ],
+  "adverbs": [
+    {
+      "elementType": "adverb",
+      "text": "あっさりする",
+      "textKana": "あっさりする",
+      "particle": null
+    },
+    {
+      "elementType": "adverb",
+      "text": "あっという間に",
+      "textKana": "あっというまに",
+      "particle": null
+    },
+    {
+      "elementType": "adverb",
+      "text": "如何にも",
+      "textKana": "いかにも",
+      "particle": null
+    },
+    {
+      "elementType": "adverb",
+      "text": "いそいそする",
+      "textKana": "いそいそする",
+      "particle": null
+    },
+    {
+      "elementType": "adverb",
+      "text": "うずうずする",
+      "textKana": "うずうずする",
+      "particle": null
+    },
+    {
+      "elementType": "adverb",
+      "text": "うっかりする",
+      "textKana": "うっかりする",
+      "particle": null
+    },
+    {
+      "elementType": "adverb",
+      "text": "うとうとする",
+      "textKana": "うとうとする",
+      "particle": null
+    },
+    {
+      "elementType": "adverb",
+      "text": "うろうろする",
+      "textKana": "うろうろする",
+      "particle": null
+    },
+    {
+      "elementType": "adverb",
+      "text": "うんざりする",
+      "textKana": "うんざりする",
+      "particle": null
+    },
+    {
+      "elementType": "adverb",
+      "text": "オドオドする",
+      "textKana": "オドオドする",
+      "particle": null
+    },
+    {
+      "elementType": "adverb",
+      "text": "おろおろする",
+      "textKana": "おろおろする",
+      "particle": null
+    },
+    {
+      "elementType": "adverb",
+      "text": "お先に",
+      "textKana": "おさきに",
+      "particle": null
+    },
+    {
+      "elementType": "adverb",
+      "text": "カチカチ",
+      "textKana": "カチカチ",
+      "particle": null
+    },
+    {
+      "elementType": "adverb",
+      "text": "カッとする",
+      "textKana": "カッとする",
+      "particle": null
+    }
+  ],
+  "verbs": [
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "あっさりする",
+      "textKana": "あっさりする",
+      "stem": "あっさりする",
+      "stemKana": "あっさりする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "いそいそする",
+      "textKana": "いそいそする",
+      "stem": "いそいそする",
+      "stemKana": "いそいそする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "godan",
+      "text": "居らっしゃる",
+      "textKana": "いらっしゃる",
+      "stem": "居らっしゃ",
+      "stemKana": "いらっしゃ",
+      "ending": "る",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "うずうずする",
+      "textKana": "うずうずする",
+      "stem": "うずうずする",
+      "stemKana": "うずうずする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "うっかりする",
+      "textKana": "うっかりする",
+      "stem": "うっかりする",
+      "stemKana": "うっかりする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "うとうとする",
+      "textKana": "うとうとする",
+      "stem": "うとうとする",
+      "stemKana": "うとうとする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "うろうろする",
+      "textKana": "うろうろする",
+      "stem": "うろうろする",
+      "stemKana": "うろうろする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "うんこする",
+      "textKana": "うんこする",
+      "stem": "うんこする",
+      "stemKana": "うんこする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "うんざりする",
+      "textKana": "うんざりする",
+      "stem": "うんざりする",
+      "stemKana": "うんざりする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "ウンチする",
+      "textKana": "ウンチする",
+      "stem": "ウンチする",
+      "stemKana": "ウンチする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "おしっこする",
+      "textKana": "おしっこする",
+      "stem": "おしっこする",
+      "stemKana": "おしっこする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "オドオドする",
+      "textKana": "オドオドする",
+      "stem": "オドオドする",
+      "stemKana": "オドオドする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "おろおろする",
+      "textKana": "おろおろする",
+      "stem": "おろおろする",
+      "stemKana": "おろおろする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "お参りする",
+      "textKana": "おまいりする",
+      "stem": "お参りする",
+      "stemKana": "おまいりする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "お辞儀する",
+      "textKana": "おじぎする",
+      "stem": "お辞儀する",
+      "stemKana": "おじぎする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "godan",
+      "text": "お世話になる",
+      "textKana": "おせわになる",
+      "stem": "お世話にな",
+      "stemKana": "おせわにな",
+      "ending": "る",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "お茶する",
+      "textKana": "おちゃする",
+      "stem": "お茶する",
+      "stemKana": "おちゃする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "お喋りする",
+      "textKana": "おしゃべりする",
+      "stem": "お喋りする",
+      "stemKana": "おしゃべりする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "お返しする",
+      "textKana": "おかえしする",
+      "stem": "お返しする",
+      "stemKana": "おかえしする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "お洒落する",
+      "textKana": "おしゃれする",
+      "stem": "お洒落する",
+      "stemKana": "おしゃれする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    },
+    {
+      "elementType": "verb",
+      "verbType": "suru",
+      "text": "カッとする",
+      "textKana": "カッとする",
+      "stem": "カッとする",
+      "stemKana": "カッとする",
+      "ending": "する",
+      "conjugation": null,
+      "particle": null
+    }
+  ],
+  "nouns": [
+    {
+      "elementType": "noun",
+      "text": "ＣＤプレーヤー",
+      "textKana": "シーディープレーヤー",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "Ｔシャツ",
+      "textKana": "ティーシャツ",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "Ｔバック",
+      "textKana": "ティーバック",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "彼処",
+      "textKana": "あそこ",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "あべこべ",
+      "textKana": "あべこべ",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "彼",
+      "textKana": "あれ",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "いざこざ",
+      "textKana": "いざこざ",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "畝り",
+      "textKana": "うねり",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "うんこする",
+      "textKana": "うんこする",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "ウンチする",
+      "textKana": "ウンチする",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "おしっこする",
+      "textKana": "おしっこする",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "おっさん",
+      "textKana": "おっさん",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "おっぱい",
+      "textKana": "おっぱい",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "御田",
+      "textKana": "おでん",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "おなら",
+      "textKana": "おなら",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お握り",
+      "textKana": "おにぎり",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お化け",
+      "textKana": "おばけ",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お菓子",
+      "textKana": "おかし",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お客様",
+      "textKana": "おきゃくさま",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お金",
+      "textKana": "おかね",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お兄さん",
+      "textKana": "おにいさん",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お好み焼き",
+      "textKana": "おこのみやき",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お絞り",
+      "textKana": "おしぼり",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お参りする",
+      "textKana": "おまいりする",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お産",
+      "textKana": "おさん",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お仕舞い",
+      "textKana": "おしまい",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お使い",
+      "textKana": "おつかい",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お姉さん",
+      "textKana": "おねえさん",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お子様",
+      "textKana": "おこさま",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お辞儀する",
+      "textKana": "おじぎする",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お守り",
+      "textKana": "おまもり",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お手上げ",
+      "textKana": "おてあげ",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お手洗い",
+      "textKana": "おてあらい",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お手伝いさん",
+      "textKana": "おてつだいさん",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お巡りさん",
+      "textKana": "おまわりさん",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お嬢さん",
+      "textKana": "おじょうさん",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お世辞",
+      "textKana": "おせじ",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お前",
+      "textKana": "おまえ",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お祖父さん",
+      "textKana": "おじいさん",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お祖母さん",
+      "textKana": "おばあさん",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お袋",
+      "textKana": "おふくろ",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お宅",
+      "textKana": "おたく",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お茶する",
+      "textKana": "おちゃする",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お喋りする",
+      "textKana": "おしゃべりする",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お天気",
+      "textKana": "おてんき",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お土産",
+      "textKana": "おみやげ",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お凸",
+      "textKana": "おでこ",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お父さん",
+      "textKana": "おとうさん",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お腹",
+      "textKana": "おなか",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お返しする",
+      "textKana": "おかえしする",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お母さん",
+      "textKana": "おかあさん",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お墨付き",
+      "textKana": "おすみつき",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    },
+    {
+      "elementType": "noun",
+      "text": "お洒落する",
+      "textKana": "おしゃれする",
+      "prefix": null,
+      "suffix": null,
+      "particle": null
+    }
+  ],
+  "affixes": [],
+  "counters": [],
+  "auxiliaries": []
+}

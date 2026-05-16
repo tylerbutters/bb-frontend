@@ -3,24 +3,24 @@ import AddElementModal from "../AddElementModal"
 import "../App.css"
 import useElementsStore from "../useElementsStore"
 
-export default function Adjective({ text, onClickSelf }) {
+export default function Adjective({ element, onClickSelf }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const [lastChar, setLastChar] = useState(text.at(-1))
+	const [lastChar, setLastChar] = useState(element.at(-1))
 	const allElements = useElementsStore((state) => state)
 	const adjectiveConjugations = { adjectiveConjugations: allElements.adjectiveConjugations }
 
 	useEffect(() => {
-		setLastChar(text.at(-1))
+		setLastChar(element.at(-1))
 	}, [])
 
-	const stem = text.slice(0, -1)
+	const stem = element.slice(0, -1)
 	return (
 		<div className="modalContainer">
 			<AddElementModal
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
 				elements={adjectiveConjugations}
-				onSelect={(element) => setLastChar(element.text)}
+				onSelect={(element) => setLastChar(element.value)}
 			/>
 			<div className="baseElement adjectiveElement">
 				<div className="elementText" onClick={onClickSelf}>

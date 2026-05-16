@@ -3,7 +3,7 @@ import AddElementModal from "../AddElementModal"
 import "../App.css"
 import useElementsStore from "../useElementsStore"
 
-export default function Verb({ element, onClickSelf, replaceElement }) {
+export default function Verb({ element, onClickSelf, replaceElement, deleteElement }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const allElements = useElementsStore((state) => state)
 
@@ -12,18 +12,24 @@ export default function Verb({ element, onClickSelf, replaceElement }) {
 			<div className="elementText" onClick={onClickSelf}>
 				{element.stem}
 			</div>
-			<Conjugation parentConjugation={element} updateConjugation={replaceElement} />
+			<Conjugation
+				parentConjugation={element}
+				updateConjugation={replaceElement}
+				deleteElement={deleteElement}
+			/>
 		</div>
 	)
 }
-function Conjugation({ parentConjugation, updateConjugation }) {
+function Conjugation({ parentConjugation, updateConjugation, deleteElement }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const allElements = useElementsStore((state) => state)
 	const [conjugationOptions, setConjugationOptions] = useState()
 	const currentConjugation = parentConjugation?.next
+	const isIrregularVerb = currentConjugation.stem === "する" || currentConjugation.stem === "くる"
 
 	useEffect(() => {
 		setConjugationOptions(getConjugationOptions())
+		// alert(JSON.stringify(parentConjugation))
 	}, [])
 
 	function getGodanElements() {
@@ -45,6 +51,31 @@ function Conjugation({ parentConjugation, updateConjugation }) {
 		const [B1, B2, B3, B4, B5, Bte, Bta] = row
 
 		const old = allElements.conjugations.godanDefaults
+
+		const irregularHonorific = ["くださる", "いらっしゃる", "なさる", "おっしゃる"]
+
+		if (irregularHonorific.includes(parentConjugation.kana)) {
+			return {
+				[B1]: old.B1,
+				["い"]: [...old.B2, "い"],
+				[B2]: [],
+				[B3]: old.B3,
+				[B4]: old.B4,
+				[B5]: old.B5,
+				[Bte]: old.Bte,
+				[Bta]: old.Bta,
+			}
+		} else if (parentConjugation.value === "行く") {
+			return {
+				[B1]: old.B1,
+				[B2]: old.B2,
+				[B3]: old.B3,
+				[B4]: old.B4,
+				[B5]: old.B5,
+				["って"]: [],
+				["った"]: [],
+			}
+		}
 
 		return {
 			[B1]: old.B1,
@@ -80,6 +111,7 @@ function Conjugation({ parentConjugation, updateConjugation }) {
 
 	function getConjugationToReplace(selectedConjugation) {
 		if (parentConjugation.verbType === "godan") {
+			// alert(JSON.stringify(selectedConjugation))
 			//only change the base (last character)
 			if (!selectedConjugation.type || selectedConjugation.type === selectedConjugation.value) {
 				updateConjugation({
@@ -121,6 +153,8 @@ function Conjugation({ parentConjugation, updateConjugation }) {
 				setIsModalOpen={setIsModalOpen}
 				elements={conjugationOptions}
 				onSelect={getConjugationToReplace}
+				isIrregularVerb={isIrregularVerb}
+				deleteElement={deleteElement}
 			/>
 			<div className="baseInsideElement conjugation">
 				<div className="insideElementText" onClick={() => setIsModalOpen(true)}>
