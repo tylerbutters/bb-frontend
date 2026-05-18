@@ -5,6 +5,7 @@ import useElementsStore from "../useElementsStore"
 import AddButton from "../AddButton"
 import dictionary from "../jmdict/processed-jmdict.json"
 import Verb from "./Verb"
+import ConjugationEnding from "./ConjugationEnding"
 
 export default function Conjugation({
 	parentConjugation,
@@ -36,75 +37,83 @@ export default function Conjugation({
 			う: ["わ", "い", "う", "え", "お", "って", "った"],
 		}
 
-		const row = godanMap[parentConjugation.ending]
+		//find what category of godan it is
+		const row = Object.values(godanMap).find((row) => row.includes(parentConjugation.ending))
 		if (!row) return null
 
 		const [B1, B2, B3, B4, B5, Bte, Bta] = row
 
-		const old = verbConjugations.godanDefaults
+		const godanDefaults = {
+			B1: [{ text: "ない" }, { text: "れる" }, { text: "せる" }, { text: "ず" }],
+			B2: [{ text: "ます" }],
+			B4: [{ text: "ば" }, { text: "る" }, { text: "れ" }],
+			B5: [{ text: "う" }],
+		}
 
 		if (parentConjugation.verbType === "godan-aru") {
 			return [
 				{
 					text: B1,
-					list: old.B1,
+					list: godanDefaults.B1,
 				},
 				{
 					text: "い",
-					list: [...old.B2, { text: "い" }],
+					list: [...godanDefaults.B2, { text: "い" }],
 				},
 				{
 					text: B2,
-					list: [],
+					list: [{ text: B2, conjugationType: "aux" }],
 				},
 				{
 					text: B3,
-					list: old.B3,
+					list: [{ text: B3 }],
 				},
 				{
 					text: B4,
-					list: old.B4,
+					list: godanDefaults.B4,
 				},
 				{
 					text: B5,
-					list: old.B5,
+					list: godanDefaults.B5,
 				},
 				{
 					text: Bte,
-					list: old.Bte,
+					list: [{ text: Bte, conjugationType: "te" }],
 				},
 				{
 					text: Bta,
-					list: old.Bta,
+					list: [{ text: Bta }],
 				},
 			]
 		} else if (parentConjugation.verbType === "godan-iku") {
 			return [
 				{
 					text: B1,
-					list: old.B1,
+					list: godanDefaults.B1,
 				},
 				{
 					text: B2,
-					list: [...old.B2, { text: B2 }],
+					list: [...godanDefaults.B2, { text: B2, conjugationType: "aux" }],
 				},
 				{
 					text: B3,
-					list: old.B3,
+					list: [{ text: B3 }],
 				},
 				{
 					text: B4,
-					list: old.B4,
+					list: godanDefaults.B4,
 				},
 				{
 					text: B5,
-					list: old.B5,
+					list: godanDefaults.B5,
 				},
 				{
 					text: "って",
+					list: [{ text: "って", conjugationType: "te" }],
 				},
 				{
 					text: "った",
+					list: [{ text: "った" }],
 				},
 			]
 		}
@@ -112,31 +121,31 @@ export default function Conjugation({
 		return [
 			{
 				text: B1,
-				list: old.B1,
+				list: godanDefaults.B1,
 			},
 			{
 				text: B2,
-				list: [...old.B2, { text: B2 }],
+				list: [...godanDefaults.B2, { text: B2, conjugationType: "aux" }],
 			},
 			{
 				text: B3,
-				list: old.B3,
+				list: [{ text: B3 }],
 			},
 			{
 				text: B4,
-				list: old.B4,
+				list: godanDefaults.B4,
 			},
 			{
 				text: B5,
-				list: old.B5,
+				list: godanDefaults.B5,
 			},
 			{
 				text: Bte,
-				list: old.Bte,
+				list: [{ text: Bte, conjugationType: "te" }],
 			},
 			{
 				text: Bta,
-				list: old.Bta,
+				list: [{ text: Bta }],
 			},
 		]
 	}
@@ -168,9 +177,10 @@ export default function Conjugation({
 	}
 
 	function onSelectConjugationChange(selectedConjugation) {
+		// alert(JSON.stringify(selectedConjugation))
 		const conjugationData = verbConjugations[selectedConjugation.text]
 
-		//its a verb
+		//its a verb or adj
 		if (!conjugationData) {
 			if (
 				currentConjugation?.conjugationType === "te" ||
@@ -207,8 +217,12 @@ export default function Conjugation({
 			if (singleCharacterConjugation) {
 				updateConjugation({
 					...parentConjugation,
-					ending: conjugationData.text,
-					conjugation: {},
+					ending: selectedConjugation.text,
+					conjugation: {
+						conjugationType: selectedConjugation.conjugationType,
+						stem: selectedConjugation.text,
+						conjugation: {},
+					},
 				})
 			} else {
 				//change the ending of verb and add conjugation
@@ -335,44 +349,12 @@ export default function Conjugation({
 					{parentConjugation.verbType?.includes("godan") &&
 						parentConjugation.ending !== currentConjugation?.stem &&
 						parentConjugation.ending}
+					{!currentConjugation.stem && !currentConjugation.ending && (
+						<div style={{ width: 40, height: 80 }} />
+					)}
 					{currentConjugation?.stem}
 				</div>
 				{renderOtherElement()}
-			</div>
-		</div>
-	)
-}
-
-function ConjugationEnding({ conjugation, updateConjugation }) {
-	const [isModalOpen, setIsModalOpen] = useState(false)
-	const verbConjugations = useElementsStore((state) => state.conjugations.verbs)
-	const [conjugationOptions, setConjugationOptions] = useState([])
-
-	useEffect(() => {
-		setConjugationOptions(getConjugationOptions())
-	}, [])
-
-	function onSelect(selectedConjugation) {
-		updateConjugation({
-			stem: verbConjugations[selectedConjugation.text]?.stem,
-			ending: verbConjugations[selectedConjugation.text]?.ending,
-		})
-	}
-
-	function getConjugationOptions() {
-		return verbConjugations[`${conjugation?.stem}${conjugation?.ending}`]?.conjugationOptions || []
-	}
-
-	return (
-		<div className="modalContainer">
-			<AddElementModal
-				isModalOpen={isModalOpen}
-				setIsModalOpen={setIsModalOpen}
-				elementOptions={conjugationOptions}
-				onSelect={onSelect}
-			/>
-			<div className="baseInsideElement conjugationEnding" onClick={() => setIsModalOpen(true)}>
-				<div className="insideElementText">{conjugation.ending}</div>
 			</div>
 		</div>
 	)

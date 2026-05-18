@@ -11,7 +11,19 @@ import dictionary from "./jmdict/processed-jmdict.json"
 
 export default function App() {
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
-	const [addedElements, setAddedElements] = useState([])
+	const [addedElements, setAddedElements] = useState([
+		{
+			elementType: "verb",
+			verbType: "ichidan",
+			text: "食べる",
+			textKana: "たべる",
+			stem: "食べ",
+			stemKana: "たべ",
+			ending: "る",
+			conjugation: null,
+			particle: null,
+		},
+	])
 	const [sentenceString, setSentenceString] = useState("")
 	const defaultElements = [
 		{ text: "Nouns", list: dictionary.nouns },

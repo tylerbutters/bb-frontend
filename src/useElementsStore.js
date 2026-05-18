@@ -307,7 +307,12 @@ const useElementsStore = create((set) => ({
 					{ text: "よう" },
 					{ text: "ます" },
 					{ text: "ず" },
+					{ text: "blank" },
 				],
+			},
+			blank: {
+				// stem: "",
+				conjugationType: "aux",
 			},
 			られる: {
 				stem: "られ",
@@ -320,15 +325,6 @@ const useElementsStore = create((set) => ({
 				conjugationOptions: [],
 			},
 			//godan
-			godanDefaults: {
-				B1: [{ text: "ない" }, { text: "れる" }, { text: "せる" }, { text: "ず" }],
-				B2: [{ text: "ます" }],
-				B3: [],
-				B4: [{ text: "ば" }, { text: "る" }, { text: "れ" }],
-				B5: [{ text: "う" }],
-				Bte: [],
-				Bta: [],
-			},
 			る: {
 				stem: null,
 				ending: "る",
