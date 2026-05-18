@@ -7,47 +7,20 @@ import Verb from "./elements/Verb"
 import Particle from "./elements/Particle"
 import useElementsStore from "./useElementsStore"
 import Element from "./elements/Element"
-import verbDictionary from "./verbs.json"
+import dictionary from "./jmdict/processed-jmdict.json"
 
 export default function App() {
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
-	const [addedElements, setAddedElements] = useState([
-		// {
-		// 	type: "verb",
-		// 	characters: "食べ",
-		// 	next: {
-		// 			characters: "させ",
-		// 			ending: "る",
-		// 			next: {
-		// 				characters: "られ",
-		// 				ending: "る",
-		// 				next: {
-		// 					characters: "た",
-		// 					ending: "い",
-		// 					next: {
-		// 						characters: "くな",
-		// 						ending: "い",
-		// 						next: {
-		// 							characters: "かった",
-		// 							ending: null,
-		// 							next: {},
-		// 						},
-		// 					},
-		// 				},
-		// 			},
-		// 		},
-		// 	},
-		// },
-	])
+	const [addedElements, setAddedElements] = useState([])
 	const [sentenceString, setSentenceString] = useState("")
-	const allElements = useElementsStore((state) => state)
-	const defaultElements = {
-		noun: allElements.noun,
-		verbs: verbDictionary,
-		adjective: allElements.adjective,
-		punctuation: allElements.punctuation,
-		coupla: allElements.coupla,
-	}
+	const defaultElements = [
+		{ text: "Nouns", list: dictionary.nouns },
+		{ text: "Verbs", list: dictionary.verbs },
+		{ text: "Adjectives", list: dictionary.adjectives },
+		{ text: "Adverbs", list: dictionary.adverbs },
+		{ text: "Counters", list: dictionary.counters },
+		{ text: "だ", list: dictionary.desu },
+	]
 
 	useEffect(() => {
 		elementsToString(addedElements)
@@ -77,8 +50,8 @@ export default function App() {
 
 			string += node.stem || ""
 
-			if (node.next && Object.keys(node.next).length > 0) {
-				verb(node.next)
+			if (node.conjugation && Object.keys(node.conjugation).length > 0) {
+				verb(node.conjugation)
 			} else {
 				string += node.ending || ""
 			}
@@ -101,39 +74,16 @@ export default function App() {
 	}
 
 	function initializeElement(element) {
-		switch (element.value.type) {
-			case "noun":
-				return {
-					...element.value,
-				}
+		switch (element.elementType) {
 			case "verb":
-				// alert(
-				// 	JSON.stringify({
-				// 		...element.value,
-				// 		next: {
-				// 			stem: element.value.ending,
-				// 			ending: null,
-				// 			next: {},
-				// 		},
-				// 	}),
-				// )
-				if (element.value.verbType === "godan") {
-					return {
-						...element.value,
-						next: {},
-					}
-				} else {
-					return {
-						...element.value,
-						next: {
-							stem: element.value.ending,
-							ending: null,
-							next: {},
-						},
-					}
+				return {
+					...element,
+					conjugation: {
+						stem: element.ending,
+					},
 				}
 			default:
-			// alert(JSON.stringify(element))
+				return element
 		}
 	}
 
@@ -146,7 +96,7 @@ export default function App() {
 			return copy
 		})
 	}
-	function replaceElement(index, newElement) {
+	function updateElement(index, newElement) {
 		// alert(JSON.stringify(newElement))
 		setAddedElements((prev) => {
 			const copy = [...prev]
@@ -188,19 +138,20 @@ export default function App() {
 					<div key={index} style={{ display: "flex", alignItems: "center" }}>
 						<AddButton
 							mouse={mouse}
-							elements={defaultElements}
+							elementOptions={defaultElements}
 							addElement={(selectedElement) => addElement(index, selectedElement)}
 						/>
 						<Element
 							element={element}
 							mouse={mouse}
-							replaceElement={(newElement) => replaceElement(index, newElement)}
+							updateElement={(newElement) => updateElement(index, newElement)}
 							deleteElement={() => deleteElement(index)}
+							defaultElements={defaultElements}
 						/>
 						{index === addedElements.length - 1 && (
 							<AddButton
 								mouse={mouse}
-								elements={defaultElements}
+								elementOptions={defaultElements}
 								addElement={(element) => addElement(index + 1, element)}
 							/>
 						)}
@@ -210,7 +161,7 @@ export default function App() {
 					<AddButton
 						locked={true}
 						mouse={mouse}
-						elements={defaultElements}
+						elementOptions={defaultElements}
 						addElement={(element) => addElement(0, element)}
 					/>
 				)}

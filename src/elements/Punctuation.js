@@ -15,7 +15,7 @@ export default function Punctuation({ text, onClickSelf }) {
 			<AddElementModal
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
-				elements={punctuation}
+				elementOptions={punctuation}
 				onSelect={(element) => setLastChar(element.text)}
 			/>
 			<div className="baseElement punctuationElement">

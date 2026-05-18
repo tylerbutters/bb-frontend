@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import AddElementModal from "./AddElementModal"
 
-export default function AddButton({ locked, mouse, elements, addElement }) {
+export default function AddButton({ locked, mouse, elementOptions, addElement, hasSearch }) {
 	const EDGE_SIZE = 100
 	const ref = useRef(null)
 
@@ -27,9 +27,9 @@ export default function AddButton({ locked, mouse, elements, addElement }) {
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
 				onSelect={addElement}
-				elements={elements}
+				elementOptions={elementOptions}
 				isElement={false}
-				hasSearch={true}
+				hasSearch={hasSearch}
 			/>
 
 			<div

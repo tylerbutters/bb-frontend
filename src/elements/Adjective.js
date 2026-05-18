@@ -19,7 +19,7 @@ export default function Adjective({ element, onClickSelf }) {
 			<AddElementModal
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
-				elements={adjectiveConjugations}
+				elementOptions={adjectiveConjugations}
 				onSelect={(element) => setLastChar(element.value)}
 			/>
 			<div className="baseElement adjectiveElement">

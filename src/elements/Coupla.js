@@ -15,7 +15,7 @@ export default function Coupla({ text, onClickSelf }) {
 			<AddElementModal
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
-				elements={coupla}
+				elementOptions={coupla}
 				onSelect={(element) => setLastChar(element.text)}
 			/>
 			<div className="baseElement couplaElement">

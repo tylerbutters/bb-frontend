@@ -7,33 +7,23 @@ import Verb from "./Verb"
 import useElementsStore from "../useElementsStore"
 import Coupla from "./Coupla"
 import Punctuation from "./Punctuation"
-import verbsDictionary from "../verbs.json"
+import dictionary from "../jmdict/processed-jmdict.json"
 
-export default function Element({ element, mouse, replaceElement, deleteElement }) {
+export default function Element({ element, mouse, updateElement, deleteElement, defaultElements }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [selectedElements, setSelectedElements] = useState()
 	const [isClosing, setIsClosing] = useState(false)
-	const allElements = useElementsStore((state) => state)
-	const defaultElements = {
-		noun: allElements.noun,
-		verb: verbsDictionary,
-		adjective: allElements.adjective,
-	}
-
-	// useEffect(() => {
-	// 	alert("test")
-	// }, [element])
 
 	function renderElement() {
 		const props = {
 			element,
 			onClickSelf: () => setIsModalOpen(true),
-			replaceElement,
-			deleteElement: deleteElement,
+			updateElement,
+			deleteElement,
 			mouse,
 		}
 
-		switch (element?.type) {
+		switch (element?.elementType) {
 			case "noun":
 				return <Noun {...props} />
 			case "adjective":
@@ -54,7 +44,7 @@ export default function Element({ element, mouse, replaceElement, deleteElement 
 			<AddElementModal
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
-				elements={defaultElements}
+				elementOptions={defaultElements}
 				onSelect={setSelectedElements}
 				deleteElement={() => setIsClosing(true)}
 				isElement={true}

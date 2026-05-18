@@ -2,41 +2,56 @@ import { useEffect, useRef, useState } from "react"
 import "../App.css"
 import AddButton from "../AddButton"
 import Particle from "./Particle"
-import SuffixPrefix from "./SuffixPrefix"
+import Suffix from "./Suffix"
+import Prefix from "./Prefix"
 import AddElementModal from "../AddElementModal"
 import useElementsStore from "../useElementsStore"
+import dictionary from "../jmdict/processed-jmdict.json"
 
-export default function Noun({ mouse, element, onClickSelf, replaceElement }) {
+export default function Noun({ mouse, element, onClickSelf, updateElement }) {
 	const [prefix, setPrefix] = useState(null)
 	const [suffix, setSuffix] = useState(null)
-	const [particle, setParticle] = useState(null)
 	const [isOpen, setIsOpen] = useState(false)
 	const allElements = useElementsStore((state) => state)
-	const prefixElements = {
-		prefix: allElements.prefix,
-	}
-	const suffixElements = {
-		suffix: allElements.suffix,
-	}
-	const particleElements = {
-		particle: allElements.particle,
-	}
-	const defaultElements = {
-		noun: allElements.noun,
-		verb: allElements.verb,
-		adjective: allElements.adjective,
-	}
+	const prefixOptions = dictionary.prefixes
+	const suffixOptions = dictionary.suffixes
+	const [particleOptions, setParticleOptions] = useState([])
+
+	useEffect(() => {
+		const availableParticles = allElements.particles.filter((particle) =>
+			particle.attachesTo.includes("noun"),
+		)
+		// alert(JSON.stringify(availableParticles.map((particle) => ({ text: particle.text }))))
+		setParticleOptions(
+			availableParticles.map((particle) => ({ elementType: "particle", text: particle.text })),
+		)
+	}, [])
 
 	function addElement(selectedElement) {
-		switch (selectedElement.type) {
+		// alert(JSON.stringify(selectedElement))
+		switch (selectedElement?.elementType) {
 			case "prefix":
-				replaceElement({ ...element, prefix: selectedElement.value.value })
+				updateElement({ ...element, prefix: selectedElement })
 				return
 			case "suffix":
-				replaceElement({ ...element, suffix: selectedElement.value.value })
+				updateElement({ ...element, suffix: selectedElement })
 				return
 			case "particle":
-				replaceElement({ ...element, particle: selectedElement.value.value })
+				updateElement({ ...element, particle: selectedElement })
+				return
+		}
+	}
+
+	function deleteElement(elementType) {
+		switch (elementType) {
+			case "prefix":
+				updateElement({ ...element, prefix: null })
+				return
+			case "suffix":
+				updateElement({ ...element, suffix: null })
+				return
+			case "particle":
+				updateElement({ ...element, particle: null })
 				return
 		}
 	}
@@ -44,45 +59,51 @@ export default function Noun({ mouse, element, onClickSelf, replaceElement }) {
 	return (
 		<div className="baseElement nounElement">
 			{element.prefix ? (
-				<SuffixPrefix
-					text={element.prefix}
-					elements={prefixElements}
-					replaceElement={(newElement) => addElement(newElement, "prefix")}
+				<Prefix
+					element={element.prefix}
+					elementOptions={prefixOptions}
+					updateElement={addElement}
+					deleteElement={deleteElement}
 				/>
 			) : (
 				<AddButton
 					mouse={mouse}
-					elements={prefixElements}
-					addElement={(newElement) => addElement(newElement, "suffix")}
+					elementOptions={prefixOptions}
+					addElement={addElement}
+					hasSearch={true}
 				/>
 			)}
 			<div className="elementText" onClick={onClickSelf}>
-				{element?.value}
+				{element?.text}
 			</div>
 			{element.suffix ? (
-				<SuffixPrefix
-					text={element.suffix}
-					elements={suffixElements}
-					replaceElement={(newElement) => addElement(newElement, "suffix")}
+				<Suffix
+					element={element.suffix}
+					elementOptions={suffixOptions}
+					updateElement={addElement}
+					deleteElement={deleteElement}
 				/>
 			) : (
 				<AddButton
 					mouse={mouse}
-					elements={suffixElements}
-					addElement={(newElement) => addElement(newElement, "suffix")}
+					elementOptions={suffixOptions}
+					addElement={addElement}
+					hasSearch={true}
 				/>
 			)}
 			{element.particle ? (
 				<Particle
-					text={element.particle}
-					elements={particleElements}
-					replaceElement={(newElement) => addElement(newElement, "particle")}
+					element={element.particle}
+					elementOptions={particleOptions}
+					updateElement={addElement}
+					deleteElement={deleteElement}
 				/>
 			) : (
 				<AddButton
 					mouse={mouse}
-					elements={particleElements}
-					addElement={(newElement) => addElement(newElement, "suffix")}
+					elementOptions={particleOptions}
+					addElement={addElement}
+					hasSearch={true}
 				/>
 			)}
 		</div>

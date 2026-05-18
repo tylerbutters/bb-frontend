@@ -3,9 +3,8 @@ import AddElementModal from "../AddElementModal"
 import "../App.css"
 import useElementsStore from "../useElementsStore"
 
-export default function Verb({ element, onClickSelf, replaceElement, deleteElement }) {
+export default function Verb({ element, onClickSelf, updateElement, deleteElement }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const allElements = useElementsStore((state) => state)
 
 	return (
 		<div className="baseElement verbElement">
@@ -14,7 +13,7 @@ export default function Verb({ element, onClickSelf, replaceElement, deleteEleme
 			</div>
 			<Conjugation
 				parentConjugation={element}
-				updateConjugation={replaceElement}
+				updateConjugation={updateElement}
 				deleteElement={deleteElement}
 			/>
 		</div>
@@ -22,14 +21,13 @@ export default function Verb({ element, onClickSelf, replaceElement, deleteEleme
 }
 function Conjugation({ parentConjugation, updateConjugation, deleteElement }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const allElements = useElementsStore((state) => state)
+	const verbConjugations = useElementsStore((state) => state.conjugations.verbs)
 	const [conjugationOptions, setConjugationOptions] = useState()
-	const currentConjugation = parentConjugation?.next
-	const isIrregularVerb = currentConjugation.stem === "する" || currentConjugation.stem === "くる"
+	const currentConjugation = parentConjugation?.conjugation
+	// const isIrregularVerb = currentConjugation.stem === "する" || currentConjugation.stem === "くる"
 
 	useEffect(() => {
 		setConjugationOptions(getConjugationOptions())
-		// alert(JSON.stringify(parentConjugation))
 	}, [])
 
 	function getGodanElements() {
@@ -50,85 +48,156 @@ function Conjugation({ parentConjugation, updateConjugation, deleteElement }) {
 
 		const [B1, B2, B3, B4, B5, Bte, Bta] = row
 
-		const old = allElements.conjugations.godanDefaults
+		const old = verbConjugations.godanDefaults
 
-		const irregularHonorific = ["くださる", "いらっしゃる", "なさる", "おっしゃる"]
-
-		if (irregularHonorific.includes(parentConjugation.kana)) {
-			return {
-				[B1]: old.B1,
-				["い"]: [...old.B2, "い"],
-				[B2]: [],
-				[B3]: old.B3,
-				[B4]: old.B4,
-				[B5]: old.B5,
-				[Bte]: old.Bte,
-				[Bta]: old.Bta,
-			}
-		} else if (parentConjugation.value === "行く") {
-			return {
-				[B1]: old.B1,
-				[B2]: old.B2,
-				[B3]: old.B3,
-				[B4]: old.B4,
-				[B5]: old.B5,
-				["って"]: [],
-				["った"]: [],
-			}
+		if (parentConjugation.verbType === "godan-aru") {
+			return [
+				{
+					text: B1,
+					list: old.B1,
+				},
+				{
+					text: "い",
+					list: [...old.B2, { text: "い" }],
+				},
+				{
+					text: B2,
+					list: [],
+				},
+				{
+					text: B3,
+					list: old.B3,
+				},
+				{
+					text: B4,
+					list: old.B4,
+				},
+				{
+					text: B5,
+					list: old.B5,
+				},
+				{
+					text: Bte,
+					list: old.Bte,
+				},
+				{
+					text: Bta,
+					list: old.Bta,
+				},
+			]
+		} else if (parentConjugation.verbType === "godan-iku") {
+			return [
+				{
+					text: B1,
+					list: old.B1,
+				},
+				{
+					text: B2,
+					list: [...old.B2, { text: B2 }],
+				},
+				{
+					text: B3,
+					list: old.B3,
+				},
+				{
+					text: B4,
+					list: old.B4,
+				},
+				{
+					text: B5,
+					list: old.B5,
+				},
+				{
+					text: "って",
+				},
+				{
+					text: "った",
+				},
+			]
 		}
 
-		return {
-			[B1]: old.B1,
-			[B2]: [...old.B2, B2],
-			[B3]: old.B3,
-			[B4]: old.B4,
-			[B5]: old.B5,
-			[Bte]: old.Bte,
-			[Bta]: old.Bta,
-		}
+		return [
+			{
+				text: B1,
+				list: old.B1,
+			},
+			{
+				text: B2,
+				list: [...old.B2, { text: B2 }],
+			},
+			{
+				text: B3,
+				list: old.B3,
+			},
+			{
+				text: B4,
+				list: old.B4,
+			},
+			{
+				text: B5,
+				list: old.B5,
+			},
+			{
+				text: Bte,
+				list: old.Bte,
+			},
+			{
+				text: Bta,
+				list: old.Bta,
+			},
+		]
 	}
 
 	function getConjugationOptions() {
-		// alert(JSON.stringify(parentConjugation))
+		//is a conjugation in a conjugation
+		if (!parentConjugation.verbType) {
+			return (
+				verbConjugations[`${parentConjugation.stem}${parentConjugation.ending}`]
+					?.conjugationOptions || []
+			)
+		}
+
+		//is the first conjugation
 		switch (parentConjugation.verbType) {
 			case "suru":
-				// alert(JSON.stringify(allElements?.conjugations?.["する"].conjugationOptions))
-				return allElements?.conjugations?.["する"].conjugationOptions || []
+				return verbConjugations["suruDefault"]?.conjugationOptions || []
 			case "kuru":
-				return allElements?.conjugations?.["くる"].conjugationOptions || []
+				return verbConjugations["kuruDefault"]?.conjugationOptions || []
 			case "ichidan":
-				return allElements?.conjugations?.["ichidanDefault"].conjugationOptions || []
-			case "godan":
-				return getGodanElements()
+				return verbConjugations["ichidanDefault"]?.conjugationOptions || []
+			case "kureru":
+				alert("make kureru")
+				return
 			default:
-				return (
-					allElements?.conjugations?.[
-						`${parentConjugation?.stem}${parentConjugation?.ending || ""}`
-					]?.conjugationOptions || []
-				)
+				//godan, godan-iku, godan-aru
+				return getGodanElements()
 		}
 	}
 
-	function getConjugationToReplace(selectedConjugation) {
-		if (parentConjugation.verbType === "godan") {
-			// alert(JSON.stringify(selectedConjugation))
-			//only change the base (last character)
-			if (!selectedConjugation.type || selectedConjugation.type === selectedConjugation.value) {
+	function onSelectConjugationChange(selectedConjugation) {
+		if (parentConjugation.verbType?.includes("godan")) {
+			const selectedCategory = conjugationOptions.find((category) =>
+				category.list.some((conjugation) => conjugation.text === selectedConjugation.text),
+			)
+
+			const singleCharacterConjugation =
+				selectedConjugation.list?.length === 0 || selectedCategory.text === selectedConjugation.text
+			//only change the ending of the verb
+			if (singleCharacterConjugation) {
 				updateConjugation({
 					...parentConjugation,
-					ending: selectedConjugation.value,
-					next: {},
+					ending: selectedConjugation.text,
+					conjugation: {},
 				})
 			} else {
+				//change the ending of verb and add conjugation
 				updateConjugation({
 					...parentConjugation,
-					ending: selectedConjugation.type,
-					next: {
-						...currentConjugation,
-
-						stem: allElements.conjugations[selectedConjugation.value].stem || "",
-						ending: allElements.conjugations[selectedConjugation.value].ending || "",
-						next: {},
+					ending: selectedCategory.text,
+					conjugation: {
+						stem: verbConjugations[selectedConjugation.text].stem || "",
+						ending: verbConjugations[selectedConjugation.text].ending || "",
+						conjugation: {},
 					},
 				})
 			}
@@ -136,11 +205,11 @@ function Conjugation({ parentConjugation, updateConjugation, deleteElement }) {
 			// alert(JSON.stringify(allElements.conjugations[selectedConjugation.value]))
 			updateConjugation({
 				...parentConjugation,
-				next: {
+				conjugation: {
 					...currentConjugation,
-					stem: allElements.conjugations[selectedConjugation.value].stem || "",
-					ending: allElements.conjugations[selectedConjugation.value].ending || "",
-					next: {},
+					stem: verbConjugations[selectedConjugation.text].stem || "",
+					ending: verbConjugations[selectedConjugation.text].ending || "",
+					conjugation: {},
 				},
 			})
 		}
@@ -151,24 +220,25 @@ function Conjugation({ parentConjugation, updateConjugation, deleteElement }) {
 			<AddElementModal
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
-				elements={conjugationOptions}
-				onSelect={getConjugationToReplace}
-				isIrregularVerb={isIrregularVerb}
+				elementOptions={conjugationOptions}
+				onSelect={onSelectConjugationChange}
 				deleteElement={deleteElement}
 			/>
 			<div className="baseInsideElement conjugation">
 				<div className="insideElementText" onClick={() => setIsModalOpen(true)}>
-					{parentConjugation.verbType === "godan" && parentConjugation.ending}
+					{parentConjugation.verbType?.includes("godan") &&
+						parentConjugation.ending !== currentConjugation?.stem &&
+						parentConjugation.ending}
 					{currentConjugation?.stem}
 				</div>
 
-				{Object.keys(currentConjugation?.next || {}).length !== 0 ? (
+				{Object.keys(currentConjugation?.conjugation || {}).length !== 0 ? (
 					<Conjugation
 						parentConjugation={currentConjugation}
 						updateConjugation={(updatedChild) =>
 							updateConjugation({
 								...parentConjugation,
-								next: {
+								conjugation: {
 									...currentConjugation,
 									...updatedChild,
 								},
@@ -179,12 +249,12 @@ function Conjugation({ parentConjugation, updateConjugation, deleteElement }) {
 					currentConjugation?.ending && (
 						<ConjugationEnding
 							conjugation={currentConjugation}
-							addConjugation={(newEnd) => {
+							updateConjugation={(nextConjugation) => {
 								updateConjugation({
 									...parentConjugation,
-									next: {
+									conjugation: {
 										...currentConjugation,
-										...newEnd,
+										conjugation: nextConjugation,
 									},
 								})
 							}}
@@ -196,17 +266,24 @@ function Conjugation({ parentConjugation, updateConjugation, deleteElement }) {
 	)
 }
 
-function ConjugationEnding({ conjugation, addConjugation }) {
+function ConjugationEnding({ conjugation, updateConjugation }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const allElements = useElementsStore((state) => state)
+	const verbConjugations = useElementsStore((state) => state.conjugations.verbs)
+	const [conjugationOptions, setConjugationOptions] = useState([])
 
-	function onSelect(selected) {
-		addConjugation({
-			next: {
-				stem: allElements.conjugations[selected.value]?.stem,
-				ending: allElements.conjugations[selected.value]?.ending,
-			},
+	useEffect(() => {
+		setConjugationOptions(getConjugationOptions())
+	}, [])
+
+	function onSelect(selectedConjugation) {
+		updateConjugation({
+			stem: verbConjugations[selectedConjugation.text]?.stem,
+			ending: verbConjugations[selectedConjugation.text]?.ending,
 		})
+	}
+
+	function getConjugationOptions() {
+		return verbConjugations[`${conjugation?.stem}${conjugation?.ending}`].conjugationOptions || []
 	}
 
 	return (
@@ -214,10 +291,7 @@ function ConjugationEnding({ conjugation, addConjugation }) {
 			<AddElementModal
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
-				elements={
-					allElements.conjugations[`${conjugation?.stem}${conjugation?.ending}`]
-						.conjugationOptions || []
-				}
+				elementOptions={conjugationOptions}
 				onSelect={onSelect}
 			/>
 			<div className="baseInsideElement conjugationEnding" onClick={() => setIsModalOpen(true)}>
