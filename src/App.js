@@ -92,7 +92,7 @@ export default function App() {
 
 		setAddedElements((prev) => {
 			const copy = [...prev]
-			copy.splice(index, 0, initializeElement(selectedElement))
+			copy.splice(index, 0, selectedElement)
 			return copy
 		})
 	}

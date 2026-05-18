@@ -38,6 +38,23 @@ const iadjOptions = [
 const kunaiOptions = [{ text: "い" }, { text: "かった" }, { text: "く" }, { text: "くて" }]
 
 const useElementsStore = create((set) => ({
+	auxiliaries: [
+		{ text: "始める", elementType: "verb" },
+		{ text: "終わる", elementType: "verb" },
+		{ text: "続ける", elementType: "verb" },
+		{ text: "やすい", elementType: "adjective" },
+		{ text: "にくい", elementType: "adjective" },
+		{ text: "すぎる", elementType: "verb" },
+		{ text: "直す", elementType: "verb" },
+		{ text: "切る", elementType: "verb" },
+		{ text: "出す", elementType: "verb" },
+		{ text: "合う", elementType: "verb" },
+		{ text: "慣れる", elementType: "verb" },
+		{ text: "忘れる", elementType: "verb" },
+		{ text: "残す", elementType: "verb" },
+		{ text: "疲れる", elementType: "verb" },
+		{ text: "比べる", elementType: "verb" },
+	],
 	particles: [
 		{
 			text: "から",
@@ -140,7 +157,12 @@ const useElementsStore = create((set) => ({
 					{ text: "こよう" },
 					{ text: "こさせる" },
 					{ text: "こず" },
+					{ text: "き" },
 				],
+			},
+			き: {
+				stem: "き",
+				conjugationType: "aux",
 			},
 			こない: {
 				stem: "こな",
@@ -155,7 +177,7 @@ const useElementsStore = create((set) => ({
 			きて: {
 				stem: "きて",
 				ending: null,
-				type: "te",
+				conjugationType: "te",
 				conjugationOptions: [],
 			},
 			きたい: {
@@ -210,7 +232,12 @@ const useElementsStore = create((set) => ({
 					{ text: "すれば" },
 					{ text: "せず" },
 					{ text: "できる" },
+					{ text: "し" },
 				],
+			},
+			し: {
+				stem: "し",
+				conjugationType: "aux",
 			},
 			される: {
 				stem: "され",
@@ -235,7 +262,7 @@ const useElementsStore = create((set) => ({
 			して: {
 				stem: "して",
 				ending: null,
-				type: "te",
+				conjugationType: "te",
 				conjugationOptions: [],
 			},
 			したい: {
@@ -346,7 +373,7 @@ const useElementsStore = create((set) => ({
 			くて: {
 				stem: "くて",
 				ending: null,
-				type: "te",
+				conjugationType: "te",
 				conjugationOptions: [],
 			},
 			た: {
@@ -358,7 +385,7 @@ const useElementsStore = create((set) => ({
 			て: {
 				stem: "て",
 				ending: null,
-				type: "te",
+				conjugationType: "te",
 				conjugationOptions: [],
 			},
 

@@ -8,7 +8,7 @@ export default function AddElementModal({
 	elementOptions,
 	deleteElement,
 	hasSearch = false,
-	isElement,
+	hasDelete,
 	isIrregularVerb,
 }) {
 	const modalRef = useRef(null)
@@ -72,7 +72,7 @@ export default function AddElementModal({
 					selectedCategory={selectedCategory}
 					onClickElement={onClickElement}
 				/>
-				{isElement && (
+				{hasDelete && (
 					<div className="addElementModalButton deleteElementButton" onClick={deleteElement}>
 						Delete
 					</div>

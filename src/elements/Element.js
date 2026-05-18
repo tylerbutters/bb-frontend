@@ -11,16 +11,17 @@ import dictionary from "../jmdict/processed-jmdict.json"
 
 export default function Element({ element, mouse, updateElement, deleteElement, defaultElements }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const [selectedElements, setSelectedElements] = useState()
+	// const [selectedElements, setSelectedElements] = useState()
 	const [isClosing, setIsClosing] = useState(false)
 
 	function renderElement() {
 		const props = {
 			element,
-			onClickSelf: () => setIsModalOpen(true),
+			// onClickSelf: () => setIsModalOpen(true),
 			updateElement,
-			deleteElement,
+			deleteElement: () => setIsClosing(true),
 			mouse,
+			elementOptions: defaultElements,
 		}
 
 		switch (element?.elementType) {
@@ -40,19 +41,19 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 	}
 
 	return (
-		<div className="modalContainer">
-			<AddElementModal
-				isModalOpen={isModalOpen}
-				setIsModalOpen={setIsModalOpen}
-				elementOptions={defaultElements}
-				onSelect={setSelectedElements}
-				deleteElement={() => setIsClosing(true)}
-				isElement={true}
-			/>
-			<Resize element={element} isClosing={isClosing} onCloseComplete={deleteElement}>
-				{renderElement()}
-			</Resize>
-		</div>
+		// <div className="modalContainer">
+		// 	<AddElementModal
+		// 		isModalOpen={isModalOpen}
+		// 		setIsModalOpen={setIsModalOpen}
+		// 		elementOptions={defaultElements}
+		// 		onSelect={updateElement}
+		// 		deleteElement={() => setIsClosing(true)}
+		// 		hasDelete={true}
+		// 	/>
+		<Resize element={element} isClosing={isClosing} onCloseComplete={deleteElement}>
+			{renderElement()}
+		</Resize>
+		// </div>
 	)
 }
 

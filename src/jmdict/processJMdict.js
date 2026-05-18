@@ -10,7 +10,6 @@ const output = {
 	prefixes: [],
 	suffixes: [],
 	counters: [],
-	auxiliaries: [],
 }
 
 const __filename = fileURLToPath(import.meta.url)
@@ -119,9 +118,8 @@ function mapAdjectiveType(wordTag, kana) {
 
 // -------------------- ADD ELEMENTS --------------------
 
-function addVerb(wordTags, word, kana, entry) {
-	const verbType = wordTags.map(mapVerbType).find(Boolean) || null
-	const isAux = wordTags.includes("aux-v") || wordTags.includes("aux")
+function addVerb(wordTag, word, kana, entry) {
+	const verbType = mapVerbType(wordTag)
 
 	if (!verbType) return
 
@@ -131,7 +129,7 @@ function addVerb(wordTags, word, kana, entry) {
 		kana += "する"
 	}
 
-	const verb = {
+	output.verbs.push({
 		elementType: "verb",
 		verbType,
 		text: word,
@@ -141,18 +139,14 @@ function addVerb(wordTags, word, kana, entry) {
 		ending: getEnding(word, verbType),
 		conjugation: null,
 		particle: null,
-	}
-
-	output.verbs.push(verb)
-	if (isAux) output.auxiliaries.push(verb)
+	})
 }
-function addAdjective(wordTags, word, kana) {
-	const adjectiveType = wordTags.map(mapAdjectiveType).find(Boolean) || null
-	const isAux = wordTags.includes("aux-adj")
+function addAdjective(wordTag, word, kana) {
+	const adjectiveType = mapAdjectiveType(wordTag)
 
 	if (!adjectiveType) return
 
-	const adjective = {
+	output.adjectives.push({
 		elementType: "adjective",
 		adjectiveType,
 		text: word,
@@ -162,10 +156,7 @@ function addAdjective(wordTags, word, kana) {
 		ending: adjectiveType === "na-type" ? null : getEnding(word, adjectiveType),
 		conjugation: null,
 		particle: null,
-	}
-
-	output.adjectives.push(adjective)
-	if (isAux) output.auxiliaries.push(adjective)
+	})
 }
 function addPrefix(wordTag, word, kana) {
 	if (wordTag === "pref") {
@@ -235,10 +226,9 @@ function processJMdict() {
 
 		const wordTags = [...new Set(entry.sense?.flatMap((s) => s.partOfSpeech || []) || [])]
 
-		addVerb(wordTags, word, kana, entry)
-		addAdjective(wordTags, word, kana)
-
 		for (const wordTag of wordTags) {
+			addVerb(wordTag, word, kana, entry)
+			addAdjective(wordTag, word, kana)
 			addPrefix(wordTag, word, kana)
 			addSuffix(wordTag, word, kana)
 			addCounter(wordTag, word)

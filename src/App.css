@@ -127,6 +127,7 @@
 	position: relative;
 }
 /* ELEMENTS */
+
 .elementText {
 	color: white;
 	font-size: 40px;
@@ -135,11 +136,12 @@
 .baseElement {
 	display: flex;
 	z-index: 999;
+	border: 1px solid white;
 	position: relative;
 	gap: 5px;
 	align-items: center;
 	justify-content: center;
-	height: 100px;
+
 	border-radius: 10px;
 	padding: 0 10px;
 	margin: 0 2.5px;

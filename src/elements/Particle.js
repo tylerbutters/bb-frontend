@@ -15,7 +15,7 @@ export default function Particle({ element, elementOptions, updateElement, delet
 				elementOptions={elementOptions}
 				onSelect={updateElement}
 				deleteElement={() => deleteElement(element.elementType)}
-				isElement={true}
+				hasDelete={true}
 			/>
 			<div className="baseInsideElement particleElement" onClick={() => setIsModalOpen(true)}>
 				<div className="insideElementText">{element.text}</div>

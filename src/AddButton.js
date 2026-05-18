@@ -28,7 +28,7 @@ export default function AddButton({ locked, mouse, elementOptions, addElement, h
 				setIsModalOpen={setIsModalOpen}
 				onSelect={addElement}
 				elementOptions={elementOptions}
-				isElement={false}
+				hasDelete={false}
 				hasSearch={hasSearch}
 			/>
 

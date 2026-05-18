@@ -14,7 +14,7 @@ export default function Prefix({ element, elementOptions, updateElement, deleteE
 				elementOptions={elementOptions}
 				onSelect={updateElement}
 				deleteElement={() => deleteElement(element.elementType)}
-				isElement={true}
+				hasDelete={true}
 			/>
 			<div className="baseInsideElement suffixPrefixElement" onClick={() => setIsModalOpen(true)}>
 				<div className="insideElementText">{element.text}</div>
