@@ -17,7 +17,7 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 	function renderElement() {
 		const props = {
 			element,
-			// onClickSelf: () => setIsModalOpen(true),
+			onClickSelf: () => setIsModalOpen(true),
 			updateElement,
 			deleteElement: () => setIsClosing(true),
 			mouse,
@@ -41,19 +41,19 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 	}
 
 	return (
-		// <div className="modalContainer">
-		// 	<AddElementModal
-		// 		isModalOpen={isModalOpen}
-		// 		setIsModalOpen={setIsModalOpen}
-		// 		elementOptions={defaultElements}
-		// 		onSelect={updateElement}
-		// 		deleteElement={() => setIsClosing(true)}
-		// 		hasDelete={true}
-		// 	/>
-		<Resize element={element} isClosing={isClosing} onCloseComplete={deleteElement}>
-			{renderElement()}
-		</Resize>
-		// </div>
+		<div className="modalContainer">
+			<AddElementModal
+				isModalOpen={isModalOpen}
+				setIsModalOpen={setIsModalOpen}
+				elementOptions={defaultElements}
+				onSelect={updateElement}
+				deleteElement={() => setIsClosing(true)}
+				hasDelete={true}
+			/>
+			<Resize element={element} isClosing={isClosing} onCloseComplete={deleteElement}>
+				{renderElement()}
+			</Resize>
+		</div>
 	)
 }
 

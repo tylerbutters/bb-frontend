@@ -1,6 +1,5 @@
 import { useState } from "react"
 import "../App.css"
-import AddButton from "../AddButton"
 import AddElementModal from "../AddElementModal"
 
 export default function Prefix({ element, elementOptions, updateElement, deleteElement }) {

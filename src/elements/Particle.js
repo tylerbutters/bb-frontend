@@ -1,11 +1,9 @@
 import { useState } from "react"
 import AddElementModal from "../AddElementModal"
 import "../App.css"
-import useElementsStore from "../useElementsStore"
 
 export default function Particle({ element, elementOptions, updateElement, deleteElement }) {
 	const [isModalOpen, setIsModalOpen] = useState()
-	const allElements = useElementsStore((state) => state)
 
 	return (
 		<div className="modalContainer">

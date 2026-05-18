@@ -65,15 +65,15 @@
 	color: white;
 }
 
-.deleteElementButtonBoundary {
-	position: absolute;
-	margin-top: 30px;
-	height: 50px;
-	width: 50px;
-	justify-self: center;
+.deleteElementButtonContainer {
+	display: flex;
+	/* background-color: red; */
+	padding: 10px;
+	border-radius: 0 0 10px 10px;
 }
 .deleteElementButton {
 	background-color: red;
+	flex: 1;
 	color: white;
 }
 .deleteElementButton:hover {
@@ -94,11 +94,8 @@
 	z-index: 100;
 }
 .elementListContainer {
-	/* position: absolute; */
-	/* left: 10; */
-	/* bottom: 0%; */
-	max-width: 200px;
-	max-height: 300px;
+	width: 200px;
+	height: 300px;
 	flex-direction: column;
 	display: flex;
 	background: grey;
@@ -114,6 +111,8 @@
 }
 .searchInputContainer {
 	display: flex;
+	background-color: grey;
+	padding: 10px;
 	border-radius: 10px 10px 0 0;
 }
 .searchInput {

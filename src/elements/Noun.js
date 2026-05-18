@@ -1,16 +1,13 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import "../App.css"
 import AddButton from "../AddButton"
 import Particle from "./Particle"
 import Suffix from "./Suffix"
 import Prefix from "./Prefix"
-import AddElementModal from "../AddElementModal"
 import useElementsStore from "../useElementsStore"
 import dictionary from "../jmdict/processed-jmdict.json"
 
 export default function Noun({ mouse, element, onClickSelf, updateElement }) {
-	const [prefix, setPrefix] = useState(null)
-	const [suffix, setSuffix] = useState(null)
 	const [isOpen, setIsOpen] = useState(false)
 	const allElements = useElementsStore((state) => state)
 	const prefixOptions = dictionary.prefixes

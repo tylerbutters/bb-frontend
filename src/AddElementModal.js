@@ -73,8 +73,10 @@ export default function AddElementModal({
 					onClickElement={onClickElement}
 				/>
 				{hasDelete && (
-					<div className="addElementModalButton deleteElementButton" onClick={deleteElement}>
-						Delete
+					<div className="deleteElementButtonContainer">
+						<div className="addElementModalButton deleteElementButton" onClick={deleteElement}>
+							Delete
+						</div>
 					</div>
 				)}
 			</div>
@@ -82,22 +84,44 @@ export default function AddElementModal({
 	)
 }
 
+const PAGE_SIZE = 50
+
 function ElementListItemContainer({ hasSearch, elementOptions, onClickElement, selectedCategory }) {
 	const [searchText, setSearchText] = useState("")
-	const [elementResults, setElementResults] = useState([])
-
+	const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
+	const sentinelRef = useRef(null)
+	const filteredOptions = useMemo(() => {
+		if (!searchText) return elementOptions
+		const query = searchText.toLowerCase()
+		return elementOptions.filter((e) => e.text.toLowerCase().startsWith(query))
+	}, [elementOptions, searchText])
+	const visibleOptions = useMemo(() => {
+		return filteredOptions.slice(0, visibleCount)
+	}, [filteredOptions, visibleCount])
 	useEffect(() => {
-		setElementResults(elementOptions)
-	}, [elementOptions])
-
-	function updateSearchResults(e) {
-		setSearchText(e.target.value)
-		const newSearchResults = elementOptions.filter((element) =>
-			element.text.startsWith(e.target.value),
+		setVisibleCount(PAGE_SIZE)
+	}, [searchText, elementOptions])
+	useEffect(() => {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				const target = entries[0]
+				if (target.isIntersecting) {
+					setVisibleCount((prev) => prev + PAGE_SIZE)
+				}
+			},
+			{
+				root: null,
+				rootMargin: "100px",
+				threshold: 0,
+			},
 		)
-		setElementResults(newSearchResults)
-	}
-
+		const node = sentinelRef.current
+		if (node) observer.observe(node)
+		return () => {
+			if (node) observer.unobserve(node)
+			observer.disconnect()
+		}
+	}, [])
 	return (
 		<>
 			{hasSearch && (
@@ -106,27 +130,27 @@ function ElementListItemContainer({ hasSearch, elementOptions, onClickElement, s
 						type="text"
 						className="searchInput"
 						value={searchText}
-						onChange={updateSearchResults}
+						onChange={(e) => setSearchText(e.target.value)}
 						placeholder="Search..."
 					/>
 				</div>
 			)}
-
 			<div className="elementListItemContainer">
-				{elementOptions &&
-					elementOptions.map((element, index) => (
-						<div
-							className="addElementModalButton"
-							style={{
-								backgroundColor: selectedCategory === element.text && "black",
-								color: selectedCategory === element.text && "white",
-							}}
-							key={index}
-							onClick={() => onClickElement(element)}
-						>
-							{element.text}
-						</div>
-					))}
+				{visibleOptions.map((element, index) => (
+					<div
+						key={index}
+						className="addElementModalButton"
+						style={{
+							backgroundColor: selectedCategory === element.text ? "black" : undefined,
+							color: selectedCategory === element.text ? "white" : undefined,
+						}}
+						onClick={() => onClickElement(element)}
+					>
+						{element.text}
+					</div>
+				))}
+				{/* sentinel triggers loading more */}
+				<div ref={sentinelRef} style={{ height: 1 }} />
 			</div>
 		</>
 	)
