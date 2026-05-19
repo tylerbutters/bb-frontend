@@ -50,7 +50,7 @@ export default function Adjective({
 				deleteElement={deleteElement}
 				hasDelete={true}
 			/>
-			<div className="baseElement adjectiveElement">
+			<div className="baseElement">
 				{element.conjugation && element.adjectiveType === "i-type" && (
 					<>
 						<div className="elementText" onClick={() => setIsModalOpen(true)}>

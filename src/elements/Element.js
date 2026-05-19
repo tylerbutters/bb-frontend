@@ -12,6 +12,7 @@ import Particle from "../element attachments/Particle"
 import AddButton from "../AddButton"
 import Adverb from "./Adverb"
 import Desu from "./Desu"
+import Counter from "./Counter"
 
 export default function Element({ element, mouse, updateElement, deleteElement, defaultElements }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
@@ -81,6 +82,8 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 				return <Adverb {...props} />
 			case "desu":
 				return <Desu {...props} />
+			case "counter":
+				return <Counter {...props} />
 			default:
 				return null
 		}

@@ -7,8 +7,8 @@ import Prefix from "../element attachments/Prefix"
 import useElementsStore from "../useElementsStore"
 import dictionary from "../jmdict/processed-jmdict.json"
 
-export default function Noun({ mouse, element, onClickSelf, updateElement, secondaryColor }) {
-	const [isOpen, setIsOpen] = useState(false)
+export default function Counter({ mouse, element, onClickSelf, updateElement, secondaryColor }) {
+	const [number, setNumber] = useState(0)
 	const allElements = useElementsStore((state) => state)
 
 	function addElement(selectedElement) {
@@ -25,23 +25,20 @@ export default function Noun({ mouse, element, onClickSelf, updateElement, secon
 
 	return (
 		<div className="baseElement">
-			<Prefix
-				element={element.prefix}
-				updateElement={addElement}
-				deleteElement={() => updateElement({ ...element, prefix: null })}
-				mouse={mouse}
-				color={secondaryColor}
+			<input
+				type="text"
+				className="baseInsideElement counterInput"
+				style={{
+					backgroundColor: secondaryColor,
+					width: `${Math.max(number.length + 1, 2)}ch`,
+				}}
+				value={number}
+				onChange={(e) => setNumber(e.target.value)}
+				placeholder="0"
 			/>
 			<div className="elementText" onClick={onClickSelf}>
 				{element?.text}
 			</div>
-			<Suffix
-				element={element.suffix}
-				updateElement={addElement}
-				deleteElement={() => updateElement({ ...element, suffix: null })}
-				mouse={mouse}
-				color={secondaryColor}
-			/>
 		</div>
 	)
 }
