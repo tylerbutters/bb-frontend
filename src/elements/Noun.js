@@ -1,24 +1,17 @@
-import { useEffect, useState } from "react"
 import "../App.css"
-import AddButton from "../AddButton"
-import Particle from "../element attachments/Particle"
 import Suffix from "../element attachments/Suffix"
 import Prefix from "../element attachments/Prefix"
-import useElementsStore from "../useElementsStore"
-import dictionary from "../jmdict/processed-jmdict.json"
 
 export default function Noun({ mouse, element, onClickSelf, updateElement, secondaryColor }) {
-	const [isOpen, setIsOpen] = useState(false)
-	const allElements = useElementsStore((state) => state)
-
 	function addElement(selectedElement) {
-		// alert(JSON.stringify(selectedElement))
 		switch (selectedElement?.elementType) {
 			case "prefix":
 				updateElement({ ...element, prefix: selectedElement })
 				return
 			case "suffix":
 				updateElement({ ...element, suffix: selectedElement })
+				return
+			default:
 				return
 		}
 	}

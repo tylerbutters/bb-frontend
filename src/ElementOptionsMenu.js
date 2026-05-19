@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef, useMemo } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import "./App.css"
 
-export default function AddElementModal({
+export default function ElementOptionsMenu({
 	isModalOpen,
 	setIsModalOpen,
 	onSelect,
@@ -9,109 +9,98 @@ export default function AddElementModal({
 	deleteElement,
 	hasSearch = false,
 	hasDelete,
-	isIrregularVerb,
 }) {
 	const modalRef = useRef(null)
 	const [selectedCategory, setSelectedCategory] = useState()
 	const [secondaryElementOptions, setSecondaryElementOptions] = useState([])
-	const [searchText, setSearchText] = useState("")
+
+	const closeMenu = useCallback(() => {
+		setIsModalOpen(false)
+		setSelectedCategory(null)
+	}, [setIsModalOpen])
 
 	useEffect(() => {
 		function handleClickOutside(e) {
 			if (isModalOpen && modalRef.current && !modalRef.current.contains(e.target)) {
-				closeModal()
+				closeMenu()
 			}
 		}
 
 		document.addEventListener("mousedown", handleClickOutside)
 		return () => document.removeEventListener("mousedown", handleClickOutside)
-	}, [isModalOpen])
+	}, [closeMenu, isModalOpen])
 
-	// useEffect(() => {
-	// 	alert(JSON.stringify(elementOptions))
-	// }, [])
-
-	function closeModal() {
-		setIsModalOpen(false)
-		setSelectedCategory(null)
-		setSearchText("")
-	}
-
-	function updateSearchResults(e) {
-		setSearchText(e.target.value)
-		const newSearchResults = elementOptions.filter((element) =>
-			element.text.startsWith(e.target.value),
-		)
-		setSecondaryElementOptions(newSearchResults)
-	}
-
-	function onClickElement(selectedElement) {
-		// alert(JSON.stringify(selectedElement))
+	function handleSelectOption(selectedElement) {
 		onSelect(selectedElement)
-		closeModal()
+		closeMenu()
 	}
 
-	function onClickCategory(selectedElement) {
-		// alert(JSON.stringify(selectedElement))
-
+	function handleSelectCategory(selectedElement) {
 		if (
 			selectedElement.list?.length === 1 &&
 			selectedElement.list[0].text === selectedElement.text
 		) {
-			onSelect(selectedElement.list[0])
-			closeModal()
+			handleSelectOption(selectedElement.list[0])
 		} else if (!selectedElement.list) {
-			onSelect(selectedElement)
-			closeModal()
+			handleSelectOption(selectedElement)
 		} else {
-			// alert(JSON.stringify(selectedElement))
 			setSelectedCategory(selectedElement.text)
 			setSecondaryElementOptions(selectedElement.list)
 		}
 	}
 
+	function handleDelete() {
+		closeMenu()
+		deleteElement()
+	}
+
 	if (!isModalOpen) return null
 
 	return (
-		<div ref={modalRef} className="addElementModalContainer">
+		<div ref={modalRef} className="elementOptionsMenuContainer">
 			{selectedCategory && (
-				<div className="elementListContainer">
-					<ElementListItemContainer
-						hasSearch={hasSearch}
-						elementOptions={secondaryElementOptions}
-						onClickElement={onClickElement}
+				<ElementOptionsPanel>
+					<ElementOptionsList
 						hasSearch={true}
+						elementOptions={secondaryElementOptions}
+						onSelectOption={handleSelectOption}
 					/>
-				</div>
+				</ElementOptionsPanel>
 			)}
-			<div className="elementListContainer">
-				<ElementListItemContainer
+			<ElementOptionsPanel hasDelete={hasDelete} onDelete={handleDelete}>
+				<ElementOptionsList
 					hasSearch={hasSearch}
 					elementOptions={elementOptions}
 					selectedCategory={selectedCategory}
-					onClickElement={onClickCategory}
+					onSelectOption={handleSelectCategory}
 				/>
-				{hasDelete && (
-					<div className="deleteElementButtonContainer">
-						<div
-							className="addElementModalButton deleteElementButton"
-							onClick={() => {
-								setIsModalOpen(false)
-								deleteElement()
-							}}
-						>
-							Delete
-						</div>
-					</div>
-				)}
-			</div>
+			</ElementOptionsPanel>
 		</div>
 	)
 }
 
 const PAGE_SIZE = 50
 
-function ElementListItemContainer({ hasSearch, elementOptions, onClickElement, selectedCategory }) {
+function ElementOptionsPanel({ children, hasDelete, onDelete }) {
+	return (
+		<div className="elementListContainer">
+			{children}
+			{hasDelete && (
+				<div className="deleteElementButtonContainer">
+					<button
+						type="button"
+						className="elementOptionsMenuButton deleteElementButton"
+						onClick={onDelete}
+					>
+						Delete
+					</button>
+				</div>
+			)}
+		</div>
+	)
+}
+
+function ElementOptionsList({ hasSearch, elementOptions = [], onSelectOption, selectedCategory }) {
 	const [searchText, setSearchText] = useState("")
 	const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 	const sentinelRef = useRef(null)
@@ -168,17 +157,16 @@ function ElementListItemContainer({ hasSearch, elementOptions, onClickElement, s
 				{visibleOptions.map((element, index) => (
 					<div
 						key={index}
-						className="addElementModalButton"
+						className="elementOptionsMenuButton"
 						style={{
 							backgroundColor: selectedCategory === element?.text ? "black" : undefined,
 							color: selectedCategory === element?.text ? "white" : undefined,
 						}}
-						onClick={() => onClickElement(element)}
+						onClick={() => onSelectOption(element)}
 					>
 						{element?.text}
 					</div>
 				))}
-				{/* sentinel triggers loading more */}
 				<div ref={sentinelRef} style={{ height: 1 }} />
 			</div>
 		</>

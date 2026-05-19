@@ -1,25 +1,11 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import Conjugation from "../element attachments/Conjugation"
-import AddElementModal from "../AddElementModal"
-import useElementsStore from "../useElementsStore"
 import NoDesu from "../element attachments/NoDesu"
-import AddButton from "../AddButton"
 
 export default function Desu({ element, updateElement, deleteElement, mouse, secondaryColor }) {
-	const [isModalOpen, setIsModalOpen] = useState(false)
-	const conjugations = useElementsStore((state) => state.conjugations)
-
 	useEffect(() => {
 		initializeVerb(element)
-		// alert(JSON.stringify(element))
-		// updateElement({
-		// 	stem: "だ",
-		// })
 	}, [])
-
-	// useEffect(() => {
-	// 	alert(JSON.stringify(element))
-	// }, [element])
 
 	function initializeVerb(newElement) {
 		updateElement({
@@ -31,13 +17,6 @@ export default function Desu({ element, updateElement, deleteElement, mouse, sec
 	}
 
 	function addNoDesu(newElement) {
-		// alert(
-		// 			JSON.stringify({
-		// 				...element,
-		// 				noDesu: newElement,
-		// 			}),
-		// 		)
-
 		updateElement({
 			...element,
 			noDesu: newElement,
@@ -46,14 +25,6 @@ export default function Desu({ element, updateElement, deleteElement, mouse, sec
 
 	return (
 		<div className="modalContainer">
-			{/* <AddElementModal
-				isModalOpen={isModalOpen}
-				setIsModalOpen={setIsModalOpen}
-				elementOptions={desuConjugations}
-				onSelect={initializeVerb}
-				deleteElement={deleteElement}
-				hasDelete={true}
-			/> */}
 			<div className="baseElement verbElement">
 				<NoDesu
 					element={element.noDesu}

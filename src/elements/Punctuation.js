@@ -1,5 +1,5 @@
 import { useState } from "react"
-import AddElementModal from "../AddElementModal"
+import ElementOptionsMenu from "../ElementOptionsMenu"
 import "../App.css"
 import useElementsStore from "../useElementsStore"
 
@@ -12,7 +12,7 @@ export default function Punctuation({ text, onClickSelf }) {
 
 	return (
 		<div className="modalContainer">
-			<AddElementModal
+			<ElementOptionsMenu
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
 				elementOptions={punctuation}

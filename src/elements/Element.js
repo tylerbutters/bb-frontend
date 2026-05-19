@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState, useLayoutEffect } from "react"
-import AddElementModal from "../AddElementModal"
+import ElementOptionsMenu from "../ElementOptionsMenu"
 import "../App.css"
 import Adjective from "./Adjective"
 import Noun from "./Noun"
 import Verb from "./Verb"
 import useElementsStore from "../useElementsStore"
-import Coupla from "./Coupla"
 import Punctuation from "./Punctuation"
 import dictionary from "../jmdict/processed-jmdict.json"
 import Particle from "../element attachments/Particle"
@@ -79,8 +78,6 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 				return <Adjective {...props} />
 			case "verb":
 				return <Verb {...props} />
-			case "coupla":
-				return <Coupla {...props} />
 			case "punctuation":
 				return <Punctuation {...props} />
 			case "adverb":
@@ -96,7 +93,7 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 
 	return (
 		<div className="modalContainer">
-			<AddElementModal
+			<ElementOptionsMenu
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
 				elementOptions={defaultElements}

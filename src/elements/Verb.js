@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import Conjugation from "../element attachments/Conjugation"
-import AddElementModal from "../AddElementModal"
+import ElementOptionsMenu from "../ElementOptionsMenu"
 
 export default function Verb({
 	element,
@@ -28,7 +28,7 @@ export default function Verb({
 
 	return (
 		<div className="modalContainer">
-			<AddElementModal
+			<ElementOptionsMenu
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
 				elementOptions={elementOptions}

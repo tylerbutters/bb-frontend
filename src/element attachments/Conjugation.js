@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import AddElementModal from "../AddElementModal"
+import ElementOptionsMenu from "../ElementOptionsMenu"
 import "../App.css"
 import useElementsStore from "../useElementsStore"
 import AddButton from "../AddButton"
@@ -394,7 +394,7 @@ export default function Conjugation({
 
 	return (
 		<div className="modalContainer">
-			<AddElementModal
+			<ElementOptionsMenu
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
 				elementOptions={conjugationOptions || []}

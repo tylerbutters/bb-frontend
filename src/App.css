@@ -1,10 +1,10 @@
 .app {
 	display: flex;
 	min-height: 100vh;
-	background-color: black;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	background-color: black;
 }
 
 .sentenceElementsContainer {
@@ -14,108 +14,118 @@
 	gap: 5px;
 }
 
+.sentenceText {
+	display: flex;
+	position: absolute;
+	flex-direction: row;
+	margin-bottom: 200px;
+	color: white;
+	font-size: 30px;
+}
+
 .addButton {
-	color: grey;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	/* background-color: grey; */
-	font-size: 40px;
 	height: 80px;
 	overflow: hidden;
 	border-radius: 10px;
+	color: grey;
+	font-size: 40px;
 	cursor: pointer;
 	transition: width 0.3s ease;
-	/* margin 0.3s ease; */
 }
 
-/* ADD ELEMENT MODAL */
-.addElementModalContainer {
+/* ELEMENT OPTIONS MENU */
+.elementOptionsMenuContainer {
 	position: absolute;
+	bottom: 130%;
 	display: flex;
+	flex-direction: row-reverse;
 	align-items: flex-end;
 	justify-self: center;
-	flex-direction: row-reverse;
 	gap: 10px;
-	bottom: 130%;
 }
 
-.addElementModalButton {
-	background: lightgrey;
-	border-radius: 5px;
+.elementOptionsMenuButton {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	/* margin: 0 10px; */
 	padding: 5px 20px;
+	border: none;
+	border-radius: 5px;
+	background: lightgrey;
 	color: black;
 	font-size: 16px;
-	cursor: pointer;
 	white-space: nowrap;
+	cursor: pointer;
 }
-.addElementModalButton:hover {
+
+.elementOptionsMenuButton:hover {
 	background: grey;
 }
-.addElementModalButton:active {
+
+.elementOptionsMenuButton:active {
 	background: black;
 	color: white;
 }
 
 .deleteElementButtonContainer {
 	display: flex;
-	/* background-color: red; */
 	padding: 10px;
 	border-radius: 0 0 10px 10px;
 }
+
 .deleteElementButton {
-	background-color: red;
 	flex: 1;
+	background-color: red;
 	color: white;
 }
+
 .deleteElementButton:hover {
 	background-color: darkred;
 }
 
 .categoryModalContainer {
-	/* position: absolute; */
-	/* left: 50%; */
 	display: flex;
 	flex-direction: column;
-	/* transform: translate(-50%, -100%); */
-
-	background: grey;
-	border-radius: 8px;
-	padding: 8px;
 	gap: 5px;
+	padding: 8px;
+	border-radius: 8px;
+	background: grey;
 	z-index: 100;
 }
+
 .elementListContainer {
+	display: flex;
+	flex-direction: column;
 	width: 200px;
 	height: 300px;
-	flex-direction: column;
-	display: flex;
-	background: grey;
 	border-radius: 10px;
+	background: grey;
 	z-index: 999;
 }
+
 .elementListItemContainer {
-	flex-direction: column;
 	display: flex;
+	flex-direction: column;
 	gap: 10px;
 	padding: 10px;
 	overflow-y: auto;
 }
+
 .searchInputContainer {
 	display: flex;
-	background-color: grey;
 	padding: 10px;
 	border-radius: 10px 10px 0 0;
+	background-color: grey;
 }
+
 .searchInput {
-	border: none;
-	border-radius: 5px;
 	width: 100%;
 	padding: 10px;
+	border: none;
+	border-radius: 5px;
 }
 
 .modalContainer {
@@ -125,8 +135,8 @@
 /* ELEMENTS */
 
 .elementText {
-	color: white;
 	font-size: 40px;
+	color: white;
 }
 
 .elementContainer {
@@ -137,6 +147,7 @@
 	border-radius: 10px;
 	cursor: pointer;
 }
+
 .baseElement {
 	display: flex;
 	align-items: center;
@@ -144,17 +155,16 @@
 }
 
 .baseInsideElement {
-	color: white;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	height: 80px;
-	font-size: 40px;
-	/* padding: 0 0 0 5px; */
-	/* overflow: hidden; */
 	border-radius: 10px;
+	color: white;
+	font-size: 40px;
 	cursor: pointer;
 }
+
 .particleElement {
 	background: grey;
 }
@@ -163,10 +173,11 @@
 	border: none;
 	padding-left: 20px;
 	padding-right: 0;
-	justify-self: center;
 	align-items: center;
+	justify-self: center;
 	justify-content: center;
 }
+
 .counterInput:focus {
 	outline: 2px solid white;
 }

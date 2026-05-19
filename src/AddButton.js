@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import AddElementModal from "./AddElementModal"
+import ElementOptionsMenu from "./ElementOptionsMenu"
 
 export default function AddButton({ locked, mouse, elementOptions, addElement, hasSearch }) {
 	const EDGE_SIZE = 100
@@ -23,7 +23,7 @@ export default function AddButton({ locked, mouse, elementOptions, addElement, h
 
 	return (
 		<div className="modalContainer">
-			<AddElementModal
+			<ElementOptionsMenu
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
 				onSelect={addElement}

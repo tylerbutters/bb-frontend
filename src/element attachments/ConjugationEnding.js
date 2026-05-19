@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import AddElementModal from "../AddElementModal"
+import ElementOptionsMenu from "../ElementOptionsMenu"
 import "../App.css"
 import useElementsStore from "../useElementsStore"
 import Verb from "../elements/Verb"
@@ -28,7 +28,7 @@ export default function ConjugationEnding({ conjugation, updateConjugation, colo
 
 	return (
 		<div className="modalContainer">
-			<AddElementModal
+			<ElementOptionsMenu
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
 				elementOptions={conjugationOptions}

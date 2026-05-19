@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import "../App.css"
-import AddElementModal from "../AddElementModal"
+import ElementOptionsMenu from "../ElementOptionsMenu"
 import useElementsStore from "../useElementsStore"
 import AddButton from "../AddButton"
 
@@ -14,7 +14,7 @@ export default function NoDesu({ element, updateElement, deleteElement, mouse, c
 
 	return (
 		<div className="modalContainer">
-			<AddElementModal
+			<ElementOptionsMenu
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
 				elementOptions={noDesuOptions}

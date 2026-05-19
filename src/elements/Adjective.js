@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react"
-import AddElementModal from "../AddElementModal"
+import ElementOptionsMenu from "../ElementOptionsMenu"
 import "../App.css"
-import useElementsStore from "../useElementsStore"
 import Conjugation from "../element attachments/Conjugation"
 
 export default function Adjective({
 	element,
-	onClickSelf,
 	updateElement,
 	mouse,
 	deleteElement,
@@ -14,16 +12,10 @@ export default function Adjective({
 	secondaryColor,
 }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const allElements = useElementsStore((state) => state)
 
 	useEffect(() => {
-		// alert(JSON.stringify(element))
 		initializeAdjective(element)
 	}, [])
-
-	// useEffect(() => {
-	// 	alert(JSON.stringify(element))
-	// }, [element])
 
 	function initializeAdjective(newElement) {
 		if (newElement.elementType === "verb" || newElement.adjectiveType === "i-type") {
@@ -37,12 +29,10 @@ export default function Adjective({
 			updateElement(newElement)
 		}
 	}
-	function addParticle(selectedElement) {
-		updateElement({ ...element, particle: selectedElement })
-	}
+
 	return (
 		<div className="modalContainer">
-			<AddElementModal
+			<ElementOptionsMenu
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
 				elementOptions={elementOptions}
