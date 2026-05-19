@@ -102,21 +102,13 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 			<Resize element={element} isClosing={isClosing} onCloseComplete={deleteElement}>
 				<div className="elementContainer" style={{ backgroundColor: getColor().primary }}>
 					{renderElement()}
-					{element.particle ? (
-						<Particle
-							element={element.particle}
-							elementOptions={particleOptions}
-							updateElement={addParticle}
-							deleteElement={deleteElement}
-						/>
-					) : (
-						<AddButton
-							mouse={mouse}
-							elementOptions={particleOptions}
-							addElement={addParticle}
-							hasSearch={true}
-						/>
-					)}
+					<Particle
+						element={element.particle}
+						elementOptions={particleOptions}
+						updateElement={addParticle}
+						deleteElement={deleteElement}
+						mouse={mouse}
+					/>
 				</div>
 			</Resize>
 		</div>

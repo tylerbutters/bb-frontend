@@ -1,26 +1,15 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import "../App.css"
-import AddButton from "../AddButton"
-import Particle from "../element attachments/Particle"
-import Suffix from "../element attachments/Suffix"
-import Prefix from "../element attachments/Prefix"
-import useElementsStore from "../useElementsStore"
-import dictionary from "../jmdict/processed-jmdict.json"
 
 export default function Counter({ mouse, element, onClickSelf, updateElement, secondaryColor }) {
-	const [number, setNumber] = useState(0)
-	const allElements = useElementsStore((state) => state)
+	const [number, setNumber] = useState("0")
 
-	function addElement(selectedElement) {
-		// alert(JSON.stringify(selectedElement))
-		switch (selectedElement?.elementType) {
-			case "prefix":
-				updateElement({ ...element, prefix: selectedElement })
-				return
-			case "suffix":
-				updateElement({ ...element, suffix: selectedElement })
-				return
-		}
+	function onChange(e) {
+		setNumber(e.target.value)
+		updateElement({
+			...element,
+			number: e.target.value,
+		})
 	}
 
 	return (
@@ -33,7 +22,7 @@ export default function Counter({ mouse, element, onClickSelf, updateElement, se
 					width: `${Math.max(number.length + 1, 2)}ch`,
 				}}
 				value={number}
-				onChange={(e) => setNumber(e.target.value)}
+				onChange={onChange}
 				placeholder="0"
 			/>
 			<div className="elementText" onClick={onClickSelf}>

@@ -9,6 +9,7 @@ export default function Verb({
 	mouse,
 	elementOptions,
 	secondaryColor,
+	primaryColor,
 }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 

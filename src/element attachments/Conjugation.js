@@ -7,6 +7,7 @@ import dictionary from "../jmdict/processed-jmdict.json"
 import Verb from "../elements/Verb"
 import ConjugationEnding from "./ConjugationEnding"
 import Adjective from "../elements/Adjective"
+import Particle from "./Particle"
 
 export default function Conjugation({
 	parentConjugation,
@@ -18,13 +19,21 @@ export default function Conjugation({
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const conjugations = useElementsStore((state) => state.conjugations)
 	const [conjugationOptions, setConjugationOptions] = useState()
+	const [particleOptions, setParticleOptions] = useState()
 	const currentConjugation = parentConjugation?.conjugation
 	const auxiliaries = useElementsStore((state) => state.auxiliaries)
+	const particles = useElementsStore((state) => state.particles)
+
 	// const isIrregularVerb = currentConjugation.stem === "する" || currentConjugation.stem === "くる"
 
 	useEffect(() => {
 		getConjugationOptions()
+		setParticleOptions(particles.filter((particle) => particle.attachesTo.includes("te")))
 	}, [])
+
+	function addParticle(selectedElement) {
+		updateConjugation({ ...currentConjugation, particle: selectedElement })
+	}
 
 	function getGodanConjugationOptions() {
 		const godanMap = {
@@ -327,26 +336,29 @@ export default function Conjugation({
 	if (currentConjugation?.elementType === "verb") {
 		// alert(JSON.stringify(currentConjugation))
 		return (
-			<Verb
-				element={currentConjugation}
-				elementOptions={auxiliaries}
-				updateElement={(updatedChild) =>
-					updateConjugation({
-						...parentConjugation,
-						conjugation: {
-							...currentConjugation,
-							...updatedChild,
-						},
-					})
-				}
-				deleteElement={() =>
-					updateConjugation({
-						...parentConjugation,
-						conjugation: {},
-					})
-				}
-				mouse={mouse}
-			/>
+			<div className="baseInsideElement" style={{ backgroundColor: color }}>
+				<Verb
+					element={currentConjugation}
+					elementOptions={auxiliaries}
+					secondaryColor={color}
+					updateElement={(updatedChild) =>
+						updateConjugation({
+							...parentConjugation,
+							conjugation: {
+								...currentConjugation,
+								...updatedChild,
+							},
+						})
+					}
+					deleteElement={() =>
+						updateConjugation({
+							...parentConjugation,
+							conjugation: {},
+						})
+					}
+					mouse={mouse}
+				/>
+			</div>
 		)
 	} else if (currentConjugation?.elementType === "adjective") {
 		// alert(JSON.stringify(currentConjugation))

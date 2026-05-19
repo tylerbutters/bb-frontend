@@ -1,8 +1,9 @@
 import { useState } from "react"
 import AddElementModal from "../AddElementModal"
 import "../App.css"
+import AddButton from "../AddButton"
 
-export default function Particle({ element, elementOptions, updateElement, deleteElement }) {
+export default function Particle({ element, elementOptions, updateElement, deleteElement, mouse }) {
 	const [isModalOpen, setIsModalOpen] = useState()
 
 	return (
@@ -15,13 +16,22 @@ export default function Particle({ element, elementOptions, updateElement, delet
 				deleteElement={() => deleteElement(element.elementType)}
 				hasDelete={true}
 			/>
-			<div
-				className="baseInsideElement"
-				style={{ background: "#FF7794", marginLeft: 5 }}
-				onClick={() => setIsModalOpen(true)}
-			>
-				{element.text}
-			</div>
+			{element ? (
+				<div
+					className="baseInsideElement"
+					style={{ background: "#FF7794", marginLeft: 5 }}
+					onClick={() => setIsModalOpen(true)}
+				>
+					{element.text}
+				</div>
+			) : (
+				<AddButton
+					mouse={mouse}
+					elementOptions={elementOptions}
+					addElement={updateElement}
+					hasSearch={true}
+				/>
+			)}
 		</div>
 	)
 }

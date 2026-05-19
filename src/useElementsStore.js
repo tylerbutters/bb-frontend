@@ -4,6 +4,7 @@ import dictionary from "./jmdict/processed-jmdict.json"
 const rareruOptions = [
 	{ text: "る" },
 	{ text: "ない" },
+	{ text: "ないで" },
 	{ text: "たい" },
 	{ text: "た" },
 	{ text: "たり" },
@@ -16,6 +17,7 @@ const rareruOptions = [
 const saseruOptions = [
 	{ text: "る" },
 	{ text: "ない" },
+	{ text: "ないで" },
 	{ text: "たい" },
 	{ text: "ます" },
 	{ text: "た" },
@@ -145,22 +147,20 @@ const useElementsStore = create((set) => ({
 	noDesu: [{ text: "の" }, { text: "なの" }, { text: "ん" }, { text: "なん" }],
 
 	conjugations: {
-		iAdjDefault: {
-			stem: "い",
-			conjugationOptions: iadjOptions,
-		},
 		//kuru
 		kuruDefault: {
 			stem: "くる",
 			conjugationOptions: [
 				{ text: "きて" },
 				{ text: "きた" },
+				{ text: "きたり" },
 				{ text: "きます" },
 				{ text: "きたい" },
 				{ text: "きたら" },
 				{ text: "くれば" },
 				{ text: "くる" },
 				{ text: "こない" },
+				{ text: "こないで" },
 				{ text: "こられる" },
 				{ text: "こい" },
 				{ text: "こよう" },
@@ -180,6 +180,9 @@ const useElementsStore = create((set) => ({
 		},
 		きた: {
 			stem: "きた",
+		},
+		きた: {
+			stem: "きたり",
 		},
 		きて: {
 			stem: "きて",
@@ -224,7 +227,9 @@ const useElementsStore = create((set) => ({
 				{ text: "します" },
 				{ text: "して" },
 				{ text: "しない" },
+				{ text: "しないで" },
 				{ text: "したい" },
+				{ text: "したり" },
 				{ text: "しよう" },
 				{ text: "する" },
 				{ text: "すれば" },
@@ -249,6 +254,9 @@ const useElementsStore = create((set) => ({
 		},
 		した: {
 			stem: "した",
+		},
+		したり: {
+			stem: "したり",
 		},
 		すれば: {
 			stem: "すれば",
@@ -284,6 +292,7 @@ const useElementsStore = create((set) => ({
 			stem: "る",
 			conjugationOptions: [
 				{ text: "ない" },
+				{ text: "ないで" },
 				{ text: "たい" },
 				{ text: "た" },
 				{ text: "る" },
@@ -357,6 +366,11 @@ const useElementsStore = create((set) => ({
 			ending: "い",
 			conjugationOptions: iadjOptions,
 		},
+		ないで: {
+			stem: "ないで",
+			conjugationType: "te",
+			conjugationOptions: iadjOptions,
+		},
 		たい: {
 			stem: "た",
 			ending: "い",
@@ -365,23 +379,28 @@ const useElementsStore = create((set) => ({
 		ず: {
 			stem: "ず",
 		},
-		くて: {
-			stem: "くて",
-			conjugationType: "te",
-		},
 		た: {
 			stem: "た",
+		},
+		たり: {
+			stem: "たり",
 		},
 
 		て: {
 			stem: "て",
 			conjugationType: "te",
 		},
-
+		iAdjDefault: {
+			stem: "い",
+			conjugationOptions: iadjOptions,
+		},
 		く: {
 			stem: "く",
 		},
-
+		くて: {
+			stem: "くて",
+			conjugationType: "te",
+		},
 		くない: {
 			stem: "くな",
 			ending: "い",

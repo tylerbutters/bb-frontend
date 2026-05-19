@@ -62,7 +62,6 @@ export default function Desu({ element, updateElement, deleteElement, mouse, sec
 					mouse={mouse}
 					color={secondaryColor}
 				/>
-
 				{element.conjugation && (
 					<Conjugation
 						parentConjugation={element}
