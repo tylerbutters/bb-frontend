@@ -37,55 +37,72 @@ export default function App() {
 	}, [])
 
 	function elementsToString(addedElements) {
-		let string = ""
+		let sentence = ""
 		function adjective(element) {
-			if (element?.value) string += element.value
-			if (element?.conjugation?.type === "adjective") adjective(element.conjugation)
-			else if (element?.conjugation?.type === "adjectiveConjugation") {
-				string += element.conjugation.value
+			if (element?.stem) sentence += element.stem
+			if (element.conjugation && Object.keys(element.conjugation).length > 0) {
+				verb(element.conjugation)
 			}
+			sentence += element.particle?.text || ""
 		}
 
-		function verb(node) {
-			if (!node) return
+		function verb(element) {
+			if (!element) return
 
-			string += node.stem || ""
-
-			if (node.conjugation && Object.keys(node.conjugation).length > 0) {
-				verb(node.conjugation)
+			sentence += element.stem || ""
+			sentence += element.middleParticle?.text || ""
+			if (element.conjugation && Object.keys(element.conjugation).length > 0) {
+				verb(element.conjugation)
 			} else {
-				string += node.ending || ""
+				sentence += element.ending || ""
 			}
+			sentence += element.particle?.text || ""
 		}
 
 		function noun(element) {
-			if (element.prefix) string += element.prefix
-			if (element.value) string += element.value
-			if (element.suffix) string += element.suffix
-			if (element.particle) string += element.particle
+			if (element.prefix) sentence += element.prefix.text
+			if (element.text) sentence += element.text
+			if (element.suffix) sentence += element.suffix.text
+			if (element.particle) sentence += element.particle.text
+		}
+
+		function adverb(element) {
+			if (element.text) sentence += element.text
+			if (element.particle) sentence += element.particle.text
+		}
+
+		function desu(element) {
+			if (element.noDesu) sentence += element.noDesu.text
+			if (element.conjugation && Object.keys(element.conjugation).length > 0) {
+				verb(element.conjugation)
+			}
+			sentence += element.particle?.text || ""
+		}
+
+		function counter(element) {
+			// alert(JSON.stringify(element))
+			sentence += element.number
+			sentence += element.text
 		}
 
 		addedElements.forEach((element) => {
-			if (element?.type === "noun") noun(element)
-			else if (element?.type === "adjective") adjective(element)
-			else if (element?.type === "verb") verb(element)
+			switch (element?.elementType) {
+				case "noun":
+					return noun(element)
+				case "adjective":
+					return adjective(element)
+				case "verb":
+					return verb(element)
+				case "adverb":
+					return adverb(element)
+				case "desu":
+					return desu(element)
+				case "counter":
+					return counter(element)
+			}
 		})
 		// alert(JSON.stringify(string))
-		setSentenceString(string)
-	}
-
-	function initializeElement(element) {
-		switch (element.elementType) {
-			case "verb":
-				return {
-					...element,
-					conjugation: {
-						stem: element.ending,
-					},
-				}
-			default:
-				return element
-		}
+		setSentenceString(sentence)
 	}
 
 	function addElement(index, selectedElement) {
@@ -129,11 +146,6 @@ export default function App() {
 			>
 				{sentenceString}
 			</div>
-			{/* <div style={{ color: "white", display: "flex", flexDirection: "row", marginBottom: 20 }}>
-				{addedElements.map((element, index) => (
-					<div key={index}>{element.value}</div>
-				))}
-			</div> */}
 			<div className="sentenceElementsContainer">
 				{addedElements.map((element, index) => (
 					<>

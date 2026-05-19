@@ -15,10 +15,7 @@ export default function Prefix({ element, updateElement, deleteElement, mouse, c
 				setIsModalOpen={setIsModalOpen}
 				elementOptions={prefixOptions}
 				onSelect={updateElement}
-				deleteElement={() => {
-					deleteElement()
-					setIsModalOpen(false)
-				}}
+				deleteElement={deleteElement}
 				hasDelete={true}
 			/>
 			{element ? (

@@ -28,11 +28,15 @@ export default function Conjugation({
 
 	useEffect(() => {
 		getConjugationOptions()
+		// alert(JSON.stringify(particles.filter((particle) => particle.attachesTo.includes("te"))))
 		setParticleOptions(particles.filter((particle) => particle.attachesTo.includes("te")))
 	}, [])
 
 	function addParticle(selectedElement) {
-		updateConjugation({ ...currentConjugation, particle: selectedElement })
+		updateConjugation({
+			...parentConjugation,
+			conjugation: { ...currentConjugation, middleParticle: selectedElement },
+		})
 	}
 
 	function getGodanConjugationOptions() {
@@ -220,18 +224,12 @@ export default function Conjugation({
 		}
 
 		let conjugationData = conjugations[selectedConjugation.text]
-		if (!conjugationData) {
-			alert("Haven't made this conjugation yet")
-			return
-		}
 
 		if (parentConjugation.verbType?.includes("godan")) {
 			const selectedCategory = conjugationOptions.find((category) =>
 				category.list.some((conjugation) => conjugation.text === selectedConjugation.text),
 			)
-
-			const singleCharacterConjugation =
-				selectedConjugation.list?.length === 0 || selectedCategory.text === selectedConjugation.text
+			const singleCharacterConjugation = selectedConjugation.text === selectedCategory.text
 
 			if (singleCharacterConjugation) {
 				//only change the ending of the verb
@@ -246,6 +244,10 @@ export default function Conjugation({
 					},
 				})
 			} else {
+				if (!conjugationData) {
+					alert("Haven't made this conjugation yet")
+					return
+				}
 				//change the ending of verb and add conjugation
 				updateConjugation({
 					...parentConjugation,
@@ -259,6 +261,10 @@ export default function Conjugation({
 				})
 			}
 		} else {
+			if (!conjugationData) {
+				alert("Haven't made this conjugation yet")
+				return
+			}
 			//if its ichidan ru
 			if (selectedConjugation.text === "る") {
 				conjugationData = conjugations["ichidanDefault"]
@@ -277,7 +283,7 @@ export default function Conjugation({
 		}
 	}
 
-	function renderElementAttachment() {
+	function renderNextConjugation() {
 		// alert(JSON.stringify(currentConjugation))
 		if (Object.keys(currentConjugation?.conjugation || {}).length !== 0) {
 			return (
@@ -404,7 +410,21 @@ export default function Conjugation({
 					)}
 					{currentConjugation?.stem}
 				</div>
-				{renderElementAttachment()}
+				{currentConjugation.conjugationType === "te" && (
+					<Particle
+						element={currentConjugation.middleParticle}
+						elementOptions={particleOptions}
+						updateElement={addParticle}
+						deleteElement={() =>
+							updateConjugation({
+								...currentConjugation,
+								particle: null,
+							})
+						}
+						mouse={mouse}
+					/>
+				)}
+				{renderNextConjugation()}
 			</div>
 		</div>
 	)

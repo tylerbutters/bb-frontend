@@ -15,7 +15,7 @@ export default function Suffix({ element, updateElement, deleteElement, mouse, c
 				setIsModalOpen={setIsModalOpen}
 				elementOptions={suffixOptions}
 				onSelect={updateElement}
-				deleteElement={() => deleteElement(element.elementType)}
+				deleteElement={deleteElement}
 				hasDelete={true}
 			/>
 			{element ? (

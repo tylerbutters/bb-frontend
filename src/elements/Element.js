@@ -16,28 +16,31 @@ import Counter from "./Counter"
 
 export default function Element({ element, mouse, updateElement, deleteElement, defaultElements }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	// const [selectedElements, setSelectedElements] = useState()
 	const [isClosing, setIsClosing] = useState(false)
 	const [particleOptions, setParticleOptions] = useState([])
 	const particles = useElementsStore((state) => state.particles)
 
+	useEffect(() => {
+		getParticleOptions()
+	}, [])
+
 	function getParticleOptions() {
-		const availableParticles = particles.filter((particle) =>
-			particle.attachesTo.includes("na-type"),
+		let availableParticles = particles.filter((particle) =>
+			particle.attachesTo.includes(element.elementType),
 		)
-		// alert(JSON.stringify(availableParticles.map((particle) => ({ text: particle.text }))))
+		if (element.adjectiveType) {
+			availableParticles.push(
+				...particles.filter((particle) => particle.attachesTo.includes(element.adjectiveType)),
+			)
+		}
 		setParticleOptions(
-			availableParticles.map((particle) => ({ elementType: "particle", text: particle.text })),
+			availableParticles?.map((particle) => ({ elementType: "particle", text: particle.text })),
 		)
 	}
 
 	function addParticle(selectedElement) {
 		updateElement({ ...element, particle: selectedElement })
 	}
-
-	useEffect(() => {
-		getParticleOptions()
-	}, [])
 
 	function getColor() {
 		switch (element?.elementType) {
@@ -53,6 +56,8 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 				return { primary: "#DC9CFF", secondary: "rgba(165,0,255,0.2)" }
 			case "desu":
 				return { primary: "#9ECDD5", secondary: "rgba(0,179,205,0.3)" }
+			default:
+				return { primary: "red", secondary: "blue" }
 		}
 	}
 
@@ -106,7 +111,12 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 						element={element.particle}
 						elementOptions={particleOptions}
 						updateElement={addParticle}
-						deleteElement={deleteElement}
+						deleteElement={() =>
+							updateElement({
+								...element,
+								particle: null,
+							})
+						}
 						mouse={mouse}
 					/>
 				</div>

@@ -47,12 +47,26 @@ export default function AddElementModal({
 
 	function onClickElement(selectedElement) {
 		// alert(JSON.stringify(selectedElement))
-		if (selectedElement.list && selectedElement.list.length !== 0) {
-			setSelectedCategory(selectedElement.text)
-			setSecondaryElementOptions(selectedElement.list)
-		} else {
+		onSelect(selectedElement)
+		closeModal()
+	}
+
+	function onClickCategory(selectedElement) {
+		// alert(JSON.stringify(selectedElement))
+
+		if (
+			selectedElement.list?.length === 1 &&
+			selectedElement.list[0].text === selectedElement.text
+		) {
+			onSelect(selectedElement.list[0])
+			closeModal()
+		} else if (!selectedElement.list) {
 			onSelect(selectedElement)
 			closeModal()
+		} else {
+			// alert(JSON.stringify(selectedElement))
+			setSelectedCategory(selectedElement.text)
+			setSecondaryElementOptions(selectedElement.list)
 		}
 	}
 
@@ -75,11 +89,17 @@ export default function AddElementModal({
 					hasSearch={hasSearch}
 					elementOptions={elementOptions}
 					selectedCategory={selectedCategory}
-					onClickElement={onClickElement}
+					onClickElement={onClickCategory}
 				/>
 				{hasDelete && (
 					<div className="deleteElementButtonContainer">
-						<div className="addElementModalButton deleteElementButton" onClick={deleteElement}>
+						<div
+							className="addElementModalButton deleteElementButton"
+							onClick={() => {
+								setIsModalOpen(false)
+								deleteElement()
+							}}
+						>
 							Delete
 						</div>
 					</div>
@@ -103,7 +123,7 @@ function ElementListItemContainer({ hasSearch, elementOptions, onClickElement, s
 	}, [elementOptions, searchText])
 
 	const visibleOptions = useMemo(() => {
-		return filteredOptions.slice(0, visibleCount)
+		return filteredOptions?.slice(0, visibleCount) || []
 	}, [filteredOptions, visibleCount])
 
 	useEffect(() => {

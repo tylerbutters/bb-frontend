@@ -69,6 +69,7 @@ export default function Desu({ element, updateElement, deleteElement, mouse, sec
 						deleteElement={deleteElement}
 						mouse={mouse}
 						color={secondaryColor}
+						hasDelete={true}
 					/>
 				)}
 			</div>

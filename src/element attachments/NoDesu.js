@@ -19,10 +19,7 @@ export default function NoDesu({ element, updateElement, deleteElement, mouse, c
 				setIsModalOpen={setIsModalOpen}
 				elementOptions={noDesuOptions}
 				onSelect={updateElement}
-				deleteElement={() => {
-					deleteElement()
-					setIsModalOpen(false)
-				}}
+				deleteElement={deleteElement}
 				hasDelete={true}
 			/>
 			{element ? (

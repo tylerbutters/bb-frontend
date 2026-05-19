@@ -13,7 +13,7 @@ export default function Particle({ element, elementOptions, updateElement, delet
 				setIsModalOpen={setIsModalOpen}
 				elementOptions={elementOptions}
 				onSelect={updateElement}
-				deleteElement={() => deleteElement(element.elementType)}
+				deleteElement={deleteElement}
 				hasDelete={true}
 			/>
 			{element ? (

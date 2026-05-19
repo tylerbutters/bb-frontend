@@ -77,19 +77,19 @@ const useElementsStore = create((set) => ({
 	particles: [
 		{
 			text: "から",
-			attachesTo: ["noun", "verb", "te-form"],
+			attachesTo: ["noun", "verb", "te"],
 		},
 		{
 			text: "は",
-			attachesTo: ["noun", "verb", "te-form"],
+			attachesTo: ["noun", "te", "na-type"],
 		},
 		{
 			text: "も",
-			attachesTo: ["noun", "verb", "te-form"],
+			attachesTo: ["noun", "verb", "te"],
 		},
 		{
 			text: "が",
-			attachesTo: ["noun", "verb"],
+			attachesTo: ["noun", "verb", "i-type", "na-type"],
 		},
 		{
 			text: "を",
@@ -97,7 +97,7 @@ const useElementsStore = create((set) => ({
 		},
 		{
 			text: "に",
-			attachesTo: ["noun", "verb", "na-type"],
+			attachesTo: ["noun", "na-type"],
 		},
 		{
 			text: "へ",
@@ -105,7 +105,7 @@ const useElementsStore = create((set) => ({
 		},
 		{
 			text: "で",
-			attachesTo: ["noun", "te-form"],
+			attachesTo: ["noun"],
 		},
 		{
 			text: "と",
@@ -183,6 +183,11 @@ const useElementsStore = create((set) => ({
 		},
 		きた: {
 			stem: "きたり",
+		},
+		こないで: {
+			stem: "こないで",
+			conjugationType: "te",
+			conjugationOptions: iadjOptions,
 		},
 		きて: {
 			stem: "きて",
@@ -280,6 +285,11 @@ const useElementsStore = create((set) => ({
 		},
 		せず: {
 			stem: "せず",
+		},
+		しないで: {
+			stem: "しないで",
+			conjugationType: "te",
+			conjugationOptions: iadjOptions,
 		},
 		//suru and ichidan
 		させる: {
