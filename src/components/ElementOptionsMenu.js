@@ -193,10 +193,7 @@ export default function ElementOptionsMenu({
 	const secondaryPlacement = selectedCategory ? getSecondaryPlacement(menuLayout) : "right"
 	const menuLeft = getMenuLeft(menuLayout, secondaryPlacement)
 	const secondaryPanel = selectedCategory && (
-		<ElementOptionsPanel
-			className="secondaryElementOptionsPanel"
-			menuTitle={selectedCategory}
-		>
+		<ElementOptionsPanel className="secondaryElementOptionsPanel" menuTitle={selectedCategory}>
 			<ElementOptionsList
 				hasSearch={true}
 				elementOptions={secondaryElementOptions}
@@ -264,7 +261,8 @@ function ElementOptionsList({ hasSearch, elementOptions = [], onSelectOption, se
 	const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 	const sentinelRef = useRef(null)
 	const filteredOptions = useMemo(() => {
-		if (!searchText) return elementOptions
+		if (!hasSearch) return elementOptions
+		if (!searchText) return []
 		return elementOptions.filter(
 			(e) => e?.text?.startsWith(searchText) || e?.textKana?.startsWith(searchText),
 		)
@@ -321,7 +319,10 @@ function ElementOptionsList({ hasSearch, elementOptions = [], onSelectOption, se
 					/>
 				</div>
 			)}
-			<div className="elementListItemContainer" style={{ height: hasSearch && 300 }}>
+			<div
+				className="elementListItemContainer"
+				style={{ height: hasSearch && 300, width: hasSearch && 250 }}
+			>
 				{visibleOptions.map((element, index) => (
 					<button
 						type="button"

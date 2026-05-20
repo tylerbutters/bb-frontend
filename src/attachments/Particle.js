@@ -39,7 +39,6 @@ export default function Particle({
 					mouse={mouse}
 					elementOptions={elementOptions}
 					addElement={updateElement}
-					hasSearch={true}
 					text="particle"
 					disabled={disabled}
 				/>
