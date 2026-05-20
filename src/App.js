@@ -283,12 +283,13 @@ export default function App() {
 		if (!dragState || dragState.elementId === elementId) return undefined
 
 		const { originalIndex, insertIndex, width } = dragState
+		const unscaledWidth = width / sentenceElementsScale
 		if (insertIndex > originalIndex && index > originalIndex && index <= insertIndex) {
-			return `translateX(-${width}px)`
+			return `translateX(-${unscaledWidth}px)`
 		}
 
 		if (insertIndex < originalIndex && index >= insertIndex && index < originalIndex) {
-			return `translateX(${width}px)`
+			return `translateX(${unscaledWidth}px)`
 		}
 
 		return undefined
@@ -361,86 +362,89 @@ export default function App() {
 				className={`sentenceElementsContainer ${
 					dragState ? "sentenceElementsDragging" : ""
 				}`}
-				style={{ transform: `scale(${sentenceElementsScale})` }}
+				style={{ zoom: sentenceElementsScale }}
 			>
-				{addedElements.map((element, index) => (
-					<Fragment key={element.sentenceElementId}>
-						<AddButton
-							mouse={mouse}
-							elementOptions={defaultElements}
-							addElement={(selectedElement) => addElement(index, selectedElement)}
-							disabled={Boolean(dragState)}
-						/>
-						<div
-							ref={(node) => {
-								if (node) {
-									elementDragRefs.current.set(element.sentenceElementId, node)
-								} else {
-									elementDragRefs.current.delete(element.sentenceElementId)
-								}
-							}}
-							className={`mainElementDragItem ${
-								dragState?.elementId === element.sentenceElementId
-									? "mainElementDragging"
-									: ""
-							}`}
-							style={
-								dragState?.elementId === element.sentenceElementId
-									? {
-											width: dragState.width,
-											height: dragState.height,
-										}
-									: {
-											transform: getDragPreviewTransform(
-												element.sentenceElementId,
-												index,
-											),
-										}
-							}
-							onPointerDown={(e) => startElementPointerDrag(e, element.sentenceElementId)}
-							onClickCapture={(e) => {
-								if (!suppressElementClick.current) return
-								e.preventDefault()
-								e.stopPropagation()
-							}}
-						>
-							<div
-								className="mainElementDragContent"
-								style={
-									dragState?.elementId === element.sentenceElementId
-										? {
-												position: "fixed",
-												left: dragState.x,
-												top: dragState.y,
-												width: dragState.width,
-												zIndex: 2000,
-												pointerEvents: "none",
-											}
-										: undefined
-								}
-							>
-								<Element
-									element={element}
-									mouse={mouse}
-									addButtonsDisabled={Boolean(dragState)}
-									updateElement={(newElement) =>
-										updateElement(element.sentenceElementId, newElement)
-									}
-									deleteElement={() => deleteElement(element.sentenceElementId)}
-									defaultElements={defaultElements}
-								/>
-							</div>
-						</div>
-						{index === addedElements.length - 1 && (
+				{addedElements.map((element, index) => {
+					const isDraggingThis = dragState?.elementId === element.sentenceElementId
+					const unscaledDragWidth = dragState?.width / sentenceElementsScale
+					const unscaledDragHeight = dragState?.height / sentenceElementsScale
+					return (
+						<Fragment key={element.sentenceElementId}>
 							<AddButton
 								mouse={mouse}
 								elementOptions={defaultElements}
-								addElement={(element) => addElement(index + 1, element)}
+								addElement={(selectedElement) => addElement(index, selectedElement)}
 								disabled={Boolean(dragState)}
 							/>
-						)}
-					</Fragment>
-				))}
+							<div
+								ref={(node) => {
+									if (node) {
+										elementDragRefs.current.set(element.sentenceElementId, node)
+									} else {
+										elementDragRefs.current.delete(element.sentenceElementId)
+									}
+								}}
+								className={`mainElementDragItem ${
+									isDraggingThis ? "mainElementDragging" : ""
+								}`}
+								style={
+									isDraggingThis
+										? {
+												width: unscaledDragWidth,
+												height: unscaledDragHeight,
+											}
+										: {
+												transform: getDragPreviewTransform(
+													element.sentenceElementId,
+													index,
+												),
+											}
+								}
+								onPointerDown={(e) => startElementPointerDrag(e, element.sentenceElementId)}
+								onClickCapture={(e) => {
+									if (!suppressElementClick.current) return
+									e.preventDefault()
+									e.stopPropagation()
+								}}
+							>
+								<div
+									className="mainElementDragContent"
+									style={
+										isDraggingThis
+											? {
+													position: "fixed",
+													left: dragState.x / sentenceElementsScale,
+													top: dragState.y / sentenceElementsScale,
+													width: unscaledDragWidth,
+													zIndex: 2000,
+													pointerEvents: "none",
+												}
+											: undefined
+									}
+								>
+									<Element
+										element={element}
+										mouse={mouse}
+										addButtonsDisabled={Boolean(dragState)}
+										updateElement={(newElement) =>
+											updateElement(element.sentenceElementId, newElement)
+										}
+										deleteElement={() => deleteElement(element.sentenceElementId)}
+										defaultElements={defaultElements}
+									/>
+								</div>
+							</div>
+							{index === addedElements.length - 1 && (
+								<AddButton
+									mouse={mouse}
+									elementOptions={defaultElements}
+									addElement={(element) => addElement(index + 1, element)}
+									disabled={Boolean(dragState)}
+								/>
+							)}
+						</Fragment>
+					)
+				})}
 				{!addedElements.length && (
 					<AddButton
 						locked={true}

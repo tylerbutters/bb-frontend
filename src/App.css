@@ -11,8 +11,6 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	transform-origin: center center;
-	transition: transform 0.18s ease-in-out;
 }
 
 .sentenceText {
