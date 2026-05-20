@@ -12,7 +12,11 @@ export default function Verb({
 
 	return (
 		<div className="baseElement">
-			<div className="elementText">{element.stem}</div>
+			<div>
+				{/* <div className="furiganaText">{element.stemKana}</div> */}
+
+				<div className="elementText">{element.stem}</div>
+			</div>
 			{hasConjugation && (
 				<Conjugation
 					color={allColors.verb.secondary}

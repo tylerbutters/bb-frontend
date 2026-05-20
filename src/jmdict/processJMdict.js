@@ -94,6 +94,14 @@ function isSuruVerb(entry) {
 	return posList.includes("vs") || posList.includes("vs-s")
 }
 
+function getMeanings(entry, wordTag) {
+	const meanings = entry.sense
+		?.filter((sense) => sense.partOfSpeech?.includes(wordTag))
+		.flatMap((sense) => sense.gloss?.map((gloss) => gloss.text).filter(Boolean) || [])
+
+	return [...new Set(meanings || [])]
+}
+
 // -------------------- MAPPING TYPES --------------------
 
 function mapVerbType(wordTag) {
@@ -139,10 +147,11 @@ function addVerb(wordTag, word, kana, entry) {
 		ending: getEnding(word, verbType),
 		conjugation: null,
 		particle: null,
+		meanings: getMeanings(entry, wordTag),
 	})
 }
-function addAdjective(wordTag, word, kana) {
-	const adjectiveType = mapAdjectiveType(wordTag)
+function addAdjective(wordTag, word, kana, entry) {
+	const adjectiveType = mapAdjectiveType(wordTag, kana)
 
 	if (!adjectiveType) return
 
@@ -156,50 +165,55 @@ function addAdjective(wordTag, word, kana) {
 		ending: adjectiveType === "na-type" ? null : getEnding(word, adjectiveType),
 		conjugation: null,
 		particle: null,
+		meanings: getMeanings(entry, wordTag),
 	})
 }
-function addPrefix(wordTag, word, kana) {
+function addPrefix(wordTag, word, kana, entry) {
 	if (wordTag === "pref") {
 		output.prefixes.push({
 			elementType: "prefix",
 			text: word,
 			textKana: kana,
+			meanings: getMeanings(entry, wordTag),
 		})
 	}
 }
-function addSuffix(wordTag, word, kana) {
+function addSuffix(wordTag, word, kana, entry) {
 	if (wordTag === "suf") {
 		output.suffixes.push({
 			elementType: "suffix",
 			text: word,
 			textKana: kana,
+			meanings: getMeanings(entry, wordTag),
 		})
 	}
 }
 
-function addCounter(wordTag, word) {
+function addCounter(wordTag, word, entry) {
 	if (wordTag === "ctr") {
 		output.counters.push({
 			elementType: "counter",
 			text: word,
 			number: "",
 			particle: null,
+			meanings: getMeanings(entry, wordTag),
 		})
 	}
 }
 
-function addAdverb(wordTag, word, kana) {
+function addAdverb(wordTag, word, kana, entry) {
 	if (wordTag.startsWith("adv")) {
 		output.adverbs.push({
 			elementType: "adverb",
 			text: word,
 			textKana: kana,
 			particle: null,
+			meanings: getMeanings(entry, wordTag),
 		})
 	}
 }
 
-function addNoun(wordTag, word, kana) {
+function addNoun(wordTag, word, kana, entry) {
 	if (wordTag === "n") {
 		output.nouns.push({
 			elementType: "noun",
@@ -208,6 +222,7 @@ function addNoun(wordTag, word, kana) {
 			prefix: null,
 			suffix: null,
 			particle: null,
+			meanings: getMeanings(entry, wordTag),
 		})
 	}
 }
@@ -228,12 +243,12 @@ function processJMdict() {
 
 		for (const wordTag of wordTags) {
 			addVerb(wordTag, word, kana, entry)
-			addAdjective(wordTag, word, kana)
-			addPrefix(wordTag, word, kana)
-			addSuffix(wordTag, word, kana)
-			addCounter(wordTag, word)
-			addAdverb(wordTag, word, kana)
-			addNoun(wordTag, word, kana)
+			addAdjective(wordTag, word, kana, entry)
+			addPrefix(wordTag, word, kana, entry)
+			addSuffix(wordTag, word, kana, entry)
+			addCounter(wordTag, word, entry)
+			addAdverb(wordTag, word, kana, entry)
+			addNoun(wordTag, word, kana, entry)
 		}
 	}
 

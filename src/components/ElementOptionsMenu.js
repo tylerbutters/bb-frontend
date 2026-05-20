@@ -79,21 +79,22 @@ export default function ElementOptionsMenu({
 				adjustment = window.innerWidth - MENU_VIEWPORT_PADDING - rect.right
 			}
 
-			if (Math.abs(adjustment) < 0.5) return
-			console.log("yes")
-			setHorizontalOffset((currentOffset) => currentOffset + adjustment)
+			// absolute target instead of accumulating offsets
+			setHorizontalOffset((prev) => (Math.abs(adjustment) < 0.5 ? prev : prev + adjustment))
 		}
 
-		setHorizontalOffset(0)
 		const frameId = requestAnimationFrame(updateHorizontalOffset)
-		const menuTimeoutId = window.setTimeout(updateHorizontalOffset, MENU_TRANSITION_MS)
-		const panelTimeoutId = window.setTimeout(updateHorizontalOffset, SECONDARY_PANEL_TRANSITION_MS)
+
+		const menuTimeoutId = setTimeout(updateHorizontalOffset, MENU_TRANSITION_MS)
+
+		const panelTimeoutId = setTimeout(updateHorizontalOffset, SECONDARY_PANEL_TRANSITION_MS)
+
 		window.addEventListener("resize", updateHorizontalOffset)
 
 		return () => {
 			cancelAnimationFrame(frameId)
-			window.clearTimeout(menuTimeoutId)
-			window.clearTimeout(panelTimeoutId)
+			clearTimeout(menuTimeoutId)
+			clearTimeout(panelTimeoutId)
 			window.removeEventListener("resize", updateHorizontalOffset)
 		}
 	}, [shouldRenderMenu, selectedCategory, secondaryElementOptions])
@@ -223,6 +224,15 @@ function ElementOptionsList({ hasSearch, elementOptions = [], onSelectOption, se
 			observer.disconnect()
 		}
 	}, [])
+
+	function getVisibleMeaningsText(element) {
+		return element?.meanings?.slice(0, 3).join("; ")
+	}
+
+	function getMeaningsTitle(element) {
+		return element?.meanings?.join("; ")
+	}
+
 	return (
 		<>
 			{hasSearch && (
@@ -241,14 +251,22 @@ function ElementOptionsList({ hasSearch, elementOptions = [], onSelectOption, se
 					<button
 						type="button"
 						key={index}
-						className={
-							selectedCategory === element?.text
-								? "selectedElementOptionsMenuButton"
-								: "elementOptionsMenuButton"
-						}
+						className={`elementOptionsMenuButton ${
+							selectedCategory === element?.text && "selectedElementOptionsMenuButton"
+						}`}
 						onClick={() => onSelectOption(element)}
+						title={getMeaningsTitle(element)}
 					>
-						{element?.text}
+						<div className="elementOptionsMenuButtonText">
+							{element?.text}
+							{element.textKana && ` (${element.textKana})`}
+						</div>
+
+						{element?.meanings?.length > 0 && (
+							<span className="elementOptionsMenuButtonMeanings">
+								{getVisibleMeaningsText(element)}
+							</span>
+						)}
 					</button>
 				))}
 				<div ref={sentinelRef} style={{ height: 1 }} />
