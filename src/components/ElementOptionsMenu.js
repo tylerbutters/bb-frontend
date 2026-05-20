@@ -7,7 +7,35 @@ const MENU_TRANSITION_MS = 160
 const MENU_OPEN_EVENT = "element-options-menu-open"
 const MENU_VIEWPORT_PADDING = 16
 const MENU_ANCHOR_GAP = 10
-const SECONDARY_PANEL_TRANSITION_MS = 320
+const MENU_PANEL_GAP = 8
+const MENU_PANEL_WIDTH = 300
+
+function clamp(value, min, max) {
+	if (max < min) return min
+	return Math.min(max, Math.max(min, value))
+}
+
+function getPanelWidth() {
+	if (typeof window === "undefined") return MENU_PANEL_WIDTH
+
+	const availableWidth = window.innerWidth - MENU_VIEWPORT_PADDING * 2
+	const maxPanelWidth = (availableWidth - MENU_PANEL_GAP) / 2
+
+	return Math.max(0, Math.min(MENU_PANEL_WIDTH, maxPanelWidth))
+}
+
+function getSecondaryPlacement(layout) {
+	return layout?.secondaryPlacement ?? "right"
+}
+
+function getMenuLeft(layout, secondaryPlacement) {
+	if (!layout) return 0
+	if (secondaryPlacement === "left") {
+		return layout.primaryLeft - layout.panelWidth - MENU_PANEL_GAP
+	}
+
+	return layout.primaryLeft
+}
 
 export default function ElementOptionsMenu({
 	anchorRef,
@@ -24,38 +52,63 @@ export default function ElementOptionsMenu({
 	const [shouldRenderMenu, setShouldRenderMenu] = useState(isModalOpen)
 	const [selectedCategory, setSelectedCategory] = useState()
 	const [secondaryElementOptions, setSecondaryElementOptions] = useState([])
-	const [horizontalOffset, setHorizontalOffset] = useState(0)
-	const [menuPosition, setMenuPosition] = useState(null)
+	const [menuLayout, setMenuLayout] = useState(null)
 
 	const closeMenu = useCallback(() => {
 		setIsModalOpen(false)
 	}, [setIsModalOpen])
 
-	const updateMenuPosition = useCallback(() => {
+	const updateMenuLayout = useCallback(() => {
 		const anchor = anchorRef?.current
 		if (!anchor) return
 
-		const rect = anchor.getBoundingClientRect()
-		const nextPosition = {
-			left: rect.left + rect.width / 2,
-			top: rect.top - MENU_ANCHOR_GAP,
+		const anchorRect = anchor.getBoundingClientRect()
+		const panelWidth = getPanelWidth()
+		const menuHeight = modalRef.current?.getBoundingClientRect().height || 0
+		const anchorCenter = anchorRect.left + anchorRect.width / 2
+		const naturalPrimaryLeft = anchorCenter - panelWidth / 2
+		const totalWidth = panelWidth * 2 + MENU_PANEL_GAP
+		const canRenderSecondaryOnRight =
+			naturalPrimaryLeft + totalWidth <= window.innerWidth - MENU_VIEWPORT_PADDING
+		const secondaryPlacement = canRenderSecondaryOnRight ? "right" : "left"
+		const primaryLeft =
+			secondaryPlacement === "right"
+				? clamp(
+						naturalPrimaryLeft,
+						MENU_VIEWPORT_PADDING,
+						window.innerWidth - MENU_VIEWPORT_PADDING - totalWidth,
+					)
+				: clamp(
+						naturalPrimaryLeft,
+						MENU_VIEWPORT_PADDING + panelWidth + MENU_PANEL_GAP,
+						window.innerWidth - MENU_VIEWPORT_PADDING - panelWidth,
+					)
+
+		const nextLayout = {
+			panelWidth,
+			primaryLeft,
+			secondaryPlacement,
+			top: anchorRect.top - MENU_ANCHOR_GAP - menuHeight,
 		}
 
-		setMenuPosition((currentPosition) => {
+		setMenuLayout((currentLayout) => {
 			if (
-				currentPosition &&
-				Math.abs(currentPosition.left - nextPosition.left) < 0.5 &&
-				Math.abs(currentPosition.top - nextPosition.top) < 0.5
+				currentLayout &&
+				Math.abs(currentLayout.primaryLeft - nextLayout.primaryLeft) < 0.5 &&
+				Math.abs(currentLayout.top - nextLayout.top) < 0.5 &&
+				Math.abs(currentLayout.panelWidth - nextLayout.panelWidth) < 0.5 &&
+				currentLayout.secondaryPlacement === nextLayout.secondaryPlacement
 			) {
-				return currentPosition
+				return currentLayout
 			}
 
-			return nextPosition
+			return nextLayout
 		})
 	}, [anchorRef])
 
 	useEffect(() => {
 		if (isModalOpen) {
+			setMenuLayout(null)
 			setShouldRenderMenu(true)
 			window.dispatchEvent(
 				new CustomEvent(MENU_OPEN_EVENT, {
@@ -68,7 +121,7 @@ export default function ElementOptionsMenu({
 		const timeout = setTimeout(() => {
 			setShouldRenderMenu(false)
 			setSelectedCategory(null)
-			setMenuPosition(null)
+			setMenuLayout(null)
 		}, MENU_TRANSITION_MS)
 
 		return () => clearTimeout(timeout)
@@ -97,55 +150,10 @@ export default function ElementOptionsMenu({
 	}, [anchorRef, closeMenu, isModalOpen])
 
 	useLayoutEffect(() => {
-		if (!shouldRenderMenu) return
+		if (!shouldRenderMenu || menuLayout) return
 
-		updateMenuPosition()
-		const frameId = requestAnimationFrame(updateMenuPosition)
-
-		window.addEventListener("resize", updateMenuPosition)
-		window.addEventListener("scroll", updateMenuPosition, true)
-
-		return () => {
-			cancelAnimationFrame(frameId)
-			window.removeEventListener("resize", updateMenuPosition)
-			window.removeEventListener("scroll", updateMenuPosition, true)
-		}
-	}, [shouldRenderMenu, updateMenuPosition])
-
-	useLayoutEffect(() => {
-		if (!shouldRenderMenu || !modalRef.current || !menuPosition) return
-
-		function updateHorizontalOffset() {
-			const rect = modalRef.current.getBoundingClientRect()
-			const baseLeft = menuPosition.left - rect.width / 2
-			const baseRight = menuPosition.left + rect.width / 2
-			let adjustment = 0
-
-			if (baseLeft < MENU_VIEWPORT_PADDING) {
-				adjustment = MENU_VIEWPORT_PADDING - baseLeft
-			} else if (baseRight > window.innerWidth - MENU_VIEWPORT_PADDING) {
-				adjustment = window.innerWidth - MENU_VIEWPORT_PADDING - baseRight
-			}
-
-			setHorizontalOffset(adjustment)
-		}
-
-		setHorizontalOffset(0)
-		const frameId = requestAnimationFrame(updateHorizontalOffset)
-
-		const menuTimeoutId = setTimeout(updateHorizontalOffset, MENU_TRANSITION_MS)
-
-		const panelTimeoutId = setTimeout(updateHorizontalOffset, SECONDARY_PANEL_TRANSITION_MS)
-
-		window.addEventListener("resize", updateHorizontalOffset)
-
-		return () => {
-			cancelAnimationFrame(frameId)
-			clearTimeout(menuTimeoutId)
-			clearTimeout(panelTimeoutId)
-			window.removeEventListener("resize", updateHorizontalOffset)
-		}
-	}, [menuPosition, shouldRenderMenu, selectedCategory, secondaryElementOptions])
+		updateMenuLayout()
+	}, [menuLayout, shouldRenderMenu, updateMenuLayout])
 
 	function handleSelectOption(selectedElement, categoryText) {
 		onSelect(
@@ -180,6 +188,29 @@ export default function ElementOptionsMenu({
 
 	if (!shouldRenderMenu) return null
 
+	const panelWidth = menuLayout?.panelWidth ?? getPanelWidth()
+	const secondaryPlacement = selectedCategory ? getSecondaryPlacement(menuLayout) : "right"
+	const menuLeft = getMenuLeft(menuLayout, secondaryPlacement)
+	const secondaryPanel = selectedCategory && (
+		<ElementOptionsPanel className="secondaryElementOptionsPanel">
+			<ElementOptionsList
+				hasSearch={true}
+				elementOptions={secondaryElementOptions}
+				onSelectOption={(selectedElement) => handleSelectOption(selectedElement, selectedCategory)}
+			/>
+		</ElementOptionsPanel>
+	)
+	const primaryPanel = (
+		<ElementOptionsPanel hasDelete={hasDelete} onDelete={handleDelete}>
+			<ElementOptionsList
+				hasSearch={hasSearch}
+				elementOptions={elementOptions}
+				selectedCategory={selectedCategory}
+				onSelectOption={handleSelectCategory}
+			/>
+		</ElementOptionsPanel>
+	)
+
 	const menu = (
 		<div
 			ref={modalRef}
@@ -187,31 +218,15 @@ export default function ElementOptionsMenu({
 				isModalOpen ? "elementOptionsMenuOpen" : "elementOptionsMenuClosing"
 			}`}
 			style={{
-				left: `${menuPosition?.left || 0}px`,
-				top: `${menuPosition?.top || 0}px`,
-				visibility: menuPosition ? undefined : "hidden",
-				"--menu-horizontal-offset": `${horizontalOffset}px`,
+				left: `${menuLeft}px`,
+				top: `${menuLayout?.top ?? 0}px`,
+				visibility: menuLayout ? undefined : "hidden",
+				"--element-options-panel-width": `${panelWidth}px`,
 			}}
 		>
-			{selectedCategory && (
-				<ElementOptionsPanel className="secondaryElementOptionsPanel">
-					<ElementOptionsList
-						hasSearch={true}
-						elementOptions={secondaryElementOptions}
-						onSelectOption={(selectedElement) =>
-							handleSelectOption(selectedElement, selectedCategory)
-						}
-					/>
-				</ElementOptionsPanel>
-			)}
-			<ElementOptionsPanel hasDelete={hasDelete} onDelete={handleDelete}>
-				<ElementOptionsList
-					hasSearch={hasSearch}
-					elementOptions={elementOptions}
-					selectedCategory={selectedCategory}
-					onSelectOption={handleSelectCategory}
-				/>
-			</ElementOptionsPanel>
+			{secondaryPlacement === "left" && secondaryPanel}
+			{primaryPanel}
+			{secondaryPlacement === "right" && secondaryPanel}
 		</div>
 	)
 

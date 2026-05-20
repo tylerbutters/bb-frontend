@@ -95,30 +95,17 @@ body {
 .elementOptionsMenuContainer {
 	position: fixed;
 	display: flex;
-	flex-direction: row-reverse;
+	flex-direction: row;
 	align-items: flex-end;
 	justify-self: center;
 	gap: 8px;
 	z-index: 2000;
 	max-width: calc(100vw - 32px);
 	filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.35));
-	transform-origin: bottom center;
-	--menu-horizontal-offset: 0px;
 	--element-options-panel-width: min(300px, calc(100vw - 32px));
-
-	--menu-y-offset: 0px;
-	--menu-scale: 1;
-	--menu-opacity: 1;
-	opacity: var(--menu-opacity);
-	transform: translate(
-			calc(-50% + var(--menu-horizontal-offset)),
-			calc(-100% + var(--menu-y-offset))
-		)
-		scale(var(--menu-scale));
-	will-change: opacity, transform;
-	transition:
-		transform 160ms ease,
-		opacity 160ms ease;
+	opacity: 1;
+	will-change: opacity;
+	transition: opacity 160ms ease;
 }
 
 .elementOptionsMenuOpen {
@@ -130,33 +117,27 @@ body {
 	animation: elementOptionsMenuOut 160ms ease-in-out both;
 }
 
-.elementOptionsMenuContainer:has(.secondaryElementOptionsPanel) {
-	--element-options-panel-width: min(300px, calc((100vw - 40px) / 2));
-}
-
 @keyframes elementOptionsMenuIn {
 	from {
+		transform: scale(0.95);
 		opacity: 0;
-		transform: translate(calc(-50% + var(--menu-horizontal-offset)), calc(-100% + 8px))
-			scale(0.98);
 	}
 
 	to {
+		transform: scale(1);
 		opacity: 1;
-		transform: translate(calc(-50% + var(--menu-horizontal-offset)), -100%) scale(1);
 	}
 }
 
 @keyframes elementOptionsMenuOut {
 	from {
 		opacity: 1;
-		transform: translate(calc(-50% + var(--menu-horizontal-offset)), -100%) scale(1);
+		transform: scale(1);
 	}
 
 	to {
+		transform: scale(0.95);
 		opacity: 0;
-		transform: translate(calc(-50% + var(--menu-horizontal-offset)), calc(-100% + 8px))
-			scale(0.98);
 	}
 }
 
@@ -239,6 +220,7 @@ body {
 .elementListContainer {
 	display: flex;
 	flex-direction: column;
+	box-sizing: border-box;
 	width: var(--element-options-panel-width);
 	min-width: 0;
 	max-height: 320px;
@@ -250,21 +232,18 @@ body {
 }
 
 .secondaryElementOptionsPanel {
-	transform-origin: right center;
 	animation: secondaryElementOptionsPanelIn 300ms ease-in-out both;
 }
 
 @keyframes secondaryElementOptionsPanelIn {
 	from {
-		width: 0;
+		transform: scale(0.95);
 		opacity: 0;
-		transform: translateX(-10px) scale(0.98);
 	}
 
 	to {
-		width: var(--element-options-panel-width);
+		transform: scale(1);
 		opacity: 1;
-		transform: translateX(0) scale(1);
 	}
 }
 
