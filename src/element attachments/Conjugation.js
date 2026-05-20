@@ -8,6 +8,12 @@ import Verb from "../elements/Verb"
 import ConjugationEnding from "./ConjugationEnding"
 import Adjective from "../elements/Adjective"
 import Particle from "./Particle"
+import {
+	createConjugationFromData,
+	getGodanConjugationOptions,
+	initializeNestedElement,
+	isNestedElementSelection,
+} from "../grammar/conjugationOptions"
 
 export default function Conjugation({
 	parentConjugation,
@@ -28,139 +34,24 @@ export default function Conjugation({
 	)
 
 	function addParticle(selectedElement) {
+		updateCurrentConjugation({ middleParticle: selectedElement })
+	}
+
+	function updateCurrentConjugation(updates) {
 		updateConjugation({
 			...parentConjugation,
-			conjugation: { ...currentConjugation, middleParticle: selectedElement },
+			conjugation: {
+				...currentConjugation,
+				...updates,
+			},
 		})
 	}
 
-	function getGodanConjugationOptions() {
-		const godanMap = {
-			く: ["か", "き", "く", "け", "こ", "いて", "いた"],
-			ぐ: ["が", "ぎ", "ぐ", "げ", "ご", "いで", "いだ"],
-			す: ["さ", "し", "す", "せ", "そ", "して", "した"],
-			ぶ: ["ば", "び", "ぶ", "べ", "ぼ", "んで", "んで"],
-			む: ["ま", "み", "む", "め", "も", "んで", "んだ"],
-			ぬ: ["な", "に", "ぬ", "ね", "の", "いて", "いた"],
-			る: ["ら", "り", "る", "れ", "ろ", "って", "った"],
-			つ: ["た", "ち", "つ", "て", "と", "って", "った"],
-			う: ["わ", "い", "う", "え", "お", "って", "った"],
-		}
-
-		//find what category of godan it is
-		const endingToMatch =
-			parentConjugation.verbType === "godan-aru" ? "る" : parentConjugation.ending
-
-		const row = godanMap[endingToMatch]
-		if (!row) return null
-
-		const [B1, B2, B3, B4, B5, Bte, Bta] = row
-
-		const godanDefaults = {
-			B1: [{ text: "ない" }, { text: "れる" }, { text: "せる" }, { text: "ず" }],
-			B2: [{ text: "ます" }],
-			B4: [{ text: "ば" }, { text: "る" }, { text: "れ" }],
-			B5: [{ text: "う" }],
-		}
-
-		if (parentConjugation.verbType === "godan-aru") {
-			return [
-				{
-					text: B1,
-					list: godanDefaults.B1,
-				},
-				{
-					text: "い",
-					list: [...godanDefaults.B2, { text: "い" }],
-				},
-				{
-					text: B2,
-					list: [{ text: B2, conjugationType: "aux" }],
-				},
-				{
-					text: B3,
-					list: [{ text: B3 }],
-				},
-				{
-					text: B4,
-					list: godanDefaults.B4,
-				},
-				{
-					text: B5,
-					list: godanDefaults.B5,
-				},
-				{
-					text: Bte,
-					list: [{ text: Bte, conjugationType: "te" }],
-				},
-				{
-					text: Bta,
-					list: [{ text: Bta }],
-				},
-			]
-		} else if (parentConjugation.verbType === "godan-iku") {
-			return [
-				{
-					text: B1,
-					list: godanDefaults.B1,
-				},
-				{
-					text: B2,
-					list: [...godanDefaults.B2, { text: B2, conjugationType: "aux" }],
-				},
-				{
-					text: B3,
-					list: [{ text: B3 }],
-				},
-				{
-					text: B4,
-					list: godanDefaults.B4,
-				},
-				{
-					text: B5,
-					list: godanDefaults.B5,
-				},
-				{
-					text: "って",
-					list: [{ text: "って", conjugationType: "te" }],
-				},
-				{
-					text: "った",
-					list: [{ text: "った" }],
-				},
-			]
-		}
-
-		return [
-			{
-				text: B1,
-				list: godanDefaults.B1,
-			},
-			{
-				text: B2,
-				list: [...godanDefaults.B2, { text: B2, conjugationType: "aux" }],
-			},
-			{
-				text: B3,
-				list: [{ text: B3 }],
-			},
-			{
-				text: B4,
-				list: godanDefaults.B4,
-			},
-			{
-				text: B5,
-				list: godanDefaults.B5,
-			},
-			{
-				text: Bte,
-				list: [{ text: Bte, conjugationType: "te" }],
-			},
-			{
-				text: Bta,
-				list: [{ text: Bta }],
-			},
-		]
+	function clearCurrentConjugation() {
+		updateConjugation({
+			...parentConjugation,
+			conjugation: {},
+		})
 	}
 
 	function getConjugationOptions() {
@@ -185,7 +76,7 @@ export default function Conjugation({
 						conjugationOptions = conjugations["kureruDefault"]?.conjugationOptions || []
 						break
 					default:
-						conjugationOptions = getGodanConjugationOptions()
+						conjugationOptions = getGodanConjugationOptions(parentConjugation)
 						break
 				}
 				break
@@ -200,46 +91,10 @@ export default function Conjugation({
 		return conjugationOptions || []
 	}
 
-	function initializeNestedElement(element) {
-		if (element.elementType === "verb" && !element.conjugation) {
-			return {
-				...element,
-				conjugation: {
-					stem: element?.ending,
-				},
-			}
-		}
-
-		if (
-			element.elementType === "adjective" &&
-			element.adjectiveType === "i-type" &&
-			!element.conjugation
-		) {
-			return {
-				...element,
-				conjugation: {
-					stem: element?.ending,
-				},
-			}
-		}
-
-		return element
-	}
-
 	function getConjugationUpdate(selectedConjugation) {
-		//its a verb or adj　or desu
-		if (
-			selectedConjugation.elementType === "verb" ||
-			selectedConjugation.elementType === "adjective" ||
-			selectedConjugation.elementType === "desu"
-		) {
-			//append to end of current conjugation
-			updateConjugation({
-				...parentConjugation,
-				conjugation: {
-					...currentConjugation,
-					conjugation: initializeNestedElement(selectedConjugation),
-				},
+		if (isNestedElementSelection(selectedConjugation)) {
+			updateCurrentConjugation({
+				conjugation: initializeNestedElement(selectedConjugation),
 			})
 
 			return
@@ -279,12 +134,7 @@ export default function Conjugation({
 				updateConjugation({
 					...parentConjugation,
 					ending: selectedCategory.text,
-					conjugation: {
-						conjugationType: conjugationData.conjugationType,
-						stem: conjugationData.stem || "",
-						ending: conjugationData.ending || "",
-						conjugation: {},
-					},
+					conjugation: createConjugationFromData(conjugationData),
 				})
 			}
 		} else {
@@ -300,12 +150,7 @@ export default function Conjugation({
 			// //if its an te verb or b2
 			updateConjugation({
 				...parentConjugation,
-				conjugation: {
-					conjugationType: conjugationData.conjugationType,
-					stem: conjugationData.stem || "",
-					ending: conjugationData.ending || "",
-					conjugation: {},
-				},
+				conjugation: createConjugationFromData(conjugationData),
 			})
 		}
 	}
@@ -320,13 +165,7 @@ export default function Conjugation({
 					mouse={mouse}
 					parentConjugation={currentConjugation}
 					updateConjugation={(updatedChild) =>
-						updateConjugation({
-							...parentConjugation,
-							conjugation: {
-								...currentConjugation,
-								...updatedChild,
-							},
-						})
+						updateCurrentConjugation(updatedChild)
 					}
 				/>
 			)
@@ -360,12 +199,8 @@ export default function Conjugation({
 					color={color}
 					conjugation={currentConjugation}
 					updateConjugation={(nextConjugation) => {
-						updateConjugation({
-							...parentConjugation,
-							conjugation: {
-								...currentConjugation,
-								conjugation: nextConjugation,
-							},
+						updateCurrentConjugation({
+							conjugation: nextConjugation,
 						})
 					}}
 				/>
@@ -383,21 +218,8 @@ export default function Conjugation({
 					element={currentConjugation}
 					elementOptions={auxiliaries}
 					secondaryColor={color}
-					updateElement={(updatedChild) =>
-						updateConjugation({
-							...parentConjugation,
-							conjugation: {
-								...currentConjugation,
-								...updatedChild,
-							},
-						})
-					}
-					deleteElement={() =>
-						updateConjugation({
-							...parentConjugation,
-							conjugation: {},
-						})
-					}
+					updateElement={(updatedChild) => updateCurrentConjugation(updatedChild)}
+					deleteElement={clearCurrentConjugation}
 					mouse={mouse}
 				/>
 			</div>
@@ -410,21 +232,8 @@ export default function Conjugation({
 					element={currentConjugation}
 					elementOptions={auxiliaries}
 					secondaryColor={color}
-					updateElement={(updatedChild) =>
-						updateConjugation({
-							...parentConjugation,
-							conjugation: {
-								...currentConjugation,
-								...updatedChild,
-							},
-						})
-					}
-					deleteElement={() =>
-						updateConjugation({
-							...parentConjugation,
-							conjugation: {},
-						})
-					}
+					updateElement={(updatedChild) => updateCurrentConjugation(updatedChild)}
+					deleteElement={clearCurrentConjugation}
 					mouse={mouse}
 				/>
 			</div>
@@ -455,12 +264,8 @@ export default function Conjugation({
 						elementOptions={particleOptions}
 						updateElement={addParticle}
 						deleteElement={() =>
-							updateConjugation({
-								...parentConjugation,
-								conjugation: {
-									...currentConjugation,
-									middleParticle: null,
-								},
+							updateCurrentConjugation({
+								middleParticle: null,
 							})
 						}
 						mouse={mouse}
