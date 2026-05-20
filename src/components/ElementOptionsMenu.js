@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import "../App.css"
 
 const MENU_TRANSITION_MS = 160
+const MENU_OPEN_EVENT = "element-options-menu-open"
 
 export default function ElementOptionsMenu({
 	isModalOpen,
@@ -13,6 +14,7 @@ export default function ElementOptionsMenu({
 	hasDelete,
 }) {
 	const modalRef = useRef(null)
+	const menuIdRef = useRef(Symbol("element-options-menu"))
 	const [shouldRenderMenu, setShouldRenderMenu] = useState(isModalOpen)
 	const [selectedCategory, setSelectedCategory] = useState()
 	const [secondaryElementOptions, setSecondaryElementOptions] = useState([])
@@ -24,6 +26,11 @@ export default function ElementOptionsMenu({
 	useEffect(() => {
 		if (isModalOpen) {
 			setShouldRenderMenu(true)
+			window.dispatchEvent(
+				new CustomEvent(MENU_OPEN_EVENT, {
+					detail: menuIdRef.current,
+				}),
+			)
 			return
 		}
 
@@ -34,6 +41,16 @@ export default function ElementOptionsMenu({
 
 		return () => clearTimeout(timeout)
 	}, [isModalOpen])
+
+	useEffect(() => {
+		function handleOtherMenuOpen(e) {
+			if (e.detail === menuIdRef.current) return
+			closeMenu()
+		}
+
+		window.addEventListener(MENU_OPEN_EVENT, handleOtherMenuOpen)
+		return () => window.removeEventListener(MENU_OPEN_EVENT, handleOtherMenuOpen)
+	}, [closeMenu])
 
 	useEffect(() => {
 		function handleClickOutside(e) {
