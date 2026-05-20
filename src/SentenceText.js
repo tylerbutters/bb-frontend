@@ -1,10 +1,43 @@
-export default function SentenceText({ addedElements }) {
-	const sentenceString = elementsToString(addedElements || [])
+import { useEffect, useState } from "react"
 
-	return <div className="sentenceText">{sentenceString}</div>
+export default function SentenceText({ addedElements }) {
+	const [sentenceString, setSentenceString] = useState()
+	const [translation, setTranslation] = useState()
+
+	useEffect(() => {
+		const result = elementsToString(addedElements || [])
+		setSentenceString(result)
+		handleTranslate(result)
+	}, [addedElements])
+
+	async function handleTranslate(sentence) {
+		const result = await translateJapanese(sentence)
+		setTranslation(result)
+	}
+
+	return (
+		<div className="sentenceTextContainer">
+			<div> {sentenceString}</div>
+			<div> {translation}</div>
+		</div>
+	)
 }
 
-export function elementsToString(addedElements = []) {
+async function translateJapanese(text) {
+	try {
+		const response = await fetch(
+			"https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=en&dt=t&q=" +
+				encodeURIComponent(text),
+		)
+		const data = await response.json()
+		return data[0].map((item) => item[0]).join("")
+	} catch (error) {
+		console.log(error)
+		return null
+	}
+}
+
+function elementsToString(addedElements = []) {
 	return addedElements.map(elementToString).join("")
 }
 

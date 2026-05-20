@@ -285,6 +285,11 @@ export const conjugations = {
 	したり: {
 		stem: "したり",
 	},
+	します: {
+		stem: "しま",
+		ending: "す",
+		conjugationOptions: masuOptions,
+	},
 	すれば: {
 		stem: "すれば",
 	},
@@ -425,6 +430,9 @@ export const conjugations = {
 	iAdjDefault: {
 		stem: "い",
 		conjugationOptions: iadjOptions,
+	},
+	い: {
+		stem: "い",
 	},
 	く: {
 		stem: "く",
