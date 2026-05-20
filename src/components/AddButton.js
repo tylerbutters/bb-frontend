@@ -38,7 +38,7 @@ export default function AddButton({ locked, mouse, elementOptions, addElement, h
 				className={`addButton ${isModalOpen ? "addButtonOpen" : ""}`}
 				onClick={() => setIsModalOpen((prev) => !prev)}
 				style={{
-					width: isVisible ? 50 : 0,
+					width: isVisible ? 45 : 0,
 					opacity: isVisible ? 1 : 0,
 					borderWidth: isVisible ? 1 : 0,
 					margin: isVisible ? "0 2.5px" : 0,

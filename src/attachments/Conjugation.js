@@ -21,7 +21,7 @@ export default function Conjugation({
 	deleteElement,
 	mouse,
 	color,
-	adjColor,
+	allColors,
 }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const conjugations = useGrammarStore((state) => state.conjugations)
@@ -102,11 +102,17 @@ export default function Conjugation({
 	}
 
 	function getConjugationUpdate(selectedConjugation) {
-		if (isNestedElementSelection(selectedConjugation)) {
+		//changing element
+		if (currentConjugation.elementType && selectedConjugation.elementType) {
+			updateCurrentConjugation(initializeNestedElement(selectedConjugation))
+			return
+		}
+
+		//adding element
+		if (selectedConjugation.elementType) {
 			updateCurrentConjugation({
 				conjugation: initializeNestedElement(selectedConjugation),
 			})
-
 			return
 		}
 
@@ -172,7 +178,7 @@ export default function Conjugation({
 			return (
 				<Conjugation
 					color={color}
-					adjColor={adjColor}
+					allColors={allColors}
 					mouse={mouse}
 					parentConjugation={currentConjugation}
 					updateConjugation={(updatedChild) => updateCurrentConjugation(updatedChild)}
@@ -226,7 +232,9 @@ export default function Conjugation({
 				<ElementOptionsMenu
 					isModalOpen={isModalOpen}
 					setIsModalOpen={setIsModalOpen}
-					elementOptions={auxiliaries}
+					elementOptions={
+						parentConjugation.conjugationType === "aux" ? auxiliaries : dictionary.verbs
+					}
 					onSelect={getConjugationUpdate}
 					deleteElement={clearCurrentConjugation}
 					hasDelete={true}
@@ -234,12 +242,12 @@ export default function Conjugation({
 				/>
 				<div
 					className="baseInsideElement conjugationElement"
-					style={{ backgroundColor: color }}
+					style={{ backgroundColor: allColors.verb.primary }}
 					onClick={openConjugationMenu}
 				>
 					<Verb
 						element={currentConjugation}
-						secondaryColor={color}
+						allColors={allColors}
 						updateElement={(updatedChild) => updateCurrentConjugation(updatedChild)}
 						deleteElement={clearCurrentConjugation}
 						mouse={mouse}
@@ -261,12 +269,12 @@ export default function Conjugation({
 				/>
 				<div
 					className="baseInsideElement conjugationElement"
-					style={{ backgroundColor: adjColor }}
+					style={{ backgroundColor: allColors.adjective.primary }}
 					onClick={openConjugationMenu}
 				>
 					<Adjective
 						element={currentConjugation}
-						secondaryColor={adjColor}
+						allColors={allColors}
 						updateElement={(updatedChild) => updateCurrentConjugation(updatedChild)}
 						deleteElement={clearCurrentConjugation}
 						mouse={mouse}
@@ -286,7 +294,7 @@ export default function Conjugation({
 			/>
 			<div
 				className="baseInsideElement conjugationElement"
-				style={{ backgroundColor: color }}
+				style={{ backgroundColor: color, borderColor: isModalOpen && "white" }}
 				onClick={openConjugationMenu}
 			>
 				<div className="insideElementText">

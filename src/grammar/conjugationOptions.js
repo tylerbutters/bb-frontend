@@ -102,10 +102,6 @@ export function initializeNestedElement(element) {
 	return element
 }
 
-export function isNestedElementSelection(selectedConjugation) {
-	return ["verb", "adjective", "desu"].includes(selectedConjugation.elementType)
-}
-
 export function createConjugationFromData(conjugationData) {
 	return {
 		conjugationType: conjugationData.conjugationType,

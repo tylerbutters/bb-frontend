@@ -137,7 +137,7 @@ function ElementOptionsList({ hasSearch, elementOptions = [], onSelectOption, se
 	const filteredOptions = useMemo(() => {
 		if (!searchText) return elementOptions
 		return elementOptions.filter(
-			(e) => e?.text.startsWith(searchText) || e?.textKana.startsWith(searchText),
+			(e) => e?.text?.startsWith(searchText) || e?.textKana?.startsWith(searchText),
 		)
 	}, [elementOptions, searchText])
 
@@ -183,14 +183,16 @@ function ElementOptionsList({ hasSearch, elementOptions = [], onSelectOption, se
 					/>
 				</div>
 			)}
-			<div className="elementListItemContainer">
+			<div className="elementListItemContainer" style={{ height: hasSearch && 300 }}>
 				{visibleOptions.map((element, index) => (
 					<button
 						type="button"
 						key={index}
-						className={`elementOptionsMenuButton ${
-							selectedCategory === element?.text ? "selectedElementOptionsMenuButton" : ""
-						}`}
+						className={
+							selectedCategory === element?.text
+								? "selectedElementOptionsMenuButton"
+								: "elementOptionsMenuButton"
+						}
 						onClick={() => onSelectOption(element)}
 					>
 						{element?.text}

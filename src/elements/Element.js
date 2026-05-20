@@ -11,6 +11,37 @@ import Adverb from "./Adverb"
 import Desu from "./Desu"
 import Counter from "./Counter"
 
+const ELEMENT_COLORS = {
+	noun: {
+		primary: "rgba(255, 138, 138, 0.72)",
+		secondary: "rgba(255, 138, 138, 0.24)",
+	},
+	adjective: {
+		primary: "rgba(255, 184, 112, 0.74)",
+		secondary: "rgba(255, 184, 112, 0.24)",
+	},
+	verb: {
+		primary: "rgba(138, 180, 255, 0.74)",
+		secondary: "rgba(138, 180, 255, 0.24)",
+	},
+	adverb: {
+		primary: "rgba(139, 199, 149, 0.72)",
+		secondary: "rgba(139, 199, 149, 0.24)",
+	},
+	counter: {
+		primary: "rgba(207, 143, 255, 0.72)",
+		secondary: "rgba(207, 143, 255, 0.24)",
+	},
+	desu: {
+		primary: "rgba(130, 204, 214, 0.72)",
+		secondary: "rgba(130, 204, 214, 0.24)",
+	},
+	default: {
+		primary: "rgba(255, 255, 255, 0.18)",
+		secondary: "rgba(255, 255, 255, 0.12)",
+	},
+}
+
 export default function Element({ element, mouse, updateElement, deleteElement, defaultElements }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [isClosing, setIsClosing] = useState(false)
@@ -60,25 +91,6 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 		updateElement({ ...element, particle: selectedElement })
 	}
 
-	function getColor(elementType) {
-		switch (elementType) {
-			case "noun":
-				return { primary: "rgba(255, 138, 138, 0.72)", secondary: "rgba(255, 138, 138, 0.24)" }
-			case "adjective":
-				return { primary: "rgba(255, 184, 112, 0.74)", secondary: "rgba(255, 184, 112, 0.24)" }
-			case "verb":
-				return { primary: "rgba(138, 180, 255, 0.74)", secondary: "rgba(138, 180, 255, 0.24)" }
-			case "adverb":
-				return { primary: "rgba(139, 199, 149, 0.72)", secondary: "rgba(139, 199, 149, 0.24)" }
-			case "counter":
-				return { primary: "rgba(207, 143, 255, 0.72)", secondary: "rgba(207, 143, 255, 0.24)" }
-			case "desu":
-				return { primary: "rgba(130, 204, 214, 0.72)", secondary: "rgba(130, 204, 214, 0.24)" }
-			default:
-				return { primary: "rgba(255, 255, 255, 0.18)", secondary: "rgba(255, 255, 255, 0.12)" }
-		}
-	}
-
 	function renderElement() {
 		const props = {
 			element,
@@ -86,7 +98,7 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 			deleteElement: () => setIsClosing(true),
 			mouse,
 			elementOptions: defaultElements,
-			secondaryColor: getColor(element.elementType).secondary,
+			allColors: ELEMENT_COLORS,
 		}
 
 		switch (element?.elementType) {
@@ -95,7 +107,7 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 			case "adjective":
 				return <Adjective {...props} />
 			case "verb":
-				return <Verb {...props} adjColor={getColor("adjective").secondary} />
+				return <Verb {...props} />
 			case "punctuation":
 				return <Punctuation {...props} />
 			case "adverb":
@@ -128,7 +140,10 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 			<Resize element={element} isClosing={isClosing} onCloseComplete={deleteElement}>
 				<div
 					className="elementContainer"
-					style={{ backgroundColor: getColor(element.elementType).primary }}
+					style={{
+						backgroundColor: ELEMENT_COLORS[element.elementType].primary,
+						borderColor: isModalOpen && "white",
+					}}
 					onClick={openMenuFromElementContainer}
 				>
 					<Fragment key={getElementKey()}>{renderElement()}</Fragment>

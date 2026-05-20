@@ -1,13 +1,6 @@
 import Conjugation from "../attachments/Conjugation"
 
-export default function Verb({
-	element,
-	updateElement,
-	deleteElement,
-	mouse,
-	secondaryColor,
-	adjColor,
-}) {
+export default function Verb({ element, updateElement, deleteElement, mouse, allColors }) {
 	const hasConjugation = element.conjugation && Object.keys(element.conjugation).length > 0
 
 	return (
@@ -15,12 +8,12 @@ export default function Verb({
 			<div className="elementText">{element.stem}</div>
 			{hasConjugation && (
 				<Conjugation
-					color={secondaryColor}
+					color={allColors.verb.secondary}
+					allColors={allColors}
 					parentConjugation={element}
 					updateConjugation={updateElement}
 					deleteElement={deleteElement}
 					mouse={mouse}
-					adjColor={adjColor}
 				/>
 			)}
 		</div>
