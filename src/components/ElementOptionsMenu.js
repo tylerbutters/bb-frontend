@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import "../App.css"
 
+const MENU_TRANSITION_MS = 160
+
 export default function ElementOptionsMenu({
 	isModalOpen,
 	setIsModalOpen,
@@ -11,13 +13,27 @@ export default function ElementOptionsMenu({
 	hasDelete,
 }) {
 	const modalRef = useRef(null)
+	const [shouldRenderMenu, setShouldRenderMenu] = useState(isModalOpen)
 	const [selectedCategory, setSelectedCategory] = useState()
 	const [secondaryElementOptions, setSecondaryElementOptions] = useState([])
 
 	const closeMenu = useCallback(() => {
 		setIsModalOpen(false)
-		setSelectedCategory(null)
 	}, [setIsModalOpen])
+
+	useEffect(() => {
+		if (isModalOpen) {
+			setShouldRenderMenu(true)
+			return
+		}
+
+		const timeout = setTimeout(() => {
+			setShouldRenderMenu(false)
+			setSelectedCategory(null)
+		}, MENU_TRANSITION_MS)
+
+		return () => clearTimeout(timeout)
+	}, [isModalOpen])
 
 	useEffect(() => {
 		function handleClickOutside(e) {
@@ -61,12 +77,17 @@ export default function ElementOptionsMenu({
 		deleteElement()
 	}
 
-	if (!isModalOpen) return null
+	if (!shouldRenderMenu) return null
 
 	return (
-		<div ref={modalRef} className="elementOptionsMenuContainer">
+		<div
+			ref={modalRef}
+			className={`elementOptionsMenuContainer ${
+				isModalOpen ? "elementOptionsMenuOpen" : "elementOptionsMenuClosing"
+			}`}
+		>
 			{selectedCategory && (
-				<ElementOptionsPanel>
+				<ElementOptionsPanel className="secondaryElementOptionsPanel">
 					<ElementOptionsList
 						hasSearch={true}
 						elementOptions={secondaryElementOptions}
@@ -90,9 +111,9 @@ export default function ElementOptionsMenu({
 
 const PAGE_SIZE = 50
 
-function ElementOptionsPanel({ children, hasDelete, onDelete }) {
+function ElementOptionsPanel({ children, hasDelete, onDelete, className = "" }) {
 	return (
-		<div className="elementListContainer">
+		<div className={`elementListContainer ${className}`}>
 			{children}
 			{hasDelete && (
 				<div className="deleteElementButtonContainer">
@@ -164,17 +185,16 @@ function ElementOptionsList({ hasSearch, elementOptions = [], onSelectOption, se
 			)}
 			<div className="elementListItemContainer">
 				{visibleOptions.map((element, index) => (
-					<div
+					<button
+						type="button"
 						key={index}
-						className="elementOptionsMenuButton"
-						style={{
-							backgroundColor: selectedCategory === element?.text ? "black" : undefined,
-							color: selectedCategory === element?.text ? "white" : undefined,
-						}}
+						className={`elementOptionsMenuButton ${
+							selectedCategory === element?.text ? "selectedElementOptionsMenuButton" : ""
+						}`}
 						onClick={() => onSelectOption(element)}
 					>
 						{element?.text}
-					</div>
+					</button>
 				))}
 				<div ref={sentinelRef} style={{ height: 1 }} />
 			</div>
