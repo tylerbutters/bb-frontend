@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import "../App.css"
 
 const MENU_TRANSITION_MS = 160
 const MENU_OPEN_EVENT = "element-options-menu-open"
+const MENU_VIEWPORT_PADDING = 16
+const SECONDARY_PANEL_TRANSITION_MS = 320
 
 export default function ElementOptionsMenu({
 	isModalOpen,
@@ -18,6 +20,7 @@ export default function ElementOptionsMenu({
 	const [shouldRenderMenu, setShouldRenderMenu] = useState(isModalOpen)
 	const [selectedCategory, setSelectedCategory] = useState()
 	const [secondaryElementOptions, setSecondaryElementOptions] = useState([])
+	const [horizontalOffset, setHorizontalOffset] = useState(0)
 
 	const closeMenu = useCallback(() => {
 		setIsModalOpen(false)
@@ -63,6 +66,38 @@ export default function ElementOptionsMenu({
 		return () => document.removeEventListener("mousedown", handleClickOutside)
 	}, [closeMenu, isModalOpen])
 
+	useLayoutEffect(() => {
+		if (!shouldRenderMenu || !modalRef.current) return
+
+		function updateHorizontalOffset() {
+			const rect = modalRef.current.getBoundingClientRect()
+			let adjustment = 0
+
+			if (rect.left < MENU_VIEWPORT_PADDING) {
+				adjustment = MENU_VIEWPORT_PADDING - rect.left
+			} else if (rect.right > window.innerWidth - MENU_VIEWPORT_PADDING) {
+				adjustment = window.innerWidth - MENU_VIEWPORT_PADDING - rect.right
+			}
+
+			if (Math.abs(adjustment) < 0.5) return
+			console.log("yes")
+			setHorizontalOffset((currentOffset) => currentOffset + adjustment)
+		}
+
+		setHorizontalOffset(0)
+		const frameId = requestAnimationFrame(updateHorizontalOffset)
+		const menuTimeoutId = window.setTimeout(updateHorizontalOffset, MENU_TRANSITION_MS)
+		const panelTimeoutId = window.setTimeout(updateHorizontalOffset, SECONDARY_PANEL_TRANSITION_MS)
+		window.addEventListener("resize", updateHorizontalOffset)
+
+		return () => {
+			cancelAnimationFrame(frameId)
+			window.clearTimeout(menuTimeoutId)
+			window.clearTimeout(panelTimeoutId)
+			window.removeEventListener("resize", updateHorizontalOffset)
+		}
+	}, [shouldRenderMenu, selectedCategory, secondaryElementOptions])
+
 	function handleSelectOption(selectedElement, categoryText) {
 		onSelect(
 			categoryText
@@ -102,6 +137,7 @@ export default function ElementOptionsMenu({
 			className={`elementOptionsMenuContainer ${
 				isModalOpen ? "elementOptionsMenuOpen" : "elementOptionsMenuClosing"
 			}`}
+			style={{ "--menu-horizontal-offset": `${horizontalOffset}px` }}
 		>
 			{selectedCategory && (
 				<ElementOptionsPanel className="secondaryElementOptionsPanel">
