@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useRef, useState } from "react"
+import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import "./App.css"
 import AddButton from "./components/AddButton"
 import Element from "./elements/Element"
@@ -11,11 +11,16 @@ export default function App() {
 	const elementDragRefs = useRef(new Map())
 	const dragStartRef = useRef(null)
 	const dragPreviewRef = useRef(null)
+	const sentenceElementsContainerRef = useRef(null)
+	const sentenceElementsScaleRef = useRef(1)
+	const scaleFrameRef = useRef(null)
+	const scaleTimeoutRef = useRef(null)
 	const isDraggingElement = useRef(false)
 	const suppressElementClick = useRef(false)
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const [addedElements, setAddedElements] = useState([])
 	const [dragState, setDragState] = useState(null)
+	const [sentenceElementsScale, setSentenceElementsScale] = useState(1)
 	const grammarStore = useGrammarStore((state) => state)
 	const defaultElements = [
 		{ text: "Nouns", list: dictionary.nouns },
@@ -35,6 +40,46 @@ export default function App() {
 		window.addEventListener("mousemove", handleMove)
 		return () => window.removeEventListener("mousemove", handleMove)
 	}, [])
+
+	useLayoutEffect(() => {
+		const container = sentenceElementsContainerRef.current
+		if (!container) return
+
+		function updateScale() {
+			const availableWidth = Math.max(window.innerWidth - 24, 1)
+			const contentWidth = Math.max(container.scrollWidth, 1)
+			const nextScale = Math.min(1, availableWidth / contentWidth)
+
+			if (Math.abs(sentenceElementsScaleRef.current - nextScale) < 0.005) return
+			sentenceElementsScaleRef.current = nextScale
+			setSentenceElementsScale(nextScale)
+		}
+
+		function scheduleScaleUpdate() {
+			if (scaleFrameRef.current) {
+				cancelAnimationFrame(scaleFrameRef.current)
+			}
+
+			scaleFrameRef.current = requestAnimationFrame(() => {
+				scaleFrameRef.current = null
+				updateScale()
+			})
+		}
+
+		scheduleScaleUpdate()
+		scaleTimeoutRef.current = window.setTimeout(scheduleScaleUpdate, 320)
+		window.addEventListener("resize", scheduleScaleUpdate)
+
+		return () => {
+			if (scaleFrameRef.current) {
+				cancelAnimationFrame(scaleFrameRef.current)
+			}
+			if (scaleTimeoutRef.current) {
+				window.clearTimeout(scaleTimeoutRef.current)
+			}
+			window.removeEventListener("resize", scheduleScaleUpdate)
+		}
+	}, [addedElements])
 
 	useEffect(() => {
 		let pressedElement
@@ -312,9 +357,11 @@ export default function App() {
 		<div className="app">
 			<SentenceText addedElements={addedElements} />
 			<div
+				ref={sentenceElementsContainerRef}
 				className={`sentenceElementsContainer ${
 					dragState ? "sentenceElementsDragging" : ""
 				}`}
+				style={{ transform: `scale(${sentenceElementsScale})` }}
 			>
 				{addedElements.map((element, index) => (
 					<Fragment key={element.sentenceElementId}>
