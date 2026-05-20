@@ -4,7 +4,7 @@ import ElementOptionsMenu from "../components/ElementOptionsMenu"
 import dictionary from "../jmdict/processed-jmdict.json"
 import AddButton from "../components/AddButton"
 
-export default function Suffix({ element, updateElement, deleteElement, mouse, color }) {
+export default function Suffix({ element, updateElement, deleteElement, mouse, color, disabled }) {
 	const [isModalOpen, setIsModalOpen] = useState()
 	const suffixOptions = dictionary.suffixes
 
@@ -32,6 +32,7 @@ export default function Suffix({ element, updateElement, deleteElement, mouse, c
 					elementOptions={suffixOptions}
 					addElement={updateElement}
 					hasSearch={true}
+					disabled={disabled}
 				/>
 			)}
 		</div>

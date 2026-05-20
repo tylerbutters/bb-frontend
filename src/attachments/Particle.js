@@ -3,7 +3,14 @@ import ElementOptionsMenu from "../components/ElementOptionsMenu"
 import "../App.css"
 import AddButton from "../components/AddButton"
 
-export default function Particle({ element, elementOptions, updateElement, deleteElement, mouse }) {
+export default function Particle({
+	element,
+	elementOptions,
+	updateElement,
+	deleteElement,
+	mouse,
+	disabled,
+}) {
 	const [isModalOpen, setIsModalOpen] = useState()
 
 	return (
@@ -29,6 +36,7 @@ export default function Particle({ element, elementOptions, updateElement, delet
 					elementOptions={elementOptions}
 					addElement={updateElement}
 					hasSearch={true}
+					disabled={disabled}
 				/>
 			)}
 		</div>

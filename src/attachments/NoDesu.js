@@ -4,7 +4,7 @@ import ElementOptionsMenu from "../components/ElementOptionsMenu"
 import useGrammarStore from "../store/useGrammarStore"
 import AddButton from "../components/AddButton"
 
-export default function NoDesu({ element, updateElement, deleteElement, mouse, color }) {
+export default function NoDesu({ element, updateElement, deleteElement, mouse, color, disabled }) {
 	const [isModalOpen, setIsModalOpen] = useState()
 	const noDesuOptions = useGrammarStore((state) => state.noDesu)
 
@@ -32,6 +32,7 @@ export default function NoDesu({ element, updateElement, deleteElement, mouse, c
 					elementOptions={noDesuOptions}
 					addElement={updateElement}
 					hasSearch={true}
+					disabled={disabled}
 				/>
 			)}
 		</div>

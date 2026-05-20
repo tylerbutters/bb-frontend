@@ -21,6 +21,7 @@ export default function Conjugation({
 	mouse,
 	color,
 	allColors,
+	addButtonsDisabled,
 }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const conjugations = useGrammarStore((state) => state.conjugations)
@@ -181,6 +182,7 @@ export default function Conjugation({
 					mouse={mouse}
 					parentConjugation={currentConjugation}
 					updateConjugation={(updatedChild) => updateCurrentConjugation(updatedChild)}
+					addButtonsDisabled={addButtonsDisabled}
 				/>
 			)
 		}
@@ -192,6 +194,7 @@ export default function Conjugation({
 					mouse={mouse}
 					hasSearch={true}
 					addElement={getConjugationUpdate}
+					disabled={addButtonsDisabled}
 				/>
 			)
 		}
@@ -203,6 +206,7 @@ export default function Conjugation({
 					mouse={mouse}
 					hasSearch={true}
 					addElement={getConjugationUpdate}
+					disabled={addButtonsDisabled}
 				/>
 			)
 		}
@@ -250,6 +254,7 @@ export default function Conjugation({
 						updateElement={(updatedChild) => updateCurrentConjugation(updatedChild)}
 						deleteElement={clearCurrentConjugation}
 						mouse={mouse}
+						addButtonsDisabled={addButtonsDisabled}
 					/>
 				</div>
 			</div>
@@ -277,6 +282,7 @@ export default function Conjugation({
 						updateElement={(updatedChild) => updateCurrentConjugation(updatedChild)}
 						deleteElement={clearCurrentConjugation}
 						mouse={mouse}
+						addButtonsDisabled={addButtonsDisabled}
 					/>
 				</div>
 			</div>
@@ -316,6 +322,7 @@ export default function Conjugation({
 							})
 						}
 						mouse={mouse}
+						disabled={addButtonsDisabled}
 					/>
 				)}
 				{renderNextConjugation()}

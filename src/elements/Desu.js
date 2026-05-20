@@ -1,7 +1,14 @@
 import Conjugation from "../attachments/Conjugation"
 import NoDesu from "../attachments/NoDesu"
 
-export default function Desu({ element, updateElement, deleteElement, mouse, allColors }) {
+export default function Desu({
+	element,
+	updateElement,
+	deleteElement,
+	mouse,
+	allColors,
+	addButtonsDisabled,
+}) {
 	function addNoDesu(newElement) {
 		updateElement({
 			...element,
@@ -18,6 +25,7 @@ export default function Desu({ element, updateElement, deleteElement, mouse, all
 					deleteElement={() => updateElement({ ...element, noDesu: null })}
 					mouse={mouse}
 					color={allColors.desu.secondary}
+					disabled={addButtonsDisabled}
 				/>
 				{element.conjugation && (
 					<Conjugation
@@ -27,6 +35,7 @@ export default function Desu({ element, updateElement, deleteElement, mouse, all
 						mouse={mouse}
 						color={allColors.desu.secondary}
 						hasDelete={true}
+						addButtonsDisabled={addButtonsDisabled}
 					/>
 				)}
 			</div>

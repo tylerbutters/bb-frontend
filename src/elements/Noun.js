@@ -2,7 +2,7 @@ import "../App.css"
 import Suffix from "../attachments/Suffix"
 import Prefix from "../attachments/Prefix"
 
-export default function Noun({ mouse, element, updateElement, allColors }) {
+export default function Noun({ mouse, element, updateElement, allColors, addButtonsDisabled }) {
 	function addElement(selectedElement) {
 		switch (selectedElement?.elementType) {
 			case "prefix":
@@ -24,6 +24,7 @@ export default function Noun({ mouse, element, updateElement, allColors }) {
 				deleteElement={() => updateElement({ ...element, prefix: null })}
 				mouse={mouse}
 				color={allColors.noun.secondary}
+				disabled={addButtonsDisabled}
 			/>
 			<div className="elementText">{element?.text}</div>
 			<Suffix
@@ -32,6 +33,7 @@ export default function Noun({ mouse, element, updateElement, allColors }) {
 				deleteElement={() => updateElement({ ...element, suffix: null })}
 				mouse={mouse}
 				color={allColors.noun.secondary}
+				disabled={addButtonsDisabled}
 			/>
 		</div>
 	)

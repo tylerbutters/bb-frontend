@@ -1,6 +1,13 @@
 import Conjugation from "../attachments/Conjugation"
 
-export default function Verb({ element, updateElement, deleteElement, mouse, allColors }) {
+export default function Verb({
+	element,
+	updateElement,
+	deleteElement,
+	mouse,
+	allColors,
+	addButtonsDisabled,
+}) {
 	const hasConjugation = element.conjugation && Object.keys(element.conjugation).length > 0
 
 	return (
@@ -14,6 +21,7 @@ export default function Verb({ element, updateElement, deleteElement, mouse, all
 					updateConjugation={updateElement}
 					deleteElement={deleteElement}
 					mouse={mouse}
+					addButtonsDisabled={addButtonsDisabled}
 				/>
 			)}
 		</div>

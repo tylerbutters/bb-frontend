@@ -1,7 +1,14 @@
 import { useEffect, useRef, useState } from "react"
 import ElementOptionsMenu from "./ElementOptionsMenu"
 
-export default function AddButton({ locked, mouse, elementOptions, addElement, hasSearch }) {
+export default function AddButton({
+	locked,
+	mouse,
+	elementOptions,
+	addElement,
+	hasSearch,
+	disabled = false,
+}) {
 	const EDGE_SIZE = 100
 	const ref = useRef(null)
 
@@ -9,6 +16,12 @@ export default function AddButton({ locked, mouse, elementOptions, addElement, h
 	const [isModalOpen, setIsModalOpen] = useState(false)
 
 	useEffect(() => {
+		if (disabled) {
+			setIsVisible(false)
+			setIsModalOpen(false)
+			return
+		}
+
 		const rect = ref.current?.getBoundingClientRect()
 		if (!rect) return
 
@@ -19,7 +32,7 @@ export default function AddButton({ locked, mouse, elementOptions, addElement, h
 			mouse.y <= rect.bottom + EDGE_SIZE
 
 		setIsVisible(near || isModalOpen || locked)
-	}, [mouse, isModalOpen, locked])
+	}, [disabled, mouse, isModalOpen, locked])
 
 	return (
 		<div className="modalContainer">

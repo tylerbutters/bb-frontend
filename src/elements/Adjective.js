@@ -1,7 +1,14 @@
 import "../App.css"
 import Conjugation from "../attachments/Conjugation"
 
-export default function Adjective({ element, updateElement, mouse, deleteElement, allColors }) {
+export default function Adjective({
+	element,
+	updateElement,
+	mouse,
+	deleteElement,
+	allColors,
+	addButtonsDisabled,
+}) {
 	return (
 		<div className="modalContainer">
 			<div className="baseElement">
@@ -15,6 +22,7 @@ export default function Adjective({ element, updateElement, mouse, deleteElement
 							mouse={mouse}
 							color={allColors.adjective.secondary}
 							allColors={allColors}
+							addButtonsDisabled={addButtonsDisabled}
 						/>
 					</>
 				)}

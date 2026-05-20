@@ -46,7 +46,14 @@ const ELEMENT_COLORS = {
 	},
 }
 
-export default function Element({ element, mouse, updateElement, deleteElement, defaultElements }) {
+export default function Element({
+	element,
+	mouse,
+	updateElement,
+	deleteElement,
+	defaultElements,
+	addButtonsDisabled = false,
+}) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [isClosing, setIsClosing] = useState(false)
 	const particles = useGrammarStore((state) => state.particles)
@@ -103,6 +110,7 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 			mouse,
 			elementOptions: defaultElements,
 			allColors: ELEMENT_COLORS,
+			addButtonsDisabled,
 		}
 
 		switch (element?.elementType) {
@@ -164,6 +172,7 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 								})
 							}
 							mouse={mouse}
+							disabled={addButtonsDisabled}
 						/>
 					)}
 				</div>
