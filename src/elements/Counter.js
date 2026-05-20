@@ -1,5 +1,6 @@
 import { useState } from "react"
 import "../App.css"
+import JapaneseText from "../components/JapaneseText"
 
 export default function Counter({ mouse, element, updateElement, allColors }) {
 	const [number, setNumber] = useState(element.number || "0")
@@ -38,7 +39,9 @@ export default function Counter({ mouse, element, updateElement, allColors }) {
 				onFocus={(e) => e.target.select()}
 				placeholder="0"
 			/>
-			<div className="elementText">{element?.text}</div>
+			<div className="elementText">
+				<JapaneseText text={element?.text} reading={element?.textKana} />
+			</div>
 		</div>
 	)
 }

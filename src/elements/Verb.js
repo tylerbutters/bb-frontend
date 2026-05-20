@@ -1,4 +1,5 @@
 import Conjugation from "../attachments/Conjugation"
+import JapaneseText from "../components/JapaneseText"
 
 export default function Verb({
 	element,
@@ -12,10 +13,8 @@ export default function Verb({
 
 	return (
 		<div className="baseElement">
-			<div>
-				{/* <div className="furiganaText">{element.stemKana}</div> */}
-
-				<div className="elementText">{element.stem}</div>
+			<div className="elementText">
+				<JapaneseText text={element.stem} reading={element.stemKana} />
 			</div>
 			{hasConjugation && (
 				<Conjugation

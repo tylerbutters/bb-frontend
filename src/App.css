@@ -22,6 +22,7 @@ body {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+	margin-top: 100px;
 }
 
 .sentenceText {
@@ -37,7 +38,7 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 80px;
+	height: 90px;
 	padding: 0px;
 	overflow: hidden;
 	border: 1px solid rgba(255, 255, 255, 0.2);
@@ -199,10 +200,6 @@ body {
 	white-space: nowrap;
 }
 
-.elementOptionsMenuButtonText {
-	color: inherit;
-}
-
 .elementOptionsMenuButtonMeanings {
 	margin-top: 3px;
 	color: rgba(255, 255, 255, 0.62);
@@ -354,13 +351,35 @@ body {
 	color: white;
 }
 
+.elementText .japaneseText,
+.baseInsideElement .japaneseText {
+	display: inline-block;
+	transform: translateY(-0.18em);
+}
+
+.elementText ruby,
+.baseInsideElement ruby {
+	line-height: 3;
+	ruby-position: over;
+}
+
+.elementText rt,
+.baseInsideElement rt {
+	font-size: 15px;
+	/* line-height: 100; */
+}
+
+.elementOptionsMenuButtonText rt {
+	font-size: 10px;
+}
+
 .elementContainer {
 	display: flex;
 	align-items: center;
 	gap: 5px;
-	height: 100px;
+	height: 110px;
 	margin: 0 2.5px;
-	padding: 0 12px;
+	padding: 0 5px;
 	border: 1px solid rgba(255, 255, 255, 0.18);
 	border-radius: 8px;
 	cursor: pointer;
@@ -384,14 +403,14 @@ body {
 	justify-content: center;
 	align-items: center;
 	min-width: 40px;
-	height: 80px;
+	height: 90px;
 	/* padding: 0 10px; */
 	border: 1px solid rgba(255, 255, 255, 0.14);
 	border-radius: 7px;
 	box-sizing: border-box;
 	backdrop-filter: blur(2px);
 	color: white;
-	font-size: 34px;
+	font-size: 40px;
 	line-height: 1;
 	cursor: pointer;
 	transition:

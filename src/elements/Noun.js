@@ -1,6 +1,7 @@
 import "../App.css"
 import Suffix from "../attachments/Suffix"
 import Prefix from "../attachments/Prefix"
+import JapaneseText from "../components/JapaneseText"
 
 export default function Noun({ mouse, element, updateElement, allColors, addButtonsDisabled }) {
 	function addElement(selectedElement) {
@@ -26,7 +27,9 @@ export default function Noun({ mouse, element, updateElement, allColors, addButt
 				color={allColors.noun.secondary}
 				disabled={addButtonsDisabled}
 			/>
-			<div className="elementText">{element?.text}</div>
+			<div className="elementText">
+				<JapaneseText text={element?.text} reading={element?.textKana} />
+			</div>
 			<Suffix
 				element={element.suffix}
 				updateElement={addElement}

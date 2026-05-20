@@ -3,6 +3,7 @@ import "../App.css"
 import ElementOptionsMenu from "../components/ElementOptionsMenu"
 import dictionary from "../jmdict/processed-jmdict.json"
 import AddButton from "../components/AddButton"
+import JapaneseText from "../components/JapaneseText"
 
 export default function Prefix({ element, updateElement, deleteElement, mouse, color, disabled }) {
 	const [isModalOpen, setIsModalOpen] = useState()
@@ -24,7 +25,7 @@ export default function Prefix({ element, updateElement, deleteElement, mouse, c
 					style={{ backgroundColor: color }}
 					onClick={() => setIsModalOpen(true)}
 				>
-					{element.text}
+					<JapaneseText text={element.text} reading={element.textKana} />
 				</div>
 			) : (
 				<AddButton

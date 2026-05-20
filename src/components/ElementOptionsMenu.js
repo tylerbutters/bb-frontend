@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import "../App.css"
+import JapaneseText from "./JapaneseText"
 
 const MENU_TRANSITION_MS = 160
 const MENU_OPEN_EVENT = "element-options-menu-open"
@@ -258,8 +259,7 @@ function ElementOptionsList({ hasSearch, elementOptions = [], onSelectOption, se
 						title={getMeaningsTitle(element)}
 					>
 						<div className="elementOptionsMenuButtonText">
-							{element?.text}
-							{element.textKana && ` (${element.textKana})`}
+							<JapaneseText text={element?.text} reading={element?.textKana} />
 						</div>
 
 						{element?.meanings?.length > 0 && (
