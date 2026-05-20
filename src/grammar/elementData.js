@@ -76,6 +76,25 @@ function formatAuxiliaryDefinitions() {
 
 export const auxiliaries = formatAuxiliaryDefinitions()
 
+export const punctuation = [
+	{
+		elementType: "punctuation",
+		text: "、",
+	},
+	{
+		elementType: "punctuation",
+		text: "？",
+	},
+	{
+		elementType: "punctuation",
+		text: "！",
+	},
+	{
+		elementType: "punctuation",
+		text: "。",
+	},
+]
+
 export const particles = [
 	{
 		text: "から",

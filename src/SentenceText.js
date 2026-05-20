@@ -76,6 +76,8 @@ function elementToString(element) {
 			return desuToString(element)
 		case "counter":
 			return counterToString(element)
+		case "punctuation":
+			return element?.text || ""
 		default:
 			return ""
 	}

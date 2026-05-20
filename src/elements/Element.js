@@ -36,6 +36,10 @@ const ELEMENT_COLORS = {
 		primary: "rgba(130, 204, 214, 0.72)",
 		secondary: "rgba(130, 204, 214, 0.24)",
 	},
+	punctuation: {
+		primary: "rgba(180, 184, 191, 0.72)",
+		secondary: "rgba(180, 184, 191, 0.24)",
+	},
 	default: {
 		primary: "rgba(255, 255, 255, 0.18)",
 		secondary: "rgba(255, 255, 255, 0.12)",
@@ -141,24 +145,27 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 				<div
 					className="elementContainer"
 					style={{
-						backgroundColor: ELEMENT_COLORS[element.elementType].primary,
+						backgroundColor:
+							ELEMENT_COLORS[element.elementType]?.primary || ELEMENT_COLORS.default.primary,
 						borderColor: isModalOpen && "white",
 					}}
 					onClick={openMenuFromElementContainer}
 				>
 					<Fragment key={getElementKey()}>{renderElement()}</Fragment>
-					<Particle
-						element={element.particle}
-						elementOptions={particleOptions}
-						updateElement={addParticle}
-						deleteElement={() =>
-							updateElement({
-								...element,
-								particle: null,
-							})
-						}
-						mouse={mouse}
-					/>
+					{(particleOptions.length > 0 || element.particle) && (
+						<Particle
+							element={element.particle}
+							elementOptions={particleOptions}
+							updateElement={addParticle}
+							deleteElement={() =>
+								updateElement({
+									...element,
+									particle: null,
+								})
+							}
+							mouse={mouse}
+						/>
+					)}
 				</div>
 			</Resize>
 		</div>

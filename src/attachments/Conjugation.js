@@ -12,7 +12,6 @@ import {
 	createConjugationFromData,
 	getGodanConjugationOptions,
 	initializeNestedElement,
-	isNestedElementSelection,
 } from "../grammar/conjugationOptions"
 
 export default function Conjugation({

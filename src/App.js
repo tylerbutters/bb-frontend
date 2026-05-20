@@ -4,17 +4,20 @@ import AddButton from "./components/AddButton"
 import Element from "./elements/Element"
 import SentenceText from "./SentenceText"
 import dictionary from "./jmdict/processed-jmdict.json"
+import useGrammarStore from "./store/useGrammarStore"
 
 export default function App() {
 	const nextElementId = useRef(0)
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const [addedElements, setAddedElements] = useState([])
+	const grammarStore = useGrammarStore((state) => state)
 	const defaultElements = [
 		{ text: "Nouns", list: dictionary.nouns },
 		{ text: "Verbs", list: dictionary.verbs },
 		{ text: "Adjectives", list: dictionary.adjectives },
 		{ text: "Adverbs", list: dictionary.adverbs },
 		{ text: "Counters", list: dictionary.counters },
+		{ text: "Punctuation", list: grammarStore.punctuation },
 		{ text: "だ", list: [{ elementType: "desu", text: "だ", stem: "だ" }] },
 	]
 
