@@ -367,7 +367,7 @@ export default function App() {
 			<div
 				ref={sentenceElementsContainerRef}
 				className={`sentenceElementsContainer ${dragState ? "sentenceElementsDragging" : ""}`}
-				style={{ zoom: sentenceElementsScale }}
+				style={{ transform: `scale(${sentenceElementsScale})` }}
 			>
 				{addedElements.map((element, index) => {
 					const isDraggingThis = dragState?.elementId === element.sentenceElementId

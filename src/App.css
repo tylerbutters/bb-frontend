@@ -23,6 +23,9 @@ body {
 	flex-direction: row;
 	align-items: center;
 	margin-top: 100px;
+	transform-origin: center center;
+	transition: transform 0.22s ease-in-out;
+	will-change: transform;
 }
 
 .sentenceText {
