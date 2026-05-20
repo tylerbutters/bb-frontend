@@ -183,7 +183,6 @@ export default function Element({
 
 function Resize({ element, isClosing, onCloseComplete, children }) {
 	const [width, setWidth] = useState(0)
-	const [isOverflowVisible, setIsOverflowVisible] = useState(false)
 	const contentRef = useRef(null)
 	const hasClosedRef = useRef(false)
 
@@ -193,6 +192,7 @@ function Resize({ element, isClosing, onCloseComplete, children }) {
 		const el = contentRef.current
 
 		const measure = () => {
+			if (isClosing) return
 			setWidth(el.scrollWidth)
 		}
 		measure()
@@ -203,12 +203,11 @@ function Resize({ element, isClosing, onCloseComplete, children }) {
 		observer.observe(el)
 
 		return () => observer.disconnect()
-	}, [element])
+	}, [element, isClosing])
 
 	useEffect(() => {
 		// alert(isClosing)
 		if (isClosing) {
-			setIsOverflowVisible(false)
 			requestAnimationFrame(() => {
 				setWidth(0)
 			})
@@ -219,8 +218,8 @@ function Resize({ element, isClosing, onCloseComplete, children }) {
 		<div
 			style={{
 				width,
-				overflow: isOverflowVisible ? "visible" : "hidden",
-				transition: "width 0.3s ease",
+				overflow: "hidden",
+				transition: isClosing ? "width 0.3s ease" : "none",
 			}}
 			onTransitionEnd={(e) => {
 				if (e.propertyName !== "width") return
@@ -230,8 +229,6 @@ function Resize({ element, isClosing, onCloseComplete, children }) {
 				if (isClosing) {
 					hasClosedRef.current = true
 					onCloseComplete()
-				} else {
-					setIsOverflowVisible(true)
 				}
 			}}
 		>
