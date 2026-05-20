@@ -32,18 +32,20 @@ export default function AddButton({ locked, mouse, elementOptions, addElement, h
 				hasSearch={hasSearch}
 			/>
 
-			<div
+			<button
+				type="button"
 				ref={ref}
-				className="addButton"
+				className={`addButton ${isModalOpen ? "addButtonOpen" : ""}`}
 				onClick={() => setIsModalOpen((prev) => !prev)}
 				style={{
-					backgroundColor: isModalOpen && "lightgrey",
 					width: isVisible ? 50 : 0,
-					// margin: isVisible ? "0 5px" : "0",
+					opacity: isVisible ? 1 : 0,
+					borderWidth: isVisible ? 1 : 0,
+					margin: isVisible ? "0 2.5px" : 0,
 				}}
 			>
 				+
-			</div>
+			</button>
 		</div>
 	)
 }

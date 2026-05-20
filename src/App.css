@@ -11,7 +11,6 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 5px;
 }
 
 .sentenceText {
@@ -28,12 +27,41 @@
 	justify-content: center;
 	align-items: center;
 	height: 80px;
+	padding: 0;
 	overflow: hidden;
-	border-radius: 10px;
-	color: grey;
-	font-size: 40px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.04);
+	color: rgba(255, 255, 255, 0.45);
+	font-family: inherit;
+	font-size: 34px;
+	line-height: 1;
 	cursor: pointer;
-	transition: width 0.3s ease;
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+	transition:
+		width 0.25s ease-in-out,
+		opacity 0.18s ease-in-out,
+		border-color 0.15s ease,
+		border-width 0.25s ease-in-out,
+		background-color 0.15s ease,
+		color 0.15s ease,
+		transform 0.15s ease;
+}
+
+.addButton:hover {
+	border-color: rgba(138, 180, 255, 0.35);
+	background: rgba(138, 180, 255, 0.1);
+	color: white;
+}
+
+.addButton:active {
+	transform: scale(0.96);
+}
+
+.addButtonOpen {
+	border-color: rgba(138, 180, 255, 0.55);
+	background: rgba(138, 180, 255, 0.18);
+	color: white;
 }
 
 /* ELEMENT OPTIONS MENU */
@@ -229,49 +257,106 @@
 /* ELEMENTS */
 
 .elementText {
+	padding: 0 2px;
 	font-size: 40px;
+	line-height: 1;
 	color: white;
+	text-shadow: 0 1px 8px rgba(0, 0, 0, 0.18);
 }
 
 .elementContainer {
 	display: flex;
 	align-items: center;
+	gap: 5px;
 	height: 100px;
-	padding: 0 10px;
-	border-radius: 10px;
+	margin: 0 2.5px;
+	padding: 0 12px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 8px;
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.14),
+		0 12px 24px rgba(0, 0, 0, 0.2);
 	cursor: pointer;
+	transition:
+		border-color 0.15s ease-in-out,
+		box-shadow 0.15s ease-in-out,
+		transform 0.15s ease-in-out;
+}
+
+.elementContainer:hover {
+	border-color: rgba(255, 255, 255, 0.28);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.18),
+		0 16px 28px rgba(0, 0, 0, 0.26);
 }
 
 .baseElement {
 	display: flex;
 	align-items: center;
-	gap: 5px;
+	gap: 4px;
 }
 
 .baseInsideElement {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	min-width: 40px;
 	height: 80px;
-	border-radius: 10px;
+	/* padding: 0 10px; */
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 7px;
+	box-sizing: border-box;
+	backdrop-filter: blur(2px);
 	color: white;
-	font-size: 40px;
+	font-size: 34px;
+	line-height: 1;
 	cursor: pointer;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+	text-shadow: 0 1px 8px rgba(0, 0, 0, 0.16);
+	transition:
+		border-color 0.15s ease-in-out,
+		background-color 0.15s ease-in-out,
+		transform 0.15s ease-in-out;
+}
+
+.baseInsideElement:hover {
+	border-color: rgba(255, 255, 255, 0.26);
+}
+
+.conjugationElement {
+	padding-right: 0;
+}
+
+.pressedElement {
+	transform: scale(0.98);
+}
+
+.insideElementText {
+	display: flex;
+	align-items: center;
+	white-space: nowrap;
+	padding: 0 5px;
 }
 
 .particleElement {
-	background: grey;
+	background: rgba(255, 119, 148, 0.24);
 }
 
 .counterInput {
-	border: none;
-	padding-left: 20px;
-	padding-right: 0;
 	align-items: center;
 	justify-self: center;
 	justify-content: center;
+	min-width: 44px;
+	padding: 0 8px;
+	border-color: rgba(255, 255, 255, 0.14);
+	font-family: inherit;
+	text-align: center;
+	outline: none;
 }
 
 .counterInput:focus {
-	outline: 2px solid white;
+	border-color: #8ab4ff;
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.1),
+		0 0 0 2px rgba(138, 180, 255, 0.18);
 }

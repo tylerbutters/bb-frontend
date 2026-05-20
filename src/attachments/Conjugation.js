@@ -21,6 +21,7 @@ export default function Conjugation({
 	deleteElement,
 	mouse,
 	color,
+	adjColor,
 }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const conjugations = useGrammarStore((state) => state.conjugations)
@@ -52,6 +53,15 @@ export default function Conjugation({
 			...parentConjugation,
 			conjugation: {},
 		})
+	}
+
+	function openConjugationMenu(e) {
+		if (e.target.closest(".addButton, input, button")) return
+
+		const clickedInsideChildElement = e.target.closest(".baseInsideElement")
+		if (clickedInsideChildElement && clickedInsideChildElement !== e.currentTarget) return
+
+		setIsModalOpen(true)
 	}
 
 	function getConjugationOptions() {
@@ -162,11 +172,10 @@ export default function Conjugation({
 			return (
 				<Conjugation
 					color={color}
+					adjColor={adjColor}
 					mouse={mouse}
 					parentConjugation={currentConjugation}
-					updateConjugation={(updatedChild) =>
-						updateCurrentConjugation(updatedChild)
-					}
+					updateConjugation={(updatedChild) => updateCurrentConjugation(updatedChild)}
 				/>
 			)
 		}
@@ -213,29 +222,56 @@ export default function Conjugation({
 	if (currentConjugation?.elementType === "verb") {
 		// alert(JSON.stringify(currentConjugation))
 		return (
-			<div className="baseInsideElement" style={{ backgroundColor: color }}>
-				<Verb
-					element={currentConjugation}
+			<div className="modalContainer">
+				<ElementOptionsMenu
+					isModalOpen={isModalOpen}
+					setIsModalOpen={setIsModalOpen}
 					elementOptions={auxiliaries}
-					secondaryColor={color}
-					updateElement={(updatedChild) => updateCurrentConjugation(updatedChild)}
+					onSelect={getConjugationUpdate}
 					deleteElement={clearCurrentConjugation}
-					mouse={mouse}
+					hasDelete={true}
+					hasSearch={true}
 				/>
+				<div
+					className="baseInsideElement conjugationElement"
+					style={{ backgroundColor: color }}
+					onClick={openConjugationMenu}
+				>
+					<Verb
+						element={currentConjugation}
+						secondaryColor={color}
+						updateElement={(updatedChild) => updateCurrentConjugation(updatedChild)}
+						deleteElement={clearCurrentConjugation}
+						mouse={mouse}
+					/>
+				</div>
 			</div>
 		)
 	} else if (currentConjugation?.elementType === "adjective") {
-		// alert(JSON.stringify(currentConjugation))
 		return (
-			<div className="baseInsideElement" style={{ backgroundColor: color }}>
-				<Adjective
-					element={currentConjugation}
+			<div className="modalContainer">
+				<ElementOptionsMenu
+					isModalOpen={isModalOpen}
+					setIsModalOpen={setIsModalOpen}
 					elementOptions={auxiliaries}
-					secondaryColor={color}
-					updateElement={(updatedChild) => updateCurrentConjugation(updatedChild)}
+					onSelect={getConjugationUpdate}
 					deleteElement={clearCurrentConjugation}
-					mouse={mouse}
+					hasDelete={true}
+					hasSearch={true}
 				/>
+				<div
+					className="baseInsideElement conjugationElement"
+					style={{ backgroundColor: adjColor }}
+					onClick={openConjugationMenu}
+				>
+					<Adjective
+						element={currentConjugation}
+						secondaryColor={adjColor}
+						updateElement={(updatedChild) => updateCurrentConjugation(updatedChild)}
+						deleteElement={clearCurrentConjugation}
+						mouse={mouse}
+					/>
+				</div>
 			</div>
 		)
 	}
@@ -248,8 +284,12 @@ export default function Conjugation({
 				elementOptions={conjugationOptions || []}
 				onSelect={getConjugationUpdate}
 			/>
-			<div className="baseInsideElement" style={{ backgroundColor: color }}>
-				<div className="insideElementText" onClick={() => setIsModalOpen(true)}>
+			<div
+				className="baseInsideElement conjugationElement"
+				style={{ backgroundColor: color }}
+				onClick={openConjugationMenu}
+			>
+				<div className="insideElementText">
 					{parentConjugation.verbType?.includes("godan") &&
 						parentConjugation.ending !== currentConjugation?.stem &&
 						parentConjugation.ending}

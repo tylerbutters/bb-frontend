@@ -3,7 +3,7 @@ import ElementOptionsMenu from "../components/ElementOptionsMenu"
 import "../App.css"
 import useGrammarStore from "../store/useGrammarStore"
 
-export default function Punctuation({ text, onClickSelf }) {
+export default function Punctuation({ text }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [lastChar, setLastChar] = useState(text.at(-1))
 	const allElements = useGrammarStore((state) => state)
@@ -19,9 +19,7 @@ export default function Punctuation({ text, onClickSelf }) {
 				onSelect={(element) => setLastChar(element.text)}
 			/>
 			<div className="baseElement punctuationElement">
-				<div className="elementText" onClick={onClickSelf}>
-					{stem}
-				</div>
+				<div className="elementText">{stem}</div>
 				<div className="baseInsideElement punctuationLastChar" onClick={() => setIsModalOpen(true)}>
 					{lastChar}
 				</div>

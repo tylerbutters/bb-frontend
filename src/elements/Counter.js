@@ -1,7 +1,7 @@
 import { useState } from "react"
 import "../App.css"
 
-export default function Counter({ mouse, element, onClickSelf, updateElement, secondaryColor }) {
+export default function Counter({ mouse, element, updateElement, secondaryColor }) {
 	const [number, setNumber] = useState(element.number || "0")
 
 	function onChange(e) {
@@ -25,9 +25,7 @@ export default function Counter({ mouse, element, onClickSelf, updateElement, se
 				onChange={onChange}
 				placeholder="0"
 			/>
-			<div className="elementText" onClick={onClickSelf}>
-				{element?.text}
-			</div>
+			<div className="elementText">{element?.text}</div>
 		</div>
 	)
 }

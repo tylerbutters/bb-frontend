@@ -2,7 +2,7 @@ import "../App.css"
 import Suffix from "../attachments/Suffix"
 import Prefix from "../attachments/Prefix"
 
-export default function Noun({ mouse, element, onClickSelf, updateElement, secondaryColor }) {
+export default function Noun({ mouse, element, updateElement, secondaryColor }) {
 	function addElement(selectedElement) {
 		switch (selectedElement?.elementType) {
 			case "prefix":
@@ -25,9 +25,7 @@ export default function Noun({ mouse, element, onClickSelf, updateElement, secon
 				mouse={mouse}
 				color={secondaryColor}
 			/>
-			<div className="elementText" onClick={onClickSelf}>
-				{element?.text}
-			</div>
+			<div className="elementText">{element?.text}</div>
 			<Suffix
 				element={element.suffix}
 				updateElement={addElement}

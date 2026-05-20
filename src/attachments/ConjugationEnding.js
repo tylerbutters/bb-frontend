@@ -25,7 +25,7 @@ export default function ConjugationEnding({ conjugation, updateConjugation, colo
 				onSelect={onSelect}
 			/>
 			<div
-				className="baseInsideElement"
+				className="baseInsideElement conjugationElement"
 				style={{ backgroundColor: color }}
 				onClick={() => setIsModalOpen(true)}
 			>

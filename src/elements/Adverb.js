@@ -1,11 +1,9 @@
 import "../App.css"
 
-export default function Adverb({ element, onClickSelf }) {
+export default function Adverb({ element }) {
 	return (
 		<div className="baseElement nounElement">
-			<div className="elementText" onClick={onClickSelf}>
-				{element?.text}
-			</div>
+			<div className="elementText">{element?.text}</div>
 		</div>
 	)
 }

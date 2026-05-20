@@ -27,6 +27,34 @@ export default function App() {
 		return () => window.removeEventListener("mousemove", handleMove)
 	}, [])
 
+	useEffect(() => {
+		let pressedElement
+
+		function clearPressedElement() {
+			pressedElement?.classList.remove("pressedElement")
+			pressedElement = null
+		}
+
+		function handlePointerDown(e) {
+			clearPressedElement()
+			if (e.target.closest(".addButton, input, button")) return
+
+			pressedElement = e.target.closest(".baseInsideElement,.elementContainer")
+			pressedElement?.classList.add("pressedElement")
+		}
+
+		document.addEventListener("pointerdown", handlePointerDown)
+		document.addEventListener("pointerup", clearPressedElement)
+		document.addEventListener("pointercancel", clearPressedElement)
+
+		return () => {
+			clearPressedElement()
+			document.removeEventListener("pointerdown", handlePointerDown)
+			document.removeEventListener("pointerup", clearPressedElement)
+			document.removeEventListener("pointercancel", clearPressedElement)
+		}
+	}, [])
+
 	function normalizeElement(element) {
 		if (element.elementType === "verb" && !element.conjugation) {
 			return {
@@ -98,9 +126,7 @@ export default function App() {
 	}
 
 	function deleteElement(elementId) {
-		setAddedElements((prev) =>
-			prev.filter((element) => element.sentenceElementId !== elementId),
-		)
+		setAddedElements((prev) => prev.filter((element) => element.sentenceElementId !== elementId))
 	}
 
 	return (
@@ -117,9 +143,7 @@ export default function App() {
 						<Element
 							element={element}
 							mouse={mouse}
-							updateElement={(newElement) =>
-								updateElement(element.sentenceElementId, newElement)
-							}
+							updateElement={(newElement) => updateElement(element.sentenceElementId, newElement)}
 							deleteElement={() => deleteElement(element.sentenceElementId)}
 							defaultElements={defaultElements}
 						/>
