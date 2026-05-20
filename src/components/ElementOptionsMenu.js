@@ -177,7 +177,7 @@ const KANA_COMBO_ROMAJI = {
 	どぅ: "du",
 }
 
-const SEARCH_TEXT_CACHE = new WeakMap()
+const SEARCH_VALUES_CACHE = new WeakMap()
 
 function normalizeSearchValue(value) {
 	return String(value || "")
@@ -186,9 +186,7 @@ function normalizeSearchValue(value) {
 }
 
 function toHiragana(text = "") {
-	return text.replace(/[\u30a1-\u30f6]/g, (char) =>
-		String.fromCharCode(char.charCodeAt(0) - 0x60),
-	)
+	return text.replace(/[\u30a1-\u30f6]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0x60))
 }
 
 function getLastVowel(text) {
@@ -238,28 +236,39 @@ function getRomajiSearchValues(value) {
 	return romaji === shortVowels ? [romaji] : [romaji, shortVowels]
 }
 
-function getOptionSearchText(element) {
-	if (!element || typeof element !== "object") return ""
+function getOptionSearchValues(element) {
+	if (!element || typeof element !== "object") return []
 
-	const cachedSearchText = SEARCH_TEXT_CACHE.get(element)
-	if (cachedSearchText) return cachedSearchText
+	const cachedSearchValues = SEARCH_VALUES_CACHE.get(element)
+	if (cachedSearchValues) return cachedSearchValues
 
 	const textValues = [element.text, element.textKana, ...(element.meanings || [])]
 	const romajiValues = [element.text, element.textKana].flatMap(getRomajiSearchValues)
-	const searchText = [...textValues, ...romajiValues]
+	const searchValues = [...textValues, ...romajiValues]
 		.filter(Boolean)
 		.map(normalizeSearchValue)
-		.join(" ")
 
-	SEARCH_TEXT_CACHE.set(element, searchText)
-	return searchText
+	SEARCH_VALUES_CACHE.set(element, searchValues)
+	return searchValues
 }
 
-function matchesSearch(element, searchText) {
-	const query = normalizeSearchValue(searchText)
-	if (!query) return false
+function startsWithSearchWord(value, query) {
+	return value
+		.split(/[^a-z0-9]+/)
+		.some((word) => word.startsWith(query))
+}
 
-	return getOptionSearchText(element).includes(query)
+function getSearchRank(element, searchText) {
+	const query = normalizeSearchValue(searchText)
+	if (!query) return Number.POSITIVE_INFINITY
+
+	const searchValues = getOptionSearchValues(element)
+
+	if (searchValues.some((value) => value.startsWith(query))) return 0
+	if (searchValues.some((value) => startsWithSearchWord(value, query))) return 1
+	if (searchValues.some((value) => value.includes(query))) return 2
+
+	return Number.POSITIVE_INFINITY
 }
 
 export default function ElementOptionsMenu({
@@ -488,7 +497,15 @@ function ElementOptionsList({ hasSearch, elementOptions = [], onSelectOption, se
 	const filteredOptions = useMemo(() => {
 		if (!hasSearch) return elementOptions
 		if (!searchText) return []
-		return elementOptions.filter((element) => matchesSearch(element, searchText))
+		return elementOptions
+			.map((element, index) => ({
+				element,
+				index,
+				rank: getSearchRank(element, searchText),
+			}))
+			.filter(({ rank }) => Number.isFinite(rank))
+			.sort((a, b) => a.rank - b.rank || a.index - b.index)
+			.map(({ element }) => element)
 	}, [elementOptions, hasSearch, searchText])
 
 	const visibleOptions = useMemo(() => {
