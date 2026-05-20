@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useMemo, useState } from "react"
 import ElementOptionsMenu from "../ElementOptionsMenu"
 import "../App.css"
 import useElementsStore from "../useElementsStore"
@@ -18,19 +18,14 @@ export default function Conjugation({
 }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const conjugations = useElementsStore((state) => state.conjugations)
-	const [conjugationOptions, setConjugationOptions] = useState()
-	const [particleOptions, setParticleOptions] = useState()
 	const currentConjugation = parentConjugation?.conjugation
 	const auxiliaries = useElementsStore((state) => state.auxiliaries)
 	const particles = useElementsStore((state) => state.particles)
-
-	// const isIrregularVerb = currentConjugation.stem === "する" || currentConjugation.stem === "くる"
-
-	useEffect(() => {
-		getConjugationOptions()
-		// alert(JSON.stringify(particles.filter((particle) => particle.attachesTo.includes("te"))))
-		setParticleOptions(particles.filter((particle) => particle.attachesTo.includes("te")))
-	}, [])
+	const conjugationOptions = getConjugationOptions()
+	const particleOptions = useMemo(
+		() => particles.filter((particle) => particle.attachesTo.includes("te")),
+		[particles],
+	)
 
 	function addParticle(selectedElement) {
 		updateConjugation({
@@ -53,7 +48,10 @@ export default function Conjugation({
 		}
 
 		//find what category of godan it is
-		const row = Object.values(godanMap).find((row) => row.includes(parentConjugation.ending))
+		const endingToMatch =
+			parentConjugation.verbType === "godan-aru" ? "る" : parentConjugation.ending
+
+		const row = godanMap[endingToMatch]
 		if (!row) return null
 
 		const [B1, B2, B3, B4, B5, Bte, Bta] = row
@@ -187,13 +185,11 @@ export default function Conjugation({
 						conjugationOptions = conjugations["kureruDefault"]?.conjugationOptions || []
 						break
 					default:
-						//godan, godan-iku, godan-aru
 						conjugationOptions = getGodanConjugationOptions()
 						break
 				}
 				break
 			case "desu":
-				// alert(JSON.stringify(conjugations["desuDefault"]))
 				conjugationOptions = conjugations["desuDefault"]?.conjugationOptions
 				break
 			default:
@@ -201,7 +197,33 @@ export default function Conjugation({
 					conjugations[`${parentConjugation.stem || ""}${parentConjugation.ending || ""}`]
 						?.conjugationOptions || []
 		}
-		setConjugationOptions(conjugationOptions)
+		return conjugationOptions || []
+	}
+
+	function initializeNestedElement(element) {
+		if (element.elementType === "verb" && !element.conjugation) {
+			return {
+				...element,
+				conjugation: {
+					stem: element?.ending,
+				},
+			}
+		}
+
+		if (
+			element.elementType === "adjective" &&
+			element.adjectiveType === "i-type" &&
+			!element.conjugation
+		) {
+			return {
+				...element,
+				conjugation: {
+					stem: element?.ending,
+				},
+			}
+		}
+
+		return element
 	}
 
 	function getConjugationUpdate(selectedConjugation) {
@@ -216,7 +238,7 @@ export default function Conjugation({
 				...parentConjugation,
 				conjugation: {
 					...currentConjugation,
-					conjugation: selectedConjugation,
+					conjugation: initializeNestedElement(selectedConjugation),
 				},
 			})
 
@@ -226,9 +248,14 @@ export default function Conjugation({
 		let conjugationData = conjugations[selectedConjugation.text]
 
 		if (parentConjugation.verbType?.includes("godan")) {
-			const selectedCategory = conjugationOptions.find((category) =>
-				category.list.some((conjugation) => conjugation.text === selectedConjugation.text),
-			)
+			const selectedCategory =
+				conjugationOptions.find(
+					(category) => category.text === selectedConjugation.selectedCategoryText,
+				) ||
+				conjugationOptions.find((category) =>
+					category.list.some((conjugation) => conjugation.text === selectedConjugation.text),
+				)
+			if (!selectedCategory) return
 			const singleCharacterConjugation = selectedConjugation.text === selectedCategory.text
 
 			if (singleCharacterConjugation) {
@@ -284,8 +311,9 @@ export default function Conjugation({
 	}
 
 	function renderNextConjugation() {
-		// alert(JSON.stringify(currentConjugation))
-		if (Object.keys(currentConjugation?.conjugation || {}).length !== 0) {
+		if (!currentConjugation) return null
+
+		if (Object.keys(currentConjugation.conjugation || {}).length !== 0) {
 			return (
 				<Conjugation
 					color={color}
@@ -302,7 +330,9 @@ export default function Conjugation({
 					}
 				/>
 			)
-		} else if (currentConjugation.conjugationType === "aux") {
+		}
+
+		if (currentConjugation.conjugationType === "aux") {
 			return (
 				<AddButton
 					elementOptions={auxiliaries}
@@ -311,16 +341,20 @@ export default function Conjugation({
 					addElement={getConjugationUpdate}
 				/>
 			)
-		} else if (currentConjugation.conjugationType === "te") {
+		}
+
+		if (currentConjugation.conjugationType === "te") {
 			return (
 				<AddButton
-					elementOptions={dictionary.verbs}
+					elementOptions={dictionary.verbs || []}
 					mouse={mouse}
 					hasSearch={true}
 					addElement={getConjugationUpdate}
 				/>
 			)
-		} else if (currentConjugation?.ending) {
+		}
+
+		if (currentConjugation.ending) {
 			return (
 				<ConjugationEnding
 					color={color}
@@ -337,6 +371,8 @@ export default function Conjugation({
 				/>
 			)
 		}
+
+		return null
 	}
 
 	if (currentConjugation?.elementType === "verb") {
@@ -369,26 +405,29 @@ export default function Conjugation({
 	} else if (currentConjugation?.elementType === "adjective") {
 		// alert(JSON.stringify(currentConjugation))
 		return (
-			<Adjective
-				element={currentConjugation}
-				elementOptions={auxiliaries}
-				updateElement={(updatedChild) =>
-					updateConjugation({
-						...parentConjugation,
-						conjugation: {
-							...currentConjugation,
-							...updatedChild,
-						},
-					})
-				}
-				deleteElement={() =>
-					updateConjugation({
-						...parentConjugation,
-						conjugation: {},
-					})
-				}
-				mouse={mouse}
-			/>
+			<div className="baseInsideElement" style={{ backgroundColor: color }}>
+				<Adjective
+					element={currentConjugation}
+					elementOptions={auxiliaries}
+					secondaryColor={color}
+					updateElement={(updatedChild) =>
+						updateConjugation({
+							...parentConjugation,
+							conjugation: {
+								...currentConjugation,
+								...updatedChild,
+							},
+						})
+					}
+					deleteElement={() =>
+						updateConjugation({
+							...parentConjugation,
+							conjugation: {},
+						})
+					}
+					mouse={mouse}
+				/>
+			</div>
 		)
 	}
 
@@ -417,8 +456,11 @@ export default function Conjugation({
 						updateElement={addParticle}
 						deleteElement={() =>
 							updateConjugation({
-								...currentConjugation,
-								particle: null,
+								...parentConjugation,
+								conjugation: {
+									...currentConjugation,
+									middleParticle: null,
+								},
 							})
 						}
 						mouse={mouse}

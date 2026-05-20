@@ -1,21 +1,7 @@
-import { useEffect } from "react"
 import Conjugation from "../element attachments/Conjugation"
 import NoDesu from "../element attachments/NoDesu"
 
 export default function Desu({ element, updateElement, deleteElement, mouse, secondaryColor }) {
-	useEffect(() => {
-		initializeVerb(element)
-	}, [])
-
-	function initializeVerb(newElement) {
-		updateElement({
-			...newElement,
-			conjugation: {
-				stem: newElement?.stem,
-			},
-		})
-	}
-
 	function addNoDesu(newElement) {
 		updateElement({
 			...element,

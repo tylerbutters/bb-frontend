@@ -30,8 +30,15 @@ export default function ElementOptionsMenu({
 		return () => document.removeEventListener("mousedown", handleClickOutside)
 	}, [closeMenu, isModalOpen])
 
-	function handleSelectOption(selectedElement) {
-		onSelect(selectedElement)
+	function handleSelectOption(selectedElement, categoryText) {
+		onSelect(
+			categoryText
+				? {
+						...selectedElement,
+						selectedCategoryText: categoryText,
+					}
+				: selectedElement,
+		)
 		closeMenu()
 	}
 
@@ -63,7 +70,9 @@ export default function ElementOptionsMenu({
 					<ElementOptionsList
 						hasSearch={true}
 						elementOptions={secondaryElementOptions}
-						onSelectOption={handleSelectOption}
+						onSelectOption={(selectedElement) =>
+							handleSelectOption(selectedElement, selectedCategory)
+						}
 					/>
 				</ElementOptionsPanel>
 			)}

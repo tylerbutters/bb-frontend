@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import ElementOptionsMenu from "../ElementOptionsMenu"
 import "../App.css"
 import Conjugation from "../element attachments/Conjugation"
@@ -12,10 +12,6 @@ export default function Adjective({
 	secondaryColor,
 }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-
-	useEffect(() => {
-		initializeAdjective(element)
-	}, [])
 
 	function initializeAdjective(newElement) {
 		if (newElement.elementType === "verb" || newElement.adjectiveType === "i-type") {

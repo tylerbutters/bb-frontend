@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useLayoutEffect } from "react"
+import { Fragment, useEffect, useMemo, useRef, useState, useLayoutEffect } from "react"
 import ElementOptionsMenu from "../ElementOptionsMenu"
 import "../App.css"
 import Adjective from "./Adjective"
@@ -6,9 +6,7 @@ import Noun from "./Noun"
 import Verb from "./Verb"
 import useElementsStore from "../useElementsStore"
 import Punctuation from "./Punctuation"
-import dictionary from "../jmdict/processed-jmdict.json"
 import Particle from "../element attachments/Particle"
-import AddButton from "../AddButton"
 import Adverb from "./Adverb"
 import Desu from "./Desu"
 import Counter from "./Counter"
@@ -16,15 +14,9 @@ import Counter from "./Counter"
 export default function Element({ element, mouse, updateElement, deleteElement, defaultElements }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [isClosing, setIsClosing] = useState(false)
-	const [particleOptions, setParticleOptions] = useState([])
 	const particles = useElementsStore((state) => state.particles)
-
-	useEffect(() => {
-		getParticleOptions()
-	}, [])
-
-	function getParticleOptions() {
-		let availableParticles = particles.filter((particle) =>
+	const particleOptions = useMemo(() => {
+		const availableParticles = particles.filter((particle) =>
 			particle.attachesTo.includes(element.elementType),
 		)
 		if (element.adjectiveType) {
@@ -32,8 +24,35 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 				...particles.filter((particle) => particle.attachesTo.includes(element.adjectiveType)),
 			)
 		}
-		setParticleOptions(
-			availableParticles?.map((particle) => ({ elementType: "particle", text: particle.text })),
+		return availableParticles?.map((particle) => ({ elementType: "particle", text: particle.text }))
+	}, [element.adjectiveType, element.elementType, particles])
+
+	useEffect(() => {
+		setIsModalOpen(false)
+		setIsClosing(false)
+	}, [element.sentenceElementId, element.elementType])
+
+	function getElementKey() {
+		return [
+			element.sentenceElementId,
+			element.elementType,
+			element.text,
+			element.textKana,
+			element.stem,
+			element.ending,
+		]
+			.filter(Boolean)
+			.join(":")
+	}
+
+	function updateBaseElement(newElement) {
+		updateElement(
+			newElement.sentenceElementId === element.sentenceElementId
+				? newElement
+				: {
+						...newElement,
+						sentenceElementId: element.sentenceElementId,
+					},
 		)
 	}
 
@@ -64,7 +83,7 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 		const props = {
 			element,
 			onClickSelf: () => setIsModalOpen(true),
-			updateElement,
+			updateElement: updateBaseElement,
 			deleteElement: () => setIsClosing(true),
 			mouse,
 			elementOptions: defaultElements,
@@ -103,7 +122,7 @@ export default function Element({ element, mouse, updateElement, deleteElement, 
 			/>
 			<Resize element={element} isClosing={isClosing} onCloseComplete={deleteElement}>
 				<div className="elementContainer" style={{ backgroundColor: getColor().primary }}>
-					{renderElement()}
+					<Fragment key={getElementKey()}>{renderElement()}</Fragment>
 					<Particle
 						element={element.particle}
 						elementOptions={particleOptions}

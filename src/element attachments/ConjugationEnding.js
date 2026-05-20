@@ -1,29 +1,19 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import ElementOptionsMenu from "../ElementOptionsMenu"
 import "../App.css"
 import useElementsStore from "../useElementsStore"
-import Verb from "../elements/Verb"
 
 export default function ConjugationEnding({ conjugation, updateConjugation, color }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const verbConjugations = useElementsStore((state) => state.conjugations)
-	const [conjugationOptions, setConjugationOptions] = useState([])
-
-	useEffect(() => {
-		getConjugationOptions()
-	}, [])
+	const conjugationOptions =
+		verbConjugations[`${conjugation?.stem}${conjugation?.ending}`]?.conjugationOptions || []
 
 	function onSelect(selectedConjugation) {
 		updateConjugation({
 			stem: verbConjugations[selectedConjugation.text]?.stem,
 			ending: verbConjugations[selectedConjugation.text]?.ending,
 		})
-	}
-
-	function getConjugationOptions() {
-		setConjugationOptions(
-			verbConjugations[`${conjugation?.stem}${conjugation?.ending}`]?.conjugationOptions || [],
-		)
 	}
 
 	return (

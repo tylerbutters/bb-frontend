@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Conjugation from "../element attachments/Conjugation"
 import ElementOptionsMenu from "../ElementOptionsMenu"
 
@@ -12,10 +12,7 @@ export default function Verb({
 	primaryColor,
 }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-
-	useEffect(() => {
-		initializeVerb(element)
-	}, [])
+	const hasConjugation = element.conjugation && Object.keys(element.conjugation).length > 0
 
 	function initializeVerb(newElement) {
 		updateElement({
@@ -40,7 +37,7 @@ export default function Verb({
 				<div className="elementText" onClick={() => setIsModalOpen(true)}>
 					{element.stem}
 				</div>
-				{element.conjugation?.stem && (
+				{hasConjugation && (
 					<Conjugation
 						color={secondaryColor}
 						parentConjugation={element}

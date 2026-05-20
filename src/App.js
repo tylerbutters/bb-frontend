@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { Fragment, useEffect, useRef, useState } from "react"
 import "./App.css"
 import AddButton from "./AddButton"
 import Element from "./elements/Element"
@@ -6,6 +6,7 @@ import SentenceText from "./SentenceText"
 import dictionary from "./jmdict/processed-jmdict.json"
 
 export default function App() {
+	const nextElementId = useRef(0)
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const [addedElements, setAddedElements] = useState([])
 	const defaultElements = [
@@ -26,31 +27,80 @@ export default function App() {
 		return () => window.removeEventListener("mousemove", handleMove)
 	}, [])
 
+	function normalizeElement(element) {
+		if (element.elementType === "verb" && !element.conjugation) {
+			return {
+				...element,
+				conjugation: {
+					stem: element?.ending,
+				},
+			}
+		}
+
+		if (
+			element.elementType === "adjective" &&
+			element.adjectiveType === "i-type" &&
+			!element.conjugation
+		) {
+			return {
+				...element,
+				conjugation: {
+					stem: element?.ending,
+				},
+			}
+		}
+
+		if (element.elementType === "desu" && !element.conjugation) {
+			return {
+				...element,
+				conjugation: {
+					stem: element?.stem,
+				},
+			}
+		}
+
+		if (element.elementType === "counter" && element.number == null) {
+			return {
+				...element,
+				number: "0",
+			}
+		}
+
+		return element
+	}
+
+	function createSentenceElement(selectedElement) {
+		return {
+			...normalizeElement(selectedElement),
+			sentenceElementId: nextElementId.current++,
+		}
+	}
+
 	function addElement(index, selectedElement) {
-		// alert(JSON.stringify(selectedElement))
-
 		setAddedElements((prev) => {
 			const copy = [...prev]
-			copy.splice(index, 0, selectedElement)
-			return copy
-		})
-	}
-	function updateElement(index, newElement) {
-		// alert(JSON.stringify(newElement))
-		setAddedElements((prev) => {
-			const copy = [...prev]
-			copy[index] = newElement
+			copy.splice(index, 0, createSentenceElement(selectedElement))
 			return copy
 		})
 	}
 
-	function deleteElement(index) {
-		// alert(JSON.stringify(index))
+	function updateElement(elementId, newElement) {
 		setAddedElements((prev) => {
-			const copy = [...prev]
-			copy.splice(index, 1)
-			return copy
+			return prev.map((element) => {
+				if (element.sentenceElementId !== elementId) return element
+
+				return {
+					...normalizeElement(newElement),
+					sentenceElementId: elementId,
+				}
+			})
 		})
+	}
+
+	function deleteElement(elementId) {
+		setAddedElements((prev) =>
+			prev.filter((element) => element.sentenceElementId !== elementId),
+		)
 	}
 
 	return (
@@ -58,7 +108,7 @@ export default function App() {
 			<SentenceText addedElements={addedElements} />
 			<div className="sentenceElementsContainer">
 				{addedElements.map((element, index) => (
-					<>
+					<Fragment key={element.sentenceElementId}>
 						<AddButton
 							mouse={mouse}
 							elementOptions={defaultElements}
@@ -67,8 +117,10 @@ export default function App() {
 						<Element
 							element={element}
 							mouse={mouse}
-							updateElement={(newElement) => updateElement(index, newElement)}
-							deleteElement={() => deleteElement(index)}
+							updateElement={(newElement) =>
+								updateElement(element.sentenceElementId, newElement)
+							}
+							deleteElement={() => deleteElement(element.sentenceElementId)}
 							defaultElements={defaultElements}
 						/>
 						{index === addedElements.length - 1 && (
@@ -78,7 +130,7 @@ export default function App() {
 								addElement={(element) => addElement(index + 1, element)}
 							/>
 						)}
-					</>
+					</Fragment>
 				))}
 				{!addedElements.length && (
 					<AddButton

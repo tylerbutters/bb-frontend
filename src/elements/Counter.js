@@ -1,15 +1,8 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import "../App.css"
 
 export default function Counter({ mouse, element, onClickSelf, updateElement, secondaryColor }) {
-	const [number, setNumber] = useState("0")
-
-	useEffect(() => {
-		updateElement({
-			...element,
-			number: "0",
-		})
-	}, [])
+	const [number, setNumber] = useState(element.number || "0")
 
 	function onChange(e) {
 		setNumber(e.target.value)
