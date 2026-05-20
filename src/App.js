@@ -1,4 +1,5 @@
 import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
+import { flushSync } from "react-dom"
 import "./App.css"
 import AddButton from "./components/AddButton"
 import Element from "./elements/Element"
@@ -7,6 +8,7 @@ import dictionary from "./jmdict/processed-jmdict.json"
 import useGrammarStore from "./store/useGrammarStore"
 
 const SENTENCE_ELEMENTS_VIEWPORT_PADDING = 100
+const DRAG_DROP_TRANSITION_MS = 180
 
 export default function App() {
 	const nextElementId = useRef(0)
@@ -17,6 +19,7 @@ export default function App() {
 	const sentenceElementsScaleRef = useRef(1)
 	const scaleFrameRef = useRef(null)
 	const scaleTimeoutRef = useRef(null)
+	const dropTimeoutRef = useRef(null)
 	const isDraggingElement = useRef(false)
 	const suppressElementClick = useRef(false)
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
@@ -145,6 +148,14 @@ export default function App() {
 
 			document.removeEventListener("pointerover", handlePointerOver)
 			document.removeEventListener("pointerout", handlePointerOut)
+		}
+	}, [])
+
+	useEffect(() => {
+		return () => {
+			if (dropTimeoutRef.current) {
+				window.clearTimeout(dropTimeoutRef.current)
+			}
 		}
 	}, [])
 
@@ -302,6 +313,21 @@ export default function App() {
 		return undefined
 	}
 
+	const getSentenceLocalPosition = useCallback((viewportLeft, viewportTop) => {
+		const containerRect = sentenceElementsContainerRef.current?.getBoundingClientRect()
+		if (!containerRect) {
+			return {
+				x: viewportLeft,
+				y: viewportTop,
+			}
+		}
+
+		return {
+			x: (viewportLeft - containerRect.left) / sentenceElementsScale,
+			y: (viewportTop - containerRect.top) / sentenceElementsScale,
+		}
+	}, [sentenceElementsScale])
+
 	useEffect(() => {
 		function moveDraggedElement(e) {
 			const dragStart = dragStartRef.current
@@ -319,24 +345,25 @@ export default function App() {
 				insertIndex,
 				width: dragStart.width,
 			}
+			const localPosition = getSentenceLocalPosition(
+				e.clientX - dragStart.offsetX,
+				e.clientY - dragStart.offsetY,
+			)
 
 			setDragState({
 				elementId: dragStart.elementId,
 				originalIndex: dragStart.originalIndex,
 				insertIndex,
-				x: e.clientX - dragStart.offsetX,
-				y: e.clientY - dragStart.offsetY,
+				x: localPosition.x,
+				y: localPosition.y,
 				width: dragStart.width,
 				height: dragStart.height,
 			})
 		}
 
 		function finishDraggedElement() {
+			const activeDragState = dragState
 			const dragPreview = dragPreviewRef.current
-			if (dragPreview) {
-				moveElementToIndex(dragPreview.elementId, dragPreview.insertIndex)
-			}
-
 			if (isDraggingElement.current) {
 				suppressElementClick.current = true
 				window.setTimeout(() => {
@@ -345,8 +372,41 @@ export default function App() {
 			}
 
 			isDraggingElement.current = false
-			dragPreviewRef.current = null
 			dragStartRef.current = null
+			dragPreviewRef.current = null
+
+			if (dropTimeoutRef.current) {
+				window.clearTimeout(dropTimeoutRef.current)
+				dropTimeoutRef.current = null
+			}
+
+			if (dragPreview && activeDragState) {
+				flushSync(() => {
+					moveElementToIndex(dragPreview.elementId, dragPreview.insertIndex)
+				})
+
+				const targetNode = elementDragRefs.current.get(dragPreview.elementId)
+				const targetRect = targetNode?.getBoundingClientRect()
+
+				if (targetRect) {
+					const localPosition = getSentenceLocalPosition(targetRect.left, targetRect.top)
+					setDragState({
+						...activeDragState,
+						x: localPosition.x,
+						y: localPosition.y,
+						width: targetRect.width,
+						height: targetRect.height,
+						isDropping: true,
+					})
+
+					dropTimeoutRef.current = window.setTimeout(() => {
+						dropTimeoutRef.current = null
+						setDragState(null)
+					}, DRAG_DROP_TRANSITION_MS)
+					return
+				}
+			}
+
 			setDragState(null)
 		}
 
@@ -359,7 +419,7 @@ export default function App() {
 			window.removeEventListener("pointerup", finishDraggedElement)
 			window.removeEventListener("pointercancel", finishDraggedElement)
 		}
-	}, [dragState, getDragInsertIndex, moveElementToIndex])
+	}, [dragState, getDragInsertIndex, getSentenceLocalPosition, moveElementToIndex])
 
 	return (
 		<div className="app">
@@ -371,6 +431,7 @@ export default function App() {
 			>
 				{addedElements.map((element, index) => {
 					const isDraggingThis = dragState?.elementId === element.sentenceElementId
+					const isDroppingThis = isDraggingThis && dragState?.isDropping
 					const unscaledDragWidth = dragState?.width / sentenceElementsScale
 					const unscaledDragHeight = dragState?.height / sentenceElementsScale
 					return (
@@ -389,7 +450,9 @@ export default function App() {
 										elementDragRefs.current.delete(element.sentenceElementId)
 									}
 								}}
-								className={`mainElementDragItem ${isDraggingThis ? "mainElementDragging" : ""}`}
+								className={`mainElementDragItem ${
+									isDraggingThis ? "mainElementDragging" : ""
+								} ${isDroppingThis ? "mainElementDropping" : ""}`}
 								style={
 									isDraggingThis
 										? {
@@ -408,13 +471,15 @@ export default function App() {
 								}}
 							>
 								<div
-									className="mainElementDragContent"
+									className={`mainElementDragContent ${
+										isDroppingThis ? "mainElementDragContentDropping" : ""
+									}`}
 									style={
 										isDraggingThis
 											? {
 													position: "fixed",
-													left: dragState.x / sentenceElementsScale,
-													top: dragState.y / sentenceElementsScale,
+													left: dragState.x,
+													top: dragState.y,
 													width: unscaledDragWidth,
 													zIndex: 2000,
 													pointerEvents: "none",
