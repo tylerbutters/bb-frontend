@@ -24,6 +24,7 @@ export default function Particle({
 				onSelect={updateElement}
 				deleteElement={deleteElement}
 				hasDelete={true}
+				menuTitle="Particle"
 			/>
 			{element ? (
 				<div
@@ -39,6 +40,7 @@ export default function Particle({
 					elementOptions={elementOptions}
 					addElement={updateElement}
 					hasSearch={true}
+					text="particle"
 					disabled={disabled}
 				/>
 			)}

@@ -43,6 +43,7 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	flex-direction: column;
 	height: 90px;
 	padding: 0px;
 	overflow: hidden;
@@ -91,6 +92,16 @@ body {
 .addButtonDragHidden {
 	transition: none;
 	pointer-events: none;
+}
+
+.addButtonText {
+	max-width: calc(100% - 8px);
+	margin-top: 3px;
+	overflow: hidden;
+	font-size: 11px;
+	line-height: 1.1;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 /* ELEMENT OPTIONS MENU */
@@ -179,6 +190,17 @@ body {
 .selectedElementOptionsMenuButton:hover {
 	border: 1px solid #8ab4ff;
 	background: rgba(138, 180, 255, 0.2);
+}
+
+.elementOptionsMenuTitle {
+	padding: 9px 12px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	background-color: #2b2d31;
+	color: rgba(255, 255, 255, 0.86);
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1.2;
+	text-transform: uppercase;
 }
 
 .elementOptionsMenuButtonText,

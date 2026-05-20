@@ -440,6 +440,7 @@ export default function App() {
 								mouse={mouse}
 								elementOptions={defaultElements}
 								addElement={(selectedElement) => addElement(index, selectedElement)}
+								text="word"
 								disabled={Boolean(dragState)}
 							/>
 							<div
@@ -504,6 +505,7 @@ export default function App() {
 									mouse={mouse}
 									elementOptions={defaultElements}
 									addElement={(element) => addElement(index + 1, element)}
+									text="word"
 									disabled={Boolean(dragState)}
 								/>
 							)}
@@ -516,6 +518,7 @@ export default function App() {
 						mouse={mouse}
 						elementOptions={defaultElements}
 						addElement={(element) => addElement(0, element)}
+						text="word"
 						disabled={Boolean(dragState)}
 					/>
 				)}

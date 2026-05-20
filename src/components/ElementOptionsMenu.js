@@ -46,6 +46,7 @@ export default function ElementOptionsMenu({
 	deleteElement,
 	hasSearch = false,
 	hasDelete,
+	menuTitle,
 }) {
 	const modalRef = useRef(null)
 	const menuIdRef = useRef(Symbol("element-options-menu"))
@@ -192,7 +193,10 @@ export default function ElementOptionsMenu({
 	const secondaryPlacement = selectedCategory ? getSecondaryPlacement(menuLayout) : "right"
 	const menuLeft = getMenuLeft(menuLayout, secondaryPlacement)
 	const secondaryPanel = selectedCategory && (
-		<ElementOptionsPanel className="secondaryElementOptionsPanel">
+		<ElementOptionsPanel
+			className="secondaryElementOptionsPanel"
+			menuTitle={selectedCategory}
+		>
 			<ElementOptionsList
 				hasSearch={true}
 				elementOptions={secondaryElementOptions}
@@ -201,7 +205,7 @@ export default function ElementOptionsMenu({
 		</ElementOptionsPanel>
 	)
 	const primaryPanel = (
-		<ElementOptionsPanel hasDelete={hasDelete} onDelete={handleDelete}>
+		<ElementOptionsPanel hasDelete={hasDelete} onDelete={handleDelete} menuTitle={menuTitle}>
 			<ElementOptionsList
 				hasSearch={hasSearch}
 				elementOptions={elementOptions}
@@ -235,9 +239,10 @@ export default function ElementOptionsMenu({
 
 const PAGE_SIZE = 50
 
-function ElementOptionsPanel({ children, hasDelete, onDelete, className = "" }) {
+function ElementOptionsPanel({ children, hasDelete, onDelete, className = "", menuTitle }) {
 	return (
 		<div className={`elementListContainer ${className}`}>
+			{menuTitle && <div className="elementOptionsMenuTitle">{menuTitle}</div>}
 			{children}
 			{hasDelete && (
 				<div className="deleteElementButtonContainer">

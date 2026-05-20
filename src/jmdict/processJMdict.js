@@ -214,7 +214,8 @@ function addAdverb(wordTag, word, kana, entry) {
 }
 
 function addNoun(wordTag, word, kana, entry) {
-	if (wordTag === "n") {
+	const nounTags = ["n", "pn", "n-t", "vs"]
+	if (nounTags.includes(wordTag)) {
 		output.nouns.push({
 			elementType: "noun",
 			text: word,

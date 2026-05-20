@@ -3,5 +3,5 @@ import App from './App';
 
 test('renders the initial add button', () => {
   render(<App />);
-  expect(screen.getByRole('button', { name: '+' })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: '+ word' })).toBeInTheDocument();
 });

@@ -25,6 +25,7 @@ export default function ConjugationEnding({ conjugation, updateConjugation, colo
 				setIsModalOpen={setIsModalOpen}
 				elementOptions={conjugationOptions}
 				onSelect={onSelect}
+				menuTitle="Conjugation"
 			/>
 			<div
 				ref={elementRef}

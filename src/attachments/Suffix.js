@@ -20,6 +20,7 @@ export default function Suffix({ element, updateElement, deleteElement, mouse, c
 				onSelect={updateElement}
 				deleteElement={deleteElement}
 				hasDelete={true}
+				menuTitle="Suffix"
 			/>
 			{element ? (
 				<div
@@ -36,6 +37,7 @@ export default function Suffix({ element, updateElement, deleteElement, mouse, c
 					elementOptions={suffixOptions}
 					addElement={updateElement}
 					hasSearch={true}
+					text="suffix"
 					disabled={disabled}
 				/>
 			)}

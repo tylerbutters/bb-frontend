@@ -333,7 +333,7 @@ export const conjugations = {
 			{ text: "たい" },
 			{ text: "た" },
 			{ text: "る" },
-			{ text: "ろう" },
+			{ text: "ろ" },
 			{ text: "たり" },
 			{ text: "て" },
 			{ text: "られる" },
@@ -373,8 +373,8 @@ export const conjugations = {
 	れば: {
 		stem: "れば",
 	},
-	ろう: {
-		stem: "ろう",
+	ろ: {
+		stem: "ろ",
 	},
 	//godan
 	る: {

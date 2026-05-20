@@ -19,6 +19,7 @@ export default function NoDesu({ element, updateElement, deleteElement, mouse, c
 				onSelect={updateElement}
 				deleteElement={deleteElement}
 				hasDelete={true}
+				menuTitle="No"
 			/>
 			{element ? (
 				<div
@@ -35,6 +36,7 @@ export default function NoDesu({ element, updateElement, deleteElement, mouse, c
 					elementOptions={noDesuOptions}
 					addElement={updateElement}
 					hasSearch={true}
+					text="no"
 					disabled={disabled}
 				/>
 			)}

@@ -195,6 +195,7 @@ export default function Conjugation({
 					mouse={mouse}
 					hasSearch={true}
 					addElement={getConjugationUpdate}
+					text="auxiliary"
 					disabled={addButtonsDisabled}
 				/>
 			)
@@ -207,6 +208,7 @@ export default function Conjugation({
 					mouse={mouse}
 					hasSearch={true}
 					addElement={getConjugationUpdate}
+					text="verb"
 					disabled={addButtonsDisabled}
 				/>
 			)
@@ -244,6 +246,7 @@ export default function Conjugation({
 					deleteElement={clearCurrentConjugation}
 					hasDelete={true}
 					hasSearch={true}
+					menuTitle={parentConjugation.conjugationType === "aux" ? "Auxiliary" : "Verb"}
 				/>
 				<div
 					ref={elementRef}
@@ -274,6 +277,7 @@ export default function Conjugation({
 					deleteElement={clearCurrentConjugation}
 					hasDelete={true}
 					hasSearch={true}
+					menuTitle="Auxiliary"
 				/>
 				<div
 					ref={elementRef}
@@ -302,6 +306,7 @@ export default function Conjugation({
 				setIsModalOpen={setIsModalOpen}
 				elementOptions={conjugationOptions || []}
 				onSelect={getConjugationUpdate}
+				menuTitle="Conjugation"
 			/>
 			<div
 				ref={elementRef}

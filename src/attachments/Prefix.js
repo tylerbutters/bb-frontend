@@ -20,6 +20,7 @@ export default function Prefix({ element, updateElement, deleteElement, mouse, c
 				onSelect={updateElement}
 				deleteElement={deleteElement}
 				hasDelete={true}
+				menuTitle="Prefix"
 			/>
 			{element ? (
 				<div
@@ -36,6 +37,7 @@ export default function Prefix({ element, updateElement, deleteElement, mouse, c
 					elementOptions={prefixOptions}
 					addElement={updateElement}
 					hasSearch={true}
+					text="prefix"
 					disabled={disabled}
 				/>
 			)}

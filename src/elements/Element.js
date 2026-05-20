@@ -150,6 +150,7 @@ export default function Element({
 				onSelect={updateElement}
 				deleteElement={() => setIsClosing(true)}
 				hasDelete={true}
+				menuTitle="Word"
 			/>
 			<Resize element={element} isClosing={isClosing} onCloseComplete={deleteElement}>
 				<div
