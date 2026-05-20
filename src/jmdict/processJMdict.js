@@ -43,43 +43,21 @@ function getFirstKana(entry) {
 function getStem(word, type) {
 	if (!word) return ""
 
-	if (
-		type === "ichidan" ||
-		type === "godan" ||
-		type === "godan-iku" ||
-		type === "kureru" ||
-		type === "godan-aru" ||
-		type === "i-type"
-	) {
-		return word.slice(0, -1)
-	}
-
 	if (type === "suru" || type === "kuru" || type === "ii") {
 		return word.slice(0, -2)
 	}
 
-	return word
+	return word.slice(0, -1)
 }
 
 function getEnding(word, type) {
 	if (!word) return ""
 
-	if (
-		type === "ichidan" ||
-		type === "godan" ||
-		type === "godan-iku" ||
-		type === "kureru" ||
-		type === "godan-aru" ||
-		type === "i-type"
-	) {
-		return word.slice(-1)
-	}
-
 	if (type === "suru" || type === "kuru" || type === "ii") {
 		return word.slice(-2)
 	}
 
-	return null
+	return word.slice(-1)
 }
 
 function isSuruVerb(entry) {
@@ -105,8 +83,9 @@ function getMeanings(entry, wordTag) {
 // -------------------- MAPPING TYPES --------------------
 
 function mapVerbType(wordTag) {
-	if (wordTag === "v5aru") return "godan-aru"
+	if (wordTag === "v5aru") return "godan-haru"
 	if (wordTag === "v5k-s") return "godan-iku"
+	if (wordTag === "v5r-i") return "godan-aru"
 	if (wordTag.startsWith("v5")) return "godan"
 	if (wordTag === "v1") return "ichidan"
 	if (wordTag === "v1-s") return "kureru"

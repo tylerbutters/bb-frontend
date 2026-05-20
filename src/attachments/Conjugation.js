@@ -119,13 +119,29 @@ export default function Conjugation({
 
 		let conjugationData = conjugations[selectedConjugation.text]
 
+		if (selectedConjugation.replacesParent) {
+			if (!conjugationData) {
+				alert("Haven't made this conjugation yet")
+				return
+			}
+
+			updateConjugation({
+				...parentConjugation,
+				conjugation: {
+					...createConjugationFromData(conjugationData),
+					replacesParent: true,
+				},
+			})
+			return
+		}
+
 		if (parentConjugation.verbType?.includes("godan")) {
 			const selectedCategory =
 				conjugationOptions.find(
 					(category) => category.text === selectedConjugation.selectedCategoryText,
 				) ||
 				conjugationOptions.find((category) =>
-					category.list.some((conjugation) => conjugation.text === selectedConjugation.text),
+					category.list?.some((conjugation) => conjugation.text === selectedConjugation.text),
 				)
 			if (!selectedCategory) return
 			const singleCharacterConjugation = selectedConjugation.text === selectedCategory.text
@@ -307,6 +323,7 @@ export default function Conjugation({
 				elementOptions={conjugationOptions || []}
 				onSelect={getConjugationUpdate}
 				menuTitle="Conjugation"
+				secondHasSearch={false}
 			/>
 			<div
 				ref={elementRef}
@@ -315,7 +332,8 @@ export default function Conjugation({
 				onClick={openConjugationMenu}
 			>
 				<div className="insideElementText">
-					{parentConjugation.verbType?.includes("godan") &&
+					{!currentConjugation.replacesParent &&
+						parentConjugation.verbType?.includes("godan") &&
 						parentConjugation.ending !== currentConjugation?.stem &&
 						parentConjugation.ending}
 					{!currentConjugation?.stem && !currentConjugation?.ending && (

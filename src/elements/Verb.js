@@ -10,12 +10,15 @@ export default function Verb({
 	addButtonsDisabled,
 }) {
 	const hasConjugation = element.conjugation && Object.keys(element.conjugation).length > 0
+	const shouldRenderStem = !element.conjugation?.replacesParent
 
 	return (
 		<div className="baseElement">
-			<div className="elementText">
-				<JapaneseText text={element.stem} reading={element.stemKana} />
-			</div>
+			{shouldRenderStem && (
+				<div className="elementText">
+					<JapaneseText text={element.stem} reading={element.stemKana} />
+				</div>
+			)}
 			{hasConjugation && (
 				<Conjugation
 					color={allColors.verb.secondary}

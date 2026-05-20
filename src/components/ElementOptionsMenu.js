@@ -20,6 +20,7 @@ export default function ElementOptionsMenu({
 	elementOptions,
 	deleteElement,
 	hasSearch = false,
+	secondHasSearch = true,
 	hasDelete,
 	menuTitle,
 }) {
@@ -131,7 +132,7 @@ export default function ElementOptionsMenu({
 	const secondaryPanel = selectedCategory && (
 		<ElementOptionsPanel className="secondaryElementOptionsPanel" menuTitle={selectedCategory}>
 			<ElementOptionsList
-				hasSearch={true}
+				hasSearch={secondHasSearch}
 				elementOptions={secondaryElementOptions}
 				onSelectOption={(selectedElement) => handleSelectOption(selectedElement, selectedCategory)}
 			/>

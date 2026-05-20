@@ -17,8 +17,10 @@ const GODAN_DEFAULTS = {
 	B5: [{ text: "う" }],
 }
 
+const ARU_B1_OPTIONS = GODAN_DEFAULTS.B1.filter((option) => option.text !== "ない")
+
 function getGodanEnding(parentConjugation) {
-	return parentConjugation.verbType === "godan-aru" ? "る" : parentConjugation.ending
+	return parentConjugation.verbType === "godan-haru" ? "る" : parentConjugation.ending
 }
 
 function createGodanCategory(text, list) {
@@ -31,7 +33,20 @@ export function getGodanConjugationOptions(parentConjugation) {
 
 	const [B1, B2, B3, B4, B5, Bte, Bta] = row
 
-	if (parentConjugation.verbType === "godan-aru") {
+	if (parentConjugation.verbType === "aru") {
+		return [
+			{ text: "ない", replacesParent: true },
+			createGodanCategory(B1, ARU_B1_OPTIONS),
+			createGodanCategory(B2, [...GODAN_DEFAULTS.B2, { text: B2, conjugationType: "aux" }]),
+			createGodanCategory(B3, [{ text: B3 }]),
+			createGodanCategory(B4, GODAN_DEFAULTS.B4),
+			createGodanCategory(B5, GODAN_DEFAULTS.B5),
+			createGodanCategory(Bte, [{ text: Bte, conjugationType: "te" }]),
+			createGodanCategory(Bta, [{ text: Bta }]),
+		]
+	}
+
+	if (parentConjugation.verbType === "godan-haru") {
 		return [
 			createGodanCategory(B1, GODAN_DEFAULTS.B1),
 			createGodanCategory("い", [...GODAN_DEFAULTS.B2, { text: "い" }]),

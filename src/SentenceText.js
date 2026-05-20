@@ -56,6 +56,14 @@ function adjectiveToString(element) {
 function verbToString(element) {
 	if (!element) return ""
 
+	if (element.conjugation?.replacesParent) {
+		return [
+			element.middleParticle?.text || "",
+			verbToString(element.conjugation),
+			element.particle?.text || "",
+		].join("")
+	}
+
 	const shouldIncludeGodanEnding =
 		element.verbType?.includes("godan") &&
 		hasConjugation(element) &&
