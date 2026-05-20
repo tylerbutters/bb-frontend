@@ -1,13 +1,16 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 import "../App.css"
 import JapaneseText from "./JapaneseText"
 
 const MENU_TRANSITION_MS = 160
 const MENU_OPEN_EVENT = "element-options-menu-open"
 const MENU_VIEWPORT_PADDING = 16
+const MENU_ANCHOR_GAP = 10
 const SECONDARY_PANEL_TRANSITION_MS = 320
 
 export default function ElementOptionsMenu({
+	anchorRef,
 	isModalOpen,
 	setIsModalOpen,
 	onSelect,
@@ -22,10 +25,34 @@ export default function ElementOptionsMenu({
 	const [selectedCategory, setSelectedCategory] = useState()
 	const [secondaryElementOptions, setSecondaryElementOptions] = useState([])
 	const [horizontalOffset, setHorizontalOffset] = useState(0)
+	const [menuPosition, setMenuPosition] = useState(null)
 
 	const closeMenu = useCallback(() => {
 		setIsModalOpen(false)
 	}, [setIsModalOpen])
+
+	const updateMenuPosition = useCallback(() => {
+		const anchor = anchorRef?.current
+		if (!anchor) return
+
+		const rect = anchor.getBoundingClientRect()
+		const nextPosition = {
+			left: rect.left + rect.width / 2,
+			top: rect.top - MENU_ANCHOR_GAP,
+		}
+
+		setMenuPosition((currentPosition) => {
+			if (
+				currentPosition &&
+				Math.abs(currentPosition.left - nextPosition.left) < 0.5 &&
+				Math.abs(currentPosition.top - nextPosition.top) < 0.5
+			) {
+				return currentPosition
+			}
+
+			return nextPosition
+		})
+	}, [anchorRef])
 
 	useEffect(() => {
 		if (isModalOpen) {
@@ -41,6 +68,7 @@ export default function ElementOptionsMenu({
 		const timeout = setTimeout(() => {
 			setShouldRenderMenu(false)
 			setSelectedCategory(null)
+			setMenuPosition(null)
 		}, MENU_TRANSITION_MS)
 
 		return () => clearTimeout(timeout)
@@ -58,6 +86,7 @@ export default function ElementOptionsMenu({
 
 	useEffect(() => {
 		function handleClickOutside(e) {
+			if (anchorRef?.current?.contains(e.target)) return
 			if (isModalOpen && modalRef.current && !modalRef.current.contains(e.target)) {
 				closeMenu()
 			}
@@ -65,25 +94,43 @@ export default function ElementOptionsMenu({
 
 		document.addEventListener("mousedown", handleClickOutside)
 		return () => document.removeEventListener("mousedown", handleClickOutside)
-	}, [closeMenu, isModalOpen])
+	}, [anchorRef, closeMenu, isModalOpen])
 
 	useLayoutEffect(() => {
-		if (!shouldRenderMenu || !modalRef.current) return
+		if (!shouldRenderMenu) return
+
+		updateMenuPosition()
+		const frameId = requestAnimationFrame(updateMenuPosition)
+
+		window.addEventListener("resize", updateMenuPosition)
+		window.addEventListener("scroll", updateMenuPosition, true)
+
+		return () => {
+			cancelAnimationFrame(frameId)
+			window.removeEventListener("resize", updateMenuPosition)
+			window.removeEventListener("scroll", updateMenuPosition, true)
+		}
+	}, [shouldRenderMenu, updateMenuPosition])
+
+	useLayoutEffect(() => {
+		if (!shouldRenderMenu || !modalRef.current || !menuPosition) return
 
 		function updateHorizontalOffset() {
 			const rect = modalRef.current.getBoundingClientRect()
+			const baseLeft = menuPosition.left - rect.width / 2
+			const baseRight = menuPosition.left + rect.width / 2
 			let adjustment = 0
 
-			if (rect.left < MENU_VIEWPORT_PADDING) {
-				adjustment = MENU_VIEWPORT_PADDING - rect.left
-			} else if (rect.right > window.innerWidth - MENU_VIEWPORT_PADDING) {
-				adjustment = window.innerWidth - MENU_VIEWPORT_PADDING - rect.right
+			if (baseLeft < MENU_VIEWPORT_PADDING) {
+				adjustment = MENU_VIEWPORT_PADDING - baseLeft
+			} else if (baseRight > window.innerWidth - MENU_VIEWPORT_PADDING) {
+				adjustment = window.innerWidth - MENU_VIEWPORT_PADDING - baseRight
 			}
 
-			// absolute target instead of accumulating offsets
-			setHorizontalOffset((prev) => (Math.abs(adjustment) < 0.5 ? prev : prev + adjustment))
+			setHorizontalOffset(adjustment)
 		}
 
+		setHorizontalOffset(0)
 		const frameId = requestAnimationFrame(updateHorizontalOffset)
 
 		const menuTimeoutId = setTimeout(updateHorizontalOffset, MENU_TRANSITION_MS)
@@ -98,7 +145,7 @@ export default function ElementOptionsMenu({
 			clearTimeout(panelTimeoutId)
 			window.removeEventListener("resize", updateHorizontalOffset)
 		}
-	}, [shouldRenderMenu, selectedCategory, secondaryElementOptions])
+	}, [menuPosition, shouldRenderMenu, selectedCategory, secondaryElementOptions])
 
 	function handleSelectOption(selectedElement, categoryText) {
 		onSelect(
@@ -133,13 +180,18 @@ export default function ElementOptionsMenu({
 
 	if (!shouldRenderMenu) return null
 
-	return (
+	const menu = (
 		<div
 			ref={modalRef}
 			className={`elementOptionsMenuContainer ${
 				isModalOpen ? "elementOptionsMenuOpen" : "elementOptionsMenuClosing"
 			}`}
-			style={{ "--menu-horizontal-offset": `${horizontalOffset}px` }}
+			style={{
+				left: `${menuPosition?.left || 0}px`,
+				top: `${menuPosition?.top || 0}px`,
+				visibility: menuPosition ? undefined : "hidden",
+				"--menu-horizontal-offset": `${horizontalOffset}px`,
+			}}
 		>
 			{selectedCategory && (
 				<ElementOptionsPanel className="secondaryElementOptionsPanel">
@@ -162,6 +214,8 @@ export default function ElementOptionsMenu({
 			</ElementOptionsPanel>
 		</div>
 	)
+
+	return createPortal(menu, document.body)
 }
 
 const PAGE_SIZE = 50

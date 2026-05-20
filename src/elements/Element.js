@@ -56,6 +56,7 @@ export default function Element({
 }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [isClosing, setIsClosing] = useState(false)
+	const elementContainerRef = useRef(null)
 	const particles = useGrammarStore((state) => state.particles)
 	const particleOptions = useMemo(() => {
 		const availableParticles = particles.filter((particle) =>
@@ -142,6 +143,7 @@ export default function Element({
 	return (
 		<div className="modalContainer">
 			<ElementOptionsMenu
+				anchorRef={elementContainerRef}
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
 				elementOptions={defaultElements}
@@ -151,6 +153,7 @@ export default function Element({
 			/>
 			<Resize element={element} isClosing={isClosing} onCloseComplete={deleteElement}>
 				<div
+					ref={elementContainerRef}
 					className="elementContainer"
 					style={{
 						backgroundColor:

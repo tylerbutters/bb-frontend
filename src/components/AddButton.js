@@ -37,6 +37,7 @@ export default function AddButton({
 	return (
 		<div className="modalContainer">
 			<ElementOptionsMenu
+				anchorRef={ref}
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
 				onSelect={addElement}

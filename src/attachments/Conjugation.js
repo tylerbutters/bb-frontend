@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import ElementOptionsMenu from "../components/ElementOptionsMenu"
 import "../App.css"
 import useGrammarStore from "../store/useGrammarStore"
@@ -24,6 +24,7 @@ export default function Conjugation({
 	addButtonsDisabled,
 }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
+	const elementRef = useRef(null)
 	const conjugations = useGrammarStore((state) => state.conjugations)
 	const currentConjugation = parentConjugation?.conjugation
 	const auxiliaries = useGrammarStore((state) => state.auxiliaries)
@@ -233,6 +234,7 @@ export default function Conjugation({
 		return (
 			<div className="modalContainer">
 				<ElementOptionsMenu
+					anchorRef={elementRef}
 					isModalOpen={isModalOpen}
 					setIsModalOpen={setIsModalOpen}
 					elementOptions={
@@ -244,6 +246,7 @@ export default function Conjugation({
 					hasSearch={true}
 				/>
 				<div
+					ref={elementRef}
 					className="baseInsideElement conjugationElement"
 					style={{ backgroundColor: allColors.verb.primary }}
 					onClick={openConjugationMenu}
@@ -263,6 +266,7 @@ export default function Conjugation({
 		return (
 			<div className="modalContainer">
 				<ElementOptionsMenu
+					anchorRef={elementRef}
 					isModalOpen={isModalOpen}
 					setIsModalOpen={setIsModalOpen}
 					elementOptions={auxiliaries}
@@ -272,6 +276,7 @@ export default function Conjugation({
 					hasSearch={true}
 				/>
 				<div
+					ref={elementRef}
 					className="baseInsideElement conjugationElement"
 					style={{ backgroundColor: allColors.adjective.primary }}
 					onClick={openConjugationMenu}
@@ -292,12 +297,14 @@ export default function Conjugation({
 	return (
 		<div className="modalContainer">
 			<ElementOptionsMenu
+				anchorRef={elementRef}
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
 				elementOptions={conjugationOptions || []}
 				onSelect={getConjugationUpdate}
 			/>
 			<div
+				ref={elementRef}
 				className="baseInsideElement conjugationElement"
 				style={{ backgroundColor: color, borderColor: isModalOpen && "white" }}
 				onClick={openConjugationMenu}

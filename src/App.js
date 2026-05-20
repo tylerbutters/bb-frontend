@@ -6,6 +6,8 @@ import SentenceText from "./SentenceText"
 import dictionary from "./jmdict/processed-jmdict.json"
 import useGrammarStore from "./store/useGrammarStore"
 
+const SENTENCE_ELEMENTS_VIEWPORT_PADDING = 100
+
 export default function App() {
 	const nextElementId = useRef(0)
 	const elementDragRefs = useRef(new Map())
@@ -46,7 +48,7 @@ export default function App() {
 		if (!container) return
 
 		function updateScale() {
-			const availableWidth = Math.max(window.innerWidth - 24, 1)
+			const availableWidth = Math.max(window.innerWidth - SENTENCE_ELEMENTS_VIEWPORT_PADDING * 2, 1)
 			const contentWidth = Math.max(container.scrollWidth, 1)
 			const nextScale = Math.min(1, availableWidth / contentWidth)
 
@@ -239,26 +241,33 @@ export default function App() {
 		})
 	}, [])
 
-	const getDragInsertIndex = useCallback((pointerX, draggedId) => {
-		const orderedRects = addedElements
-			.filter((element) => element.sentenceElementId !== draggedId)
-			.map((element) => {
-				const node = elementDragRefs.current.get(element.sentenceElementId)
-				return node
-					? {
-							elementId: element.sentenceElementId,
-							centerX: node.getBoundingClientRect().left + node.getBoundingClientRect().width / 2,
-						}
-					: null
-			})
-			.filter(Boolean)
+	const getDragInsertIndex = useCallback(
+		(pointerX, draggedId) => {
+			const orderedRects = addedElements
+				.filter((element) => element.sentenceElementId !== draggedId)
+				.map((element) => {
+					const node = elementDragRefs.current.get(element.sentenceElementId)
+					return node
+						? {
+								elementId: element.sentenceElementId,
+								centerX: node.getBoundingClientRect().left + node.getBoundingClientRect().width / 2,
+							}
+						: null
+				})
+				.filter(Boolean)
 
-		const targetIndex = orderedRects.findIndex((rect) => pointerX < rect.centerX)
-		return targetIndex === -1 ? orderedRects.length : targetIndex
-	}, [addedElements])
+			const targetIndex = orderedRects.findIndex((rect) => pointerX < rect.centerX)
+			return targetIndex === -1 ? orderedRects.length : targetIndex
+		},
+		[addedElements],
+	)
 
 	function startElementPointerDrag(e, elementId) {
-		if (e.target.closest(".baseInsideElement, .addButton, input, button, .elementOptionsMenuContainer")) {
+		if (
+			e.target.closest(
+				".baseInsideElement, .addButton, input, button, .elementOptionsMenuContainer",
+			)
+		) {
 			return
 		}
 
@@ -267,9 +276,7 @@ export default function App() {
 		dragStartRef.current = {
 			elementId,
 			pointerId: e.pointerId,
-			originalIndex: addedElements.findIndex(
-				(element) => element.sentenceElementId === elementId,
-			),
+			originalIndex: addedElements.findIndex((element) => element.sentenceElementId === elementId),
 			startX: e.clientX,
 			startY: e.clientY,
 			offsetX: e.clientX - rect.left,
@@ -359,9 +366,7 @@ export default function App() {
 			<SentenceText addedElements={addedElements} />
 			<div
 				ref={sentenceElementsContainerRef}
-				className={`sentenceElementsContainer ${
-					dragState ? "sentenceElementsDragging" : ""
-				}`}
+				className={`sentenceElementsContainer ${dragState ? "sentenceElementsDragging" : ""}`}
 				style={{ zoom: sentenceElementsScale }}
 			>
 				{addedElements.map((element, index) => {
@@ -384,9 +389,7 @@ export default function App() {
 										elementDragRefs.current.delete(element.sentenceElementId)
 									}
 								}}
-								className={`mainElementDragItem ${
-									isDraggingThis ? "mainElementDragging" : ""
-								}`}
+								className={`mainElementDragItem ${isDraggingThis ? "mainElementDragging" : ""}`}
 								style={
 									isDraggingThis
 										? {
@@ -394,10 +397,7 @@ export default function App() {
 												height: unscaledDragHeight,
 											}
 										: {
-												transform: getDragPreviewTransform(
-													element.sentenceElementId,
-													index,
-												),
+												transform: getDragPreviewTransform(element.sentenceElementId, index),
 											}
 								}
 								onPointerDown={(e) => startElementPointerDrag(e, element.sentenceElementId)}

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import ElementOptionsMenu from "../components/ElementOptionsMenu"
 import "../App.css"
 import AddButton from "../components/AddButton"
@@ -12,10 +12,12 @@ export default function Particle({
 	disabled,
 }) {
 	const [isModalOpen, setIsModalOpen] = useState()
+	const elementRef = useRef(null)
 
 	return (
 		<div className="modalContainer">
 			<ElementOptionsMenu
+				anchorRef={elementRef}
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
 				elementOptions={elementOptions}
@@ -25,6 +27,7 @@ export default function Particle({
 			/>
 			{element ? (
 				<div
+					ref={elementRef}
 					className="baseInsideElement particleElement"
 					onClick={() => setIsModalOpen(true)}
 				>
