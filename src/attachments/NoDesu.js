@@ -35,7 +35,6 @@ export default function NoDesu({ element, updateElement, deleteElement, mouse, c
 					mouse={mouse}
 					elementOptions={noDesuOptions}
 					addElement={updateElement}
-					hasSearch={true}
 					text="no"
 					disabled={disabled}
 				/>
