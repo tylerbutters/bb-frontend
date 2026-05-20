@@ -1,12 +1,12 @@
 import { Fragment, useEffect, useMemo, useRef, useState, useLayoutEffect } from "react"
-import ElementOptionsMenu from "../ElementOptionsMenu"
+import ElementOptionsMenu from "../components/ElementOptionsMenu"
 import "../App.css"
 import Adjective from "./Adjective"
 import Noun from "./Noun"
 import Verb from "./Verb"
-import useElementsStore from "../useElementsStore"
+import useGrammarStore from "../store/useGrammarStore"
 import Punctuation from "./Punctuation"
-import Particle from "../element attachments/Particle"
+import Particle from "../attachments/Particle"
 import Adverb from "./Adverb"
 import Desu from "./Desu"
 import Counter from "./Counter"
@@ -14,7 +14,7 @@ import Counter from "./Counter"
 export default function Element({ element, mouse, updateElement, deleteElement, defaultElements }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [isClosing, setIsClosing] = useState(false)
-	const particles = useElementsStore((state) => state.particles)
+	const particles = useGrammarStore((state) => state.particles)
 	const particleOptions = useMemo(() => {
 		const availableParticles = particles.filter((particle) =>
 			particle.attachesTo.includes(element.elementType),

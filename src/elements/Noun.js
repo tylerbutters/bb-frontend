@@ -1,6 +1,6 @@
 import "../App.css"
-import Suffix from "../element attachments/Suffix"
-import Prefix from "../element attachments/Prefix"
+import Suffix from "../attachments/Suffix"
+import Prefix from "../attachments/Prefix"
 
 export default function Noun({ mouse, element, onClickSelf, updateElement, secondaryColor }) {
 	function addElement(selectedElement) {

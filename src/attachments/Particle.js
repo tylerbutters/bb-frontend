@@ -1,7 +1,7 @@
 import { useState } from "react"
-import ElementOptionsMenu from "../ElementOptionsMenu"
+import ElementOptionsMenu from "../components/ElementOptionsMenu"
 import "../App.css"
-import AddButton from "../AddButton"
+import AddButton from "../components/AddButton"
 
 export default function Particle({ element, elementOptions, updateElement, deleteElement, mouse }) {
 	const [isModalOpen, setIsModalOpen] = useState()

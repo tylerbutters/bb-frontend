@@ -1,7 +1,7 @@
 import { useState } from "react"
-import ElementOptionsMenu from "../ElementOptionsMenu"
+import ElementOptionsMenu from "../components/ElementOptionsMenu"
 import "../App.css"
-import Conjugation from "../element attachments/Conjugation"
+import Conjugation from "../attachments/Conjugation"
 
 export default function Adjective({
 	element,

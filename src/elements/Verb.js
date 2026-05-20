@@ -1,6 +1,6 @@
 import { useState } from "react"
-import Conjugation from "../element attachments/Conjugation"
-import ElementOptionsMenu from "../ElementOptionsMenu"
+import Conjugation from "../attachments/Conjugation"
+import ElementOptionsMenu from "../components/ElementOptionsMenu"
 
 export default function Verb({
 	element,

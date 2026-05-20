@@ -1,11 +1,11 @@
 import { useState } from "react"
-import ElementOptionsMenu from "../ElementOptionsMenu"
+import ElementOptionsMenu from "../components/ElementOptionsMenu"
 import "../App.css"
-import useElementsStore from "../useElementsStore"
+import useGrammarStore from "../store/useGrammarStore"
 
 export default function ConjugationEnding({ conjugation, updateConjugation, color }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const verbConjugations = useElementsStore((state) => state.conjugations)
+	const verbConjugations = useGrammarStore((state) => state.conjugations)
 	const conjugationOptions =
 		verbConjugations[`${conjugation?.stem}${conjugation?.ending}`]?.conjugationOptions || []
 

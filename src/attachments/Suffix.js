@@ -1,26 +1,26 @@
 import { useState } from "react"
 import "../App.css"
-import ElementOptionsMenu from "../ElementOptionsMenu"
+import ElementOptionsMenu from "../components/ElementOptionsMenu"
 import dictionary from "../jmdict/processed-jmdict.json"
-import AddButton from "../AddButton"
+import AddButton from "../components/AddButton"
 
-export default function Prefix({ element, updateElement, deleteElement, mouse, color }) {
+export default function Suffix({ element, updateElement, deleteElement, mouse, color }) {
 	const [isModalOpen, setIsModalOpen] = useState()
-	const prefixOptions = dictionary.prefixes
+	const suffixOptions = dictionary.suffixes
 
 	return (
 		<div className="modalContainer">
 			<ElementOptionsMenu
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
-				elementOptions={prefixOptions}
+				elementOptions={suffixOptions}
 				onSelect={updateElement}
 				deleteElement={deleteElement}
 				hasDelete={true}
 			/>
 			{element ? (
 				<div
-					className="baseInsideElement"
+					className="baseInsideElement suffixPrefixElement"
 					style={{ backgroundColor: color }}
 					onClick={() => setIsModalOpen(true)}
 				>
@@ -29,7 +29,7 @@ export default function Prefix({ element, updateElement, deleteElement, mouse, c
 			) : (
 				<AddButton
 					mouse={mouse}
-					elementOptions={prefixOptions}
+					elementOptions={suffixOptions}
 					addElement={updateElement}
 					hasSearch={true}
 				/>

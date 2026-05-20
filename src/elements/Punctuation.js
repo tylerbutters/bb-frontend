@@ -1,12 +1,12 @@
 import { useState } from "react"
-import ElementOptionsMenu from "../ElementOptionsMenu"
+import ElementOptionsMenu from "../components/ElementOptionsMenu"
 import "../App.css"
-import useElementsStore from "../useElementsStore"
+import useGrammarStore from "../store/useGrammarStore"
 
 export default function Punctuation({ text, onClickSelf }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [lastChar, setLastChar] = useState(text.at(-1))
-	const allElements = useElementsStore((state) => state)
+	const allElements = useGrammarStore((state) => state)
 	const punctuation = { punctuation: allElements.punctuation }
 	const stem = text.slice(0, -1)
 

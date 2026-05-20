@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react"
-import ElementOptionsMenu from "../ElementOptionsMenu"
+import ElementOptionsMenu from "../components/ElementOptionsMenu"
 import "../App.css"
-import useElementsStore from "../useElementsStore"
-import AddButton from "../AddButton"
+import useGrammarStore from "../store/useGrammarStore"
+import AddButton from "../components/AddButton"
 import dictionary from "../jmdict/processed-jmdict.json"
 import Verb from "../elements/Verb"
 import ConjugationEnding from "./ConjugationEnding"
@@ -23,10 +23,10 @@ export default function Conjugation({
 	color,
 }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const conjugations = useElementsStore((state) => state.conjugations)
+	const conjugations = useGrammarStore((state) => state.conjugations)
 	const currentConjugation = parentConjugation?.conjugation
-	const auxiliaries = useElementsStore((state) => state.auxiliaries)
-	const particles = useElementsStore((state) => state.particles)
+	const auxiliaries = useGrammarStore((state) => state.auxiliaries)
+	const particles = useGrammarStore((state) => state.particles)
 	const conjugationOptions = getConjugationOptions()
 	const particleOptions = useMemo(
 		() => particles.filter((particle) => particle.attachesTo.includes("te")),

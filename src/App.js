@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useRef, useState } from "react"
 import "./App.css"
-import AddButton from "./AddButton"
+import AddButton from "./components/AddButton"
 import Element from "./elements/Element"
 import SentenceText from "./SentenceText"
 import dictionary from "./jmdict/processed-jmdict.json"
