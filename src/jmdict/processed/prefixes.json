@@ -1,6 +1,70 @@
 [
   {
     "elementType": "prefix",
+    "text": "彼の",
+    "textKana": "あの",
+    "meanings": [
+      "that",
+      "those",
+      "the"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "あんな",
+    "textKana": "あんな",
+    "meanings": [
+      "that sort of",
+      "that kind of",
+      "like that",
+      "such",
+      "so"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "こう言う",
+    "textKana": "こういう",
+    "meanings": [
+      "such",
+      "this sort of",
+      "like this"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "こんな",
+    "textKana": "こんな",
+    "meanings": [
+      "this sort of",
+      "this kind of",
+      "like this",
+      "such"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "其の",
+    "textKana": "その",
+    "meanings": [
+      "that",
+      "the",
+      "part (as in \"part two\")"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "そんな",
+    "textKana": "そんな",
+    "meanings": [
+      "such",
+      "that sort of",
+      "that kind of",
+      "like that"
+    ]
+  },
+  {
+    "elementType": "prefix",
     "text": "でも",
     "textKana": "でも",
     "meanings": [
@@ -8,6 +72,56 @@
       "quack",
       "in-name-only",
       "for lack of anything better to do"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "飛んだ",
+    "textKana": "とんだ",
+    "meanings": [
+      "unexpected",
+      "unlikely",
+      "strange",
+      "terrible",
+      "awful",
+      "horrible",
+      "serious",
+      "outrageous"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "どう言う",
+    "textKana": "どういう",
+    "meanings": [
+      "what kind of",
+      "what sort of",
+      "what"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "どんな",
+    "textKana": "どんな",
+    "meanings": [
+      "what kind of",
+      "what sort of",
+      "what",
+      "no matter what (kind of)",
+      "whatever",
+      "any",
+      "all"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "本の",
+    "textKana": "ほんの",
+    "meanings": [
+      "mere",
+      "only",
+      "just",
+      "slight"
     ]
   },
   {
@@ -371,6 +485,14 @@
   },
   {
     "elementType": "prefix",
+    "text": "去る",
+    "textKana": "さる",
+    "meanings": [
+      "last ... (e.g. \"last April\")"
+    ]
+  },
+  {
+    "elementType": "prefix",
     "text": "空",
     "textKana": "から",
     "meanings": [
@@ -396,6 +518,16 @@
   },
   {
     "elementType": "prefix",
+    "text": "見知らぬ",
+    "textKana": "みしらぬ",
+    "meanings": [
+      "strange",
+      "unfamiliar",
+      "unknown"
+    ]
+  },
+  {
+    "elementType": "prefix",
     "text": "御",
     "textKana": "ご",
     "meanings": [
@@ -413,12 +545,35 @@
   },
   {
     "elementType": "prefix",
+    "text": "主たる",
+    "textKana": "しゅたる",
+    "meanings": [
+      "main",
+      "principal",
+      "chief",
+      "primary",
+      "major"
+    ]
+  },
+  {
+    "elementType": "prefix",
     "text": "準",
     "textKana": "じゅん",
     "meanings": [
       "semi-",
       "quasi-",
       "associate"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "所謂",
+    "textKana": "いわゆる",
+    "meanings": [
+      "what is called",
+      "what you call",
+      "what they call",
+      "so-called"
     ]
   },
   {
@@ -490,6 +645,16 @@
   },
   {
     "elementType": "prefix",
+    "text": "そう言う",
+    "textKana": "そういう",
+    "meanings": [
+      "such",
+      "like that",
+      "that sort of"
+    ]
+  },
+  {
+    "elementType": "prefix",
     "text": "全",
     "textKana": "ぜん",
     "meanings": [
@@ -533,10 +698,42 @@
   },
   {
     "elementType": "prefix",
+    "text": "大きな",
+    "textKana": "おおきな",
+    "meanings": [
+      "big",
+      "large",
+      "great"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "大した",
+    "textKana": "たいした",
+    "meanings": [
+      "considerable",
+      "great",
+      "important",
+      "significant",
+      "a big deal"
+    ]
+  },
+  {
+    "elementType": "prefix",
     "text": "第",
     "textKana": "だい",
     "meanings": [
       "prefix for forming ordinal numbers"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "単なる",
+    "textKana": "たんなる",
+    "meanings": [
+      "mere",
+      "simple",
+      "sheer"
     ]
   },
   {
@@ -552,6 +749,14 @@
       "really",
       "totally",
       "absolutely"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "当の",
+    "textKana": "とうの",
+    "meanings": [
+      "the ... in question"
     ]
   },
   {
@@ -718,6 +923,15 @@
   },
   {
     "elementType": "prefix",
+    "text": "明くる",
+    "textKana": "あくる",
+    "meanings": [
+      "next (day, morning, etc.)",
+      "following"
+    ]
+  },
+  {
+    "elementType": "prefix",
     "text": "滅多",
     "textKana": "めった",
     "meanings": [
@@ -762,6 +976,36 @@
   },
   {
     "elementType": "prefix",
+    "text": "此の",
+    "textKana": "この",
+    "meanings": [
+      "this",
+      "last (couple of years, etc.)",
+      "these",
+      "past",
+      "you (as in \"you liar\")"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "凡ゆる",
+    "textKana": "あらゆる",
+    "meanings": [
+      "all",
+      "every"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "或る",
+    "textKana": "ある",
+    "meanings": [
+      "a certain ...",
+      "some ..."
+    ]
+  },
+  {
+    "elementType": "prefix",
     "text": "姫",
     "textKana": "ひめ",
     "meanings": [
@@ -779,6 +1023,63 @@
       "cool",
       "chilled",
       "unheated"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "我が",
+    "textKana": "わが",
+    "meanings": [
+      "my",
+      "our",
+      "one's own"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "色んな",
+    "textKana": "いろんな",
+    "meanings": [
+      "various",
+      "a variety of",
+      "all sorts of",
+      "many (different)"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "碌な",
+    "textKana": "ろくな",
+    "meanings": [
+      "satisfactory",
+      "decent",
+      "good",
+      "proper",
+      "respectable"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "可笑しな",
+    "textKana": "おかしな",
+    "meanings": [
+      "funny",
+      "amusing",
+      "comical",
+      "laughable",
+      "ridiculous",
+      "strange",
+      "odd",
+      "peculiar",
+      "weird",
+      "wrong",
+      "unusual",
+      "eccentric",
+      "unsuitable",
+      "improper",
+      "inappropriate",
+      "unbecoming",
+      "suspicious"
     ]
   },
   {
@@ -808,6 +1109,15 @@
     "textKana": "デミ",
     "meanings": [
       "demi-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "何の",
+    "textKana": "どの",
+    "meanings": [
+      "which",
+      "what (way)"
     ]
   },
   {
@@ -846,10 +1156,37 @@
   },
   {
     "elementType": "prefix",
+    "text": "有りとあらゆる",
+    "textKana": "ありとあらゆる",
+    "meanings": [
+      "every conceivable",
+      "every single",
+      "every possible",
+      "all kinds of"
+    ]
+  },
+  {
+    "elementType": "prefix",
     "text": "全日本",
     "textKana": "ぜんにほん",
     "meanings": [
       "all-Japan"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "良き",
+    "textKana": "よき",
+    "meanings": [
+      "good"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "然うした",
+    "textKana": "そうした",
+    "meanings": [
+      "such"
     ]
   },
   {
@@ -928,6 +1265,25 @@
       "prominent",
       "eminent",
       "distinguished"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "ああ言う",
+    "textKana": "ああいう",
+    "meanings": [
+      "that sort of",
+      "like that"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "小さな",
+    "textKana": "ちいさな",
+    "meanings": [
+      "small",
+      "little",
+      "tiny"
     ]
   },
   {

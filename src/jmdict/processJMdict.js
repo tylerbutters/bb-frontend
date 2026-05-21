@@ -148,7 +148,7 @@ function addAdjective(wordTag, word, kana, entry) {
 	})
 }
 function addPrefix(wordTag, word, kana, entry) {
-	if (wordTag === "pref") {
+	if (wordTag === "pref" || wordTag === "adj-pn") {
 		output.prefixes.push({
 			elementType: "prefix",
 			text: word,

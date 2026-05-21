@@ -150,7 +150,7 @@ export default function ElementOptionsMenu({
 			menuTitle={selectedCategory}
 		>
 			<ElementOptionsList
-				hasSearch={secondHasSearch}
+				hasSearch={selectedCategory === "Punctuation" ? false : secondHasSearch}
 				elementOptions={secondaryElementOptions}
 				onSelectOption={(selectedElement) => handleSelectOption(selectedElement, selectedCategory)}
 			/>
