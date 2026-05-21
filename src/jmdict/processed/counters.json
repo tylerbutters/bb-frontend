@@ -1,0 +1,1118 @@
+[
+  {
+    "elementType": "counter",
+    "text": "頁",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "page"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "駅",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for railway stations and bus stations"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "ヶ月",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for months"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "課",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for lessons and chapters (of a book)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "画",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "stroke (of a kanji)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "回",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for occurrences"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "階",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for storeys and floors of a building"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "株",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "stock",
+      "share",
+      "(clump of) roots",
+      "plant with attached roots or stem",
+      "strain (of bacteria, etc.)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "竿",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for flags (on poles)",
+      "counter for long, thin Japanese sweets (e.g. yōkan)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "缶",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "can",
+      "tin"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "気筒",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "cylinder"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "客",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for containers used to entertain guests"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "球",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for pitches"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "局",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "game (of go, shogi, etc.)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "玉",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "okonomiyaki"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "筋",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for long thin things",
+      "counter for roads or blocks when giving directions",
+      "(Edo period) counter for hundreds of mon (obsolete unit of currency)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "金",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "karat (measure of purity of gold)",
+      "carat"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "具",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for sets of armor, utensils, furniture, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "件",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "matter",
+      "affair",
+      "case",
+      "item",
+      "subject",
+      "counter for (received) emails, text messages, voicemail messages, etc.",
+      "counter for accounts (on a website, email service, etc.)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "元",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for plants or trees",
+      "counter for falcons (in falconry)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "個",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for (small) things or pieces",
+      "counter for military units",
+      "counter for years (of age difference)",
+      "counter for school-years"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "語",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "word",
+      "term"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "口",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for mouthfuls, shares (of money) and stove burners",
+      "counter for swords, blades, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "座",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for theatres, deities, Buddhist images, tall mountains, and satokagura songs"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "歳",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "... years old",
+      "age (of) ..."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "冊",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for books"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "皿",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "serving",
+      "helping",
+      "course"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "山",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "mountain",
+      "hill",
+      "mine",
+      "(mountain) forest",
+      "heap",
+      "pile",
+      "stack"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "誌",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "magazine",
+      "journal"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "手",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "move (in go, shogi, etc.)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "種類",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for kinds, species, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "畳",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "tatami mat (esp. as a measure of room size, either 1.82 sqm or 1.54 sqm)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "振り",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "swing",
+      "shake",
+      "sweep",
+      "wave",
+      "wag",
+      "counter for swords, blades, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "針",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for stitches"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "切り",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for slices (esp. thick slices)",
+      "counter for cuts (of fish, meat, etc.)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "切れ",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for scraps, pieces, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "折",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for folded items",
+      "counter for items (esp. food) packed in an oribako"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "膳",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for bowlfuls of rice",
+      "counter for pairs of chopsticks"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "組",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "group (of people)",
+      "party",
+      "team",
+      "crew",
+      "set (of items)",
+      "assortment",
+      "deck (of cards)",
+      "pack"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "双",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "pair"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "束",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "bundle",
+      "bunch",
+      "sheaf"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "対",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for items that come in pairs",
+      "counter for sets (of clothes, small furniture, utensils, etc.)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "台",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for machines and vehicles"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "題",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for questions (on a test)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "卓",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for tables, desks, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "柱",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for buddhas, gods, nobles, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "通",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for messages, letters, notes, documents, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "通り",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for sets of things",
+      "counter for methods, ways, kinds, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "通話",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for telephone calls of a set duration"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "点",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for points, marks, goals, etc.",
+      "counter for goods, items, articles of clothing, works of art, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "度",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "time (three times, each time, etc.)",
+      "times"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "度",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for occurrences"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "棟",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for buildings, apartments, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "頭",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for large animals (e.g. head of cattle)",
+      "counter for insects in a collection",
+      "counter for helmets, masks, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "倍",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "times (as much)",
+      "-fold",
+      "1-nth",
+      "1 to n",
+      "1 in n"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "発",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for engines (on an aircraft)",
+      "counter for gunshots, bursts of gas, etc.",
+      "counter for bullets, bombs, etc.",
+      "counter for blows (punches)",
+      "counter for jokes, puns, etc.",
+      "counter for ideas, thoughts or guesses",
+      "counter for ejaculations or sexual intercourse"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "版",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for editions of a publication"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "晩",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for nights"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "番目",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "the nth ..."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "筆",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "(land) lot",
+      "plot"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "票",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "vote",
+      "ballot"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "部",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for copies of a newspaper, magazine, book, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "服",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for doses of medicine, gulps of tea, puffs of a cigarette, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "腹",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for hard roe",
+      "counter for containers with bulging middles (pots, vases, etc.)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "編",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "volume (of a text)",
+      "completed literary work"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "舗",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for foldable things such as maps, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "歩",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for steps"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "包み",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for wrapped objects"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "房",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "bunch (of grapes, bananas, etc.)",
+      "cluster (of flowers)",
+      "segment (of a tangerine, etc.)",
+      "section"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "本",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for long, cylindrical things",
+      "counter for films, TV shows, etc.",
+      "counter for goals, home runs, etc.",
+      "counter for telephone calls"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "枚",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for thin, flat objects (e.g. sheets of paper, plates, coins)",
+      "counter for portions of gyōza or soba",
+      "counter for ranks",
+      "counter for wrestlers of a particular rank",
+      "counter for fields or rice paddies",
+      "counter for palanquin bearers"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "幕",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "act (in a play)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "翼",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for birds or bird wings"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "粒",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for small round objects including grains, seeds, pills, drops"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "礼",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "bow (i.e. bending of the body)",
+      "bowing"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "列",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for rows"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "椀",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for bowls of food or drink"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "冠",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for titles"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "管",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for tube-shaped objects"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "信",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for received messages"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "匹",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for small animals",
+      "counter for rolls of cloth (two han in size)",
+      "counter for horses"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "俵",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for sacks (of rice, potatoes, coal, etc.)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "面",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for broad, flat objects, levels or stages, e.g. in a video game"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "門",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for cannons"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "箱",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for boxes (or boxed objects)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "箇所",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for places, parts, passages, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "着",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for items or suits of clothing",
+      "nth place (in a race)",
+      "counter for moves"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "船",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for boat-shaped containers (e.g. of sashimi)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "割引",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "tenths discounted",
+      "tenths reduced"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "羽",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for birds or rabbits"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "把",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for bundles"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "錠",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "tablet",
+      "pill"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "段",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "step",
+      "stair",
+      "rung",
+      "(flight of) steps",
+      "shelf",
+      "layer",
+      "tier",
+      "dan (degree of advanced proficiency in martial arts, go, shogi, etc.)",
+      "rank",
+      "column (of print)",
+      "act (in kabuki, joruri, etc.)",
+      "section",
+      "scene",
+      "counter for breaks in written language or speech"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "問",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for questions"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "締め",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for bundles (of wood, cotton, etc.)",
+      "counter for reams of 2000 sheets of Japanese writing paper"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "級",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "(school) grade",
+      "year",
+      "class",
+      "kyu (junior rank in martial arts, go, shogi, etc.)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "貫",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for pieces of sushi"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "合",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for covered containers",
+      "counter for matches, battles, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "食",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "meal",
+      "portion"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "機",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for aircraft",
+      "counter for (remaining) lives"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "位",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "rank",
+      "place (e.g. first place)",
+      "decimal place",
+      "counter for ghosts"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "両",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for carriages (e.g. in a train)",
+      "counter for vehicles",
+      "counter for suits of clothing, sets of armor, etc."
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "日",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for days"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "年",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for years (e.g. of an era), grades (e.g. school)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "カ国",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for countries"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "氏",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for people"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "人",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for people"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "分間",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "minutes (period of)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "品",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "counter for items (of food, etc.)",
+      "counter for dishes or courses (at a restaurant)"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "回り",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "round",
+      "turn",
+      "size",
+      "12-year period",
+      "12-year age difference"
+    ]
+  },
+  {
+    "elementType": "counter",
+    "text": "代目",
+    "number": "",
+    "particle": null,
+    "meanings": [
+      "nth generation",
+      "nth (person to occupy a position, e.g. president)"
+    ]
+  }
+]

@@ -1,4 +1,5 @@
-import dictionary from "../jmdict/processed-jmdict.json"
+import adjectives from "../jmdict/processed/adjectives.json"
+import verbs from "../jmdict/processed/verbs.json"
 
 const rareruOptions = [
 	{ text: "る" },
@@ -61,11 +62,9 @@ function formatAuxiliaryDefinitions() {
 	return auxiliaryDefinitions
 		.map((aux) => {
 			if (aux.elementType === "verb") {
-				return dictionary.verbs?.find(
-					(verb) => verb.text === aux.text || verb.textKana === aux.text,
-				)
+				return verbs.find((verb) => verb.text === aux.text || verb.textKana === aux.text)
 			} else if (aux.elementType === "adjective") {
-				return dictionary.adjectives?.find(
+				return adjectives.find(
 					(adj) => adj.text === aux.text || adj.textKana === aux.text,
 				)
 			}

@@ -1,14 +1,14 @@
 import { useRef, useState } from "react"
 import "../App.css"
 import ElementOptionsMenu from "../components/ElementOptionsMenu"
-import dictionary from "../jmdict/processed-jmdict.json"
+import suffixes from "../jmdict/processed/suffixes.json"
 import AddButton from "../components/AddButton"
 import JapaneseText from "../components/JapaneseText"
 
 export default function Suffix({ element, updateElement, deleteElement, mouse, color, disabled }) {
 	const [isModalOpen, setIsModalOpen] = useState()
 	const elementRef = useRef(null)
-	const suffixOptions = dictionary.suffixes
+	const suffixOptions = suffixes
 
 	return (
 		<div className="modalContainer">

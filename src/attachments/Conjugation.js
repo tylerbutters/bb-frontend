@@ -3,7 +3,7 @@ import ElementOptionsMenu from "../components/ElementOptionsMenu"
 import "../App.css"
 import useGrammarStore from "../store/useGrammarStore"
 import AddButton from "../components/AddButton"
-import dictionary from "../jmdict/processed-jmdict.json"
+import verbs from "../jmdict/processed/verbs.json"
 import Verb from "../elements/Verb"
 import ConjugationEnding from "./ConjugationEnding"
 import Adjective from "../elements/Adjective"
@@ -220,7 +220,7 @@ export default function Conjugation({
 		if (currentConjugation.conjugationType === "te") {
 			return (
 				<AddButton
-					elementOptions={dictionary.verbs || []}
+					elementOptions={verbs}
 					mouse={mouse}
 					hasSearch={true}
 					addElement={getConjugationUpdate}
@@ -256,7 +256,7 @@ export default function Conjugation({
 					isModalOpen={isModalOpen}
 					setIsModalOpen={setIsModalOpen}
 					elementOptions={
-						parentConjugation.conjugationType === "aux" ? auxiliaries : dictionary.verbs
+						parentConjugation.conjugationType === "aux" ? auxiliaries : verbs
 					}
 					onSelect={getConjugationUpdate}
 					deleteElement={clearCurrentConjugation}

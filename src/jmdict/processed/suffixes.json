@@ -1,0 +1,1772 @@
+[
+  {
+    "elementType": "suffix",
+    "text": "さん",
+    "textKana": "さん",
+    "meanings": [
+      "Mr",
+      "Mrs",
+      "Miss",
+      "Ms",
+      "-san",
+      "politeness marker"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "たっぷり",
+    "textKana": "たっぷり",
+    "meanings": [
+      "plentifully",
+      "amply",
+      "abundantly",
+      "copiously",
+      "generously",
+      "fully",
+      "a lot"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "ちゃん",
+    "textKana": "ちゃん",
+    "meanings": [
+      "suffix for familiar person"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "っ放し",
+    "textKana": "っぱなし",
+    "meanings": [
+      "leaving (on, open, unfinished, etc.)",
+      "(doing) continuously",
+      "constantly",
+      "keep ...-ing"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "のみ",
+    "textKana": "のみ",
+    "meanings": [
+      "only",
+      "nothing but"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "惚け",
+    "textKana": "ぼけ",
+    "meanings": [
+      "touched in the head (from)",
+      "out of it (from)",
+      "feeling sluggish (from)",
+      "not yet up to par (after)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "めく",
+    "textKana": "めく",
+    "meanings": [
+      "to show signs of ...",
+      "to have the appearance of ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "遣る",
+    "textKana": "やる",
+    "meanings": [
+      "to do ... completely",
+      "to do ... broadly",
+      "to do ... to a great distance"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "らしい",
+    "textKana": "らしい",
+    "meanings": [
+      "-ish",
+      "like a ...",
+      "typical of ...",
+      "appropriate for ...",
+      "becoming of ...",
+      "worthy of the name ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "イズム",
+    "textKana": "イズム",
+    "meanings": [
+      "ism",
+      "-ism"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "オンリー",
+    "textKana": "オンリー",
+    "meanings": [
+      "only",
+      "just",
+      "solely"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "ジャスト",
+    "textKana": "ジャスト",
+    "meanings": [
+      "just",
+      "exactly",
+      "precisely",
+      "perfectly",
+      "sharp"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "ナウ",
+    "textKana": "ナウ",
+    "meanings": [
+      "currently at ...",
+      "now doing ...",
+      "in the middle of ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "ネス",
+    "textKana": "ネス",
+    "meanings": [
+      "-ness"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "プラス",
+    "textKana": "プラス",
+    "meanings": [
+      "plus",
+      "addition"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "くらい",
+    "textKana": "くらい",
+    "meanings": [
+      "approximately",
+      "about",
+      "around",
+      "or so",
+      "to (about) the extent that",
+      "(almost) enough that",
+      "so ... that ...",
+      "at least",
+      "as ... as ...",
+      "like"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "易い",
+    "textKana": "やすい",
+    "meanings": [
+      "likely to ...",
+      "have a tendency to ...",
+      "easy to ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "成す",
+    "textKana": "なす",
+    "meanings": [
+      "to do intentionally"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "する",
+    "textKana": "する",
+    "meanings": [
+      "verbalizing suffix (applies to nouns noted in this dictionary with the part of speech \"vs\")"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "一",
+    "textKana": "いち",
+    "meanings": [
+      "best"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "一円",
+    "textKana": "いちえん",
+    "meanings": [
+      "throughout (an area)",
+      "whole district"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "一寸",
+    "textKana": "ちょっと",
+    "meanings": [
+      "a little more than (a week, month, etc.)",
+      "slightly more than"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "下す",
+    "textKana": "くだす",
+    "meanings": [
+      "to do in one go",
+      "to do to the end without stopping"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "家",
+    "textKana": "け",
+    "meanings": [
+      "house",
+      "family"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "過ぎる",
+    "textKana": "すぎる",
+    "meanings": [
+      "to be excessive",
+      "to be too much",
+      "to be too ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "過ごす",
+    "textKana": "すごす",
+    "meanings": [
+      "to overdo",
+      "to do too much",
+      "to ... without acting on it",
+      "to ... without getting involved"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "回生",
+    "textKana": "かいせい",
+    "meanings": [
+      "nth-year university student"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "回目",
+    "textKana": "かいめ",
+    "meanings": [
+      "nth time"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "掛け",
+    "textKana": "かけ",
+    "meanings": [
+      "hanger",
+      "holder",
+      "rest",
+      "rack",
+      "peg",
+      "hook",
+      "stand",
+      "in the process of (doing)",
+      "midway through",
+      "half-(done)",
+      "on the verge of",
+      "just about to"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "掛ける",
+    "textKana": "かける",
+    "meanings": [
+      "to be partway doing ...",
+      "to begin (but not complete) ...",
+      "to be about to ...",
+      "to address (someone)",
+      "to direct (something, to someone)",
+      "to do (something, to someone)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "丸",
+    "textKana": "まる",
+    "meanings": [
+      "suffix for ship names",
+      "suffix for names of people (esp. infants)",
+      "suffix for names of swords, armour, musical instruments, etc.",
+      "suffix for names of dogs, horses, etc."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "儀",
+    "textKana": "ぎ",
+    "meanings": [
+      "with regard to",
+      "as for",
+      "as concerns"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "共",
+    "textKana": "ども",
+    "meanings": [
+      "first-person plural (or singular)",
+      "second or third person plural (implies speaker is of higher status than those referred to)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "卿",
+    "textKana": "きょう",
+    "meanings": [
+      "Lord",
+      "Sir"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "筋",
+    "textKana": "すじ",
+    "meanings": [
+      "counter for long thin things",
+      "counter for roads or blocks when giving directions",
+      "street (in Osaka)",
+      "(Edo period) counter for hundreds of mon (obsolete unit of currency)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "苦しい",
+    "textKana": "くるしい",
+    "meanings": [
+      "hard to do",
+      "unpleasant"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "君",
+    "textKana": "くん",
+    "meanings": [
+      "Mr",
+      "master",
+      "boy",
+      "Ms",
+      "miss",
+      "sir",
+      "madam"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "兼ねる",
+    "textKana": "かねる",
+    "meanings": [
+      "to be unable to",
+      "to find difficult (unpleasant, awkward, painful) to do"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "御",
+    "textKana": "ご",
+    "meanings": [
+      "honorific suffix"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "口",
+    "textKana": "くち",
+    "meanings": [
+      "counter for mouthfuls, shares (of money) and stove burners",
+      "counter for swords, blades, etc."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "攻め",
+    "textKana": "せめ",
+    "meanings": [
+      "barrage (of)",
+      "flood (of)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "号",
+    "textKana": "ごう",
+    "meanings": [
+      "suffix attached to names of ships, trains, airplanes, etc."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "号車",
+    "textKana": "ごうしゃ",
+    "meanings": [
+      "suffix for train car numbers"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "刻み",
+    "textKana": "きざみ",
+    "meanings": [
+      "interval"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "惚れる",
+    "textKana": "ほれる",
+    "meanings": [
+      "to forget oneself",
+      "to be entranced (by)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "差す",
+    "textKana": "さす",
+    "meanings": [
+      "to stop in the midst of",
+      "to leave undone"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "座",
+    "textKana": "ざ",
+    "meanings": [
+      "attaches to the names of constellations",
+      "attaches to the names of theatres, cinemas and theatrical troupes",
+      "counter for theatres, deities, Buddhist images, tall mountains, and satokagura songs"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "散らす",
+    "textKana": "ちらす",
+    "meanings": [
+      "to do ... wildly (i.e. disorderly or frequently)",
+      "to do ... all over the place"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "師匠",
+    "textKana": "ししょう",
+    "meanings": [
+      "master",
+      "teacher"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "字",
+    "textKana": "あざ",
+    "meanings": [
+      "section of village"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "次第",
+    "textKana": "しだい",
+    "meanings": [
+      "depending on",
+      "as soon as",
+      "immediately after",
+      "upon",
+      "as (e.g. \"as one is told\", \"as one wishes\")",
+      "whatever (e.g. \"whatever is at hand\")"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "弱",
+    "textKana": "じゃく",
+    "meanings": [
+      "a little less than",
+      "a little under",
+      "slightly fewer than",
+      "-lower (seismic intensity)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "州",
+    "textKana": "しゅう",
+    "meanings": [
+      "dear"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "臭い",
+    "textKana": "くさい",
+    "meanings": [
+      "smelling of",
+      "looking like",
+      "appearing like",
+      "smacking of",
+      "-ish"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "出す",
+    "textKana": "だす",
+    "meanings": [
+      "... out (e.g. to jump out, to carry out)",
+      "to begin ...",
+      "to start to ...",
+      "to burst into ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "所",
+    "textKana": "ところ",
+    "meanings": [
+      "place",
+      "spot",
+      "scene",
+      "site",
+      "address",
+      "district",
+      "area",
+      "locality",
+      "one's house",
+      "point",
+      "aspect",
+      "side",
+      "facet",
+      "passage (in text)",
+      "part",
+      "space",
+      "room",
+      "thing",
+      "matter"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "症",
+    "textKana": "しょう",
+    "meanings": [
+      "illness",
+      "condition",
+      "-pathy"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "上",
+    "textKana": "うえ",
+    "meanings": [
+      "honorable",
+      "venerable",
+      "dear"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "上",
+    "textKana": "じょう",
+    "meanings": [
+      "from the standpoint of",
+      "from the viewpoint of",
+      "with respect to",
+      "in terms of",
+      "as a matter of",
+      "in view of",
+      "so far as ... is concerned",
+      "on",
+      "above",
+      "on top of",
+      "aboard (a ship or vehicle)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "上がり",
+    "textKana": "あがり",
+    "meanings": [
+      "after (rain, illness, etc.)",
+      "ex- (e.g. ex-bureaucrat)",
+      "former"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "上がる",
+    "textKana": "あがる",
+    "meanings": [
+      "to be complete",
+      "to finish",
+      "adds the connotation of an action happening strongly or violently"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "上げる",
+    "textKana": "あげる",
+    "meanings": [
+      "to complete ...",
+      "to humbly do ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "振り",
+    "textKana": "ぶり",
+    "meanings": [
+      "way",
+      "manner",
+      "style",
+      "(for) the first time in (e.g. ten years)",
+      "after ...",
+      "...-sized",
+      "amount (equivalent to ...)",
+      "tune",
+      "tone"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "人",
+    "textKana": "じん",
+    "meanings": [
+      "-ian (e.g. Italian)",
+      "-ite (e.g. Tokyoite)",
+      "-er (e.g. performer, etc.)",
+      "person working with ...",
+      "man",
+      "person",
+      "people"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "尽くす",
+    "textKana": "つくす",
+    "meanings": [
+      "to do to exhaustion",
+      "to do completely",
+      "to do fully"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "切る",
+    "textKana": "きる",
+    "meanings": [
+      "to do completely",
+      "to finish doing",
+      "to be completely ...",
+      "to be totally ...",
+      "to be terribly ...",
+      "to do clearly",
+      "to do decisively",
+      "to do firmly"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "先輩",
+    "textKana": "せんぱい",
+    "meanings": [
+      "senior (at school, work, etc.)",
+      "superior",
+      "elder",
+      "older person",
+      "predecessor"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "千切る",
+    "textKana": "ちぎる",
+    "meanings": [
+      "to do ... heavily",
+      "to do ... heartily",
+      "to do ... vigorously"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "川",
+    "textKana": "かわ",
+    "meanings": [
+      "River",
+      "the ... river"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "前",
+    "textKana": "まえ",
+    "meanings": [
+      "portion",
+      "helping"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "台",
+    "textKana": "だい",
+    "meanings": [
+      "level (e.g. price level)",
+      "mark",
+      "range",
+      "decade (of one's life)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "達",
+    "textKana": "たち",
+    "meanings": [
+      "pluralizing suffix (esp. for people and animals; formerly honorific)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "単位",
+    "textKana": "たんい",
+    "meanings": [
+      "by the ...",
+      "in units of ...",
+      "in groups of ...",
+      "in amounts of ...",
+      "each ...",
+      "by ...",
+      "every..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "中心",
+    "textKana": "ちゅうしん",
+    "meanings": [
+      "-centered",
+      "-centred",
+      "-focused",
+      "-oriented",
+      "centered on",
+      "focused on"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "柱",
+    "textKana": "はしら",
+    "meanings": [
+      "counter for buddhas, gods, nobles, etc."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "通す",
+    "textKana": "とおす",
+    "meanings": [
+      "to do ... to the end",
+      "to do ... continuously",
+      "to carry through ...",
+      "to complete ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "通る",
+    "textKana": "とおる",
+    "meanings": [
+      "to do ... completely",
+      "to do ... thoroughly"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "摘み",
+    "textKana": "つまみ",
+    "meanings": [
+      "a pinch (e.g. of salt)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "的",
+    "textKana": "てき",
+    "meanings": [
+      "-ical",
+      "-ive",
+      "-al",
+      "-ic",
+      "-y",
+      "-like",
+      "-ish",
+      "-sort of",
+      "-kind of",
+      "(something) like",
+      "along the lines of",
+      "-wise",
+      "in terms of",
+      "for",
+      "from the viewpoint of",
+      "from a ... standpoint",
+      "as far as ... is concerned",
+      "Mr.",
+      "Ms.",
+      "Mrs."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "殿",
+    "textKana": "どの",
+    "meanings": [
+      "Mr.",
+      "Mrs.",
+      "Miss",
+      "Ms."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "棟",
+    "textKana": "むね",
+    "meanings": [
+      "counter for buildings, apartments, etc."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "当たり",
+    "textKana": "あたり",
+    "meanings": [
+      "per",
+      "each"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "当て",
+    "textKana": "あて",
+    "meanings": [
+      "addressed to",
+      "per"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "堂",
+    "textKana": "どう",
+    "meanings": [
+      "company"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "得る",
+    "textKana": "うる",
+    "meanings": [
+      "to be able to ...",
+      "can ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "入る",
+    "textKana": "いる",
+    "meanings": [
+      "to do fully",
+      "to do intently",
+      "to do sincerely",
+      "to do deeply",
+      "to feel keenly",
+      "to (reach a state) completely"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "熱",
+    "textKana": "ねつ",
+    "meanings": [
+      "zeal",
+      "passion",
+      "enthusiasm",
+      "mania",
+      "craze",
+      "rage"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "年生",
+    "textKana": "ねんせい",
+    "meanings": [
+      "nth-year student",
+      "nth-year pupil"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "抜く",
+    "textKana": "ぬく",
+    "meanings": [
+      "to do to the end",
+      "to do thoroughly",
+      "to do completely",
+      "to do severely"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "不明",
+    "textKana": "ふめい",
+    "meanings": [
+      "unknown",
+      "unidentified"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "付く",
+    "textKana": "つく",
+    "meanings": [
+      "to become (a state, condition, etc.)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "付ける",
+    "textKana": "つける",
+    "meanings": [
+      "to do intensely",
+      "to do fiercely",
+      "to do strongly",
+      "to be used to (doing)",
+      "to be accustomed to"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "負け",
+    "textKana": "まけ",
+    "meanings": [
+      "failing to live up to (one's name, looks, etc.)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "風",
+    "textKana": "ふう",
+    "meanings": [
+      "-ish",
+      "resembling",
+      "-looking"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "風情",
+    "textKana": "ふぜい",
+    "meanings": [
+      "the likes of ...",
+      "lowly people such as ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "腹",
+    "textKana": "はら",
+    "meanings": [
+      "counter for hard roe",
+      "counter for containers with bulging middles (pots, vases, etc.)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "返る",
+    "textKana": "かえる",
+    "meanings": [
+      "to become extremely",
+      "to become completely"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "暮らす",
+    "textKana": "くらす",
+    "meanings": [
+      "to do daily",
+      "to do all day long",
+      "to continue doing"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "放題",
+    "textKana": "ほうだい",
+    "meanings": [
+      "(doing) as one pleases",
+      "to one's heart's content",
+      "letting (something) go unchecked",
+      "leaving uncontrolled",
+      "leaving (something) to take its own course"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "豊か",
+    "textKana": "ゆたか",
+    "meanings": [
+      "abundant",
+      "plentiful",
+      "rich",
+      "ample",
+      "(well) over",
+      "(easily) in excess of"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "毎に",
+    "textKana": "ごとに",
+    "meanings": [
+      "one by one",
+      "each",
+      "every",
+      "at intervals of"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "様",
+    "textKana": "さま",
+    "meanings": [
+      "Mr",
+      "Mrs",
+      "Miss",
+      "Ms",
+      "makes a word more polite (usu. in fixed expressions)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "翼",
+    "textKana": "つばさ",
+    "meanings": [
+      "counter for birds or bird wings"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "来",
+    "textKana": "らい",
+    "meanings": [
+      "since (e.g. last month)",
+      "for (e.g. 20 years)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "立てる",
+    "textKana": "たてる",
+    "meanings": [
+      "to do ... vigorously"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "流",
+    "textKana": "りゅう",
+    "meanings": [
+      "way",
+      "manner",
+      "style",
+      "fashion",
+      "mode",
+      "school (e.g. of flower arrangement)",
+      "class",
+      "rate",
+      "rank",
+      "flow",
+      "current",
+      "stream"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "流す",
+    "textKana": "ながす",
+    "meanings": [
+      "to do inattentively",
+      "to do without concentrating",
+      "to put little effort into doing"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "力",
+    "textKana": "りょく",
+    "meanings": [
+      "strength",
+      "power",
+      "proficiency",
+      "ability"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "暦",
+    "textKana": "こよみ",
+    "meanings": [
+      "calendar",
+      "almanac"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "翁",
+    "textKana": "おきな",
+    "meanings": [
+      "venerable",
+      "old",
+      "father"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "居る",
+    "textKana": "おる",
+    "meanings": [
+      "to (have the audacity to) do"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "共",
+    "textKana": "とも",
+    "meanings": [
+      "both",
+      "all",
+      "neither",
+      "none",
+      "including ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "魂",
+    "textKana": "たましい",
+    "meanings": [
+      "inherent spirit of something",
+      "state of mind"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "側",
+    "textKana": "がわ",
+    "meanings": [
+      "side (of something, or taking someone's side)",
+      "part",
+      "(watch) case"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "面",
+    "textKana": "めん",
+    "meanings": [
+      "aspect",
+      "facet",
+      "side",
+      "chamfer"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "箱",
+    "textKana": "はこ",
+    "meanings": [
+      "counter for boxes (or boxed objects)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "飽きる",
+    "textKana": "あきる",
+    "meanings": [
+      "to get tired of",
+      "to tire of",
+      "to lose interest in",
+      "to grow weary of",
+      "to get fed up with",
+      "to get sick of",
+      "to become bored with"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "収める",
+    "textKana": "おさめる",
+    "meanings": [
+      "to finish",
+      "to conclude",
+      "to wind up",
+      "to bring to a close"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "終わる",
+    "textKana": "おわる",
+    "meanings": [
+      "to finish doing"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "交わす",
+    "textKana": "かわす",
+    "meanings": [
+      "... with one another",
+      "... to each other"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "込む",
+    "textKana": "こむ",
+    "meanings": [
+      "to go into",
+      "to go in",
+      "to put into",
+      "to become (completely)",
+      "to do thoroughly",
+      "to do sufficiently",
+      "to remain (silent, seated, etc.)",
+      "to stay ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "銀",
+    "textKana": "ぎん",
+    "meanings": [
+      "bank"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "損なう",
+    "textKana": "そこなう",
+    "meanings": [
+      "to fail to do",
+      "to do amiss",
+      "to miss one's opportunity to do",
+      "to almost do",
+      "to come close to doing"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "直す",
+    "textKana": "なおす",
+    "meanings": [
+      "to do over again",
+      "to redo"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "回る",
+    "textKana": "まわる",
+    "meanings": [
+      "to ... around",
+      "to ... about"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "目",
+    "textKana": "め",
+    "meanings": [
+      "ordinal number suffix",
+      "somewhat",
+      "-ish",
+      "point (e.g. of change)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "漏らす",
+    "textKana": "もらす",
+    "meanings": [
+      "to fail to do",
+      "to miss",
+      "to omit (by mistake)",
+      "to forget to do"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "いい",
+    "textKana": "いい",
+    "meanings": [
+      "easy to ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "沿い",
+    "textKana": "ぞい",
+    "meanings": [
+      "along (a river, coast, railway, etc.)",
+      "on (e.g. a street)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "熟す",
+    "textKana": "こなす",
+    "meanings": [
+      "to do ... well",
+      "to do ... completely"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "中",
+    "textKana": "ちゅう",
+    "meanings": [
+      "in",
+      "within",
+      "out of (e.g. ten people)",
+      "among",
+      "during",
+      "while",
+      "in (the course of)",
+      "within (a period)",
+      "throughout",
+      "currently (doing)",
+      "in the process of",
+      "in the middle of",
+      "under (e.g. construction, investigation)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "がる",
+    "textKana": "がる",
+    "meanings": [
+      "to show signs of being",
+      "to feel",
+      "to think",
+      "to behave as if one were",
+      "to pretend",
+      "to act as if"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "問",
+    "textKana": "もん",
+    "meanings": [
+      "counter for questions"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "時半",
+    "textKana": "じはん",
+    "meanings": [
+      "half past (the hour)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "番手",
+    "textKana": "ばんて",
+    "meanings": [
+      "nth place (in a race)",
+      "nth position (in a starting lineup)",
+      "nth rank (in a battle formation)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "渡し",
+    "textKana": "わたし",
+    "meanings": [
+      "delivery"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "等々",
+    "textKana": "とうとう",
+    "meanings": [
+      "etc.",
+      "et cetera",
+      "and so on"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "級",
+    "textKana": "きゅう",
+    "meanings": [
+      "class",
+      "grade",
+      "rank",
+      "level"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "訓",
+    "textKana": "くん",
+    "meanings": [
+      "precept",
+      "lesson",
+      "one's teachings"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "著",
+    "textKana": "ちょ",
+    "meanings": [
+      "(written) by"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "張り",
+    "textKana": "ばり",
+    "meanings": [
+      "in the style of (esp. literary, artistic, etc. works)",
+      "reminiscent of",
+      "attached or stretched on"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "開き",
+    "textKana": "ひらき",
+    "meanings": [
+      "dried and opened fish"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "宛",
+    "textKana": "ずつ",
+    "meanings": [
+      "apiece",
+      "each",
+      "at a time",
+      "piecemeal"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "抜き",
+    "textKana": "ぬき",
+    "meanings": [
+      "(beating) in succession",
+      "in a row"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "みたい",
+    "textKana": "みたい",
+    "meanings": [
+      "-like",
+      "sort of",
+      "similar to",
+      "resembling"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "たい",
+    "textKana": "たい",
+    "meanings": [
+      "very ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "時",
+    "textKana": "じ",
+    "meanings": [
+      "hour",
+      "o'clock",
+      "(specified) time",
+      "when ...",
+      "during ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "か",
+    "textKana": "か",
+    "meanings": [
+      "-al",
+      "-ial",
+      "-ic",
+      "-ical",
+      "-ish",
+      "-y"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "さ",
+    "textKana": "さ",
+    "meanings": [
+      "-ness"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "等",
+    "textKana": "ら",
+    "meanings": [
+      "pluralizing suffix",
+      "or so",
+      "rough indicator of direction, location, amount, etc.",
+      "nominalizing suffix"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "間",
+    "textKana": "かん",
+    "meanings": [
+      "interval",
+      "period of time",
+      "among",
+      "between",
+      "inter-"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "だてらに",
+    "textKana": "だてらに",
+    "meanings": [
+      "in a way that is uncharacteristic of ...",
+      "in a way that is unbecoming to ...",
+      "in a way that is unbefitting of ...",
+      "despite one's position as ...",
+      "despite being ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "大",
+    "textKana": "だい",
+    "meanings": [
+      "-sized",
+      "as big as",
+      "the size of"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "日",
+    "textKana": "にち",
+    "meanings": [
+      "nth day (of the month)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "中",
+    "textKana": "じゅう",
+    "meanings": [
+      "(all) through (e.g. the night)",
+      "throughout (e.g. the year)",
+      "all ... long",
+      "within (e.g. the week)",
+      "in the course of (e.g. today)",
+      "by the end of",
+      "all over",
+      "throughout (e.g. the world)",
+      "all (of a group)",
+      "the whole (family, school, etc.)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "っぽい",
+    "textKana": "っぽい",
+    "meanings": [
+      "-ish",
+      "-like"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "内",
+    "textKana": "ない",
+    "meanings": [
+      "within ...",
+      "inside ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "氏",
+    "textKana": "し",
+    "meanings": [
+      "Mr",
+      "Mrs",
+      "Ms",
+      "Miss",
+      "clan"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "歴",
+    "textKana": "れき",
+    "meanings": [
+      "experience",
+      "history",
+      "record",
+      "career"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "外",
+    "textKana": "がい",
+    "meanings": [
+      "outside ...",
+      "beyond ...",
+      "not included in ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "相",
+    "textKana": "しょう",
+    "meanings": [
+      "minister (of a government department)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "無さそう",
+    "textKana": "なさそう",
+    "meanings": [
+      "does not seem",
+      "unlikely",
+      "improbable"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "ない",
+    "textKana": "ない",
+    "meanings": [
+      "not"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "デー",
+    "textKana": "デー",
+    "meanings": [
+      "day (as in holiday)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "品",
+    "textKana": "ひん",
+    "meanings": [
+      "article",
+      "item",
+      "counter for items (of food, etc.)",
+      "counter for dishes or courses (at a restaurant)"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "難い",
+    "textKana": "にくい",
+    "meanings": [
+      "difficult to ...",
+      "hard to ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "回り",
+    "textKana": "まわり",
+    "meanings": [
+      "round",
+      "turn",
+      "size",
+      "12-year period",
+      "12-year age difference"
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "連れ",
+    "textKana": "づれ",
+    "meanings": [
+      "in the company of",
+      "accompanied by ...",
+      "as a group comprising ...",
+      "likes of ..."
+    ]
+  },
+  {
+    "elementType": "suffix",
+    "text": "煩う",
+    "textKana": "わずらう",
+    "meanings": [
+      "to have trouble doing ...",
+      "to struggle to ..."
+    ]
+  }
+]

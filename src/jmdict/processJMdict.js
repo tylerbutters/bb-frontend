@@ -210,7 +210,7 @@ function addNoun(wordTag, word, kana, entry) {
 
 function processJMdict() {
 	const sourcePath = path.join(__dirname, "jmdict-eng-common.json")
-	const outputPath = path.join(__dirname, "processed-jmdict.json")
+	const outputDirectory = path.join(__dirname, "processed")
 	const JMdictJSON = JSON.parse(fs.readFileSync(sourcePath, "utf8"))
 
 	for (const entry of JMdictJSON.words) {
@@ -232,7 +232,12 @@ function processJMdict() {
 		}
 	}
 
-	fs.writeFileSync(outputPath, JSON.stringify(output, null, 2), "utf8")
+	fs.mkdirSync(outputDirectory, { recursive: true })
+
+	for (const [elementType, elements] of Object.entries(output)) {
+		const outputPath = path.join(outputDirectory, `${elementType}.json`)
+		fs.writeFileSync(outputPath, JSON.stringify(elements, null, 2), "utf8")
+	}
 
 	console.log("Finished processing JMdict")
 }

@@ -1,0 +1,1015 @@
+[
+  {
+    "elementType": "prefix",
+    "text": "でも",
+    "textKana": "でも",
+    "meanings": [
+      "pseudo-",
+      "quack",
+      "in-name-only",
+      "for lack of anything better to do"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "アフター",
+    "textKana": "アフター",
+    "meanings": [
+      "after"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "アンチ",
+    "textKana": "アンチ",
+    "meanings": [
+      "anti-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "インター",
+    "textKana": "インター",
+    "meanings": [
+      "inter-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "ウルトラ",
+    "textKana": "ウルトラ",
+    "meanings": [
+      "ultra"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "Ｓ",
+    "textKana": "エス",
+    "meanings": [
+      "nth year in the Shōwa era (1926.12.25-1989.1.7)"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "Ｈ",
+    "textKana": "エッチ",
+    "meanings": [
+      "nth year in the Heisei era (1989.1.8-2019.4.30)"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "キロ",
+    "textKana": "キロ",
+    "meanings": [
+      "kilo-",
+      "1000",
+      "1024",
+      "2^10"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "ギガ",
+    "textKana": "ギガ",
+    "meanings": [
+      "giga-",
+      "10^9"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "サブ",
+    "textKana": "サブ",
+    "meanings": [
+      "sub-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "セルフ",
+    "textKana": "セルフ",
+    "meanings": [
+      "self-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "センチ",
+    "textKana": "センチ",
+    "meanings": [
+      "centi-",
+      "10^-2"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "禿び",
+    "textKana": "ちび",
+    "meanings": [
+      "worn down (pencil, etc.)"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "デシ",
+    "textKana": "デシ",
+    "meanings": [
+      "deci-",
+      "10^-1"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "ナノ",
+    "textKana": "ナノ",
+    "meanings": [
+      "nano-",
+      "10^-9"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "ネオ",
+    "textKana": "ネオ",
+    "meanings": [
+      "neo"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "ノン",
+    "textKana": "ノン",
+    "meanings": [
+      "non-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "バイオ",
+    "textKana": "バイオ",
+    "meanings": [
+      "bio-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "ピコ",
+    "textKana": "ピコ",
+    "meanings": [
+      "pico-",
+      "10^-12"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "プチ",
+    "textKana": "プチ",
+    "meanings": [
+      "small"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "プラス",
+    "textKana": "プラス",
+    "meanings": [
+      "plus",
+      "addition"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "ヘクト",
+    "textKana": "ヘクト",
+    "meanings": [
+      "hecto-",
+      "10^2"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "ホモ",
+    "textKana": "ホモ",
+    "meanings": [
+      "homo-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "ポリ",
+    "textKana": "ポリ",
+    "meanings": [
+      "poly-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "マイ",
+    "textKana": "マイ",
+    "meanings": [
+      "my",
+      "one's own",
+      "personal",
+      "privately owned"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "マルチ",
+    "textKana": "マルチ",
+    "meanings": [
+      "multi-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "ミニ",
+    "textKana": "ミニ",
+    "meanings": [
+      "mini-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "ミリ",
+    "textKana": "ミリ",
+    "meanings": [
+      "milli-",
+      "10^-3"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "メガ",
+    "textKana": "メガ",
+    "meanings": [
+      "mega- (i.e. 10^6)",
+      "mega",
+      "enormous",
+      "huge"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "ユーロ",
+    "textKana": "ユーロ",
+    "meanings": [
+      "Euro-",
+      "European"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "リア",
+    "textKana": "リア",
+    "meanings": [
+      "rear"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "一",
+    "textKana": "いち",
+    "meanings": [
+      "one",
+      "1"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "延べ",
+    "textKana": "のべ",
+    "meanings": [
+      "total (preceding counter, unit, etc.)",
+      "aggregate",
+      "gross"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "押し",
+    "textKana": "おし",
+    "meanings": [
+      "to forcibly ...",
+      "to strongly ..."
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "仮",
+    "textKana": "かり",
+    "meanings": [
+      "temporary",
+      "provisional",
+      "interim",
+      "tentative"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "我",
+    "textKana": "われ",
+    "meanings": [
+      "prefix indicating familiarity or contempt"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "各",
+    "textKana": "かく",
+    "meanings": [
+      "each",
+      "every",
+      "all"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "幾",
+    "textKana": "いく",
+    "meanings": [
+      "some",
+      "several",
+      "a few",
+      "many",
+      "how many",
+      "how much",
+      "very",
+      "so (much)"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "鬼",
+    "textKana": "おに",
+    "meanings": [
+      "very",
+      "extremely",
+      "super-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "偽",
+    "textKana": "にせ",
+    "meanings": [
+      "pseudo-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "旧",
+    "textKana": "きゅう",
+    "meanings": [
+      "old",
+      "former",
+      "ex-",
+      "Japan's old (lunisolar) calendar"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "空",
+    "textKana": "から",
+    "meanings": [
+      "not carrying anything",
+      "unburdened",
+      "empty-handed",
+      "dishonoured (bill, promise, etc.)",
+      "false",
+      "no-show (reservation)",
+      "put-on (cheeriness, courage, etc.)",
+      "empty (compliments)",
+      "insincere"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "計",
+    "textKana": "けい",
+    "meanings": [
+      "(in) total",
+      "total (of)"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "御",
+    "textKana": "ご",
+    "meanings": [
+      "honorific/polite/humble prefix"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "再",
+    "textKana": "さい",
+    "meanings": [
+      "re-",
+      "again"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "準",
+    "textKana": "じゅん",
+    "meanings": [
+      "semi-",
+      "quasi-",
+      "associate"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "諸",
+    "textKana": "しょ",
+    "meanings": [
+      "various",
+      "many",
+      "several"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "新",
+    "textKana": "しん",
+    "meanings": [
+      "new",
+      "neo-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "正面",
+    "textKana": "しょうめん",
+    "meanings": [
+      "front",
+      "frontage",
+      "facade",
+      "main"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "生",
+    "textKana": "なま",
+    "meanings": [
+      "just a little",
+      "somehow",
+      "vaguely",
+      "partially",
+      "somewhat",
+      "half-",
+      "semi-",
+      "insufficient",
+      "incomplete",
+      "half-baked",
+      "half-hearted",
+      "perfunctory"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "生き",
+    "textKana": "いき",
+    "meanings": [
+      "damned"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "青",
+    "textKana": "あお",
+    "meanings": [
+      "immature",
+      "unripe",
+      "young"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "全",
+    "textKana": "ぜん",
+    "meanings": [
+      "all",
+      "whole",
+      "entire",
+      "complete",
+      "total",
+      "pan-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "総",
+    "textKana": "そう",
+    "meanings": [
+      "whole",
+      "total",
+      "gross",
+      "entire",
+      "overall",
+      "general (election, manager, etc.)"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "草",
+    "textKana": "くさ",
+    "meanings": [
+      "not genuine",
+      "substandard"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "多",
+    "textKana": "た",
+    "meanings": [
+      "multi-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "第",
+    "textKana": "だい",
+    "meanings": [
+      "prefix for forming ordinal numbers"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "超",
+    "textKana": "ちょう",
+    "meanings": [
+      "super-",
+      "ultra-",
+      "hyper-",
+      "extreme",
+      "extremely",
+      "really",
+      "totally",
+      "absolutely"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "豆",
+    "textKana": "まめ",
+    "meanings": [
+      "small",
+      "miniature",
+      "baby",
+      "midget",
+      "small-scale",
+      "child"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "同",
+    "textKana": "どう",
+    "meanings": [
+      "the same",
+      "the said"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "乍ら",
+    "textKana": "ながら",
+    "meanings": [
+      "while doing something else (at the same time)"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "二重",
+    "textKana": "にじゅう",
+    "meanings": [
+      "diplo-",
+      "dipl-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "反",
+    "textKana": "はん",
+    "meanings": [
+      "anti-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "非",
+    "textKana": "ひ",
+    "meanings": [
+      "un-",
+      "non-",
+      "an-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "風力",
+    "textKana": "ふうりょく",
+    "meanings": [
+      "force (level on the Beaufort wind speed scale)"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "副",
+    "textKana": "ふく",
+    "meanings": [
+      "assistant",
+      "associate",
+      "vice-",
+      "sub-",
+      "deputy",
+      "substitute",
+      "auxiliary",
+      "supplementary",
+      "additional",
+      "collateral"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "物",
+    "textKana": "もの",
+    "meanings": [
+      "somehow",
+      "somewhat",
+      "for some reason",
+      "really",
+      "truly"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "糞",
+    "textKana": "くそ",
+    "meanings": [
+      "damn",
+      "damned",
+      "blasted",
+      "stupid",
+      "very",
+      "extremely",
+      "really"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "某",
+    "textKana": "ぼう",
+    "meanings": [
+      "certain",
+      "one"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "没",
+    "textKana": "ぼつ",
+    "meanings": [
+      "lacking",
+      "without"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "本",
+    "textKana": "ほん",
+    "meanings": [
+      "this",
+      "present",
+      "current",
+      "... in question",
+      "... at issue",
+      "main",
+      "head",
+      "principal",
+      "real",
+      "genuine",
+      "regular",
+      "proper"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "毎",
+    "textKana": "まい",
+    "meanings": [
+      "every (usu. with events, e.g. every weekend)",
+      "each"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "又",
+    "textKana": "また",
+    "meanings": [
+      "indirect"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "滅多",
+    "textKana": "めった",
+    "meanings": [
+      "excessive",
+      "indiscriminate"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "来",
+    "textKana": "らい",
+    "meanings": [
+      "next (year, spring, etc.)",
+      "coming"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "立ち",
+    "textKana": "たち",
+    "meanings": [
+      "verb prefix conveying emphasis and sometimes formality"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "令",
+    "textKana": "れい",
+    "meanings": [
+      "nth year in the Reiwa era (May 1, 2019-)"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "数",
+    "textKana": "すう",
+    "meanings": [
+      "several",
+      "a few",
+      "a number of"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "姫",
+    "textKana": "ひめ",
+    "meanings": [
+      "small",
+      "cute",
+      "lesser (in names of species)"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "冷や",
+    "textKana": "ひや",
+    "meanings": [
+      "cold",
+      "cool",
+      "chilled",
+      "unheated"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "純",
+    "textKana": "じゅん",
+    "meanings": [
+      "pure",
+      "unmixed",
+      "genuine",
+      "unalloyed"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "ふん",
+    "textKana": "ふん",
+    "meanings": [
+      "roughly",
+      "harshly",
+      "violently"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "デミ",
+    "textKana": "デミ",
+    "meanings": [
+      "demi-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "不",
+    "textKana": "ふ",
+    "meanings": [
+      "un-",
+      "non-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "軽",
+    "textKana": "けい",
+    "meanings": [
+      "light (e.g. aircraft, truck)"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "汎",
+    "textKana": "はん",
+    "meanings": [
+      "pan-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "無",
+    "textKana": "む",
+    "meanings": [
+      "un-",
+      "non-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "全日本",
+    "textKana": "ぜんにほん",
+    "meanings": [
+      "all-Japan"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "か",
+    "textKana": "か",
+    "meanings": [
+      "very"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "素",
+    "textKana": "す",
+    "meanings": [
+      "mere",
+      "poor",
+      "exceedingly"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "ノー",
+    "textKana": "ノー",
+    "meanings": [
+      "no",
+      "without",
+      "not needed",
+      "not allowed"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "両",
+    "textKana": "りょう",
+    "meanings": [
+      "both (hands, parents, sides, etc.)"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "大",
+    "textKana": "おお",
+    "meanings": [
+      "large",
+      "big",
+      "great",
+      "major",
+      "important",
+      "serious",
+      "heavy",
+      "loud",
+      "older",
+      "senior",
+      "final",
+      "ultimate",
+      "rough",
+      "broad",
+      "general"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "大",
+    "textKana": "だい",
+    "meanings": [
+      "large",
+      "big",
+      "great",
+      "huge",
+      "vast",
+      "major",
+      "important",
+      "serious",
+      "severe",
+      "prominent",
+      "eminent",
+      "distinguished"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "小",
+    "textKana": "こ",
+    "meanings": [
+      "small",
+      "little",
+      "slight",
+      "slightly less than",
+      "just about",
+      "somewhat",
+      "somehow",
+      "minor",
+      "petty"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "少",
+    "textKana": "しょう",
+    "meanings": [
+      "small",
+      "little",
+      "few"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "未",
+    "textKana": "み",
+    "meanings": [
+      "not yet",
+      "un-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "エコ",
+    "textKana": "エコ",
+    "meanings": [
+      "ecological",
+      "eco-"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "単",
+    "textKana": "たん",
+    "meanings": [
+      "single",
+      "simple"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "一",
+    "textKana": "ひと",
+    "meanings": [
+      "one"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "御",
+    "textKana": "お",
+    "meanings": [
+      "honorific/polite/humble prefix"
+    ]
+  },
+  {
+    "elementType": "prefix",
+    "text": "何",
+    "textKana": "なん",
+    "meanings": [
+      "how many",
+      "many",
+      "a lot of",
+      "several",
+      "a few",
+      "some"
+    ]
+  }
+]

@@ -4,7 +4,11 @@ import "./App.css"
 import AddButton from "./components/AddButton"
 import Element from "./elements/Element"
 import SentenceText from "./SentenceText"
-import dictionary from "./jmdict/processed-jmdict.json"
+import adjectives from "./jmdict/processed/adjectives.json"
+import adverbs from "./jmdict/processed/adverbs.json"
+import counters from "./jmdict/processed/counters.json"
+import nouns from "./jmdict/processed/nouns.json"
+import verbs from "./jmdict/processed/verbs.json"
 import useGrammarStore from "./store/useGrammarStore"
 
 const SENTENCE_ELEMENTS_VIEWPORT_PADDING = 100
@@ -28,11 +32,11 @@ export default function App() {
 	const [sentenceElementsScale, setSentenceElementsScale] = useState(1)
 	const grammarStore = useGrammarStore((state) => state)
 	const defaultElements = [
-		{ text: "Nouns", list: dictionary.nouns },
-		{ text: "Verbs", list: dictionary.verbs },
-		{ text: "Adjectives", list: dictionary.adjectives },
-		{ text: "Adverbs", list: dictionary.adverbs },
-		{ text: "Counters", list: dictionary.counters },
+		{ text: "Nouns", list: nouns },
+		{ text: "Verbs", list: verbs },
+		{ text: "Adjectives", list: adjectives },
+		{ text: "Adverbs", list: adverbs },
+		{ text: "Counters", list: counters },
 		{ text: "Punctuation", list: grammarStore.punctuation },
 		{ text: "だ", list: [{ elementType: "desu", text: "だ", stem: "だ" }] },
 	]

@@ -1,14 +1,14 @@
 import { useRef, useState } from "react"
 import "../App.css"
 import ElementOptionsMenu from "../components/ElementOptionsMenu"
-import dictionary from "../jmdict/processed-jmdict.json"
+import prefixes from "../jmdict/processed/prefixes.json"
 import AddButton from "../components/AddButton"
 import JapaneseText from "../components/JapaneseText"
 
 export default function Prefix({ element, updateElement, deleteElement, mouse, color, disabled }) {
 	const [isModalOpen, setIsModalOpen] = useState()
 	const elementRef = useRef(null)
-	const prefixOptions = dictionary.prefixes
+	const prefixOptions = prefixes
 
 	return (
 		<div className="modalContainer">
