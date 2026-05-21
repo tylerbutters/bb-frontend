@@ -29,7 +29,7 @@ export default function SentenceText({ addedElements }) {
 					</Fragment>
 				))}
 			</div>
-			<div> {translation}</div>
+			<div className="sentenceJapaneseText">{translation}</div>
 		</div>
 	)
 }
