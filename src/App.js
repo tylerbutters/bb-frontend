@@ -1,8 +1,8 @@
-import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
-import { flushSync } from "react-dom"
+import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react"
 import "./App.css"
 import AddButton from "./components/AddButton"
 import Element from "./elements/Element"
+import useSentenceDragDrop from "./hooks/useSentenceDragDrop"
 import SentenceText from "./SentenceText"
 import adjectives from "./jmdict/processed/adjectives.json"
 import adverbs from "./jmdict/processed/adverbs.json"
@@ -12,23 +12,15 @@ import verbs from "./jmdict/processed/verbs.json"
 import useGrammarStore from "./store/useGrammarStore"
 
 const SENTENCE_ELEMENTS_VIEWPORT_PADDING = 100
-const DRAG_DROP_TRANSITION_MS = 180
 
 export default function App() {
 	const nextElementId = useRef(0)
-	const elementDragRefs = useRef(new Map())
-	const dragStartRef = useRef(null)
-	const dragPreviewRef = useRef(null)
 	const sentenceElementsContainerRef = useRef(null)
 	const sentenceElementsScaleRef = useRef(1)
 	const scaleFrameRef = useRef(null)
 	const scaleTimeoutRef = useRef(null)
-	const dropTimeoutRef = useRef(null)
-	const isDraggingElement = useRef(false)
-	const suppressElementClick = useRef(false)
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const [addedElements, setAddedElements] = useState([])
-	const [dragState, setDragState] = useState(null)
 	const [sentenceElementsScale, setSentenceElementsScale] = useState(1)
 	const grammarStore = useGrammarStore((state) => state)
 	const defaultElements = [
@@ -40,6 +32,18 @@ export default function App() {
 		{ text: "Punctuation", list: grammarStore.punctuation },
 		{ text: "だ", list: [{ elementType: "desu", text: "だ", stem: "だ" }] },
 	]
+	const {
+		dragState,
+		getDragPreviewTransform,
+		setElementDragNode,
+		shouldSuppressElementClick,
+		startElementPointerDrag,
+	} = useSentenceDragDrop({
+		elements: addedElements,
+		setElements: setAddedElements,
+		containerRef: sentenceElementsContainerRef,
+		scale: sentenceElementsScale,
+	})
 
 	useEffect(() => {
 		function handleMove(e) {
@@ -155,14 +159,6 @@ export default function App() {
 		}
 	}, [])
 
-	useEffect(() => {
-		return () => {
-			if (dropTimeoutRef.current) {
-				window.clearTimeout(dropTimeoutRef.current)
-			}
-		}
-	}, [])
-
 	function normalizeElement(element) {
 		if (element.elementType === "verb" && !element.conjugation) {
 			return {
@@ -237,194 +233,6 @@ export default function App() {
 		setAddedElements((prev) => prev.filter((element) => element.sentenceElementId !== elementId))
 	}
 
-	const moveElementToIndex = useCallback((draggedId, insertIndex) => {
-		setAddedElements((prev) => {
-			const draggedIndex = prev.findIndex((element) => element.sentenceElementId === draggedId)
-			if (draggedIndex === -1) return prev
-
-			const nextElements = [...prev]
-			const [draggedElement] = nextElements.splice(draggedIndex, 1)
-			const boundedIndex = Math.max(0, Math.min(insertIndex, nextElements.length))
-
-			nextElements.splice(boundedIndex, 0, draggedElement)
-			const didOrderChange = nextElements.some(
-				(element, index) => element.sentenceElementId !== prev[index].sentenceElementId,
-			)
-			if (!didOrderChange) return prev
-
-			return nextElements
-		})
-	}, [])
-
-	const getDragInsertIndex = useCallback(
-		(pointerX, draggedId) => {
-			const orderedRects = addedElements
-				.filter((element) => element.sentenceElementId !== draggedId)
-				.map((element) => {
-					const node = elementDragRefs.current.get(element.sentenceElementId)
-					return node
-						? {
-								elementId: element.sentenceElementId,
-								centerX: node.getBoundingClientRect().left + node.getBoundingClientRect().width / 2,
-							}
-						: null
-				})
-				.filter(Boolean)
-
-			const targetIndex = orderedRects.findIndex((rect) => pointerX < rect.centerX)
-			return targetIndex === -1 ? orderedRects.length : targetIndex
-		},
-		[addedElements],
-	)
-
-	function startElementPointerDrag(e, elementId) {
-		if (
-			e.target.closest(
-				".baseInsideElement, .addButton, input, button, .elementOptionsMenuContainer",
-			)
-		) {
-			return
-		}
-
-		e.preventDefault()
-		const rect = e.currentTarget.getBoundingClientRect()
-		dragStartRef.current = {
-			elementId,
-			pointerId: e.pointerId,
-			originalIndex: addedElements.findIndex((element) => element.sentenceElementId === elementId),
-			startX: e.clientX,
-			startY: e.clientY,
-			offsetX: e.clientX - rect.left,
-			offsetY: e.clientY - rect.top,
-			width: rect.width,
-			height: rect.height,
-		}
-	}
-
-	function getDragPreviewTransform(elementId, index) {
-		if (!dragState || dragState.elementId === elementId) return undefined
-
-		const { originalIndex, insertIndex, width } = dragState
-		const unscaledWidth = width / sentenceElementsScale
-		if (insertIndex > originalIndex && index > originalIndex && index <= insertIndex) {
-			return `translateX(-${unscaledWidth}px)`
-		}
-
-		if (insertIndex < originalIndex && index >= insertIndex && index < originalIndex) {
-			return `translateX(${unscaledWidth}px)`
-		}
-
-		return undefined
-	}
-
-	const getSentenceLocalPosition = useCallback((viewportLeft, viewportTop) => {
-		const containerRect = sentenceElementsContainerRef.current?.getBoundingClientRect()
-		if (!containerRect) {
-			return {
-				x: viewportLeft,
-				y: viewportTop,
-			}
-		}
-
-		return {
-			x: (viewportLeft - containerRect.left) / sentenceElementsScale,
-			y: (viewportTop - containerRect.top) / sentenceElementsScale,
-		}
-	}, [sentenceElementsScale])
-
-	useEffect(() => {
-		function moveDraggedElement(e) {
-			const dragStart = dragStartRef.current
-			if (!dragStart) return
-
-			const deltaX = e.clientX - dragStart.startX
-			const deltaY = e.clientY - dragStart.startY
-			const hasStartedDragging = Math.abs(deltaX) > 4 || Math.abs(deltaY) > 4
-
-			if (!dragState && !hasStartedDragging) return
-			isDraggingElement.current = true
-			const insertIndex = getDragInsertIndex(e.clientX, dragStart.elementId)
-			dragPreviewRef.current = {
-				elementId: dragStart.elementId,
-				insertIndex,
-				width: dragStart.width,
-			}
-			const localPosition = getSentenceLocalPosition(
-				e.clientX - dragStart.offsetX,
-				e.clientY - dragStart.offsetY,
-			)
-
-			setDragState({
-				elementId: dragStart.elementId,
-				originalIndex: dragStart.originalIndex,
-				insertIndex,
-				x: localPosition.x,
-				y: localPosition.y,
-				width: dragStart.width,
-				height: dragStart.height,
-			})
-		}
-
-		function finishDraggedElement() {
-			const activeDragState = dragState
-			const dragPreview = dragPreviewRef.current
-			if (isDraggingElement.current) {
-				suppressElementClick.current = true
-				window.setTimeout(() => {
-					suppressElementClick.current = false
-				}, 0)
-			}
-
-			isDraggingElement.current = false
-			dragStartRef.current = null
-			dragPreviewRef.current = null
-
-			if (dropTimeoutRef.current) {
-				window.clearTimeout(dropTimeoutRef.current)
-				dropTimeoutRef.current = null
-			}
-
-			if (dragPreview && activeDragState) {
-				flushSync(() => {
-					moveElementToIndex(dragPreview.elementId, dragPreview.insertIndex)
-				})
-
-				const targetNode = elementDragRefs.current.get(dragPreview.elementId)
-				const targetRect = targetNode?.getBoundingClientRect()
-
-				if (targetRect) {
-					const localPosition = getSentenceLocalPosition(targetRect.left, targetRect.top)
-					setDragState({
-						...activeDragState,
-						x: localPosition.x,
-						y: localPosition.y,
-						width: targetRect.width,
-						height: targetRect.height,
-						isDropping: true,
-					})
-
-					dropTimeoutRef.current = window.setTimeout(() => {
-						dropTimeoutRef.current = null
-						setDragState(null)
-					}, DRAG_DROP_TRANSITION_MS)
-					return
-				}
-			}
-
-			setDragState(null)
-		}
-
-		window.addEventListener("pointermove", moveDraggedElement)
-		window.addEventListener("pointerup", finishDraggedElement)
-		window.addEventListener("pointercancel", finishDraggedElement)
-
-		return () => {
-			window.removeEventListener("pointermove", moveDraggedElement)
-			window.removeEventListener("pointerup", finishDraggedElement)
-			window.removeEventListener("pointercancel", finishDraggedElement)
-		}
-	}, [dragState, getDragInsertIndex, getSentenceLocalPosition, moveElementToIndex])
-
 	return (
 		<div className="app">
 			<SentenceText addedElements={addedElements} />
@@ -449,11 +257,7 @@ export default function App() {
 							/>
 							<div
 								ref={(node) => {
-									if (node) {
-										elementDragRefs.current.set(element.sentenceElementId, node)
-									} else {
-										elementDragRefs.current.delete(element.sentenceElementId)
-									}
+									setElementDragNode(element.sentenceElementId, node)
 								}}
 								className={`mainElementDragItem ${
 									isDraggingThis ? "mainElementDragging" : ""
@@ -470,7 +274,7 @@ export default function App() {
 								}
 								onPointerDown={(e) => startElementPointerDrag(e, element.sentenceElementId)}
 								onClickCapture={(e) => {
-									if (!suppressElementClick.current) return
+									if (!shouldSuppressElementClick()) return
 									e.preventDefault()
 									e.stopPropagation()
 								}}
