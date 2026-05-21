@@ -79,6 +79,23 @@ describe("sentence text conversion", () => {
 			]),
 		).toBe("猫がいる")
 	})
+
+	test("uses the current counter number in the sentence string", () => {
+		const parts = elementsToTextParts([
+			{
+				elementType: "counter",
+				number: "12",
+				text: "個",
+				textKana: "こ",
+			},
+		])
+
+		expect(parts).toEqual([
+			{ text: "12", reading: undefined },
+			{ text: "個", reading: "こ" },
+		])
+		expect(textPartsToString(parts)).toBe("12個")
+	})
 })
 
 describe("translateJapanese", () => {

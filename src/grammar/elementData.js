@@ -64,9 +64,7 @@ function formatAuxiliaryDefinitions() {
 			if (aux.elementType === "verb") {
 				return verbs.find((verb) => verb.text === aux.text || verb.textKana === aux.text)
 			} else if (aux.elementType === "adjective") {
-				return adjectives.find(
-					(adj) => adj.text === aux.text || adj.textKana === aux.text,
-				)
+				return adjectives.find((adj) => adj.text === aux.text || adj.textKana === aux.text)
 			}
 			return null
 		})
@@ -129,7 +127,7 @@ export const particles = [
 	},
 	{
 		text: "と",
-		attachesTo: ["noun", "verb", "i-type", "na-type"],
+		attachesTo: ["noun", "verb", "i-type", "na-type", "counter"],
 	},
 	{
 		text: "こそ",
@@ -157,7 +155,7 @@ export const particles = [
 	},
 	{
 		text: "の",
-		attachesTo: ["noun"],
+		attachesTo: ["noun", "counter"],
 	},
 	{
 		text: "な",

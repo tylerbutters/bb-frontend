@@ -1,26 +1,28 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import "../App.css"
 import JapaneseText from "../components/JapaneseText"
 
 export default function Counter({ mouse, element, updateElement, allColors }) {
-	const [number, setNumber] = useState(element.number || "0")
+	const [number, setNumber] = useState(element.number ?? "0")
+
+	useEffect(() => {
+		setNumber(element.number ?? "0")
+	}, [element.number])
 
 	function onChange(e) {
-		setNumber(e.target.value)
+		const nextNumber = e.target.value
+		if (!/^\d*$/.test(nextNumber)) return
+
+		setNumber(nextNumber)
 	}
 
 	function handleKeyDown(e) {
 		if (e.key !== "Enter") return
 
-		if (!/^\d*$/.test(e.target.value)) {
-			alert("Only numbers")
-			return
-		}
 		updateElement({
 			...element,
-			number,
+			number: e.currentTarget.value,
 		})
-
 		e.target.blur()
 	}
 

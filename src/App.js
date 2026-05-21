@@ -2,6 +2,7 @@ import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react"
 import "./App.css"
 import AddButton from "./components/AddButton"
 import Element from "./elements/Element"
+import normalizeElement from "./grammar/normalizeElement"
 import useSentenceDragDrop from "./hooks/useSentenceDragDrop"
 import SentenceText from "./SentenceText"
 import adjectives from "./jmdict/processed/adjectives.json"
@@ -158,48 +159,6 @@ export default function App() {
 			document.removeEventListener("pointerout", handlePointerOut)
 		}
 	}, [])
-
-	function normalizeElement(element) {
-		if (element.elementType === "verb" && !element.conjugation) {
-			return {
-				...element,
-				conjugation: {
-					stem: element?.ending,
-				},
-			}
-		}
-
-		if (
-			element.elementType === "adjective" &&
-			element.adjectiveType === "i-type" &&
-			!element.conjugation
-		) {
-			return {
-				...element,
-				conjugation: {
-					stem: element?.ending,
-				},
-			}
-		}
-
-		if (element.elementType === "desu" && !element.conjugation) {
-			return {
-				...element,
-				conjugation: {
-					stem: element?.stem,
-				},
-			}
-		}
-
-		if (element.elementType === "counter" && element.number == null) {
-			return {
-				...element,
-				number: "0",
-			}
-		}
-
-		return element
-	}
 
 	function createSentenceElement(selectedElement) {
 		return {

@@ -2,6 +2,14 @@ import { useRef, useState } from "react"
 import ElementOptionsMenu from "../components/ElementOptionsMenu"
 import "../App.css"
 import useGrammarStore from "../store/useGrammarStore"
+import { createConjugationFromData } from "../grammar/conjugationOptions"
+
+export function getConjugationEndingUpdate(conjugations, selectedConjugation) {
+	const conjugationData = conjugations[selectedConjugation.text]
+	if (!conjugationData) return {}
+
+	return createConjugationFromData(conjugationData)
+}
 
 export default function ConjugationEnding({ conjugation, updateConjugation, color }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
@@ -11,10 +19,7 @@ export default function ConjugationEnding({ conjugation, updateConjugation, colo
 		verbConjugations[`${conjugation?.stem}${conjugation?.ending}`]?.conjugationOptions || []
 
 	function onSelect(selectedConjugation) {
-		updateConjugation({
-			stem: verbConjugations[selectedConjugation.text]?.stem,
-			ending: verbConjugations[selectedConjugation.text]?.ending,
-		})
+		updateConjugation(getConjugationEndingUpdate(verbConjugations, selectedConjugation))
 	}
 
 	return (
