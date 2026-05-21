@@ -1,11 +1,9 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
+import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import "../App.css"
 import ElementOptionsList from "./ElementOptionsList"
 import {
-	getMenuLeft,
-	getNextMenuLayout,
-	getPanelWidth,
+	getPrimaryMenuLayout,
 	getSecondaryPlacement,
 	isSameMenuLayout,
 	MENU_OPEN_EVENT,
@@ -25,10 +23,13 @@ export default function ElementOptionsMenu({
 	menuTitle,
 }) {
 	const modalRef = useRef(null)
+	const primaryPanelRef = useRef(null)
+	const secondaryPanelRef = useRef(null)
 	const menuIdRef = useRef(Symbol("element-options-menu"))
 	const [shouldRenderMenu, setShouldRenderMenu] = useState(isModalOpen)
 	const [selectedCategory, setSelectedCategory] = useState()
 	const [secondaryElementOptions, setSecondaryElementOptions] = useState([])
+	const [secondaryPlacement, setSecondaryPlacement] = useState("right")
 	const [menuLayout, setMenuLayout] = useState(null)
 
 	const closeMenu = useCallback(() => {
@@ -39,7 +40,7 @@ export default function ElementOptionsMenu({
 		const anchor = anchorRef?.current
 		if (!anchor) return
 
-		const nextLayout = getNextMenuLayout(anchor, modalRef.current)
+		const nextLayout = getPrimaryMenuLayout(anchor, primaryPanelRef.current)
 		setMenuLayout((currentLayout) =>
 			isSameMenuLayout(currentLayout, nextLayout) ? currentLayout : nextLayout,
 		)
@@ -48,6 +49,7 @@ export default function ElementOptionsMenu({
 	useEffect(() => {
 		if (isModalOpen) {
 			setMenuLayout(null)
+			setSecondaryPlacement("right")
 			setShouldRenderMenu(true)
 			window.dispatchEvent(
 				new CustomEvent(MENU_OPEN_EVENT, {
@@ -60,6 +62,7 @@ export default function ElementOptionsMenu({
 		const timeout = setTimeout(() => {
 			setShouldRenderMenu(false)
 			setSelectedCategory(null)
+			setSecondaryPlacement("right")
 			setMenuLayout(null)
 		}, MENU_TRANSITION_MS)
 
@@ -93,6 +96,19 @@ export default function ElementOptionsMenu({
 		updateMenuLayout()
 	}, [menuLayout, shouldRenderMenu, updateMenuLayout])
 
+	useLayoutEffect(() => {
+		if (!shouldRenderMenu || !selectedCategory || !menuLayout) return
+
+		const nextPlacement = getSecondaryPlacement(
+			menuLayout,
+			primaryPanelRef.current,
+			secondaryPanelRef.current,
+		)
+		setSecondaryPlacement((currentPlacement) =>
+			currentPlacement === nextPlacement ? currentPlacement : nextPlacement,
+		)
+	}, [menuLayout, secondaryElementOptions, selectedCategory, shouldRenderMenu])
+
 	function handleSelectOption(selectedElement, categoryText) {
 		onSelect(
 			categoryText
@@ -116,6 +132,7 @@ export default function ElementOptionsMenu({
 		} else {
 			setSelectedCategory(selectedElement.text)
 			setSecondaryElementOptions(selectedElement.list)
+			setSecondaryPlacement("right")
 		}
 	}
 
@@ -126,11 +143,12 @@ export default function ElementOptionsMenu({
 
 	if (!shouldRenderMenu) return null
 
-	const panelWidth = menuLayout?.panelWidth ?? getPanelWidth()
-	const secondaryPlacement = selectedCategory ? getSecondaryPlacement(menuLayout) : "right"
-	const menuLeft = getMenuLeft(menuLayout, secondaryPlacement)
 	const secondaryPanel = selectedCategory && (
-		<ElementOptionsPanel className="secondaryElementOptionsPanel" menuTitle={selectedCategory}>
+		<ElementOptionsPanel
+			ref={secondaryPanelRef}
+			className={`secondaryElementOptionsPanel secondaryElementOptionsPanel-${secondaryPlacement}`}
+			menuTitle={selectedCategory}
+		>
 			<ElementOptionsList
 				hasSearch={secondHasSearch}
 				elementOptions={secondaryElementOptions}
@@ -139,7 +157,12 @@ export default function ElementOptionsMenu({
 		</ElementOptionsPanel>
 	)
 	const primaryPanel = (
-		<ElementOptionsPanel hasDelete={hasDelete} onDelete={handleDelete} menuTitle={menuTitle}>
+		<ElementOptionsPanel
+			ref={primaryPanelRef}
+			hasDelete={hasDelete}
+			onDelete={handleDelete}
+			menuTitle={menuTitle}
+		>
 			<ElementOptionsList
 				hasSearch={hasSearch}
 				elementOptions={elementOptions}
@@ -156,23 +179,24 @@ export default function ElementOptionsMenu({
 				isModalOpen ? "elementOptionsMenuOpen" : "elementOptionsMenuClosing"
 			}`}
 			style={{
-				left: `${menuLeft}px`,
+				left: `${menuLayout?.primaryLeft ?? 0}px`,
 				top: `${menuLayout?.top ?? 0}px`,
 				visibility: menuLayout ? undefined : "hidden",
-				"--element-options-panel-width": `${panelWidth}px`,
 			}}
 		>
-			{secondaryPlacement === "left" && secondaryPanel}
 			{primaryPanel}
-			{secondaryPlacement === "right" && secondaryPanel}
+			{secondaryPanel}
 		</div>,
 		document.body,
 	)
 }
 
-function ElementOptionsPanel({ children, hasDelete, onDelete, className = "", menuTitle }) {
+const ElementOptionsPanel = forwardRef(function ElementOptionsPanel(
+	{ children, hasDelete, onDelete, className = "", menuTitle },
+	ref,
+) {
 	return (
-		<div className={`elementListContainer ${className}`}>
+		<div ref={ref} className={`elementListContainer ${className}`}>
 			{menuTitle && <div className="elementOptionsMenuTitle">{menuTitle}</div>}
 			{children}
 			{hasDelete && (
@@ -188,4 +212,4 @@ function ElementOptionsPanel({ children, hasDelete, onDelete, className = "", me
 			)}
 		</div>
 	)
-}
+})

@@ -3,7 +3,7 @@ export const MENU_OPEN_EVENT = "element-options-menu-open"
 
 const MENU_VIEWPORT_PADDING = 16
 const MENU_ANCHOR_GAP = 10
-const MENU_PANEL_GAP = 8
+export const MENU_PANEL_GAP = 8
 const MENU_PANEL_WIDTH = 300
 
 function clamp(value, min, max) {
@@ -20,56 +20,38 @@ export function getPanelWidth() {
 	return Math.max(0, Math.min(MENU_PANEL_WIDTH, maxPanelWidth))
 }
 
-export function getSecondaryPlacement(layout) {
-	return layout?.secondaryPlacement ?? "right"
-}
-
-export function getMenuLeft(layout, secondaryPlacement) {
-	if (!layout) return 0
-	if (secondaryPlacement === "left") {
-		return layout.primaryLeft - layout.panelWidth - MENU_PANEL_GAP
-	}
-
-	return layout.primaryLeft
-}
-
-export function getNextMenuLayout(anchor, menu) {
+export function getPrimaryMenuLayout(anchor, primaryPanel) {
 	const anchorRect = anchor.getBoundingClientRect()
-	const panelWidth = getPanelWidth()
-	const menuHeight = menu?.getBoundingClientRect().height || 0
+	const primaryRect = primaryPanel?.getBoundingClientRect()
+	const primaryWidth = primaryRect?.width || getPanelWidth()
+	const primaryHeight = primaryRect?.height || 0
 	const anchorCenter = anchorRect.left + anchorRect.width / 2
-	const naturalPrimaryLeft = anchorCenter - panelWidth / 2
-	const totalWidth = panelWidth * 2 + MENU_PANEL_GAP
-	const canRenderSecondaryOnRight =
-		naturalPrimaryLeft + totalWidth <= window.innerWidth - MENU_VIEWPORT_PADDING
-	const secondaryPlacement = canRenderSecondaryOnRight ? "right" : "left"
-	const primaryLeft =
-		secondaryPlacement === "right"
-			? clamp(
-					naturalPrimaryLeft,
-					MENU_VIEWPORT_PADDING,
-					window.innerWidth - MENU_VIEWPORT_PADDING - totalWidth,
-				)
-			: clamp(
-					naturalPrimaryLeft,
-					MENU_VIEWPORT_PADDING + panelWidth + MENU_PANEL_GAP,
-					window.innerWidth - MENU_VIEWPORT_PADDING - panelWidth,
-				)
+	const naturalPrimaryLeft = anchorCenter - primaryWidth / 2
+	const primaryLeft = clamp(
+		naturalPrimaryLeft,
+		MENU_VIEWPORT_PADDING,
+		window.innerWidth - MENU_VIEWPORT_PADDING - primaryWidth,
+	)
 
 	return {
-		panelWidth,
 		primaryLeft,
-		secondaryPlacement,
-		top: anchorRect.top - MENU_ANCHOR_GAP - menuHeight,
+		top: anchorRect.top - MENU_ANCHOR_GAP - primaryHeight,
 	}
+}
+
+export function getSecondaryPlacement(layout, primaryPanel, secondaryPanel) {
+	const primaryWidth = primaryPanel?.getBoundingClientRect().width || getPanelWidth()
+	const secondaryWidth = secondaryPanel?.getBoundingClientRect().width || getPanelWidth()
+	const secondaryRightEdge =
+		layout.primaryLeft + primaryWidth + MENU_PANEL_GAP + secondaryWidth
+
+	return secondaryRightEdge <= window.innerWidth - MENU_VIEWPORT_PADDING ? "right" : "left"
 }
 
 export function isSameMenuLayout(currentLayout, nextLayout) {
 	return (
 		currentLayout &&
 		Math.abs(currentLayout.primaryLeft - nextLayout.primaryLeft) < 0.5 &&
-		Math.abs(currentLayout.top - nextLayout.top) < 0.5 &&
-		Math.abs(currentLayout.panelWidth - nextLayout.panelWidth) < 0.5 &&
-		currentLayout.secondaryPlacement === nextLayout.secondaryPlacement
+		Math.abs(currentLayout.top - nextLayout.top) < 0.5
 	)
 }

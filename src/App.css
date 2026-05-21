@@ -121,11 +121,6 @@ body {
 /* ELEMENT OPTIONS MENU */
 .elementOptionsMenuContainer {
 	position: fixed;
-	display: flex;
-	flex-direction: row;
-	align-items: flex-start;
-	justify-self: center;
-	gap: 8px;
 	z-index: 2000;
 	/* min-width: 100px; */
 	filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.35));
@@ -268,7 +263,19 @@ body {
 }
 
 .secondaryElementOptionsPanel {
+	position: absolute;
+	top: 0;
 	animation: secondaryElementOptionsPanelIn 300ms ease-in-out both;
+}
+
+.secondaryElementOptionsPanel-right {
+	left: calc(100% + 8px);
+	transform-origin: top left;
+}
+
+.secondaryElementOptionsPanel-left {
+	right: calc(100% + 8px);
+	transform-origin: top right;
 }
 
 @keyframes secondaryElementOptionsPanelIn {
