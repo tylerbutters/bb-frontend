@@ -34,7 +34,7 @@ export default function SentenceText({ addedElements }) {
 	)
 }
 
-async function translateJapanese(text) {
+export async function translateJapanese(text) {
 	try {
 		const response = await fetch(
 			"https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=en&dt=t&q=" +
@@ -48,11 +48,11 @@ async function translateJapanese(text) {
 	}
 }
 
-function elementsToTextParts(addedElements = []) {
+export function elementsToTextParts(addedElements = []) {
 	return addedElements.flatMap(elementToTextParts)
 }
 
-function textPartsToString(parts = []) {
+export function textPartsToString(parts = []) {
 	return parts.map((part) => part.text).join("")
 }
 
