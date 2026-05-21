@@ -39,6 +39,20 @@ body {
 	font-size: 30px;
 }
 
+.sentenceJapaneseText {
+	min-height: 48px;
+	line-height: 1.45;
+	text-align: center;
+}
+
+.sentenceJapaneseText ruby {
+	ruby-position: over;
+}
+
+.sentenceJapaneseText rt {
+	font-size: 14px;
+}
+
 .addButton {
 	display: flex;
 	justify-content: center;

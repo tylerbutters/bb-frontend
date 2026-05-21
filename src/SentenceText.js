@@ -1,23 +1,34 @@
-import { useEffect, useState } from "react"
+import { Fragment, useEffect, useMemo, useState } from "react"
+import JapaneseText from "./components/JapaneseText"
 
 export default function SentenceText({ addedElements }) {
-	const [sentenceString, setSentenceString] = useState()
 	const [translation, setTranslation] = useState()
+	const sentenceParts = useMemo(() => elementsToTextParts(addedElements || []), [addedElements])
+	const sentenceString = useMemo(() => textPartsToString(sentenceParts), [sentenceParts])
 
 	useEffect(() => {
-		const result = elementsToString(addedElements || [])
-		setSentenceString(result)
-		handleTranslate(result)
-	}, [addedElements])
+		handleTranslate(sentenceString)
+	}, [sentenceString])
 
 	async function handleTranslate(sentence) {
+		if (!sentence) {
+			setTranslation("")
+			return
+		}
+
 		const result = await translateJapanese(sentence)
 		setTranslation(result)
 	}
 
 	return (
 		<div className="sentenceTextContainer">
-			<div> {sentenceString}</div>
+			<div className="sentenceJapaneseText">
+				{sentenceParts.map((part, index) => (
+					<Fragment key={`${part.text}:${index}`}>
+						<JapaneseText text={part.text} reading={part.reading} />
+					</Fragment>
+				))}
+			</div>
 			<div> {translation}</div>
 		</div>
 	)
@@ -37,31 +48,50 @@ async function translateJapanese(text) {
 	}
 }
 
-function elementsToString(addedElements = []) {
-	return addedElements.map(elementToString).join("")
+function elementsToTextParts(addedElements = []) {
+	return addedElements.flatMap(elementToTextParts)
+}
+
+function textPartsToString(parts = []) {
+	return parts.map((part) => part.text).join("")
+}
+
+function textPart(text, reading) {
+	if (!text) return []
+	return [{ text, reading }]
+}
+
+function plainTextPart(text) {
+	return textPart(text)
 }
 
 function hasConjugation(element) {
 	return element?.conjugation && Object.keys(element.conjugation).length > 0
 }
 
-function adjectiveToString(element) {
+function adjectiveToTextParts(element) {
+	const shouldUseStem = hasConjugation(element)
+	const text = shouldUseStem ? element?.stem || element?.text : element?.text || element?.stem
+	const reading = shouldUseStem
+		? element?.stemKana || element?.textKana
+		: element?.textKana || element?.stemKana
+
 	return [
-		element?.stem || "",
-		hasConjugation(element) ? verbToString(element.conjugation) : "",
-		element?.particle?.text || "",
-	].join("")
+		...textPart(text, reading),
+		...(hasConjugation(element) ? verbToTextParts(element.conjugation) : []),
+		...plainTextPart(element?.particle?.text),
+	]
 }
 
-function verbToString(element) {
-	if (!element) return ""
+function verbToTextParts(element) {
+	if (!element) return []
 
 	if (element.conjugation?.replacesParent) {
 		return [
-			element.middleParticle?.text || "",
-			verbToString(element.conjugation),
-			element.particle?.text || "",
-		].join("")
+			...plainTextPart(element.middleParticle?.text),
+			...verbToTextParts(element.conjugation),
+			...plainTextPart(element.particle?.text),
+		]
 	}
 
 	const shouldIncludeGodanEnding =
@@ -70,56 +100,58 @@ function verbToString(element) {
 		element.ending !== element.conjugation?.stem
 
 	return [
-		element.stem || "",
-		element.middleParticle?.text || "",
-		shouldIncludeGodanEnding ? element.ending || "" : "",
-		hasConjugation(element) ? verbToString(element.conjugation) : element.ending || "",
-		element.particle?.text || "",
-	].join("")
+		...textPart(element.stem, element.stemKana),
+		...plainTextPart(element.middleParticle?.text),
+		...(shouldIncludeGodanEnding ? plainTextPart(element.ending) : []),
+		...(hasConjugation(element)
+			? verbToTextParts(element.conjugation)
+			: plainTextPart(element.ending)),
+		...plainTextPart(element.particle?.text),
+	]
 }
 
-function nounToString(element) {
+function nounToTextParts(element) {
 	return [
-		element?.prefix?.text || "",
-		element?.text || "",
-		element?.suffix?.text || "",
-		element?.particle?.text || "",
-	].join("")
+		...textPart(element?.prefix?.text, element?.prefix?.textKana),
+		...textPart(element?.text, element?.textKana),
+		...textPart(element?.suffix?.text, element?.suffix?.textKana),
+		...plainTextPart(element?.particle?.text),
+	]
 }
 
-function adverbToString(element) {
-	return [element?.text || "", element?.particle?.text || ""].join("")
+function adverbToTextParts(element) {
+	return [...textPart(element?.text, element?.textKana), ...plainTextPart(element?.particle?.text)]
 }
 
-function desuToString(element) {
+function desuToTextParts(element) {
 	return [
-		element?.noDesu?.text || "",
-		hasConjugation(element) ? verbToString(element.conjugation) : "",
-		element?.particle?.text || "",
-	].join("")
+		...plainTextPart(element?.noDesu?.text),
+		...(hasConjugation(element) ? verbToTextParts(element.conjugation) : []),
+		...plainTextPart(element?.particle?.text),
+	]
 }
 
-function counterToString(element) {
-	return [element?.number || "", element?.text || ""].join("")
+function counterToTextParts(element) {
+	return [...plainTextPart(element?.number), ...textPart(element?.text, element?.textKana)]
 }
 
-function elementToString(element) {
+function elementToTextParts(element) {
 	switch (element?.elementType) {
 		case "noun":
-			return nounToString(element)
+			return nounToTextParts(element)
 		case "adjective":
-			return adjectiveToString(element)
+			return adjectiveToTextParts(element)
 		case "verb":
-			return verbToString(element)
+			return verbToTextParts(element)
 		case "adverb":
-			return adverbToString(element)
+			return adverbToTextParts(element)
 		case "desu":
-			return desuToString(element)
+			return desuToTextParts(element)
 		case "counter":
-			return counterToString(element)
+			return counterToTextParts(element)
 		case "punctuation":
-			return element?.text || ""
+			return plainTextPart(element?.text)
 		default:
-			return ""
+			return []
 	}
 }

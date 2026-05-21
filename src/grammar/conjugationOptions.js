@@ -33,7 +33,7 @@ export function getGodanConjugationOptions(parentConjugation) {
 
 	const [B1, B2, B3, B4, B5, Bte, Bta] = row
 
-	if (parentConjugation.verbType === "aru") {
+	if (parentConjugation.verbType === "godan-aru") {
 		return [
 			{ text: "ない", replacesParent: true },
 			createGodanCategory(B1, ARU_B1_OPTIONS),
