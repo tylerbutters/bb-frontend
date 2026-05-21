@@ -253,6 +253,7 @@ function Resize({ element, isClosing, onCloseComplete, children }) {
 		<div
 			style={{
 				width,
+				borderRadius: 10,
 				overflow: isAnimatingWidth ? "hidden" : "visible",
 				transition: isAnimatingWidth ? "width 0.3s ease" : "none",
 			}}
