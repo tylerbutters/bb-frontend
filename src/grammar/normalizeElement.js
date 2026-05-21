@@ -30,7 +30,7 @@ export default function normalizeElement(element) {
 		}
 	}
 
-	if (element.elementType === "counter" && element.number.length === 0) {
+	if (element.elementType === "counter" && (element.number == null || element.number.length === 0)) {
 		return {
 			...element,
 			number: "0",

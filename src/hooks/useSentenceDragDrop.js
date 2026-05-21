@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
+import { MENU_CLOSE_EVENT } from "../components/elementOptionsMenuLayout"
 
 const DRAG_DROP_TRANSITION_MS = 180
 const DRAG_START_THRESHOLD = 4
@@ -145,6 +146,9 @@ export default function useSentenceDragDrop({ elements, setElements, containerRe
 				Math.abs(deltaX) > DRAG_START_THRESHOLD || Math.abs(deltaY) > DRAG_START_THRESHOLD
 
 			if (!dragState && !hasStartedDragging) return
+			if (!isDraggingElement.current) {
+				window.dispatchEvent(new CustomEvent(MENU_CLOSE_EVENT))
+			}
 			isDraggingElement.current = true
 			const insertIndex = getDragInsertIndex(e.clientX, dragStart.elementId)
 			dragPreviewRef.current = {

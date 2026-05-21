@@ -1,5 +1,6 @@
 export const MENU_TRANSITION_MS = 160
 export const MENU_OPEN_EVENT = "element-options-menu-open"
+export const MENU_CLOSE_EVENT = "element-options-menu-close"
 
 const MENU_VIEWPORT_PADDING = 16
 const MENU_ANCHOR_GAP = 10

@@ -6,6 +6,7 @@ import {
 	getPrimaryMenuLayout,
 	getSecondaryPlacement,
 	isSameMenuLayout,
+	MENU_CLOSE_EVENT,
 	MENU_OPEN_EVENT,
 	MENU_TRANSITION_MS,
 } from "./elementOptionsMenuLayout"
@@ -76,7 +77,12 @@ export default function ElementOptionsMenu({
 		}
 
 		window.addEventListener(MENU_OPEN_EVENT, handleOtherMenuOpen)
-		return () => window.removeEventListener(MENU_OPEN_EVENT, handleOtherMenuOpen)
+		window.addEventListener(MENU_CLOSE_EVENT, closeMenu)
+
+		return () => {
+			window.removeEventListener(MENU_OPEN_EVENT, handleOtherMenuOpen)
+			window.removeEventListener(MENU_CLOSE_EVENT, closeMenu)
+		}
 	}, [closeMenu])
 
 	useEffect(() => {

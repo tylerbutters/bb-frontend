@@ -1,5 +1,6 @@
 import { act, render, screen } from "@testing-library/react"
 import { useRef, useState } from "react"
+import { MENU_CLOSE_EVENT } from "../components/elementOptionsMenuLayout"
 import useSentenceDragDrop from "./useSentenceDragDrop"
 
 function mockRect(node, rect) {
@@ -78,7 +79,9 @@ describe("useSentenceDragDrop", () => {
 	})
 
 	afterEach(() => {
-		jest.runOnlyPendingTimers()
+		act(() => {
+			jest.runOnlyPendingTimers()
+		})
 		jest.useRealTimers()
 	})
 
@@ -135,5 +138,69 @@ describe("useSentenceDragDrop", () => {
 		})
 
 		expect(screen.getByTestId("dragging")).toHaveTextContent("")
+	})
+
+	test("dispatches a menu close event when dragging starts", () => {
+		const handleMenuClose = jest.fn()
+		window.addEventListener(MENU_CLOSE_EVENT, handleMenuClose)
+
+		render(
+			<DragDropHarness
+				initialElements={[
+					{ sentenceElementId: 1, text: "A" },
+					{ sentenceElementId: 2, text: "B" },
+				]}
+			/>,
+		)
+
+		act(() => {
+			screen.getByTestId("item-1").dispatchEvent(
+				pointerEvent("pointerdown", {
+					bubbles: true,
+					clientX: 10,
+					clientY: 10,
+					pointerId: 1,
+				}),
+			)
+		})
+
+		act(() => {
+			window.dispatchEvent(
+				pointerEvent("pointermove", {
+					bubbles: true,
+					clientX: 12,
+					clientY: 10,
+					pointerId: 1,
+				}),
+			)
+		})
+
+		expect(handleMenuClose).not.toHaveBeenCalled()
+
+		act(() => {
+			window.dispatchEvent(
+				pointerEvent("pointermove", {
+					bubbles: true,
+					clientX: 80,
+					clientY: 10,
+					pointerId: 1,
+				}),
+			)
+		})
+
+		expect(handleMenuClose).toHaveBeenCalledTimes(1)
+
+		act(() => {
+			window.dispatchEvent(
+				pointerEvent("pointerup", {
+					bubbles: true,
+					clientX: 80,
+					clientY: 10,
+					pointerId: 1,
+				}),
+			)
+		})
+
+		window.removeEventListener(MENU_CLOSE_EVENT, handleMenuClose)
 	})
 })
