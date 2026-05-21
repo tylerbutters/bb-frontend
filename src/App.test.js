@@ -27,6 +27,34 @@ test("renders the initial add button", () => {
 	expect(screen.getByRole("button", { name: "+ word" })).toBeInTheDocument()
 })
 
+test("switches game tabs and clears the sentence", async () => {
+	render(<App />)
+
+	const gameTabs = ["sandbox", "shuffle", "translate", "conjugations", "fix sentence", "particles", "reorder"]
+	gameTabs.forEach((gameTab) => {
+		expect(screen.getByRole("tab", { name: gameTab })).toBeInTheDocument()
+	})
+	expect(screen.getByRole("tab", { name: "sandbox" })).toHaveAttribute("aria-selected", "true")
+	expect(screen.getByRole("heading", { name: "Sandbox" })).toBeInTheDocument()
+	expect(screen.getByText("Create any sentence you want.")).toBeInTheDocument()
+
+	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
+	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
+	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	expect(screen.getAllByText("。").length).toBeGreaterThan(0)
+	await waitFor(() => {
+		expect(screen.getByText(".")).toBeInTheDocument()
+	})
+
+	fireEvent.click(screen.getByRole("tab", { name: "shuffle" }))
+
+	expect(screen.getByRole("tab", { name: "sandbox" })).toHaveAttribute("aria-selected", "false")
+	expect(screen.getByRole("tab", { name: "shuffle" })).toHaveAttribute("aria-selected", "true")
+	expect(screen.getByRole("heading", { name: "Shuffle practice" })).toBeInTheDocument()
+	expect(screen.getByText("Build the correct sentence from shuffled Japanese parts.")).toBeInTheDocument()
+	expect(screen.queryByText("。")).not.toBeInTheDocument()
+})
+
 test("clears all sentence elements", async () => {
 	render(<App />)
 
@@ -38,6 +66,9 @@ test("clears all sentence elements", async () => {
 	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
 	fireEvent.click(screen.getByRole("button", { name: "。" }))
 
+	await waitFor(() => {
+		expect(screen.getByText(".")).toBeInTheDocument()
+	})
 	await waitFor(() => {
 		expect(clearAllButton).toHaveClass("clearAllButtonVisible")
 	})

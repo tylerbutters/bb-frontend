@@ -13,6 +13,43 @@ import verbs from "./jmdict/processed/verbs.json"
 import useGrammarStore from "./store/useGrammarStore"
 
 const SENTENCE_ELEMENTS_VIEWPORT_PADDING = 100
+const GAME_MODES = [
+	{
+		id: "sandbox",
+		title: "Sandbox",
+		description: "Create any sentence you want.",
+	},
+	{
+		id: "shuffle",
+		title: "Shuffle practice",
+		description: "Build the correct sentence from shuffled Japanese parts.",
+	},
+	{
+		id: "translate",
+		title: "Translate sentence practice",
+		description: "Translate the English sentence into Japanese.",
+	},
+	{
+		id: "conjugations",
+		title: "Conjugation practice",
+		description: "Choose the right conjugation for the sentence.",
+	},
+	{
+		id: "fix sentence",
+		title: "Fix sentence practice",
+		description: "Find and fix the mistake in the Japanese sentence.",
+	},
+	{
+		id: "particles",
+		title: "Particle practice",
+		description: "Choose the particle that fits the sentence.",
+	},
+	{
+		id: "reorder",
+		title: "Reorder practice",
+		description: "Put the sentence elements in the correct order.",
+	},
+]
 
 export default function App() {
 	const nextElementId = useRef(0)
@@ -22,7 +59,10 @@ export default function App() {
 	const scaleTimeoutRef = useRef(null)
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const [addedElements, setAddedElements] = useState([])
+	const [selectedGameMode, setSelectedGameMode] = useState(GAME_MODES[0].id)
 	const [sentenceElementsScale, setSentenceElementsScale] = useState(1)
+	const selectedGameModeDetails =
+		GAME_MODES.find((gameMode) => gameMode.id === selectedGameMode) || GAME_MODES[0]
 	const grammarStore = useGrammarStore((state) => state)
 	const defaultElements = [
 		{ text: "Nouns", list: nouns },
@@ -196,8 +236,31 @@ export default function App() {
 		setAddedElements([])
 	}
 
+	function selectGameMode(gameMode) {
+		setSelectedGameMode(gameMode)
+		clearAllElements()
+	}
+
 	return (
 		<div className="app">
+			<div className="gameTabs" role="tablist" aria-label="Game modes">
+				{GAME_MODES.map((gameMode) => (
+					<button
+						key={gameMode.id}
+						type="button"
+						role="tab"
+						aria-selected={selectedGameMode === gameMode.id}
+						className={`gameTab ${selectedGameMode === gameMode.id ? "gameTabSelected" : ""}`}
+						onClick={() => selectGameMode(gameMode.id)}
+					>
+						{gameMode.id}
+					</button>
+				))}
+			</div>
+			<header className="gameModeDetails">
+				<h1>{selectedGameModeDetails.title}</h1>
+				<p>{selectedGameModeDetails.description}</p>
+			</header>
 			<SentenceText addedElements={addedElements} />
 			<div
 				ref={sentenceElementsContainerRef}
