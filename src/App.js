@@ -192,6 +192,10 @@ export default function App() {
 		setAddedElements((prev) => prev.filter((element) => element.sentenceElementId !== elementId))
 	}
 
+	function clearAllElements() {
+		setAddedElements([])
+	}
+
 	return (
 		<div className="app">
 			<SentenceText addedElements={addedElements} />
@@ -290,6 +294,15 @@ export default function App() {
 					/>
 				)}
 			</div>
+			<button
+				type="button"
+				className={`clearAllButton ${addedElements.length ? "clearAllButtonVisible" : ""}`}
+				onClick={clearAllElements}
+				disabled={!addedElements.length}
+				aria-hidden={!addedElements.length}
+			>
+				Clear all
+			</button>
 		</div>
 	)
 }
