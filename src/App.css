@@ -18,6 +18,50 @@ body {
 	align-items: center;
 }
 
+.topRightActions {
+	position: fixed;
+	top: 18px;
+	right: 18px;
+	z-index: 1600;
+	display: flex;
+	gap: 8px;
+}
+
+.topRightButton {
+	position: fixed;
+	top: 18px;
+	right: 18px;
+	z-index: 1600;
+	padding: 10px 14px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 8px;
+	background: rgba(20, 20, 20, 0.9);
+	color: white;
+	font-family: inherit;
+	font-size: 14px;
+	font-weight: 800;
+	line-height: 1;
+	text-decoration: none;
+	cursor: pointer;
+	transition:
+		background-color 0.15s ease,
+		border-color 0.15s ease,
+		transform 0.15s ease;
+}
+
+.topRightActions .topRightButton {
+	position: static;
+}
+
+.topRightButton:hover {
+	border-color: rgba(255, 255, 255, 0.36);
+	background: rgba(255, 255, 255, 0.12);
+}
+
+.topRightButton:active {
+	transform: scale(0.96);
+}
+
 .gameTabs {
 	position: fixed;
 	top: 18px;
@@ -85,6 +129,113 @@ body {
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 1.35;
+}
+
+.signupPage {
+	padding: 96px 18px 40px;
+	box-sizing: border-box;
+}
+
+.signupForm {
+	display: flex;
+	width: min(380px, 100%);
+	flex-direction: column;
+	gap: 16px;
+	padding: 28px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 8px;
+	background: rgba(20, 20, 20, 0.92);
+	box-sizing: border-box;
+	color: white;
+}
+
+.signupForm h1 {
+	margin: 0 0 4px;
+	font-size: 26px;
+	font-weight: 850;
+	line-height: 1.2;
+}
+
+.signupField {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+	font-size: 13px;
+	font-weight: 800;
+	color: rgba(255, 255, 255, 0.72);
+}
+
+.signupField input {
+	width: 100%;
+	height: 42px;
+	padding: 0 12px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.08);
+	box-sizing: border-box;
+	color: white;
+	font: inherit;
+	font-size: 15px;
+	font-weight: 650;
+	outline: none;
+}
+
+.signupField input:focus {
+	border-color: rgba(255, 255, 255, 0.48);
+	background: rgba(255, 255, 255, 0.12);
+}
+
+.signupSubmitButton {
+	height: 44px;
+	margin-top: 4px;
+	border: 1px solid rgba(255, 255, 255, 0.24);
+	border-radius: 8px;
+	background: white;
+	color: black;
+	font: inherit;
+	font-size: 15px;
+	font-weight: 850;
+	cursor: pointer;
+}
+
+.signupSubmitButton:disabled {
+	cursor: default;
+	opacity: 0.62;
+}
+
+.signupMessage {
+	min-height: 20px;
+	margin: 0;
+	font-size: 13px;
+	font-weight: 750;
+	line-height: 1.35;
+}
+
+.signupMessagesuccess {
+	color: rgb(119, 224, 147);
+}
+
+.signupMessageerror {
+	color: rgb(255, 126, 126);
+}
+
+.authSwitchText {
+	margin: 2px 0 0;
+	color: rgba(255, 255, 255, 0.62);
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1.35;
+	text-align: center;
+}
+
+.authSwitchText a {
+	color: white;
+	font-weight: 850;
+	text-decoration: none;
+}
+
+.authSwitchText a:hover {
+	text-decoration: underline;
 }
 
 .sentenceElementsContainer {

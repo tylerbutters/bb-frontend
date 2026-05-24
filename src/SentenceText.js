@@ -36,7 +36,6 @@ export default function SentenceText({ addedElements }) {
 
 export async function translateJapanese(text) {
 	try {
-		console.log("/api/v1/translate")
 		const response = await fetch("/api/v1/translate", {
 			method: "POST",
 			headers: {
