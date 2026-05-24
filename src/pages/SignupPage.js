@@ -10,6 +10,7 @@ export default function SignupPage({ onSignup }) {
 	})
 	const [signupStatus, setSignupStatus] = useState("idle")
 	const [signupMessage, setSignupMessage] = useState("")
+	const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 
 	function updateSignupField(field, value) {
 		setSignupForm((prev) => ({
@@ -76,14 +77,25 @@ export default function SignupPage({ onSignup }) {
 				</label>
 				<label className="signupField">
 					<span>Password</span>
-					<input
-						type="password"
-						value={signupForm.password}
-						onChange={(e) => updateSignupField("password", e.target.value)}
-						autoComplete="new-password"
-						minLength={8}
-						required
-					/>
+					<div className="passwordInputWrap">
+						<input
+							type={isPasswordVisible ? "text" : "password"}
+							value={signupForm.password}
+							onChange={(e) => updateSignupField("password", e.target.value)}
+							autoComplete="new-password"
+							minLength={8}
+							required
+						/>
+						<button
+							type="button"
+							className="passwordToggleButton"
+							aria-label={isPasswordVisible ? "Hide password" : "Show password"}
+							aria-pressed={isPasswordVisible}
+							onClick={() => setIsPasswordVisible((isVisible) => !isVisible)}
+						>
+							{isPasswordVisible ? "Hide" : "Show"}
+						</button>
+					</div>
 				</label>
 				<button type="submit" className="signupSubmitButton" disabled={signupStatus === "submitting"}>
 					{signupStatus === "submitting" ? "Creating..." : "Create account"}
@@ -92,7 +104,7 @@ export default function SignupPage({ onSignup }) {
 					<p className={`signupMessage signupMessage${signupStatus}`}>{signupMessage}</p>
 				)}
 				<p className="authSwitchText">
-					Already have an account? <Link to="/login">Sign in</Link>
+					Already have an account? <Link to="/login">Login</Link>
 				</p>
 			</form>
 		</div>

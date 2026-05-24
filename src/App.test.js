@@ -56,7 +56,7 @@ afterEach(() => {
 test("renders the initial add button", () => {
 	render(<App />)
 	expect(screen.getByRole("button", { name: "+ word" })).toBeInTheDocument()
-	expect(screen.getByRole("link", { name: "Sign in" })).toBeInTheDocument()
+	expect(screen.getByRole("link", { name: "Login" })).toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Sign up" })).toBeInTheDocument()
 })
 
@@ -68,7 +68,7 @@ test("opens the sign up page and creates an account", async () => {
 	expect(screen.getByRole("heading", { name: "Sign up" })).toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Back" })).toBeInTheDocument()
 	expect(screen.getByText(/Already have an account\?/)).toBeInTheDocument()
-	expect(screen.getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/login")
+	expect(screen.getByRole("link", { name: "Login" })).toHaveAttribute("href", "/login")
 	expect(window.location.pathname).toBe("/signup")
 
 	fireEvent.change(screen.getByLabelText("Display name"), { target: { value: "Tyler" } })
@@ -80,14 +80,14 @@ test("opens the sign up page and creates an account", async () => {
 		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
 	})
 	expect(window.location.pathname).toBe("/")
-	const loginRequest = global.fetch.mock.calls.find(([url]) => url === "/api/v1/users/")
-	expect(loginRequest[1]).toMatchObject({
+	const signupRequest = global.fetch.mock.calls.find(([url]) => url === "/api/v1/users/")
+	expect(signupRequest[1]).toMatchObject({
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
 	})
-	expect(JSON.parse(loginRequest[1].body)).toEqual({
+	expect(JSON.parse(signupRequest[1].body)).toEqual({
 		displayName: "Tyler",
 		email: "tyler@example.com",
 		password: "password1",
@@ -102,18 +102,26 @@ test("renders the sign up page at the sign up route", () => {
 	expect(screen.getByRole("heading", { name: "Sign up" })).toBeInTheDocument()
 	expect(screen.getByLabelText("Display name")).toBeInTheDocument()
 	expect(screen.getByLabelText("Email")).toBeInTheDocument()
-	expect(screen.getByLabelText("Password")).toBeInTheDocument()
+	const passwordInput = screen.getByLabelText("Password")
+	expect(passwordInput).toHaveAttribute("type", "password")
+
+	fireEvent.click(screen.getByRole("button", { name: "Show password" }))
+	expect(passwordInput).toHaveAttribute("type", "text")
+	expect(screen.getByRole("button", { name: "Hide password" })).toHaveAttribute("aria-pressed", "true")
 })
 
-test("opens the sign in page", () => {
+test("opens the login page", () => {
 	render(<App />)
 
-	fireEvent.click(screen.getByRole("link", { name: "Sign in" }))
+	fireEvent.click(screen.getByRole("link", { name: "Login" }))
 
-	expect(screen.getByRole("heading", { name: "Sign in" })).toBeInTheDocument()
+	expect(screen.getByRole("heading", { name: "Login" })).toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Back" })).toBeInTheDocument()
 	expect(screen.getByLabelText("Email")).toBeInTheDocument()
-	expect(screen.getByLabelText("Password")).toBeInTheDocument()
+	const passwordInput = screen.getByLabelText("Password")
+	expect(passwordInput).toHaveAttribute("type", "password")
+	fireEvent.click(screen.getByRole("button", { name: "Show password" }))
+	expect(passwordInput).toHaveAttribute("type", "text")
 	expect(screen.getByText(/Don't have an account\?/)).toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Sign up" })).toHaveAttribute("href", "/signup")
 	expect(window.location.pathname).toBe("/login")
@@ -122,16 +130,16 @@ test("opens the sign in page", () => {
 test("logs in and replaces auth links with the user name", async () => {
 	render(<App />)
 
-	fireEvent.click(screen.getByRole("link", { name: "Sign in" }))
+	fireEvent.click(screen.getByRole("link", { name: "Login" }))
 	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
 	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
-	fireEvent.click(screen.getByRole("button", { name: "Sign in" }))
+	fireEvent.click(screen.getByRole("button", { name: "Login" }))
 
 	await waitFor(() => {
 		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
 	})
 	expect(window.location.pathname).toBe("/")
-	expect(screen.queryByRole("link", { name: "Sign in" })).not.toBeInTheDocument()
+	expect(screen.queryByRole("link", { name: "Login" })).not.toBeInTheDocument()
 	expect(screen.queryByRole("link", { name: "Sign up" })).not.toBeInTheDocument()
 	expect(screen.queryByRole("menuitem", { name: "Log out" })).not.toBeInTheDocument()
 
@@ -139,7 +147,7 @@ test("logs in and replaces auth links with the user name", async () => {
 	expect(screen.getByRole("menuitem", { name: "Log out" })).toBeInTheDocument()
 
 	fireEvent.click(screen.getByRole("menuitem", { name: "Log out" }))
-	expect(screen.getByRole("link", { name: "Sign in" })).toBeInTheDocument()
+	expect(screen.getByRole("link", { name: "Login" })).toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Sign up" })).toBeInTheDocument()
 	expect(screen.queryByRole("button", { name: "Tyler" })).not.toBeInTheDocument()
 	expect(window.localStorage.getItem("jsbCurrentUser")).toBeNull()
@@ -157,12 +165,12 @@ test("logs in and replaces auth links with the user name", async () => {
 	})
 })
 
-test("renders the sign in page at the sign in route", () => {
+test("renders the login page at the login route", () => {
 	window.history.pushState({}, "", "/login")
 
 	render(<App />)
 
-	expect(screen.getByRole("heading", { name: "Sign in" })).toBeInTheDocument()
+	expect(screen.getByRole("heading", { name: "Login" })).toBeInTheDocument()
 	expect(screen.getByLabelText("Email")).toBeInTheDocument()
 	expect(screen.getByLabelText("Password")).toBeInTheDocument()
 })

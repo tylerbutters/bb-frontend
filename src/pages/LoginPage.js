@@ -9,6 +9,7 @@ export default function LoginPage({ onLogin }) {
 	})
 	const [loginStatus, setLoginStatus] = useState("idle")
 	const [loginMessage, setLoginMessage] = useState("")
+	const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 
 	function updateLoginField(field, value) {
 		setLoginForm((prev) => ({
@@ -65,16 +66,27 @@ export default function LoginPage({ onLogin }) {
 				</label>
 				<label className="loginField">
 					<span>Password</span>
-					<input
-						type="password"
-						value={loginForm.password}
-						onChange={(e) => updateLoginField("password", e.target.value)}
-						autoComplete="current-password"
-						required
-					/>
+					<div className="passwordInputWrap">
+						<input
+							type={isPasswordVisible ? "text" : "password"}
+							value={loginForm.password}
+							onChange={(e) => updateLoginField("password", e.target.value)}
+							autoComplete="current-password"
+							required
+						/>
+						<button
+							type="button"
+							className="passwordToggleButton"
+							aria-label={isPasswordVisible ? "Hide password" : "Show password"}
+							aria-pressed={isPasswordVisible}
+							onClick={() => setIsPasswordVisible((isVisible) => !isVisible)}
+						>
+							{isPasswordVisible ? "Hide" : "Show"}
+						</button>
+					</div>
 				</label>
 				<button type="submit" className="loginSubmitButton" disabled={loginStatus === "submitting"}>
-					{loginStatus === "submitting" ? "Signing in..." : "Sign in"}
+					{loginStatus === "submitting" ? "Logging in..." : "Login"}
 				</button>
 				{loginMessage && <p className="loginMessage loginMessageerror">{loginMessage}</p>}
 				<p className="authSwitchText">
