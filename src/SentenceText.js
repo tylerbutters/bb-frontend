@@ -1,14 +1,19 @@
 import { Fragment, useEffect, useMemo, useState } from "react"
 import JapaneseText from "./components/JapaneseText"
 
-export default function SentenceText({ addedElements }) {
+export default function SentenceText({ addedElements, showTranslation = true }) {
 	const [translation, setTranslation] = useState()
 	const sentenceParts = useMemo(() => elementsToTextParts(addedElements || []), [addedElements])
 	const sentenceString = useMemo(() => textPartsToString(sentenceParts), [sentenceParts])
 
 	useEffect(() => {
+		if (!showTranslation) {
+			setTranslation("")
+			return
+		}
+
 		handleTranslate(sentenceString)
-	}, [sentenceString])
+	}, [sentenceString, showTranslation])
 
 	async function handleTranslate(sentence) {
 		if (!sentence) {
@@ -29,7 +34,7 @@ export default function SentenceText({ addedElements }) {
 					</Fragment>
 				))}
 			</div>
-			<div className="sentenceJapaneseText">{translation}</div>
+			{showTranslation && <div className="sentenceJapaneseText">{translation}</div>}
 		</div>
 	)
 }

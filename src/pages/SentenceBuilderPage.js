@@ -4,7 +4,7 @@ import AddButton from "../components/AddButton"
 import Element from "../elements/Element"
 import normalizeElement from "../grammar/normalizeElement"
 import useSentenceDragDrop from "../hooks/useSentenceDragDrop"
-import SentenceText from "../SentenceText"
+import SentenceText, { elementsToTextParts, textPartsToString } from "../SentenceText"
 import adjectives from "../jmdict/processed/adjectives.json"
 import adverbs from "../jmdict/processed/adverbs.json"
 import counters from "../jmdict/processed/counters.json"
@@ -62,8 +62,14 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 	const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
 	const [selectedGameMode, setSelectedGameMode] = useState(GAME_MODES[0].id)
 	const [sentenceElementsScale, setSentenceElementsScale] = useState(1)
+	const [translatePrompt, setTranslatePrompt] = useState("")
+	const [translatePromptStatus, setTranslatePromptStatus] = useState("idle")
+	const [translateCheckStatus, setTranslateCheckStatus] = useState("idle")
+	const [translateFeedback, setTranslateFeedback] = useState(null)
 	const selectedGameModeDetails =
 		GAME_MODES.find((gameMode) => gameMode.id === selectedGameMode) || GAME_MODES[0]
+	const isTranslateGame = selectedGameMode === "translate"
+	const japaneseSentence = textPartsToString(elementsToTextParts(addedElements))
 	const grammarStore = useGrammarStore((state) => state)
 	const defaultElements = [
 		{ text: "Nouns", list: nouns },
@@ -201,6 +207,53 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 		}
 	}, [])
 
+	useEffect(() => {
+		if (!isTranslateGame) return
+
+		let ignore = false
+
+		async function loadTranslatePrompt() {
+			setTranslatePromptStatus("loading")
+			setTranslateFeedback(null)
+
+			try {
+				const response = await fetch("/api/v1/games/translate/prompt", {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				})
+
+				if (!response.ok) {
+					throw new Error(`Prompt request failed with ${response.status}.`)
+				}
+
+				const data = await response.json()
+				if (ignore) return
+
+				setTranslatePrompt(data.sentence || "")
+				setTranslatePromptStatus("ready")
+			} catch (error) {
+				console.log(error)
+				if (ignore) return
+
+				setTranslatePrompt("")
+				setTranslatePromptStatus("error")
+			}
+		}
+
+		loadTranslatePrompt()
+
+		return () => {
+			ignore = true
+		}
+	}, [isTranslateGame])
+
+	useEffect(() => {
+		setTranslateFeedback(null)
+		setTranslateCheckStatus("idle")
+	}, [japaneseSentence])
+
 	function createSentenceElement(selectedElement) {
 		return {
 			...normalizeElement(selectedElement),
@@ -245,6 +298,44 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 	function logout() {
 		setIsUserMenuOpen(false)
 		onLogout()
+	}
+
+	async function checkTranslateAnswer() {
+		if (!translatePrompt || !japaneseSentence || translateCheckStatus === "checking") return
+
+		setTranslateCheckStatus("checking")
+		setTranslateFeedback(null)
+
+		try {
+			const response = await fetch("/api/v1/games/translate/check", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					englishSentence: translatePrompt,
+					japaneseSentence,
+				}),
+			})
+
+			if (!response.ok) {
+				throw new Error(`Check request failed with ${response.status}.`)
+			}
+
+			const data = await response.json()
+			setTranslateFeedback({
+				correct: Boolean(data.correct),
+				feedback: data.feedback || "",
+			})
+			setTranslateCheckStatus("ready")
+		} catch (error) {
+			console.log(error)
+			setTranslateFeedback({
+				correct: false,
+				feedback: "Could not check the sentence right now. Try again in a moment.",
+			})
+			setTranslateCheckStatus("error")
+		}
 	}
 
 	return (
@@ -298,7 +389,17 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 				<h1>{selectedGameModeDetails.title}</h1>
 				<p>{selectedGameModeDetails.description}</p>
 			</header>
-			<SentenceText addedElements={addedElements} />
+			{isTranslateGame && (
+				<section className="translateGamePanel" aria-live="polite">
+					<div className="translatePromptLabel">English sentence</div>
+					<div className="translatePromptText">
+						{translatePromptStatus === "loading" && "Loading..."}
+						{translatePromptStatus === "error" && "Could not load a sentence."}
+						{translatePromptStatus === "ready" && translatePrompt}
+					</div>
+				</section>
+			)}
+			<SentenceText addedElements={addedElements} showTranslation={!isTranslateGame} />
 			<div
 				ref={sentenceElementsContainerRef}
 				className={`sentenceElementsContainer ${dragState ? "sentenceElementsDragging" : ""}`}
@@ -403,6 +504,36 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 			>
 				Clear all
 			</button>
+			{isTranslateGame && addedElements.length > 0 && (
+				<div className="translateCheckContainer">
+					<button
+						type="button"
+						className="translateCheckButton"
+						onClick={checkTranslateAnswer}
+						disabled={
+							!translatePrompt ||
+							!japaneseSentence ||
+							translatePromptStatus !== "ready" ||
+							translateCheckStatus === "checking"
+						}
+					>
+						{translateCheckStatus === "checking" ? "Checking..." : "Check"}
+					</button>
+					{translateFeedback && (
+						<div
+							className={`translateFeedback ${
+								translateFeedback.correct
+									? "translateFeedbackCorrect"
+									: "translateFeedbackIncorrect"
+							}`}
+							role="status"
+						>
+							{translateFeedback.correct ? "Correct." : "Not quite."}
+							{translateFeedback.feedback ? ` ${translateFeedback.feedback}` : ""}
+						</div>
+					)}
+				</div>
+			)}
 		</div>
 	)
 }
