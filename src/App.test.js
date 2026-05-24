@@ -14,11 +14,31 @@ beforeAll(() => {
 
 beforeEach(() => {
 	window.history.pushState({}, "", "/")
+	window.localStorage.clear()
 	global.fetch = jest.fn((url) => {
 		if (url === "/api/v1/users/") {
 			return Promise.resolve({
 				ok: true,
-				json: jest.fn().mockResolvedValue({ user: { id: 1 } }),
+				json: jest.fn().mockResolvedValue({
+					user: {
+						id: 1,
+						email: "tyler@example.com",
+						displayName: "Tyler",
+					},
+				}),
+			})
+		}
+
+		if (url === "/api/v1/login") {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					user: {
+						id: 1,
+						email: "tyler@example.com",
+						displayName: "Tyler",
+					},
+				}),
 			})
 		}
 
@@ -48,7 +68,7 @@ test("opens the sign up page and creates an account", async () => {
 	expect(screen.getByRole("heading", { name: "Sign up" })).toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Back" })).toBeInTheDocument()
 	expect(screen.getByText(/Already have an account\?/)).toBeInTheDocument()
-	expect(screen.getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/signin")
+	expect(screen.getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/login")
 	expect(window.location.pathname).toBe("/signup")
 
 	fireEvent.change(screen.getByLabelText("Display name"), { target: { value: "Tyler" } })
@@ -57,23 +77,24 @@ test("opens the sign up page and creates an account", async () => {
 	fireEvent.click(screen.getByRole("button", { name: "Create account" }))
 
 	await waitFor(() => {
-		expect(screen.getByText("Account created.")).toBeInTheDocument()
+		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
 	})
-	const signupRequest = global.fetch.mock.calls.find(([url]) => url === "/api/v1/users/")
-	expect(signupRequest[1]).toMatchObject({
+	expect(window.location.pathname).toBe("/")
+	const loginRequest = global.fetch.mock.calls.find(([url]) => url === "/api/v1/users/")
+	expect(loginRequest[1]).toMatchObject({
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
 	})
-	expect(JSON.parse(signupRequest[1].body)).toEqual({
+	expect(JSON.parse(loginRequest[1].body)).toEqual({
 		displayName: "Tyler",
 		email: "tyler@example.com",
 		password: "password1",
 	})
 })
 
-test("renders the sign up page at the signup route", () => {
+test("renders the sign up page at the sign up route", () => {
 	window.history.pushState({}, "", "/signup")
 
 	render(<App />)
@@ -95,11 +116,49 @@ test("opens the sign in page", () => {
 	expect(screen.getByLabelText("Password")).toBeInTheDocument()
 	expect(screen.getByText(/Don't have an account\?/)).toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Sign up" })).toHaveAttribute("href", "/signup")
-	expect(window.location.pathname).toBe("/signin")
+	expect(window.location.pathname).toBe("/login")
+})
+
+test("logs in and replaces auth links with the user name", async () => {
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("link", { name: "Sign in" }))
+	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
+	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
+	fireEvent.click(screen.getByRole("button", { name: "Sign in" }))
+
+	await waitFor(() => {
+		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+	})
+	expect(window.location.pathname).toBe("/")
+	expect(screen.queryByRole("link", { name: "Sign in" })).not.toBeInTheDocument()
+	expect(screen.queryByRole("link", { name: "Sign up" })).not.toBeInTheDocument()
+	expect(screen.queryByRole("menuitem", { name: "Log out" })).not.toBeInTheDocument()
+
+	fireEvent.click(screen.getByRole("button", { name: "Tyler" }))
+	expect(screen.getByRole("menuitem", { name: "Log out" })).toBeInTheDocument()
+
+	fireEvent.click(screen.getByRole("menuitem", { name: "Log out" }))
+	expect(screen.getByRole("link", { name: "Sign in" })).toBeInTheDocument()
+	expect(screen.getByRole("link", { name: "Sign up" })).toBeInTheDocument()
+	expect(screen.queryByRole("button", { name: "Tyler" })).not.toBeInTheDocument()
+	expect(window.localStorage.getItem("jsbCurrentUser")).toBeNull()
+
+	const loginRequest = global.fetch.mock.calls.find(([url]) => url === "/api/v1/login")
+	expect(loginRequest[1]).toMatchObject({
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	})
+	expect(JSON.parse(loginRequest[1].body)).toEqual({
+		email: "tyler@example.com",
+		password: "password1",
+	})
 })
 
 test("renders the sign in page at the sign in route", () => {
-	window.history.pushState({}, "", "/signin")
+	window.history.pushState({}, "", "/login")
 
 	render(<App />)
 
@@ -111,7 +170,15 @@ test("renders the sign in page at the sign in route", () => {
 test("switches game tabs and clears the sentence", async () => {
 	render(<App />)
 
-	const gameTabs = ["sandbox", "shuffle", "translate", "conjugations", "fix sentence", "particles", "reorder"]
+	const gameTabs = [
+		"sandbox",
+		"shuffle",
+		"translate",
+		"conjugations",
+		"fix sentence",
+		"particles",
+		"reorder",
+	]
 	gameTabs.forEach((gameTab) => {
 		expect(screen.getByRole("tab", { name: gameTab })).toBeInTheDocument()
 	})
@@ -132,7 +199,9 @@ test("switches game tabs and clears the sentence", async () => {
 	expect(screen.getByRole("tab", { name: "sandbox" })).toHaveAttribute("aria-selected", "false")
 	expect(screen.getByRole("tab", { name: "shuffle" })).toHaveAttribute("aria-selected", "true")
 	expect(screen.getByRole("heading", { name: "Shuffle practice" })).toBeInTheDocument()
-	expect(screen.getByText("Build the correct sentence from shuffled Japanese parts.")).toBeInTheDocument()
+	expect(
+		screen.getByText("Build the correct sentence from shuffled Japanese parts."),
+	).toBeInTheDocument()
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
 })
 

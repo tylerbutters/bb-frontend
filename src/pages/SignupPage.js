@@ -1,7 +1,8 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
-export default function SignupPage() {
+export default function SignupPage({ onSignup }) {
+	const navigate = useNavigate()
 	const [signupForm, setSignupForm] = useState({
 		email: "",
 		password: "",
@@ -38,8 +39,8 @@ export default function SignupPage() {
 				throw new Error(data?.error?.message || data?.message || "Sign up failed.")
 			}
 
-			setSignupStatus("success")
-			setSignupMessage("Account created.")
+			onSignup(data.user)
+			navigate("/")
 		} catch (error) {
 			setSignupStatus("error")
 			setSignupMessage(error.message)
@@ -91,7 +92,7 @@ export default function SignupPage() {
 					<p className={`signupMessage signupMessage${signupStatus}`}>{signupMessage}</p>
 				)}
 				<p className="authSwitchText">
-					Already have an account? <Link to="/signin">Sign in</Link>
+					Already have an account? <Link to="/login">Sign in</Link>
 				</p>
 			</form>
 		</div>

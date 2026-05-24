@@ -51,7 +51,7 @@ const GAME_MODES = [
 	},
 ]
 
-export default function SentenceBuilderPage() {
+export default function SentenceBuilderPage({ currentUser, onLogout }) {
 	const nextElementId = useRef(0)
 	const sentenceElementsContainerRef = useRef(null)
 	const sentenceElementsScaleRef = useRef(1)
@@ -59,6 +59,7 @@ export default function SentenceBuilderPage() {
 	const scaleTimeoutRef = useRef(null)
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const [addedElements, setAddedElements] = useState([])
+	const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
 	const [selectedGameMode, setSelectedGameMode] = useState(GAME_MODES[0].id)
 	const [sentenceElementsScale, setSentenceElementsScale] = useState(1)
 	const selectedGameModeDetails =
@@ -241,16 +242,41 @@ export default function SentenceBuilderPage() {
 		clearAllElements()
 	}
 
+	function logout() {
+		setIsUserMenuOpen(false)
+		onLogout()
+	}
+
 	return (
 		<div className="app">
-			<nav className="topRightActions" aria-label="Account">
-				<Link className="topRightButton" to="/signin">
-					Sign in
-				</Link>
-				<Link className="topRightButton" to="/signup">
-					Sign up
-				</Link>
-			</nav>
+			{currentUser ? (
+				<div className="topRightUserMenu">
+					<button
+						type="button"
+						className="topRightUserButton"
+						aria-expanded={isUserMenuOpen}
+						onClick={() => setIsUserMenuOpen((isOpen) => !isOpen)}
+					>
+						{currentUser.displayName}
+					</button>
+					{isUserMenuOpen && (
+						<div className="userDropdown" role="menu">
+							<button type="button" role="menuitem" onClick={logout}>
+								Log out
+							</button>
+						</div>
+					)}
+				</div>
+			) : (
+				<nav className="topRightActions" aria-label="Account">
+					<Link className="topRightButton" to="/login">
+						Login
+					</Link>
+					<Link className="topRightButton" to="/signup">
+						Sign up
+					</Link>
+				</nav>
+			)}
 			<div className="gameTabs" role="tablist" aria-label="Game modes">
 				{GAME_MODES.map((gameMode) => (
 					<button
