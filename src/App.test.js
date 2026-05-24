@@ -14,7 +14,8 @@ beforeAll(() => {
 
 beforeEach(() => {
 	global.fetch = jest.fn().mockResolvedValue({
-		json: jest.fn().mockResolvedValue([[[".", "。"]]]),
+		ok: true,
+		json: jest.fn().mockResolvedValue({ translation: "." }),
 	})
 })
 

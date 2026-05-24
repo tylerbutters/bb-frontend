@@ -36,12 +36,21 @@ export default function SentenceText({ addedElements }) {
 
 export async function translateJapanese(text) {
 	try {
-		const response = await fetch(
-			"https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=en&dt=t&q=" +
-				encodeURIComponent(text),
-		)
+		console.log("/api/v1/translate")
+		const response = await fetch("/api/v1/translate", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ text }),
+		})
+
+		if (!response.ok) {
+			throw new Error(`Translation request failed with ${response.status}.`)
+		}
+
 		const data = await response.json()
-		return data[0].map((item) => item[0]).join("")
+		return data.translation
 	} catch (error) {
 		console.log(error)
 		return null

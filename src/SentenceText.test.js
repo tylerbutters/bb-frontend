@@ -106,11 +106,18 @@ describe("translateJapanese", () => {
 
 	test("returns joined translated text from the translation API response", async () => {
 		global.fetch = jest.fn().mockResolvedValue({
-			json: jest.fn().mockResolvedValue([[["I", "私"], [" eat", "食べる"]]]),
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "I eat" }),
 		})
 
 		await expect(translateJapanese("食べる")).resolves.toBe("I eat")
-		expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining(encodeURIComponent("食べる")))
+		expect(global.fetch).toHaveBeenCalledWith("/api/v1/translate", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ text: "食べる" }),
+		})
 	})
 })
 
@@ -122,7 +129,8 @@ describe("SentenceText", () => {
 
 	test("renders Japanese text with furigana and the translated sentence", async () => {
 		global.fetch = jest.fn().mockResolvedValue({
-			json: jest.fn().mockResolvedValue([[["The cat eats.", "猫が食べる。"]]]),
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "The cat eats." }),
 		})
 
 		render(
