@@ -15,7 +15,7 @@ beforeAll(() => {
 beforeEach(() => {
 	window.history.pushState({}, "", "/")
 	window.localStorage.clear()
-	global.fetch = jest.fn((url) => {
+	global.fetch = jest.fn((url, options = {}) => {
 		if (url === "/api/v1/users/") {
 			return Promise.resolve({
 				ok: true,
@@ -42,7 +42,7 @@ beforeEach(() => {
 			})
 		}
 
-		if (url === "/api/v1/users/1") {
+		if (url === "/api/v1/users/1" && options.method === "PATCH") {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
@@ -52,6 +52,15 @@ beforeEach(() => {
 						email: "taylor@example.com",
 						displayName: "Taylor",
 					},
+				}),
+			})
+		}
+
+		if (url === "/api/v1/users/1" && options.method === "DELETE") {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					message: "Account deleted.",
 				}),
 			})
 		}
@@ -210,7 +219,9 @@ test("opens account from the user menu and updates account details", async () =>
 		expect(screen.getByText("Account updated.")).toBeInTheDocument()
 	})
 
-	const accountRequest = global.fetch.mock.calls.find(([url]) => url === "/api/v1/users/1")
+	const accountRequest = global.fetch.mock.calls.find(
+		([url, options]) => url === "/api/v1/users/1" && options.method === "PATCH",
+	)
 	expect(accountRequest[1]).toMatchObject({
 		method: "PATCH",
 		headers: {
@@ -231,6 +242,46 @@ test("opens account from the user menu and updates account details", async () =>
 
 	fireEvent.click(screen.getByRole("link", { name: "Back" }))
 	expect(screen.getByRole("button", { name: "Taylor" })).toBeInTheDocument()
+})
+
+test("deletes an account from the account page", async () => {
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("link", { name: "Login" }))
+	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
+	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
+	fireEvent.click(screen.getByRole("button", { name: "Login" }))
+
+	await waitFor(() => {
+		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+	})
+
+	fireEvent.click(screen.getByRole("button", { name: "Tyler" }))
+	fireEvent.click(screen.getByRole("menuitem", { name: "Account" }))
+	fireEvent.click(screen.getByRole("button", { name: "Delete account" }))
+
+	expect(screen.getByRole("button", { name: "Confirm delete" })).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument()
+
+	fireEvent.click(screen.getByRole("button", { name: "Cancel" }))
+	expect(screen.queryByRole("button", { name: "Confirm delete" })).not.toBeInTheDocument()
+
+	fireEvent.click(screen.getByRole("button", { name: "Delete account" }))
+	fireEvent.click(screen.getByRole("button", { name: "Confirm delete" }))
+
+	await waitFor(() => {
+		expect(window.location.pathname).toBe("/")
+	})
+
+	const deleteRequest = global.fetch.mock.calls.find(
+		([url, options]) => url === "/api/v1/users/1" && options.method === "DELETE",
+	)
+	expect(deleteRequest[1]).toMatchObject({
+		method: "DELETE",
+	})
+	expect(window.localStorage.getItem("jsbCurrentUser")).toBeNull()
+	expect(screen.getByRole("link", { name: "Login" })).toBeInTheDocument()
+	expect(screen.getByRole("link", { name: "Sign up" })).toBeInTheDocument()
 })
 
 test("renders the login page at the login route", () => {

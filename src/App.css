@@ -228,6 +228,20 @@ body {
 	color: white;
 }
 
+.deleteAccountPanel {
+	display: flex;
+	width: min(380px, 100%);
+	flex-direction: column;
+	gap: 12px;
+	margin-top: 14px;
+	padding: 18px;
+	border: 1px solid rgba(255, 126, 126, 0.34);
+	border-radius: 8px;
+	background: rgba(32, 12, 12, 0.72);
+	box-sizing: border-box;
+	color: white;
+}
+
 .accountForm h1,
 .loginForm h1,
 .signupForm h1 {
@@ -235,6 +249,18 @@ body {
 	font-size: 26px;
 	font-weight: 850;
 	line-height: 1.2;
+}
+
+.deleteAccountPanel h2 {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 850;
+	line-height: 1.2;
+}
+
+.deleteAccountActions {
+	display: flex;
+	gap: 10px;
 }
 
 .accountField,
@@ -320,6 +346,31 @@ body {
 	font-size: 15px;
 	font-weight: 850;
 	cursor: pointer;
+}
+
+.cancelDeleteButton,
+.deleteAccountButton {
+	height: 40px;
+	padding: 0 12px;
+	border: 1px solid rgba(255, 126, 126, 0.44);
+	border-radius: 8px;
+	background: rgb(255, 126, 126);
+	color: black;
+	font: inherit;
+	font-size: 14px;
+	font-weight: 850;
+	cursor: pointer;
+}
+
+.cancelDeleteButton {
+	border-color: rgba(255, 255, 255, 0.2);
+	background: rgba(255, 255, 255, 0.08);
+	color: white;
+}
+
+.deleteAccountButton:disabled {
+	cursor: default;
+	opacity: 0.62;
 }
 
 .accountSubmitButton:disabled,

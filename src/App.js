@@ -45,7 +45,13 @@ export default function App() {
 				<Route path="/signup" element={<SignupPage onSignup={handleLogin} />} />
 				<Route
 					path="/account"
-					element={<AccountPage currentUser={currentUser} onUserUpdate={handleUserUpdate} />}
+					element={
+						<AccountPage
+							currentUser={currentUser}
+							onAccountDelete={handleLogout}
+							onUserUpdate={handleUserUpdate}
+						/>
+					}
 				/>
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>

@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Link, Navigate } from "react-router-dom"
 
-export default function AccountPage({ currentUser, onUserUpdate }) {
+export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate }) {
 	const [accountForm, setAccountForm] = useState({
 		displayName: currentUser?.displayName || "",
 		email: currentUser?.email || "",
@@ -10,6 +10,14 @@ export default function AccountPage({ currentUser, onUserUpdate }) {
 	const [accountStatus, setAccountStatus] = useState("idle")
 	const [accountMessage, setAccountMessage] = useState("")
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+	const [isDeleteConfirming, setIsDeleteConfirming] = useState(false)
+	const [isAccountDeleted, setIsAccountDeleted] = useState(false)
+	const [deleteStatus, setDeleteStatus] = useState("idle")
+	const [deleteMessage, setDeleteMessage] = useState("")
+
+	if (isAccountDeleted) {
+		return <Navigate to="/" replace />
+	}
 
 	if (!currentUser) {
 		return <Navigate to="/login" replace />
@@ -22,6 +30,12 @@ export default function AccountPage({ currentUser, onUserUpdate }) {
 		}))
 		setAccountStatus("idle")
 		setAccountMessage("")
+	}
+
+	function cancelDeleteAccount() {
+		setIsDeleteConfirming(false)
+		setDeleteStatus("idle")
+		setDeleteMessage("")
 	}
 
 	async function submitAccount(e) {
@@ -63,6 +77,35 @@ export default function AccountPage({ currentUser, onUserUpdate }) {
 		} catch (error) {
 			setAccountStatus("error")
 			setAccountMessage(error.message)
+		}
+	}
+
+	async function deleteAccount() {
+		if (!isDeleteConfirming) {
+			setIsDeleteConfirming(true)
+			setDeleteStatus("idle")
+			setDeleteMessage("")
+			return
+		}
+
+		setDeleteStatus("submitting")
+		setDeleteMessage("")
+
+		try {
+			const response = await fetch(`/api/v1/users/${currentUser.id}`, {
+				method: "DELETE",
+			})
+			const data = await response.json()
+
+			if (!response.ok) {
+				throw new Error(data?.error?.message || data?.message || "Account delete failed.")
+			}
+
+			setIsAccountDeleted(true)
+			onAccountDelete()
+		} catch (error) {
+			setDeleteStatus("error")
+			setDeleteMessage(error.message)
 		}
 	}
 
@@ -122,6 +165,31 @@ export default function AccountPage({ currentUser, onUserUpdate }) {
 					<p className={`accountMessage accountMessage${accountStatus}`}>{accountMessage}</p>
 				)}
 			</form>
+			<div className="deleteAccountPanel">
+				<h2>Delete account</h2>
+				<div className="deleteAccountActions">
+					<button
+						type="button"
+						className="deleteAccountButton"
+						disabled={deleteStatus === "submitting"}
+						onClick={deleteAccount}
+					>
+						{deleteStatus === "submitting"
+							? "Deleting..."
+							: isDeleteConfirming
+								? "Confirm delete"
+								: "Delete account"}
+					</button>
+					{isDeleteConfirming && (
+						<button type="button" className="cancelDeleteButton" onClick={cancelDeleteAccount}>
+							Cancel
+						</button>
+					)}
+				</div>
+				{deleteMessage && (
+					<p className={`accountMessage accountMessage${deleteStatus}`}>{deleteMessage}</p>
+				)}
+			</div>
 		</div>
 	)
 }
