@@ -61,7 +61,6 @@ export default function LoginPage({ onLogin }) {
 						value={loginForm.email}
 						onChange={(e) => updateLoginField("email", e.target.value)}
 						autoComplete="email"
-						required
 					/>
 				</label>
 				<label className="loginField">
@@ -72,7 +71,6 @@ export default function LoginPage({ onLogin }) {
 							value={loginForm.password}
 							onChange={(e) => updateLoginField("password", e.target.value)}
 							autoComplete="current-password"
-							required
 						/>
 						<button
 							type="button"

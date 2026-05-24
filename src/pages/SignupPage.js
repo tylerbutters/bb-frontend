@@ -62,7 +62,6 @@ export default function SignupPage({ onSignup }) {
 						value={signupForm.displayName}
 						onChange={(e) => updateSignupField("displayName", e.target.value)}
 						autoComplete="name"
-						required
 					/>
 				</label>
 				<label className="signupField">
@@ -72,7 +71,6 @@ export default function SignupPage({ onSignup }) {
 						value={signupForm.email}
 						onChange={(e) => updateSignupField("email", e.target.value)}
 						autoComplete="email"
-						required
 					/>
 				</label>
 				<label className="signupField">
@@ -83,8 +81,6 @@ export default function SignupPage({ onSignup }) {
 							value={signupForm.password}
 							onChange={(e) => updateSignupField("password", e.target.value)}
 							autoComplete="new-password"
-							minLength={8}
-							required
 						/>
 						<button
 							type="button"
@@ -97,7 +93,11 @@ export default function SignupPage({ onSignup }) {
 						</button>
 					</div>
 				</label>
-				<button type="submit" className="signupSubmitButton" disabled={signupStatus === "submitting"}>
+				<button
+					type="submit"
+					className="signupSubmitButton"
+					disabled={signupStatus === "submitting"}
+				>
 					{signupStatus === "submitting" ? "Creating..." : "Create account"}
 				</button>
 				{signupMessage && (

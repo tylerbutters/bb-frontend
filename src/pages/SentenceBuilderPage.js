@@ -261,6 +261,9 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 					</button>
 					{isUserMenuOpen && (
 						<div className="userDropdown" role="menu">
+							<Link to="/account" role="menuitem">
+								Account
+							</Link>
 							<button type="button" role="menuitem" onClick={logout}>
 								Log out
 							</button>
@@ -272,7 +275,7 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 					<Link className="topRightButton" to="/login">
 						Login
 					</Link>
-					<Link className="topRightButton" to="/signup">
+					<Link className="topRightButton topRightSignupButton" to="/signup">
 						Sign up
 					</Link>
 				</nav>

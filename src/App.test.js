@@ -42,6 +42,20 @@ beforeEach(() => {
 			})
 		}
 
+		if (url === "/api/v1/users/1") {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					message: "Account updated.",
+					user: {
+						id: 1,
+						email: "taylor@example.com",
+						displayName: "Taylor",
+					},
+				}),
+			})
+		}
+
 		return Promise.resolve({
 			ok: true,
 			json: jest.fn().mockResolvedValue({ translation: "." }),
@@ -163,6 +177,60 @@ test("logs in and replaces auth links with the user name", async () => {
 		email: "tyler@example.com",
 		password: "password1",
 	})
+})
+
+test("opens account from the user menu and updates account details", async () => {
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("link", { name: "Login" }))
+	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
+	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
+	fireEvent.click(screen.getByRole("button", { name: "Login" }))
+
+	await waitFor(() => {
+		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+	})
+
+	fireEvent.click(screen.getByRole("button", { name: "Tyler" }))
+	fireEvent.click(screen.getByRole("menuitem", { name: "Account" }))
+
+	expect(window.location.pathname).toBe("/account")
+	expect(screen.getByRole("heading", { name: "Account" })).toBeInTheDocument()
+	expect(screen.getByLabelText("Display name")).toHaveValue("Tyler")
+	expect(screen.getByLabelText("Email")).toHaveValue("tyler@example.com")
+
+	fireEvent.change(screen.getByLabelText("Display name"), { target: { value: "Taylor" } })
+	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "taylor@example.com" } })
+	fireEvent.change(screen.getByLabelText("New password"), { target: { value: "password2" } })
+	fireEvent.click(screen.getByRole("button", { name: "Show password" }))
+	expect(screen.getByLabelText("New password")).toHaveAttribute("type", "text")
+	fireEvent.click(screen.getByRole("button", { name: "Save changes" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("Account updated.")).toBeInTheDocument()
+	})
+
+	const accountRequest = global.fetch.mock.calls.find(([url]) => url === "/api/v1/users/1")
+	expect(accountRequest[1]).toMatchObject({
+		method: "PATCH",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	})
+	expect(JSON.parse(accountRequest[1].body)).toEqual({
+		displayName: "Taylor",
+		email: "taylor@example.com",
+		password: "password2",
+	})
+	expect(screen.getByLabelText("New password")).toHaveValue("")
+	expect(JSON.parse(window.localStorage.getItem("jsbCurrentUser"))).toEqual({
+		id: 1,
+		email: "taylor@example.com",
+		displayName: "Taylor",
+	})
+
+	fireEvent.click(screen.getByRole("link", { name: "Back" }))
+	expect(screen.getByRole("button", { name: "Taylor" })).toBeInTheDocument()
 })
 
 test("renders the login page at the login route", () => {

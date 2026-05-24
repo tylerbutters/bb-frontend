@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import "./App.css"
+import AccountPage from "./pages/AccountPage"
 import SentenceBuilderPage from "./pages/SentenceBuilderPage"
 import LoginPage from "./pages/LoginPage"
 import SignupPage from "./pages/SignupPage"
@@ -23,6 +24,11 @@ export default function App() {
 		window.localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(user))
 	}
 
+	function handleUserUpdate(user) {
+		setCurrentUser(user)
+		window.localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(user))
+	}
+
 	function handleLogout() {
 		setCurrentUser(null)
 		window.localStorage.removeItem(CURRENT_USER_STORAGE_KEY)
@@ -37,6 +43,10 @@ export default function App() {
 				/>
 				<Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
 				<Route path="/signup" element={<SignupPage onSignup={handleLogin} />} />
+				<Route
+					path="/account"
+					element={<AccountPage currentUser={currentUser} onUserUpdate={handleUserUpdate} />}
+				/>
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
 		</BrowserRouter>

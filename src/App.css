@@ -53,6 +53,12 @@ body {
 	position: static;
 }
 
+.topRightSignupButton {
+	border-color: white;
+	background: white;
+	color: black;
+}
+
 .topRightUserMenu {
 	position: fixed;
 	top: 18px;
@@ -92,21 +98,26 @@ body {
 	box-shadow: 0 18px 30px rgba(0, 0, 0, 0.35);
 }
 
+.userDropdown a,
 .userDropdown button {
+	display: block;
 	width: 100%;
 	padding: 9px 10px;
 	border: 0;
 	border-radius: 6px;
 	background: transparent;
 	color: white;
+	box-sizing: border-box;
 	font: inherit;
 	font-size: 13px;
 	font-weight: 800;
 	line-height: 1;
 	text-align: left;
+	text-decoration: none;
 	cursor: pointer;
 }
 
+.userDropdown a:hover,
 .userDropdown button:hover {
 	background: rgba(255, 255, 255, 0.12);
 }
@@ -114,6 +125,12 @@ body {
 .topRightButton:hover {
 	border-color: rgba(255, 255, 255, 0.36);
 	background: rgba(255, 255, 255, 0.12);
+}
+
+.topRightSignupButton:hover {
+	border-color: rgb(232, 232, 232);
+	background: rgb(232, 232, 232);
+	color: black;
 }
 
 .topRightButton:active {
@@ -189,12 +206,14 @@ body {
 	line-height: 1.35;
 }
 
+.accountPage,
 .loginPage,
 .signupPage {
 	padding: 96px 18px 40px;
 	box-sizing: border-box;
 }
 
+.accountForm,
 .loginForm,
 .signupForm {
 	display: flex;
@@ -209,6 +228,7 @@ body {
 	color: white;
 }
 
+.accountForm h1,
 .loginForm h1,
 .signupForm h1 {
 	margin: 0 0 4px;
@@ -217,6 +237,7 @@ body {
 	line-height: 1.2;
 }
 
+.accountField,
 .loginField,
 .signupField {
 	display: flex;
@@ -227,6 +248,7 @@ body {
 	color: rgba(255, 255, 255, 0.72);
 }
 
+.accountField input,
 .loginField input,
 .signupField input {
 	width: 100%;
@@ -278,12 +300,14 @@ body {
 	outline-offset: 2px;
 }
 
+.accountField input:focus,
 .loginField input:focus,
 .signupField input:focus {
 	border-color: rgba(255, 255, 255, 0.48);
 	background: rgba(255, 255, 255, 0.12);
 }
 
+.accountSubmitButton,
 .loginSubmitButton,
 .signupSubmitButton {
 	height: 44px;
@@ -298,12 +322,14 @@ body {
 	cursor: pointer;
 }
 
+.accountSubmitButton:disabled,
 .loginSubmitButton:disabled,
 .signupSubmitButton:disabled {
 	cursor: default;
 	opacity: 0.62;
 }
 
+.accountMessage,
 .loginMessage,
 .signupMessage {
 	min-height: 20px;
@@ -313,11 +339,13 @@ body {
 	line-height: 1.35;
 }
 
+.accountMessagesuccess,
 .loginMessagesuccess,
 .signupMessagesuccess {
 	color: rgb(119, 224, 147);
 }
 
+.accountMessageerror,
 .loginMessageerror,
 .signupMessageerror {
 	color: rgb(255, 126, 126);
