@@ -339,9 +339,7 @@ test("switches game tabs and clears the sentence", async () => {
 	expect(screen.getByRole("tab", { name: "sandbox" })).toHaveAttribute("aria-selected", "false")
 	expect(screen.getByRole("tab", { name: "shuffle" })).toHaveAttribute("aria-selected", "true")
 	expect(screen.getByRole("heading", { name: "Shuffle practice" })).toBeInTheDocument()
-	expect(
-		screen.getByText("Build the correct sentence from shuffled Japanese parts."),
-	).toBeInTheDocument()
+	expect(screen.getByText("Practice a random mix of the game modes.")).toBeInTheDocument()
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
@@ -540,4 +538,69 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 	)
 	expect(promptRequests).toHaveLength(2)
 	expect(promptRequests[0][0]).toContain("difficulty=easy")
+})
+
+test("calls prompt and check endpoints with a random real mode for shuffle", async () => {
+	jest.spyOn(Math, "random").mockReturnValue(0.6)
+
+	global.fetch.mockImplementation((url, options = {}) => {
+		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					mode: "particles",
+					difficulty: "easy",
+					prompt: "Japanese: 私は寿司[blank]食べる。 Hint: I eat sushi.",
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/games/check`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					correct: true,
+					feedback: "Good.",
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("tab", { name: "shuffle" }))
+
+	await waitFor(() => {
+		expect(
+			screen.getByText("Japanese: 私は寿司[blank]食べる。 Hint: I eat sushi."),
+		).toBeInTheDocument()
+	})
+
+	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
+	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
+	fireEvent.click(screen.getByRole("button", { name: "。" }))
+
+	fireEvent.click(screen.getByRole("button", { name: "Check" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("Correct. Good.")).toBeInTheDocument()
+	})
+
+	const promptRequest = global.fetch.mock.calls.find(([url]) =>
+		String(url).startsWith(`${API_BASE_URL}/games/prompt`),
+	)
+	const promptParams = new URL(String(promptRequest[0]), "http://localhost").searchParams
+	expect(promptParams.get("mode")).toBe("particles")
+
+	const checkRequest = global.fetch.mock.calls.find(([url]) => url === `${API_BASE_URL}/games/check`)
+	expect(JSON.parse(checkRequest[1].body)).toEqual({
+		mode: "particles",
+		prompt: "Japanese: 私は寿司[blank]食べる。 Hint: I eat sushi.",
+		answer: "。",
+	})
 })

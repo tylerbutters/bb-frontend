@@ -66,7 +66,7 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 			/>
 			<GameControls
 				isVisible={isGame && hasSentenceElements}
-				gameMode={selectedGameMode}
+				gameMode={gamePromptData?.mode || selectedGameMode}
 				prompt={gamePrompt}
 				promptStatus={gamePromptStatus}
 				answer={japaneseSentence}
@@ -77,6 +77,9 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 }
 
 function shouldPopulatePromptElements(gameMode, promptData) {
-	if (!gameMode || gameMode === "sandbox" || gameMode === "translate") return false
+	const generatedGameMode = promptData?.mode || gameMode
+	if (!generatedGameMode || generatedGameMode === "sandbox" || generatedGameMode === "translate") {
+		return false
+	}
 	return Array.isArray(promptData?.japaneseTranslation)
 }

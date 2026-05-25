@@ -9,7 +9,7 @@ const GAME_MODES = [
 	{
 		id: "shuffle",
 		title: "Shuffle practice",
-		description: "Build the correct sentence from shuffled Japanese parts.",
+		description: "Practice a random mix of the game modes.",
 	},
 	{
 		id: "translate",

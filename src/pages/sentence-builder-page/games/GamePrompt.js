@@ -3,6 +3,7 @@ import { generateGamePrompt } from "../../../api/games"
 import "./GamePrompt.css"
 
 const PROMPT_DIFFICULTIES = ["easy", "medium", "hard"]
+const SHUFFLE_GAME_MODES = ["translate", "conjugations", "fix sentence", "particles", "reorder"]
 
 export default function GamePrompt({
 	isVisible,
@@ -31,17 +32,26 @@ export default function GamePrompt({
 			onPromptChange?.({ prompt: "", status: "loading", promptData: null })
 
 			try {
+				const promptRequestMode = resolvePromptRequestMode(gameMode)
 				const nextPromptData = await generateGamePrompt({
-					gameMode,
+					gameMode: promptRequestMode,
 					difficulty,
 					signal: controller.signal,
 				})
 				if (controller.signal.aborted) return
 
 				const nextPrompt = nextPromptData?.prompt || ""
+				const nextPromptDataWithMode = {
+					...nextPromptData,
+					mode: nextPromptData?.mode || promptRequestMode,
+				}
 				setPrompt(nextPrompt)
 				setStatus("ready")
-				onPromptChange?.({ prompt: nextPrompt, status: "ready", promptData: nextPromptData })
+				onPromptChange?.({
+					prompt: nextPrompt,
+					status: "ready",
+					promptData: nextPromptDataWithMode,
+				})
 			} catch (error) {
 				if (controller.signal.aborted) return
 				console.log(error)
@@ -104,4 +114,11 @@ export default function GamePrompt({
 
 function hasGamePromptGenerator(gameMode) {
 	return Boolean(gameMode && gameMode !== "sandbox")
+}
+
+function resolvePromptRequestMode(gameMode) {
+	if (gameMode !== "shuffle") return gameMode
+
+	const index = Math.floor(Math.random() * SHUFFLE_GAME_MODES.length)
+	return SHUFFLE_GAME_MODES[index]
 }
