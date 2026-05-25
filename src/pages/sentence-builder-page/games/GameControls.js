@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { checkTranslateAnswer } from "../../../api/games"
+import { checkGameAnswer } from "../../../api/games"
 import "./GameControls.css"
 
 export default function GameControls({
@@ -83,19 +83,5 @@ export default function GameControls({
 }
 
 function hasGameAnswerChecker(gameMode) {
-	switch (gameMode) {
-		case "translate":
-			return true
-		default:
-			return false
-	}
-}
-
-async function checkGameAnswer({ gameMode, prompt, answer }) {
-	switch (gameMode) {
-		case "translate":
-			return checkTranslateAnswer({ prompt, answer })
-		default:
-			throw new Error(`No answer checker configured for ${gameMode}.`)
-	}
+	return Boolean(gameMode && gameMode !== "sandbox")
 }

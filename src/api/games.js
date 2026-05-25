@@ -1,19 +1,20 @@
 import { apiRequest } from "./client"
 
-export async function generateTranslatePrompt(difficulty, { signal } = {}) {
-	const params = new URLSearchParams({ difficulty })
-	const data = await apiRequest(`/games/translate/prompt?${params}`, { signal })
+export async function generateGamePrompt({ gameMode, difficulty, signal }) {
+	const params = new URLSearchParams({ mode: gameMode, difficulty })
+	const data = await apiRequest(`/games/prompt?${params}`, { signal })
 
-	return data.sentence || ""
+	return data.prompt || ""
 }
 
-export async function checkTranslateAnswer({ prompt, answer, signal }) {
-	const data = await apiRequest("/games/translate/check", {
+export async function checkGameAnswer({ gameMode, prompt, answer, signal }) {
+	const data = await apiRequest("/games/check", {
 		method: "POST",
 		signal,
 		body: {
-			englishSentence: prompt,
-			japaneseSentence: answer,
+			mode: gameMode,
+			prompt,
+			answer,
 		},
 	})
 

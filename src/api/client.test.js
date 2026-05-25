@@ -42,15 +42,15 @@ test("apiRequest preserves fetch signals", async () => {
 	const controller = new AbortController()
 	global.fetch.mockResolvedValue({
 		ok: true,
-		json: jest.fn().mockResolvedValue({ sentence: "I eat rice." }),
+		json: jest.fn().mockResolvedValue({ prompt: "I eat rice." }),
 	})
 
-	await apiRequest("/games/translate/prompt?difficulty=easy", {
+	await apiRequest("/games/prompt?mode=translate&difficulty=easy", {
 		signal: controller.signal,
 	})
 
 	expect(global.fetch).toHaveBeenCalledWith(
-		`${API_BASE_URL}/games/translate/prompt?difficulty=easy`,
+		`${API_BASE_URL}/games/prompt?mode=translate&difficulty=easy`,
 		{
 			method: "GET",
 			headers: {},

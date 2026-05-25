@@ -66,11 +66,11 @@ beforeEach(() => {
 			})
 		}
 
-		if (String(url).startsWith(`${API_BASE_URL}/games/translate/prompt`)) {
+		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
-					sentence: "I eat rice.",
+					prompt: "I eat rice.",
 				}),
 			})
 		}
@@ -343,6 +343,9 @@ test("switches game tabs and clears the sentence", async () => {
 		screen.getByText("Build the correct sentence from shuffled Japanese parts."),
 	).toBeInTheDocument()
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
+	await waitFor(() => {
+		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
+	})
 })
 
 test("clears all sentence elements", async () => {
@@ -375,13 +378,13 @@ test("clears all sentence elements", async () => {
 test("changing translate difficulty regenerates the prompt and clears sentence elements", async () => {
 	global.fetch.mockImplementation((url, options = {}) => {
 		const requestUrl = String(url)
-		if (requestUrl.startsWith(`${API_BASE_URL}/games/translate/prompt`)) {
+		if (requestUrl.startsWith(`${API_BASE_URL}/games/prompt`)) {
 			const difficulty = new URL(requestUrl, "http://localhost").searchParams.get("difficulty")
 
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
-					sentence: `${difficulty} prompt.`,
+					prompt: `${difficulty} prompt.`,
 				}),
 			})
 		}
@@ -412,28 +415,32 @@ test("changing translate difficulty regenerates the prompt and clears sentence e
 	})
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
 	expect(
-		global.fetch.mock.calls.some(([url]) =>
-			String(url).includes("/games/translate/prompt?difficulty=medium"),
-		),
+		global.fetch.mock.calls.some(([url]) => {
+			const requestUrl = String(url)
+			if (!requestUrl.startsWith(`${API_BASE_URL}/games/prompt`)) return false
+
+			const params = new URL(requestUrl, "http://localhost").searchParams
+			return params.get("mode") === "translate" && params.get("difficulty") === "medium"
+		}),
 	).toBe(true)
 })
 
 test("regenerates the translate prompt and clears sentence elements", async () => {
 	global.fetch.mockImplementation((url, options = {}) => {
-		if (String(url).startsWith(`${API_BASE_URL}/games/translate/prompt`)) {
+		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
 			const promptRequestCount = global.fetch.mock.calls.filter(([requestUrl]) =>
-				String(requestUrl).startsWith(`${API_BASE_URL}/games/translate/prompt`),
+				String(requestUrl).startsWith(`${API_BASE_URL}/games/prompt`),
 			).length
 
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
-					sentence: promptRequestCount > 1 ? "I drink tea." : "I eat rice.",
+					prompt: promptRequestCount > 1 ? "I drink tea." : "I eat rice.",
 				}),
 			})
 		}
 
-		if (url === `${API_BASE_URL}/games/translate/check`) {
+		if (url === `${API_BASE_URL}/games/check`) {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
@@ -466,6 +473,12 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 	await waitFor(() => {
 		expect(screen.getByText("Not quite. Use a full Japanese sentence.")).toBeInTheDocument()
 	})
+	const checkRequest = global.fetch.mock.calls.find(([url]) => url === `${API_BASE_URL}/games/check`)
+	expect(JSON.parse(checkRequest[1].body)).toEqual({
+		mode: "translate",
+		prompt: "I eat rice.",
+		answer: "。",
+	})
 
 	fireEvent.click(screen.getByRole("button", { name: "Next" }))
 
@@ -474,7 +487,7 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 	})
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
 	const promptRequests = global.fetch.mock.calls.filter(([url]) =>
-		String(url).startsWith(`${API_BASE_URL}/games/translate/prompt`),
+		String(url).startsWith(`${API_BASE_URL}/games/prompt`),
 	)
 	expect(promptRequests).toHaveLength(2)
 	expect(promptRequests[0][0]).toContain("difficulty=easy")

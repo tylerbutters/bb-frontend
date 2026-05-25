@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { generateTranslatePrompt } from "../../../api/games"
+import { generateGamePrompt } from "../../../api/games"
 import "./GamePrompt.css"
 
 const PROMPT_DIFFICULTIES = ["easy", "medium", "hard"]
@@ -102,19 +102,5 @@ export default function GamePrompt({
 }
 
 function hasGamePromptGenerator(gameMode) {
-	switch (gameMode) {
-		case "translate":
-			return true
-		default:
-			return false
-	}
-}
-
-async function generateGamePrompt({ gameMode, difficulty, signal }) {
-	switch (gameMode) {
-		case "translate":
-			return generateTranslatePrompt(difficulty, { signal })
-		default:
-			throw new Error(`No prompt generator configured for ${gameMode}.`)
-	}
+	return Boolean(gameMode && gameMode !== "sandbox")
 }
