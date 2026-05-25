@@ -52,4 +52,17 @@ describe("japaneseTranslationToElements", () => {
 			}),
 		])
 	})
+
+	test("does not attach prompt particles to verbs", () => {
+		expect(
+			japaneseTranslationToElements([{ kanji: "行く", kana: "いく", particle: "を" }]),
+		).toEqual([
+			expect.objectContaining({
+				elementType: "verb",
+				text: "行く",
+				textKana: "いく",
+				particle: null,
+			}),
+		])
+	})
 })

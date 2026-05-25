@@ -49,7 +49,7 @@ function lookupTranslationElement(word) {
 
 function attachParticle(element, particleText) {
 	const particle = normalizeValue(particleText)
-	if (!particle) return element
+	if (!particle || !canAttachPromptParticle(element)) return element
 
 	return {
 		...element,
@@ -58,6 +58,10 @@ function attachParticle(element, particleText) {
 			text: particle,
 		},
 	}
+}
+
+function canAttachPromptParticle(element) {
+	return ["noun", "counter"].includes(element?.elementType)
 }
 
 export function japaneseTranslationToElements(japaneseTranslation = []) {
