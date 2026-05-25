@@ -53,30 +53,36 @@ export default function SignupPage({ onSignup }) {
 			<Link className="topRightButton" to="/">
 				Back
 			</Link>
-			<form className="signupForm" onSubmit={submitSignup}>
+			<form className="signupForm" method="post" action="/api/v1/users/" onSubmit={submitSignup}>
 				<h1>Sign up</h1>
-				<label className="signupField">
+				<label className="signupField" htmlFor="signup-display-name">
 					<span>Display name</span>
 					<input
+						id="signup-display-name"
+						name="displayName"
 						type="text"
 						value={signupForm.displayName}
 						onChange={(e) => updateSignupField("displayName", e.target.value)}
 						autoComplete="name"
 					/>
 				</label>
-				<label className="signupField">
+				<label className="signupField" htmlFor="signup-email">
 					<span>Email</span>
 					<input
+						id="signup-email"
+						name="email"
 						type="email"
 						value={signupForm.email}
 						onChange={(e) => updateSignupField("email", e.target.value)}
-						autoComplete="email"
+						autoComplete="username"
 					/>
 				</label>
-				<label className="signupField">
+				<label className="signupField" htmlFor="signup-password">
 					<span>Password</span>
 					<div className="passwordInputWrap">
 						<input
+							id="signup-password"
+							name="password"
 							type={isPasswordVisible ? "text" : "password"}
 							value={signupForm.password}
 							onChange={(e) => updateSignupField("password", e.target.value)}

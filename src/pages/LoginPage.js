@@ -52,21 +52,25 @@ export default function LoginPage({ onLogin }) {
 			<Link className="topRightButton" to="/">
 				Back
 			</Link>
-			<form className="loginForm" onSubmit={submitLogin}>
+			<form className="loginForm" method="post" action="/api/v1/login" onSubmit={submitLogin}>
 				<h1>Login</h1>
-				<label className="loginField">
+				<label className="loginField" htmlFor="login-email">
 					<span>Email</span>
 					<input
+						id="login-email"
+						name="email"
 						type="email"
 						value={loginForm.email}
 						onChange={(e) => updateLoginField("email", e.target.value)}
-						autoComplete="email"
+						autoComplete="username"
 					/>
 				</label>
-				<label className="loginField">
+				<label className="loginField" htmlFor="login-password">
 					<span>Password</span>
 					<div className="passwordInputWrap">
 						<input
+							id="login-password"
+							name="password"
 							type={isPasswordVisible ? "text" : "password"}
 							value={loginForm.password}
 							onChange={(e) => updateLoginField("password", e.target.value)}

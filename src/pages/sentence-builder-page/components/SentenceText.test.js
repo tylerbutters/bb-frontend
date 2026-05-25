@@ -1,5 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react"
-import SentenceText, { elementsToTextParts, textPartsToString, translateJapanese } from "./SentenceText"
+import SentenceText, {
+	elementsToTextParts,
+	textPartsToString,
+	translateJapanese,
+} from "./SentenceText"
 
 describe("sentence text conversion", () => {
 	test("builds text parts for nouns with prefix, suffix, and particle", () => {
@@ -72,11 +76,7 @@ describe("sentence text conversion", () => {
 
 	test("turns text parts into a sentence string", () => {
 		expect(
-			textPartsToString([
-				{ text: "猫", reading: "ねこ" },
-				{ text: "が" },
-				{ text: "いる" },
-			]),
+			textPartsToString([{ text: "猫", reading: "ねこ" }, { text: "が" }, { text: "いる" }]),
 		).toBe("猫がいる")
 	})
 
@@ -111,7 +111,7 @@ describe("translateJapanese", () => {
 		})
 
 		await expect(translateJapanese("食べる")).resolves.toBe("I eat")
-		expect(global.fetch).toHaveBeenCalledWith("/api/v1/translate", {
+		expect(global.fetch).toHaveBeenCalledWith("/api/v1/games/sandbox/translate-japanese", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
