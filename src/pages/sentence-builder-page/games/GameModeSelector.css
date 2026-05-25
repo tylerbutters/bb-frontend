@@ -1,0 +1,68 @@
+.gameTabs {
+	position: fixed;
+	top: 18px;
+	left: 50%;
+	z-index: 1500;
+	display: flex;
+	max-width: calc(100vw - 24px);
+	padding: 4px;
+	overflow-x: auto;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 8px;
+	background: rgba(20, 20, 20, 0.9);
+	transform: translateX(-50%);
+}
+
+.gameTab {
+	flex: 0 0 auto;
+	padding: 8px 11px;
+	border: 0;
+	border-radius: 6px;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.58);
+	font-family: inherit;
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1;
+	white-space: nowrap;
+	cursor: pointer;
+	transition:
+		background-color 0.15s ease,
+		color 0.15s ease;
+}
+
+.gameTab:hover {
+	color: white;
+}
+
+.gameTabSelected {
+	background: rgba(255, 255, 255, 0.14);
+	color: white;
+}
+
+.gameModeDetails {
+	position: fixed;
+	top: 68px;
+	left: 50%;
+	z-index: 1400;
+	width: min(680px, calc(100vw - 28px));
+	color: white;
+	text-align: center;
+	transform: translateX(-50%);
+	pointer-events: none;
+}
+
+.gameModeDetails h1 {
+	margin: 0;
+	font-size: 22px;
+	font-weight: 800;
+	line-height: 1.2;
+}
+
+.gameModeDetails p {
+	margin: 6px 0 0;
+	color: rgba(255, 255, 255, 0.64);
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.35;
+}

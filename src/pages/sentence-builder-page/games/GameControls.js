@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { checkTranslateAnswer } from "../../../api/games"
+import "./GameControls.css"
 
 export default function GameControls({
 	isVisible,

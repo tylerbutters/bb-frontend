@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { generateTranslatePrompt } from "../../../api/games"
+import "./GamePrompt.css"
 
 const PROMPT_DIFFICULTIES = ["easy", "medium", "hard"]
 

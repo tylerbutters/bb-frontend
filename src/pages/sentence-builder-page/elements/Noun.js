@@ -1,4 +1,4 @@
-import "./Elements.css"
+import "./Element.css"
 import Suffix from "../element-attachments/Suffix"
 import Prefix from "../element-attachments/Prefix"
 import JapaneseText from "../components/JapaneseText"

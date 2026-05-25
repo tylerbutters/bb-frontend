@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
-import "./App.css"
 import AccountPage from "./pages/AccountPage"
 import SentenceBuilderPage from "./pages/sentence-builder-page/SentenceBuilderPage"
 import LoginPage from "./pages/LoginPage"

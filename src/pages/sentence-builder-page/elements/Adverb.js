@@ -1,4 +1,4 @@
-import "./Elements.css"
+import "./Element.css"
 import JapaneseText from "../components/JapaneseText"
 
 export default function Adverb({ element }) {

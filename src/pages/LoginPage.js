@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { login } from "../api/auth"
+import "./TopRightButton.css"
+import "./AuthPage.css"
 
 export default function LoginPage({ onLogin }) {
 	const navigate = useNavigate()

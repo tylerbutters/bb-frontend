@@ -1,0 +1,61 @@
+.addButton {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	height: 90px;
+	padding: 0;
+	overflow: hidden;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0);
+	color: rgba(255, 255, 255, 0.3);
+	font-family: inherit;
+	font-size: 34px;
+	line-height: 1;
+	cursor: pointer;
+	transition:
+		width 0.25s ease-in-out,
+		opacity 0.18s ease-in-out,
+		border-color 0.15s ease,
+		border-width 0.25s ease-in-out,
+		background-color 0.15s ease,
+		color 0.15s ease,
+		transform 0.15s ease;
+}
+
+.addButtonSlot {
+	display: flex;
+	flex-shrink: 0;
+	justify-content: center;
+	align-items: center;
+	transition: none;
+}
+
+.addButton:hover {
+	color: white;
+}
+
+.addButton:active {
+	transform: scale(0.95);
+}
+
+.addButtonOpen {
+	border-color: white;
+	color: white;
+}
+
+.addButtonDragHidden {
+	transition: none;
+	pointer-events: none;
+}
+
+.addButtonText {
+	max-width: calc(100% - 8px);
+	margin-top: 3px;
+	overflow: hidden;
+	font-size: 11px;
+	line-height: 1.1;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

@@ -1,4 +1,4 @@
-import "./Elements.css"
+import "./Element.css"
 
 export default function Punctuation({ element }) {
 	return (

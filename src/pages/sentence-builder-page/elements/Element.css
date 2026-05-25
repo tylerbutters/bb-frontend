@@ -1,46 +1,8 @@
-/* ELEMENTS */
-
-.mainElementDragItem {
-	position: relative;
-	display: flex;
-	flex-shrink: 0;
-	transition:
-		width 0.16s ease-in-out,
-		height 0.16s ease-in-out,
-		transform 0.16s ease-in-out;
-	touch-action: none;
-}
-
-.mainElementDragItem .elementContainer {
-	cursor: grab;
-}
-
-.mainElementDragItem:active .elementContainer {
-	cursor: grabbing;
-}
-
-.mainElementDragging {
-	transition: none;
-}
-
-.mainElementDragging .elementContainer {
-	cursor: grabbing;
-	box-shadow: 0 18px 34px rgba(0, 0, 0, 0.34);
-}
-
-.mainElementDragContentDropping {
-	transition:
-		left 0.18s ease-in-out,
-		top 0.18s ease-in-out,
-		width 0.18s ease-in-out,
-		transform 0.18s ease-in-out;
-}
-
 .elementText {
 	padding: 0 2px;
+	color: white;
 	font-size: 40px;
 	line-height: 1;
-	color: white;
 }
 
 .elementText .japaneseText,
@@ -58,7 +20,6 @@
 .elementText rt,
 .baseInsideElement rt {
 	font-size: 15px;
-	/* line-height: 100; */
 }
 
 .elementContainer {
@@ -76,10 +37,6 @@
 		transform 0.15s ease-in-out;
 }
 
-/* .elementContainer:hover {
-	border-color: white;
-} */
-
 .baseElement {
 	display: flex;
 	align-items: center;
@@ -92,7 +49,6 @@
 	align-items: center;
 	min-width: 40px;
 	height: 90px;
-	/* padding: 0 10px; */
 	border: 1px solid rgba(255, 255, 255, 0.14);
 	border-radius: 10px;
 	box-sizing: border-box;
@@ -107,29 +63,24 @@
 		transform 0.15s ease-in-out;
 }
 
-/* .baseInsideElement:hover {
-	border-color: white;
-} */
-
 .conjugationElement {
 	padding-right: 0;
 }
 
 .pressedElement {
-	transform: scale(0.95);
 	border-color: white;
+	transform: scale(0.95);
 }
 
 .hoverElement {
-	/* transform: scale(0.95); */
 	border-color: white;
 }
 
 .insideElementText {
 	display: flex;
 	align-items: center;
-	white-space: nowrap;
 	padding: 0 5px;
+	white-space: nowrap;
 }
 
 .particleElement {

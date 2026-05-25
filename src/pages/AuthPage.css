@@ -1,0 +1,214 @@
+.accountPage,
+.loginPage,
+.signupPage {
+	padding: 96px 18px 40px;
+	box-sizing: border-box;
+}
+
+.accountForm,
+.loginForm,
+.signupForm {
+	display: flex;
+	width: min(380px, 100%);
+	flex-direction: column;
+	gap: 16px;
+	padding: 28px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 8px;
+	background: rgba(20, 20, 20, 0.92);
+	box-sizing: border-box;
+	color: white;
+}
+
+.deleteAccountPanel {
+	display: flex;
+	width: min(380px, 100%);
+	flex-direction: column;
+	gap: 12px;
+	margin-top: 14px;
+	padding: 18px;
+	border: 1px solid rgba(255, 126, 126, 0.34);
+	border-radius: 8px;
+	background: rgba(32, 12, 12, 0.72);
+	box-sizing: border-box;
+	color: white;
+}
+
+.accountForm h1,
+.loginForm h1,
+.signupForm h1 {
+	margin: 0 0 4px;
+	font-size: 26px;
+	font-weight: 850;
+	line-height: 1.2;
+}
+
+.deleteAccountPanel h2 {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 850;
+	line-height: 1.2;
+}
+
+.deleteAccountActions {
+	display: flex;
+	gap: 10px;
+}
+
+.accountField,
+.loginField,
+.signupField {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+	color: rgba(255, 255, 255, 0.72);
+	font-size: 13px;
+	font-weight: 800;
+}
+
+.accountField input,
+.loginField input,
+.signupField input {
+	width: 100%;
+	height: 42px;
+	padding: 0 12px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.08);
+	box-sizing: border-box;
+	color: white;
+	font: inherit;
+	font-size: 15px;
+	font-weight: 650;
+	outline: none;
+}
+
+.passwordInputWrap {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.passwordInputWrap input {
+	padding-right: 68px;
+}
+
+.passwordToggleButton {
+	position: absolute;
+	right: 6px;
+	height: 30px;
+	padding: 0 10px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 7px;
+	background: rgba(255, 255, 255, 0.1);
+	color: rgba(255, 255, 255, 0.82);
+	font: inherit;
+	font-size: 12px;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.passwordToggleButton:hover {
+	background: rgba(255, 255, 255, 0.16);
+	color: white;
+}
+
+.passwordToggleButton:focus-visible {
+	outline: 2px solid rgba(255, 255, 255, 0.62);
+	outline-offset: 2px;
+}
+
+.accountField input:focus,
+.loginField input:focus,
+.signupField input:focus {
+	border-color: rgba(255, 255, 255, 0.48);
+	background: rgba(255, 255, 255, 0.12);
+}
+
+.accountSubmitButton,
+.loginSubmitButton,
+.signupSubmitButton {
+	height: 44px;
+	margin-top: 4px;
+	border: 1px solid rgba(255, 255, 255, 0.24);
+	border-radius: 8px;
+	background: white;
+	color: black;
+	font: inherit;
+	font-size: 15px;
+	font-weight: 850;
+	cursor: pointer;
+}
+
+.cancelDeleteButton,
+.deleteAccountButton {
+	height: 40px;
+	padding: 0 12px;
+	border: 1px solid rgba(255, 126, 126, 0.44);
+	border-radius: 8px;
+	background: rgb(255, 126, 126);
+	color: black;
+	font: inherit;
+	font-size: 14px;
+	font-weight: 850;
+	cursor: pointer;
+}
+
+.cancelDeleteButton {
+	border-color: rgba(255, 255, 255, 0.2);
+	background: rgba(255, 255, 255, 0.08);
+	color: white;
+}
+
+.deleteAccountButton:disabled {
+	cursor: default;
+	opacity: 0.62;
+}
+
+.accountSubmitButton:disabled,
+.loginSubmitButton:disabled,
+.signupSubmitButton:disabled {
+	cursor: default;
+	opacity: 0.62;
+}
+
+.accountMessage,
+.loginMessage,
+.signupMessage {
+	min-height: 20px;
+	margin: 0;
+	font-size: 13px;
+	font-weight: 750;
+	line-height: 1.35;
+}
+
+.accountMessagesuccess,
+.loginMessagesuccess,
+.signupMessagesuccess {
+	color: rgb(119, 224, 147);
+}
+
+.accountMessageerror,
+.loginMessageerror,
+.signupMessageerror {
+	color: rgb(255, 126, 126);
+}
+
+.authSwitchText {
+	margin: 2px 0 0;
+	color: rgba(255, 255, 255, 0.62);
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1.35;
+	text-align: center;
+}
+
+.authSwitchText a {
+	color: white;
+	font-weight: 850;
+	text-decoration: none;
+}
+
+.authSwitchText a:hover {
+	text-decoration: underline;
+}

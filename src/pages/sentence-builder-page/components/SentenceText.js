@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useMemo, useState } from "react"
 import { translateJapanese as requestJapaneseTranslation } from "../../../api/games"
 import JapaneseText from "./JapaneseText"
+import "./SentenceText.css"
 
 export default function SentenceText({ addedElements, showTranslation = true }) {
 	const [translation, setTranslation] = useState()
@@ -28,6 +29,7 @@ export default function SentenceText({ addedElements, showTranslation = true }) 
 		}
 
 		const result = await translateJapanese(sentence, { signal })
+		console.log(result)
 		if (signal.aborted) return
 		setTranslation(result)
 	}

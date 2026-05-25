@@ -1,0 +1,75 @@
+.topRightActions {
+	position: fixed;
+	top: 18px;
+	right: 18px;
+	z-index: 1600;
+	display: flex;
+	gap: 8px;
+}
+
+.topRightActions .topRightButton {
+	position: static;
+}
+
+.topRightUserMenu {
+	position: fixed;
+	top: 18px;
+	right: 18px;
+	z-index: 1600;
+}
+
+.topRightUserButton {
+	max-width: min(240px, calc(100vw - 36px));
+	padding: 0;
+	overflow: hidden;
+	border: 0;
+	background: transparent;
+	color: white;
+	font-family: inherit;
+	font-size: 14px;
+	font-weight: 850;
+	line-height: 1;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.topRightUserButton:hover {
+	text-decoration: underline;
+}
+
+.userDropdown {
+	position: absolute;
+	top: calc(100% + 10px);
+	right: 0;
+	min-width: 120px;
+	padding: 4px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 8px;
+	background: rgba(20, 20, 20, 0.96);
+	box-shadow: 0 18px 30px rgba(0, 0, 0, 0.35);
+}
+
+.userDropdown a,
+.userDropdown button {
+	display: block;
+	width: 100%;
+	padding: 9px 10px;
+	border: 0;
+	border-radius: 6px;
+	background: transparent;
+	box-sizing: border-box;
+	color: white;
+	font: inherit;
+	font-size: 13px;
+	font-weight: 800;
+	line-height: 1;
+	text-align: left;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.userDropdown a:hover,
+.userDropdown button:hover {
+	background: rgba(255, 255, 255, 0.12);
+}

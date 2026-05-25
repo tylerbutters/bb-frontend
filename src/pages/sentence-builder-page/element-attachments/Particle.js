@@ -1,6 +1,6 @@
 import { useRef, useState } from "react"
 import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
-import "../elements/Elements.css"
+import "../elements/Element.css"
 import AddButton from "../components/AddButton"
 
 export default function Particle({

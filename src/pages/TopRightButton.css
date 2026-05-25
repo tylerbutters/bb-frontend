@@ -1,0 +1,42 @@
+.topRightButton {
+	position: fixed;
+	top: 18px;
+	right: 18px;
+	z-index: 1600;
+	padding: 10px 14px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 8px;
+	background: rgba(20, 20, 20, 0.9);
+	color: white;
+	font-family: inherit;
+	font-size: 14px;
+	font-weight: 800;
+	line-height: 1;
+	text-decoration: none;
+	cursor: pointer;
+	transition:
+		background-color 0.15s ease,
+		border-color 0.15s ease,
+		transform 0.15s ease;
+}
+
+.topRightSignupButton {
+	border-color: white;
+	background: white;
+	color: black;
+}
+
+.topRightButton:hover {
+	border-color: rgba(255, 255, 255, 0.36);
+	background: rgba(255, 255, 255, 0.12);
+}
+
+.topRightSignupButton:hover {
+	border-color: rgb(232, 232, 232);
+	background: rgb(232, 232, 232);
+	color: black;
+}
+
+.topRightButton:active {
+	transform: scale(0.96);
+}

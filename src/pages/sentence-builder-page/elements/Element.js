@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react"
 import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
-import "./Elements.css"
+import "./Element.css"
 import useGrammarStore from "../../../store/useGrammarStore"
 import Particle from "../element-attachments/Particle"
 import AnimatedWidth from "./AnimatedWidth"

@@ -1,4 +1,4 @@
-import "./Elements.css"
+import "./Element.css"
 import Conjugation from "../element-attachments/Conjugation"
 import JapaneseText from "../components/JapaneseText"
 

@@ -1,0 +1,69 @@
+.elementOptionsMenuButtonText,
+.elementOptionsMenuButtonMeanings {
+	display: block;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.elementOptionsMenuButtonText rt {
+	font-size: 10px;
+}
+
+.elementOptionsMenuButtonMeanings {
+	margin-top: 3px;
+	color: rgba(255, 255, 255, 0.62);
+	font-size: 12px;
+	line-height: 1.25;
+}
+
+.elementListItemContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	padding: 8px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.elementListItemContainer::-webkit-scrollbar {
+	width: 8px;
+}
+
+.elementListItemContainer::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.elementListItemContainer::-webkit-scrollbar-thumb {
+	border: 2px solid #202124;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.28);
+}
+
+.searchInputContainer {
+	display: flex;
+	padding: 8px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	background-color: #2b2d31;
+}
+
+.searchInput {
+	width: 100%;
+	padding: 8px 10px;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 7px;
+	background: #17181a;
+	color: white;
+	font-size: 15px;
+	outline: none;
+}
+
+.searchInput::placeholder {
+	color: rgba(255, 255, 255, 0.5);
+}
+
+.searchInput:focus {
+	border-color: #8ab4ff;
+	box-shadow: 0 0 0 2px rgba(138, 180, 255, 0.18);
+}

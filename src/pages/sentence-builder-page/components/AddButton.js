@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
+import "./AddButton.css"
 
 export default function AddButton({
 	locked,

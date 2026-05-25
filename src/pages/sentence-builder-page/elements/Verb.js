@@ -1,5 +1,6 @@
 import Conjugation from "../element-attachments/Conjugation"
 import JapaneseText from "../components/JapaneseText"
+import "./Element.css"
 
 export default function Verb({
 	element,

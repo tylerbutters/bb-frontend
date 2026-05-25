@@ -1,5 +1,5 @@
 import { useRef, useState } from "react"
-import "../elements/Elements.css"
+import "../elements/Element.css"
 import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
 import useGrammarStore from "../../../store/useGrammarStore"
 import AddButton from "../components/AddButton"

@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import AddButton from "./AddButton"
 import SentenceText, { elementsToTextParts, textPartsToString } from "./SentenceText"
+import "./SentenceBuilderWorkspace.css"
 import Element from "../elements/Element"
 import { getDefaultElementOptions } from "../elements/elementTypes"
 import normalizeElement from "../grammar/normalizeElement"

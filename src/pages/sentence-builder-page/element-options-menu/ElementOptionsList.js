@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import JapaneseText from "../components/JapaneseText"
 import { filterElementOptions } from "./elementOptionsSearch"
+import "./ElementOptionsList.css"
 
 const PAGE_SIZE = 50
 

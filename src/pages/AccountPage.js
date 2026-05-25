@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { Link, Navigate } from "react-router-dom"
 import { deleteUser, updateUser } from "../api/users"
+import "./TopRightButton.css"
+import "./AuthPage.css"
 
 export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate }) {
 	const [accountForm, setAccountForm] = useState({

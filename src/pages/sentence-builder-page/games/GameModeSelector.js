@@ -1,3 +1,5 @@
+import "./GameModeSelector.css"
+
 const GAME_MODES = [
 	{
 		id: "sandbox",

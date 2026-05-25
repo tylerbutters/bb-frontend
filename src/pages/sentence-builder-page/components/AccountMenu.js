@@ -1,5 +1,7 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import "../../TopRightButton.css"
+import "./AccountMenu.css"
 
 export default function AccountMenu({ currentUser, onLogout }) {
 	const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)

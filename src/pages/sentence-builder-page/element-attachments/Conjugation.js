@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react"
 import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
-import "../elements/Elements.css"
+import "../elements/Element.css"
 import useGrammarStore from "../../../store/useGrammarStore"
 import AddButton from "../components/AddButton"
 import verbs from "../jmdict/processed/verbs.json"
