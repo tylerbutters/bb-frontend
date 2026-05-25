@@ -1,6 +1,6 @@
 import { useRef, useState } from "react"
 import "../elements/Elements.css"
-import ElementOptionsMenu from "../elemention-options-menu/ElementOptionsMenu"
+import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
 import suffixes from "../jmdict/processed/suffixes.json"
 import AddButton from "../components/AddButton"
 import JapaneseText from "../components/JapaneseText"

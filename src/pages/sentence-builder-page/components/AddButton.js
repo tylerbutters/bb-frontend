@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import ElementOptionsMenu from "../elemention-options-menu/ElementOptionsMenu"
+import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
 
 export default function AddButton({
 	locked,
@@ -10,7 +10,7 @@ export default function AddButton({
 	text,
 	disabled = false,
 }) {
-	const EDGE_SIZE = 0
+	const EDGE_SIZE = 30
 	const ref = useRef(null)
 	const buttonText = text || getOptionsButtonText(elementOptions)
 	// const visibleWidth = getVisibleButtonWidth(buttonText)

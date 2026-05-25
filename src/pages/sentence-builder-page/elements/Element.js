@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react"
-import ElementOptionsMenu from "../elemention-options-menu/ElementOptionsMenu"
+import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
 import "./Elements.css"
 import useGrammarStore from "../../../store/useGrammarStore"
 import Particle from "../element-attachments/Particle"

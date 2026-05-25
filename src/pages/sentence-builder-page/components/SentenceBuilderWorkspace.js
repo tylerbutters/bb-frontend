@@ -4,6 +4,7 @@ import SentenceText, { elementsToTextParts, textPartsToString } from "./Sentence
 import Element from "../elements/Element"
 import { getDefaultElementOptions } from "../elements/elementTypes"
 import normalizeElement from "../grammar/normalizeElement"
+import useNestedElementPointerGuard from "../hooks/useNestedElementPointerGuard"
 import useSentenceDragDrop from "../hooks/useSentenceDragDrop"
 import useGrammarStore from "../../../store/useGrammarStore"
 
@@ -38,6 +39,7 @@ export default function SentenceBuilderWorkspace({
 		containerRef: sentenceElementsContainerRef,
 		scale: sentenceElementsScale,
 	})
+	useNestedElementPointerGuard()
 
 	useEffect(() => {
 		if (resetKeyRef.current === resetKey) return
@@ -100,71 +102,6 @@ export default function SentenceBuilderWorkspace({
 			window.removeEventListener("resize", scheduleScaleUpdate)
 		}
 	}, [addedElements])
-
-	useEffect(() => {
-		let pressedElement
-		let hoveredElement
-
-		function clearPressedElement() {
-			pressedElement?.classList.remove("pressedElement")
-			pressedElement = null
-		}
-
-		function clearHoveredElement() {
-			hoveredElement?.classList.remove("hoverElement")
-			hoveredElement = null
-		}
-
-		function handlePointerDown(e) {
-			clearPressedElement()
-
-			if (e.target.closest("input, button")) return
-
-			pressedElement = e.target.closest(".baseInsideElement,.elementContainer,.addButton ")
-			pressedElement?.classList.add("pressedElement")
-		}
-
-		function handlePointerOver(e) {
-			//it would highlight the parent conjugation when hovering over menu
-			if (e.target.closest(".elementOptionsMenuContainer")) return
-
-			const element = e.target.closest(".baseInsideElement,.elementContainer,.addButton ")
-
-			if (element === hoveredElement) return
-
-			clearHoveredElement()
-
-			if (element) {
-				hoveredElement = element
-				hoveredElement.classList.add("hoverElement")
-			}
-		}
-
-		function handlePointerOut(e) {
-			if (hoveredElement && !hoveredElement.contains(e.relatedTarget)) {
-				clearHoveredElement()
-			}
-		}
-
-		document.addEventListener("pointerdown", handlePointerDown)
-		document.addEventListener("pointerup", clearPressedElement)
-		document.addEventListener("pointercancel", clearPressedElement)
-
-		document.addEventListener("pointerover", handlePointerOver)
-		document.addEventListener("pointerout", handlePointerOut)
-
-		return () => {
-			clearPressedElement()
-			clearHoveredElement()
-
-			document.removeEventListener("pointerdown", handlePointerDown)
-			document.removeEventListener("pointerup", clearPressedElement)
-			document.removeEventListener("pointercancel", clearPressedElement)
-
-			document.removeEventListener("pointerover", handlePointerOver)
-			document.removeEventListener("pointerout", handlePointerOut)
-		}
-	}, [])
 
 	function createSentenceElement(selectedElement) {
 		return {
