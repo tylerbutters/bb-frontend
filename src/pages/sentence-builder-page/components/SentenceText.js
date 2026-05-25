@@ -41,7 +41,7 @@ export default function SentenceText({ addedElements, showTranslation = true }) 
 
 export async function translateJapanese(text) {
 	try {
-		const response = await fetch(`${process.env.API_URL}/api/v1/games/sandbox/translate-japanese`, {
+		const response = await fetch(`${process.env.API_URL}/games/sandbox/translate-japanese`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

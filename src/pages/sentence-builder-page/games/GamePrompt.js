@@ -115,7 +115,7 @@ async function generateGamePrompt({ gameMode, difficulty }) {
 
 async function generateTranslatePrompt(difficulty) {
 	const response = await fetch(
-		`/api/v1/games/translate/prompt?difficulty=${encodeURIComponent(difficulty)}`,
+		`/games/translate/prompt?difficulty=${encodeURIComponent(difficulty)}`,
 		{
 			method: "GET",
 			headers: {

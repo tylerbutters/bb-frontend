@@ -16,7 +16,7 @@ beforeEach(() => {
 	window.history.pushState({}, "", "/")
 	window.localStorage.clear()
 	global.fetch = jest.fn((url, options = {}) => {
-		if (url === "/api/v1/users/") {
+		if (url === "/users/") {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
@@ -29,7 +29,7 @@ beforeEach(() => {
 			})
 		}
 
-		if (url === "/api/v1/login") {
+		if (url === "/login") {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
@@ -42,7 +42,7 @@ beforeEach(() => {
 			})
 		}
 
-		if (url === "/api/v1/users/1" && options.method === "PATCH") {
+		if (url === "/users/1" && options.method === "PATCH") {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
@@ -56,7 +56,7 @@ beforeEach(() => {
 			})
 		}
 
-		if (url === "/api/v1/users/1" && options.method === "DELETE") {
+		if (url === "/users/1" && options.method === "DELETE") {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
@@ -65,7 +65,7 @@ beforeEach(() => {
 			})
 		}
 
-		if (String(url).startsWith("/api/v1/games/translate/prompt")) {
+		if (String(url).startsWith("/games/translate/prompt")) {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
@@ -112,7 +112,7 @@ test("opens the sign up page and creates an account", async () => {
 		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
 	})
 	expect(window.location.pathname).toBe("/")
-	const signupRequest = global.fetch.mock.calls.find(([url]) => url === "/api/v1/users/")
+	const signupRequest = global.fetch.mock.calls.find(([url]) => url === "/users/")
 	expect(signupRequest[1]).toMatchObject({
 		method: "POST",
 		headers: {
@@ -139,7 +139,10 @@ test("renders the sign up page at the sign up route", () => {
 
 	fireEvent.click(screen.getByRole("button", { name: "Show password" }))
 	expect(passwordInput).toHaveAttribute("type", "text")
-	expect(screen.getByRole("button", { name: "Hide password" })).toHaveAttribute("aria-pressed", "true")
+	expect(screen.getByRole("button", { name: "Hide password" })).toHaveAttribute(
+		"aria-pressed",
+		"true",
+	)
 })
 
 test("opens the login page", () => {
@@ -184,7 +187,7 @@ test("logs in and replaces auth links with the user name", async () => {
 	expect(screen.queryByRole("button", { name: "Tyler" })).not.toBeInTheDocument()
 	expect(window.localStorage.getItem("jsbCurrentUser")).toBeNull()
 
-	const loginRequest = global.fetch.mock.calls.find(([url]) => url === "/api/v1/login")
+	const loginRequest = global.fetch.mock.calls.find(([url]) => url === "/login")
 	expect(loginRequest[1]).toMatchObject({
 		method: "POST",
 		headers: {
@@ -229,7 +232,7 @@ test("opens account from the user menu and updates account details", async () =>
 	})
 
 	const accountRequest = global.fetch.mock.calls.find(
-		([url, options]) => url === "/api/v1/users/1" && options.method === "PATCH",
+		([url, options]) => url === "/users/1" && options.method === "PATCH",
 	)
 	expect(accountRequest[1]).toMatchObject({
 		method: "PATCH",
@@ -283,7 +286,7 @@ test("deletes an account from the account page", async () => {
 	})
 
 	const deleteRequest = global.fetch.mock.calls.find(
-		([url, options]) => url === "/api/v1/users/1" && options.method === "DELETE",
+		([url, options]) => url === "/users/1" && options.method === "DELETE",
 	)
 	expect(deleteRequest[1]).toMatchObject({
 		method: "DELETE",
@@ -371,7 +374,7 @@ test("clears all sentence elements", async () => {
 test("changing translate difficulty regenerates the prompt and clears sentence elements", async () => {
 	global.fetch.mockImplementation((url, options = {}) => {
 		const requestUrl = String(url)
-		if (requestUrl.startsWith("/api/v1/games/translate/prompt")) {
+		if (requestUrl.startsWith("/games/translate/prompt")) {
 			const difficulty = new URL(requestUrl, "http://localhost").searchParams.get("difficulty")
 
 			return Promise.resolve({
@@ -409,16 +412,16 @@ test("changing translate difficulty regenerates the prompt and clears sentence e
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
 	expect(
 		global.fetch.mock.calls.some(([url]) =>
-			String(url).includes("/api/v1/games/translate/prompt?difficulty=medium"),
+			String(url).includes("/games/translate/prompt?difficulty=medium"),
 		),
 	).toBe(true)
 })
 
 test("regenerates the translate prompt and clears sentence elements", async () => {
 	global.fetch.mockImplementation((url, options = {}) => {
-		if (String(url).startsWith("/api/v1/games/translate/prompt")) {
-			const promptRequestCount = global.fetch.mock.calls.filter(
-				([requestUrl]) => String(requestUrl).startsWith("/api/v1/games/translate/prompt"),
+		if (String(url).startsWith("/games/translate/prompt")) {
+			const promptRequestCount = global.fetch.mock.calls.filter(([requestUrl]) =>
+				String(requestUrl).startsWith("/games/translate/prompt"),
 			).length
 
 			return Promise.resolve({
@@ -429,7 +432,7 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 			})
 		}
 
-		if (url === "/api/v1/games/translate/check") {
+		if (url === "/games/translate/check") {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
@@ -470,7 +473,7 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 	})
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
 	const promptRequests = global.fetch.mock.calls.filter(([url]) =>
-		String(url).startsWith("/api/v1/games/translate/prompt"),
+		String(url).startsWith("/games/translate/prompt"),
 	)
 	expect(promptRequests).toHaveLength(2)
 	expect(promptRequests[0][0]).toContain("difficulty=easy")

@@ -27,7 +27,7 @@ export default function SignupPage({ onSignup }) {
 		setSignupMessage("")
 
 		try {
-			const response = await fetch(`${process.env.API_URL}/api/v1/users/`, {
+			const response = await fetch(`${process.env.API_URL}/users/`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -53,7 +53,7 @@ export default function SignupPage({ onSignup }) {
 			<Link className="topRightButton" to="/">
 				Back
 			</Link>
-			<form className="signupForm" method="post" action="/api/v1/users/" onSubmit={submitSignup}>
+			<form className="signupForm" method="post" action="/users/" onSubmit={submitSignup}>
 				<h1>Sign up</h1>
 				<label className="signupField" htmlFor="signup-display-name">
 					<span>Display name</span>

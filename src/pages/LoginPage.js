@@ -26,7 +26,7 @@ export default function LoginPage({ onLogin }) {
 		setLoginMessage("")
 
 		try {
-			const response = await fetch(`${process.env.API_URL}/api/v1/login`, {
+			const response = await fetch(`${process.env.API_URL}/login`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -52,7 +52,7 @@ export default function LoginPage({ onLogin }) {
 			<Link className="topRightButton" to="/">
 				Back
 			</Link>
-			<form className="loginForm" method="post" action="/api/v1/login" onSubmit={submitLogin}>
+			<form className="loginForm" method="post" action="/login" onSubmit={submitLogin}>
 				<h1>Login</h1>
 				<label className="loginField" htmlFor="login-email">
 					<span>Email</span>

@@ -111,7 +111,7 @@ describe("translateJapanese", () => {
 		})
 
 		await expect(translateJapanese("食べる")).resolves.toBe("I eat")
-		expect(global.fetch).toHaveBeenCalledWith("/api/v1/games/sandbox/translate-japanese", {
+		expect(global.fetch).toHaveBeenCalledWith("/games/sandbox/translate-japanese", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

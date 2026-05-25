@@ -53,7 +53,7 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 		}
 
 		try {
-			const response = await fetch(`${process.env.API_URL}/api/v1/users/${currentUser.id}`, {
+			const response = await fetch(`${process.env.API_URL}/users/${currentUser.id}`, {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",
@@ -92,7 +92,7 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 		setDeleteMessage("")
 
 		try {
-			const response = await fetch(`${process.env.API_URL}/api/v1/users/${currentUser.id}`, {
+			const response = await fetch(`${process.env.API_URL}/users/${currentUser.id}`, {
 				method: "DELETE",
 			})
 			const data = await response.json()
