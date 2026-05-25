@@ -1,6 +1,6 @@
-import "../App.css"
-import Suffix from "../attachments/Suffix"
-import Prefix from "../attachments/Prefix"
+import "./Elements.css"
+import Suffix from "../element-attachments/Suffix"
+import Prefix from "../element-attachments/Prefix"
 import JapaneseText from "../components/JapaneseText"
 
 export default function Noun({ mouse, element, updateElement, allColors, addButtonsDisabled }) {

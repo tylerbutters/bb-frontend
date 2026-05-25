@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import JapaneseText from "./JapaneseText"
+import JapaneseText from "../components/JapaneseText"
 import { filterElementOptions } from "./elementOptionsSearch"
 
 const PAGE_SIZE = 50

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
-import { MENU_CLOSE_EVENT } from "../components/elementOptionsMenuLayout"
+import { MENU_CLOSE_EVENT } from "../elemention-options-menu/elementOptionsMenuLayout"
 
 const DRAG_DROP_TRANSITION_MS = 180
 const DRAG_START_THRESHOLD = 4

@@ -1,5 +1,5 @@
-import "../App.css"
-import Conjugation from "../attachments/Conjugation"
+import "./Elements.css"
+import Conjugation from "../element-attachments/Conjugation"
 import JapaneseText from "../components/JapaneseText"
 
 export default function Adjective({

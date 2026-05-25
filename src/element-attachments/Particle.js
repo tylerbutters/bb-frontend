@@ -1,14 +1,18 @@
 import { useRef, useState } from "react"
-import "../App.css"
-import ElementOptionsMenu from "../components/ElementOptionsMenu"
-import suffixes from "../jmdict/processed/suffixes.json"
+import ElementOptionsMenu from "../elemention-options-menu/ElementOptionsMenu"
+import "../elements/Elements.css"
 import AddButton from "../components/AddButton"
-import JapaneseText from "../components/JapaneseText"
 
-export default function Suffix({ element, updateElement, deleteElement, mouse, color, disabled }) {
+export default function Particle({
+	element,
+	elementOptions,
+	updateElement,
+	deleteElement,
+	mouse,
+	disabled,
+}) {
 	const [isModalOpen, setIsModalOpen] = useState()
 	const elementRef = useRef(null)
-	const suffixOptions = suffixes
 
 	return (
 		<div className="modalContainer">
@@ -16,28 +20,26 @@ export default function Suffix({ element, updateElement, deleteElement, mouse, c
 				anchorRef={elementRef}
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
-				elementOptions={suffixOptions}
+				elementOptions={elementOptions}
 				onSelect={updateElement}
 				deleteElement={deleteElement}
 				hasDelete={true}
-				menuTitle="Suffix"
+				menuTitle="Particle"
 			/>
 			{element ? (
 				<div
 					ref={elementRef}
-					className="baseInsideElement suffixPrefixElement"
-					style={{ backgroundColor: color }}
+					className="baseInsideElement particleElement"
 					onClick={() => setIsModalOpen(true)}
 				>
-					<JapaneseText text={element.text} reading={element.textKana} />
+					{element.text}
 				</div>
 			) : (
 				<AddButton
 					mouse={mouse}
-					elementOptions={suffixOptions}
+					elementOptions={elementOptions}
 					addElement={updateElement}
-					hasSearch={true}
-					text="suffix"
+					text="particle"
 					disabled={disabled}
 				/>
 			)}

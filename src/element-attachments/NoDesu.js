@@ -1,6 +1,6 @@
 import { useRef, useState } from "react"
-import "../App.css"
-import ElementOptionsMenu from "../components/ElementOptionsMenu"
+import "../elements/Elements.css"
+import ElementOptionsMenu from "../elemention-options-menu/ElementOptionsMenu"
 import useGrammarStore from "../store/useGrammarStore"
 import AddButton from "../components/AddButton"
 

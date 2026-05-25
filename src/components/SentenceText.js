@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useMemo, useState } from "react"
-import JapaneseText from "./components/JapaneseText"
+import JapaneseText from "./JapaneseText"
 
 export default function SentenceText({ addedElements, showTranslation = true }) {
 	const [translation, setTranslation] = useState()

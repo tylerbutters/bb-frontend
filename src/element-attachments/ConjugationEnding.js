@@ -1,6 +1,6 @@
 import { useRef, useState } from "react"
-import ElementOptionsMenu from "../components/ElementOptionsMenu"
-import "../App.css"
+import ElementOptionsMenu from "../elemention-options-menu/ElementOptionsMenu"
+import "../elements/Elements.css"
 import useGrammarStore from "../store/useGrammarStore"
 import { createConjugationFromData } from "../grammar/conjugationOptions"
 

@@ -1,6 +1,6 @@
 import { act, render, screen } from "@testing-library/react"
 import { useRef, useState } from "react"
-import { MENU_CLOSE_EVENT } from "../components/elementOptionsMenuLayout"
+import { MENU_CLOSE_EVENT } from "../elemention-options-menu/elementOptionsMenuLayout"
 import useSentenceDragDrop from "./useSentenceDragDrop"
 
 function mockRect(node, rect) {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import "../App.css"
+import "./Elements.css"
 import JapaneseText from "../components/JapaneseText"
 
 export default function Counter({ mouse, element, updateElement, allColors }) {

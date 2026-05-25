@@ -1,5 +1,5 @@
-import Conjugation from "../attachments/Conjugation"
-import NoDesu from "../attachments/NoDesu"
+import Conjugation from "../element-attachments/Conjugation"
+import NoDesu from "../element-attachments/NoDesu"
 
 export default function Desu({
 	element,

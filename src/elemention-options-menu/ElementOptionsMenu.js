@@ -1,6 +1,6 @@
 import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import "../App.css"
+import "./ElementOptionsMenu.css"
 import ElementOptionsList from "./ElementOptionsList"
 import {
 	getPrimaryMenuLayout,

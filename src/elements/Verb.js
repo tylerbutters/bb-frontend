@@ -1,4 +1,4 @@
-import Conjugation from "../attachments/Conjugation"
+import Conjugation from "../element-attachments/Conjugation"
 import JapaneseText from "../components/JapaneseText"
 
 export default function Verb({
