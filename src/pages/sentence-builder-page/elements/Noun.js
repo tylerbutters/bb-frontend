@@ -1,7 +1,7 @@
 import "./Elements.css"
 import Suffix from "../element-attachments/Suffix"
 import Prefix from "../element-attachments/Prefix"
-import JapaneseText from "../pages/sentence-builder-page/components/JapaneseText"
+import JapaneseText from "../components/JapaneseText"
 
 export default function Noun({ mouse, element, updateElement, allColors, addButtonsDisabled }) {
 	function addElement(selectedElement) {

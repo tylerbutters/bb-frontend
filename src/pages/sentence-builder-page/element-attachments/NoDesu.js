@@ -1,18 +1,13 @@
 import { useRef, useState } from "react"
-import ElementOptionsMenu from "../elemention-options-menu/ElementOptionsMenu"
 import "../elements/Elements.css"
-import AddButton from "../pages/sentence-builder-page/components/AddButton"
+import ElementOptionsMenu from "../elemention-options-menu/ElementOptionsMenu"
+import useGrammarStore from "../../../store/useGrammarStore"
+import AddButton from "../components/AddButton"
 
-export default function Particle({
-	element,
-	elementOptions,
-	updateElement,
-	deleteElement,
-	mouse,
-	disabled,
-}) {
+export default function NoDesu({ element, updateElement, deleteElement, mouse, color, disabled }) {
 	const [isModalOpen, setIsModalOpen] = useState()
 	const elementRef = useRef(null)
+	const noDesuOptions = useGrammarStore((state) => state.noDesu)
 
 	return (
 		<div className="modalContainer">
@@ -20,26 +15,27 @@ export default function Particle({
 				anchorRef={elementRef}
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
-				elementOptions={elementOptions}
+				elementOptions={noDesuOptions}
 				onSelect={updateElement}
 				deleteElement={deleteElement}
 				hasDelete={true}
-				menuTitle="Particle"
+				menuTitle="No"
 			/>
 			{element ? (
 				<div
 					ref={elementRef}
-					className="baseInsideElement particleElement"
+					className="baseInsideElement"
+					style={{ backgroundColor: color }}
 					onClick={() => setIsModalOpen(true)}
 				>
-					{element.text}
+					<div className="insideElementText">{element?.text || "nothing"}</div>
 				</div>
 			) : (
 				<AddButton
 					mouse={mouse}
-					elementOptions={elementOptions}
+					elementOptions={noDesuOptions}
 					addElement={updateElement}
-					text="particle"
+					text="no"
 					disabled={disabled}
 				/>
 			)}

@@ -5,7 +5,7 @@ import {
 	noDesu,
 	particles,
 	punctuation,
-} from "../grammar/elementData"
+} from "../pages/sentence-builder-page/grammar/elementData"
 
 const useGrammarStore = create(() => ({
 	auxiliaries,
