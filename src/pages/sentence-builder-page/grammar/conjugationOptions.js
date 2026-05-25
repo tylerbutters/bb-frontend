@@ -12,7 +12,7 @@ const GODAN_ROWS = {
 
 const GODAN_DEFAULTS = {
 	B1: [{ text: "ない" }, { text: "れる" }, { text: "せる" }, { text: "ず" }],
-	B2: [{ text: "ます" }],
+	B2: [{ text: "ます" }, { text: "たい" }],
 	B4: [{ text: "ば" }, { text: "る" }, { text: "れ" }],
 	B5: [{ text: "う" }],
 }

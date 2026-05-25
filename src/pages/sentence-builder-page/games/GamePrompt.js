@@ -20,7 +20,7 @@ export default function GamePrompt({
 		if (!isVisible || !hasPromptGenerator) {
 			setPrompt("")
 			setStatus("idle")
-			onPromptChange?.({ prompt: "", status: "idle" })
+			onPromptChange?.({ prompt: "", status: "idle", promptData: null })
 			return
 		}
 
@@ -28,26 +28,27 @@ export default function GamePrompt({
 
 		async function loadPrompt() {
 			setStatus("loading")
-			onPromptChange?.({ prompt: "", status: "loading" })
+			onPromptChange?.({ prompt: "", status: "loading", promptData: null })
 
 			try {
-				const nextPrompt = await generateGamePrompt({
+				const nextPromptData = await generateGamePrompt({
 					gameMode,
 					difficulty,
 					signal: controller.signal,
 				})
 				if (controller.signal.aborted) return
 
+				const nextPrompt = nextPromptData?.prompt || ""
 				setPrompt(nextPrompt)
 				setStatus("ready")
-				onPromptChange?.({ prompt: nextPrompt, status: "ready" })
+				onPromptChange?.({ prompt: nextPrompt, status: "ready", promptData: nextPromptData })
 			} catch (error) {
 				if (controller.signal.aborted) return
 				console.log(error)
 
 				setPrompt("")
 				setStatus("error")
-				onPromptChange?.({ prompt: "", status: "error" })
+				onPromptChange?.({ prompt: "", status: "error", promptData: null })
 			}
 		}
 

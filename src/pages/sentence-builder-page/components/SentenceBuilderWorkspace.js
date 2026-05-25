@@ -12,6 +12,7 @@ import useGrammarStore from "../../../store/useGrammarStore"
 const SENTENCE_ELEMENTS_VIEWPORT_PADDING = 100
 
 export default function SentenceBuilderWorkspace({
+	generatedElements = [],
 	showTranslation,
 	resetKey,
 	onSentenceChange,
@@ -47,6 +48,12 @@ export default function SentenceBuilderWorkspace({
 		resetKeyRef.current = resetKey
 		setAddedElements([])
 	}, [resetKey])
+
+	useEffect(() => {
+		if (!generatedElements.length) return
+
+		setAddedElements(generatedElements.map(createSentenceElement))
+	}, [generatedElements])
 
 	useEffect(() => {
 		onSentenceChange?.({

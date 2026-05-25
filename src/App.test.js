@@ -375,6 +375,55 @@ test("clears all sentence elements", async () => {
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
 })
 
+test("populates conjugation game elements from Japanese translation prompt data", async () => {
+	global.fetch.mockImplementation((url, options = {}) => {
+		const requestUrl = String(url)
+		if (requestUrl.startsWith(`${API_BASE_URL}/games/prompt`)) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					mode: "conjugations",
+					difficulty: "easy",
+					prompt: "I want to eat sushi.",
+					englishSentence: "I want to eat sushi.",
+					japaneseTranslation: [
+						{ kanji: "私", kana: "わたし", particle: "は" },
+						{ kanji: "寿司", kana: "すし", particle: "を" },
+						{ kanji: "食べる", kana: "たべる" },
+					],
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("tab", { name: "conjugations" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("I want to eat sushi.")).toBeInTheDocument()
+	})
+	await waitFor(() => {
+		expect(screen.getAllByText("私").length).toBeGreaterThan(0)
+	})
+	expect(screen.getAllByText("わたし").length).toBeGreaterThan(0)
+	expect(screen.getAllByText("は").length).toBeGreaterThan(0)
+	expect(screen.getAllByText("寿司").length).toBeGreaterThan(0)
+	expect(screen.getAllByText("すし").length).toBeGreaterThan(0)
+	expect(screen.getAllByText("を").length).toBeGreaterThan(0)
+	expect(screen.getAllByText("食べ").length).toBeGreaterThan(0)
+	expect(screen.getAllByText("たべ").length).toBeGreaterThan(0)
+	expect(screen.getAllByText("る").length).toBeGreaterThan(0)
+	await waitFor(() => {
+		expect(screen.getByRole("button", { name: "Check" })).toBeEnabled()
+	})
+})
+
 test("changing translate difficulty regenerates the prompt and clears sentence elements", async () => {
 	global.fetch.mockImplementation((url, options = {}) => {
 		const requestUrl = String(url)

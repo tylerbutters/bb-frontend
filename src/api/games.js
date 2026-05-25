@@ -2,9 +2,8 @@ import { apiRequest } from "./client"
 
 export async function generateGamePrompt({ gameMode, difficulty, signal }) {
 	const params = new URLSearchParams({ mode: gameMode, difficulty })
-	const data = await apiRequest(`/games/prompt?${params}`, { signal })
 
-	return data.prompt || ""
+	return apiRequest(`/games/prompt?${params}`, { signal })
 }
 
 export async function checkGameAnswer({ gameMode, prompt, answer, signal }) {
