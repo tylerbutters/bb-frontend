@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useState } from "react"
 import AccountMenu from "./components/AccountMenu"
 import GameControls from "./components/GameControls"
 import GameModeSelector from "./components/GameModeSelector"
@@ -46,71 +46,21 @@ const GAME_MODES = [
 export default function SentenceBuilderPage({ currentUser, onLogout }) {
 	const [selectedGameMode, setSelectedGameMode] = useState(GAME_MODES[0].id)
 	const [workspaceResetCount, setWorkspaceResetCount] = useState(0)
-	const [translatePrompt, setTranslatePrompt] = useState("")
-	const [translatePromptStatus, setTranslatePromptStatus] = useState("idle")
-	const [translatePromptRequestCount, setTranslatePromptRequestCount] = useState(0)
-	const [translateCheckStatus, setTranslateCheckStatus] = useState("idle")
-	const [translateFeedback, setTranslateFeedback] = useState(null)
+	const [gamePrompt, setGamePrompt] = useState("")
+	const [gamePromptStatus, setGamePromptStatus] = useState("idle")
 	const [japaneseSentence, setJapaneseSentence] = useState("")
 	const [hasSentenceElements, setHasSentenceElements] = useState(false)
-	const isTranslateGame = selectedGameMode === "translate"
-	const translateControlFeedback =
-		translateFeedback &&
-		`${translateFeedback.correct ? "Correct." : "Not quite."}${
-			translateFeedback.feedback ? ` ${translateFeedback.feedback}` : ""
-		}`
+	const isGame = selectedGameMode !== "sandbox"
 
 	const handleSentenceChange = useCallback(({ sentence, hasElements }) => {
 		setJapaneseSentence(sentence)
 		setHasSentenceElements(hasElements)
 	}, [])
 
-	useEffect(() => {
-		if (!isTranslateGame) return
-
-		let ignore = false
-
-		async function loadTranslatePrompt() {
-			setTranslatePromptStatus("loading")
-			setTranslateFeedback(null)
-
-			try {
-				const response = await fetch("/api/v1/games/translate/prompt", {
-					method: "GET",
-					headers: {
-						"Content-Type": "application/json",
-					},
-				})
-
-				if (!response.ok) {
-					throw new Error(`Prompt request failed with ${response.status}.`)
-				}
-
-				const data = await response.json()
-				if (ignore) return
-
-				setTranslatePrompt(data.sentence || "")
-				setTranslatePromptStatus("ready")
-			} catch (error) {
-				console.log(error)
-				if (ignore) return
-
-				setTranslatePrompt("")
-				setTranslatePromptStatus("error")
-			}
-		}
-
-		loadTranslatePrompt()
-
-		return () => {
-			ignore = true
-		}
-	}, [isTranslateGame, translatePromptRequestCount])
-
-	useEffect(() => {
-		setTranslateFeedback(null)
-		setTranslateCheckStatus("idle")
-	}, [japaneseSentence])
+	const handlePromptChange = useCallback(({ prompt, status }) => {
+		setGamePrompt(prompt)
+		setGamePromptStatus(status)
+	}, [])
 
 	function resetSentence() {
 		setWorkspaceResetCount((count) => count + 1)
@@ -118,52 +68,13 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 		setHasSentenceElements(false)
 	}
 
-	function regenerateTranslatePrompt() {
+	function regenerateGamePrompt() {
 		resetSentence()
-		setTranslatePromptRequestCount((count) => count + 1)
 	}
 
 	function selectGameMode(gameMode) {
 		setSelectedGameMode(gameMode)
 		resetSentence()
-	}
-
-	async function checkTranslateAnswer() {
-		if (!translatePrompt || !japaneseSentence || translateCheckStatus === "checking") return
-
-		setTranslateCheckStatus("checking")
-		setTranslateFeedback(null)
-
-		try {
-			const response = await fetch("/api/v1/games/translate/check", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					englishSentence: translatePrompt,
-					japaneseSentence,
-				}),
-			})
-
-			if (!response.ok) {
-				throw new Error(`Check request failed with ${response.status}.`)
-			}
-
-			const data = await response.json()
-			setTranslateFeedback({
-				correct: Boolean(data.correct),
-				feedback: data.feedback || "",
-			})
-			setTranslateCheckStatus("ready")
-		} catch (error) {
-			console.log(error)
-			setTranslateFeedback({
-				correct: false,
-				feedback: "Could not check the sentence right now. Try again in a moment.",
-			})
-			setTranslateCheckStatus("error")
-		}
 	}
 
 	return (
@@ -175,36 +86,24 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 				onSelectGameMode={selectGameMode}
 			/>
 			<GamePrompt
-				isVisible={isTranslateGame}
-				label="English sentence"
-				prompt={translatePrompt}
-				status={translatePromptStatus}
-				onRegenerate={regenerateTranslatePrompt}
+				isVisible={isGame}
+				gameMode={selectedGameMode}
+				requestKey={workspaceResetCount}
+				onRegenerate={regenerateGamePrompt}
+				onPromptChange={handlePromptChange}
 			/>
 			<SentenceBuilderWorkspace
-				showTranslation={!isTranslateGame}
+				showTranslation={!isGame}
 				resetKey={workspaceResetCount}
 				onSentenceChange={handleSentenceChange}
 			/>
 			<GameControls
-				isVisible={isTranslateGame && hasSentenceElements}
-				feedback={
-					translateFeedback && {
-						tone: translateFeedback.correct ? "success" : "warning",
-						text: translateControlFeedback,
-					}
-				}
-				isChecking={translateCheckStatus === "checking"}
-				isCheckDisabled={
-					!translatePrompt ||
-					!japaneseSentence ||
-					translatePromptStatus !== "ready" ||
-					translateCheckStatus === "checking"
-				}
-				onCheck={checkTranslateAnswer}
-				showNext={Boolean(translateFeedback)}
-				isNextDisabled={translatePromptStatus === "loading"}
-				onNext={regenerateTranslatePrompt}
+				isVisible={isGame && hasSentenceElements}
+				gameMode={selectedGameMode}
+				prompt={gamePrompt}
+				promptStatus={gamePromptStatus}
+				answer={japaneseSentence}
+				onNext={regenerateGamePrompt}
 			/>
 		</div>
 	)
