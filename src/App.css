@@ -569,14 +569,16 @@ body {
 
 .translateCheckContainer {
 	position: fixed;
-	right: 24px;
-	bottom: 24px;
+	left: 50%;
+	bottom: 70px;
 	z-index: 1500;
 	display: flex;
 	max-width: min(360px, calc(100vw - 48px));
-	flex-direction: column;
-	align-items: flex-end;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
 	gap: 10px;
+	transform: translateX(-50%);
 }
 
 .translateCheckButton {
@@ -610,7 +612,19 @@ body {
 	opacity: 0.58;
 }
 
+.translateNextButton {
+	border-color: rgba(255, 255, 255, 0.24);
+	background: white;
+	color: black;
+}
+
+.translateNextButton:hover:not(:disabled) {
+	border-color: rgb(232, 232, 232);
+	background: rgb(232, 232, 232);
+}
+
 .translateFeedback {
+	flex: 0 0 100%;
 	padding: 12px 14px;
 	border: 1px solid rgba(255, 255, 255, 0.16);
 	border-radius: 8px;
@@ -619,7 +633,7 @@ body {
 	font-size: 14px;
 	font-weight: 700;
 	line-height: 1.35;
-	text-align: right;
+	text-align: center;
 }
 
 .translateFeedbackCorrect {

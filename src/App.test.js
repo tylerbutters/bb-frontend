@@ -383,6 +383,16 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 			})
 		}
 
+		if (url === "/api/v1/games/translate/check") {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					correct: false,
+					feedback: "Use a full Japanese sentence.",
+				}),
+			})
+		}
+
 		return Promise.resolve({
 			ok: true,
 			json: jest.fn().mockResolvedValue({ translation: "." }),
@@ -402,7 +412,12 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 	fireEvent.click(screen.getByRole("button", { name: "。" }))
 	expect(screen.getAllByText("。").length).toBeGreaterThan(0)
 
-	fireEvent.click(screen.getByRole("button", { name: "Regenerate" }))
+	fireEvent.click(screen.getByRole("button", { name: "Check" }))
+	await waitFor(() => {
+		expect(screen.getByText("Not quite. Use a full Japanese sentence.")).toBeInTheDocument()
+	})
+
+	fireEvent.click(screen.getByRole("button", { name: "Next" }))
 
 	await waitFor(() => {
 		expect(screen.getByText("I drink tea.")).toBeInTheDocument()

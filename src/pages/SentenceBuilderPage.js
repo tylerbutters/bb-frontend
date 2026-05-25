@@ -522,6 +522,19 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 			</button>
 			{isTranslateGame && addedElements.length > 0 && (
 				<div className="translateCheckContainer">
+					{translateFeedback && (
+						<div
+							className={`translateFeedback ${
+								translateFeedback.correct
+									? "translateFeedbackCorrect"
+									: "translateFeedbackIncorrect"
+							}`}
+							role="status"
+						>
+							{translateFeedback.correct ? "Correct." : "Not quite."}
+							{translateFeedback.feedback ? ` ${translateFeedback.feedback}` : ""}
+						</div>
+					)}
 					<button
 						type="button"
 						className="translateCheckButton"
@@ -536,17 +549,14 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 						{translateCheckStatus === "checking" ? "Checking..." : "Check"}
 					</button>
 					{translateFeedback && (
-						<div
-							className={`translateFeedback ${
-								translateFeedback.correct
-									? "translateFeedbackCorrect"
-									: "translateFeedbackIncorrect"
-							}`}
-							role="status"
+						<button
+							type="button"
+							className="translateCheckButton translateNextButton"
+							onClick={regenerateTranslatePrompt}
+							disabled={translatePromptStatus === "loading"}
 						>
-							{translateFeedback.correct ? "Correct." : "Not quite."}
-							{translateFeedback.feedback ? ` ${translateFeedback.feedback}` : ""}
-						</div>
+							Next
+						</button>
 					)}
 				</div>
 			)}
