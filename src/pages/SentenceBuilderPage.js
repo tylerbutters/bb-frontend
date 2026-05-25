@@ -64,6 +64,7 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 	const [sentenceElementsScale, setSentenceElementsScale] = useState(1)
 	const [translatePrompt, setTranslatePrompt] = useState("")
 	const [translatePromptStatus, setTranslatePromptStatus] = useState("idle")
+	const [translatePromptRequestCount, setTranslatePromptRequestCount] = useState(0)
 	const [translateCheckStatus, setTranslateCheckStatus] = useState("idle")
 	const [translateFeedback, setTranslateFeedback] = useState(null)
 	const selectedGameModeDetails =
@@ -247,7 +248,7 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 		return () => {
 			ignore = true
 		}
-	}, [isTranslateGame])
+	}, [isTranslateGame, translatePromptRequestCount])
 
 	useEffect(() => {
 		setTranslateFeedback(null)
@@ -288,6 +289,11 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 
 	function clearAllElements() {
 		setAddedElements([])
+	}
+
+	function regenerateTranslatePrompt() {
+		clearAllElements()
+		setTranslatePromptRequestCount((count) => count + 1)
 	}
 
 	function selectGameMode(gameMode) {
@@ -391,7 +397,17 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 			</header>
 			{isTranslateGame && (
 				<section className="translateGamePanel" aria-live="polite">
-					<div className="translatePromptLabel">English sentence</div>
+					<div className="translatePromptHeader">
+						<div className="translatePromptLabel">English sentence</div>
+						<button
+							type="button"
+							className="translateRegenerateButton"
+							onClick={regenerateTranslatePrompt}
+							disabled={translatePromptStatus === "loading"}
+						>
+							{translatePromptStatus === "loading" ? "Generating..." : "Regenerate"}
+						</button>
+					</div>
 					<div className="translatePromptText">
 						{translatePromptStatus === "loading" && "Loading..."}
 						{translatePromptStatus === "error" && "Could not load a sentence."}

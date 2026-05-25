@@ -65,6 +65,15 @@ beforeEach(() => {
 			})
 		}
 
+		if (url === "/api/v1/games/translate/prompt") {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					sentence: "I eat rice.",
+				}),
+			})
+		}
+
 		return Promise.resolve({
 			ok: true,
 			json: jest.fn().mockResolvedValue({ translation: "." }),
@@ -357,4 +366,49 @@ test("clears all sentence elements", async () => {
 	expect(clearAllButton).toBeDisabled()
 	expect(clearAllButton).not.toHaveClass("clearAllButtonVisible")
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
+})
+
+test("regenerates the translate prompt and clears sentence elements", async () => {
+	global.fetch.mockImplementation((url, options = {}) => {
+		if (url === "/api/v1/games/translate/prompt") {
+			const promptRequestCount = global.fetch.mock.calls.filter(
+				([requestUrl]) => requestUrl === "/api/v1/games/translate/prompt",
+			).length
+
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					sentence: promptRequestCount > 1 ? "I drink tea." : "I eat rice.",
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
+	})
+
+	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
+	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
+	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	expect(screen.getAllByText("。").length).toBeGreaterThan(0)
+
+	fireEvent.click(screen.getByRole("button", { name: "Regenerate" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("I drink tea.")).toBeInTheDocument()
+	})
+	expect(screen.queryByText("。")).not.toBeInTheDocument()
+	expect(global.fetch.mock.calls.filter(([url]) => url === "/api/v1/games/translate/prompt")).toHaveLength(
+		2,
+	)
 })
