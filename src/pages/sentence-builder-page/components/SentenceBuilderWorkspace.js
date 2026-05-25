@@ -1,14 +1,10 @@
-import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react"
+import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import AddButton from "./AddButton"
 import SentenceText, { elementsToTextParts, textPartsToString } from "./SentenceText"
 import Element from "../elements/Element"
+import { getDefaultElementOptions } from "../elements/elementTypes"
 import normalizeElement from "../grammar/normalizeElement"
 import useSentenceDragDrop from "../hooks/useSentenceDragDrop"
-import adjectives from "../jmdict/processed/adjectives.json"
-import adverbs from "../jmdict/processed/adverbs.json"
-import counters from "../jmdict/processed/counters.json"
-import nouns from "../jmdict/processed/nouns.json"
-import verbs from "../jmdict/processed/verbs.json"
 import useGrammarStore from "../../../store/useGrammarStore"
 
 const SENTENCE_ELEMENTS_VIEWPORT_PADDING = 100
@@ -27,17 +23,9 @@ export default function SentenceBuilderWorkspace({
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const [addedElements, setAddedElements] = useState([])
 	const [sentenceElementsScale, setSentenceElementsScale] = useState(1)
-	const grammarStore = useGrammarStore((state) => state)
+	const punctuation = useGrammarStore((state) => state.punctuation)
 	const sentenceString = textPartsToString(elementsToTextParts(addedElements))
-	const defaultElements = [
-		{ text: "Nouns", list: nouns },
-		{ text: "Verbs", list: verbs },
-		{ text: "Adjectives", list: adjectives },
-		{ text: "Adverbs", list: adverbs },
-		{ text: "Counters", list: counters },
-		{ text: "Punctuation", list: grammarStore.punctuation },
-		{ text: "だ", list: [{ elementType: "desu", text: "だ", stem: "だ" }] },
-	]
+	const defaultElements = useMemo(() => getDefaultElementOptions({ punctuation }), [punctuation])
 	const {
 		dragState,
 		getDragPreviewTransform,
