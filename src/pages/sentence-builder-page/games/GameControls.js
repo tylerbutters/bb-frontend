@@ -1,8 +1,16 @@
 import { useEffect, useState } from "react"
 
-export default function GameControls({ isVisible, gameMode, prompt, promptStatus, answer, onNext }) {
+export default function GameControls({
+	isVisible,
+	gameMode,
+	prompt,
+	promptStatus,
+	answer,
+	onNext,
+}) {
 	const [checkStatus, setCheckStatus] = useState("idle")
 	const [feedback, setFeedback] = useState(null)
+	const hasAnswerChecker = hasGameAnswerChecker(gameMode)
 	const isChecking = checkStatus === "checking"
 	const isCheckDisabled = !prompt || !answer || promptStatus !== "ready" || isChecking
 	const feedbackText =
@@ -36,7 +44,7 @@ export default function GameControls({ isVisible, gameMode, prompt, promptStatus
 		}
 	}
 
-	if (!isVisible) return null
+	if (!isVisible || !hasAnswerChecker) return null
 
 	return (
 		<div className="gameControls">
@@ -70,6 +78,15 @@ export default function GameControls({ isVisible, gameMode, prompt, promptStatus
 			)}
 		</div>
 	)
+}
+
+function hasGameAnswerChecker(gameMode) {
+	switch (gameMode) {
+		case "translate":
+			return true
+		default:
+			return false
+	}
 }
 
 async function checkGameAnswer({ gameMode, prompt, answer }) {

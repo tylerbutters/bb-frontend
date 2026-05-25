@@ -10,9 +10,10 @@ export default function GamePrompt({
 	const [prompt, setPrompt] = useState("")
 	const [status, setStatus] = useState("idle")
 	const label = getGamePromptLabel(gameMode)
+	const hasPromptGenerator = hasGamePromptGenerator(gameMode)
 
 	useEffect(() => {
-		if (!isVisible) {
+		if (!isVisible || !hasPromptGenerator) {
 			setPrompt("")
 			setStatus("idle")
 			onPromptChange?.({ prompt: "", status: "idle" })
@@ -47,9 +48,9 @@ export default function GamePrompt({
 		return () => {
 			ignore = true
 		}
-	}, [gameMode, isVisible, onPromptChange, requestKey])
+	}, [gameMode, hasPromptGenerator, isVisible, onPromptChange, requestKey])
 
-	if (!isVisible) return null
+	if (!isVisible || !hasPromptGenerator) return null
 
 	return (
 		<section className="gamePromptPanel" aria-live="polite">
@@ -71,6 +72,15 @@ export default function GamePrompt({
 			</div>
 		</section>
 	)
+}
+
+function hasGamePromptGenerator(gameMode) {
+	switch (gameMode) {
+		case "translate":
+			return true
+		default:
+			return false
+	}
 }
 
 function getGamePromptLabel(gameMode) {

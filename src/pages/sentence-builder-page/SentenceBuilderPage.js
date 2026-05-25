@@ -1,56 +1,18 @@
 import { useCallback, useState } from "react"
 import AccountMenu from "./components/AccountMenu"
-import GameControls from "./components/GameControls"
-import GameModeSelector from "./components/GameModeSelector"
-import GamePrompt from "./components/GamePrompt"
+import GameControls from "./games/GameControls"
+import GameModeSelector from "./games/GameModeSelector"
+import GamePrompt from "./games/GamePrompt"
 import SentenceBuilderWorkspace from "./components/SentenceBuilderWorkspace"
 
-const GAME_MODES = [
-	{
-		id: "sandbox",
-		title: "Sandbox",
-		description: "Create any sentence you want.",
-	},
-	{
-		id: "shuffle",
-		title: "Shuffle practice",
-		description: "Build the correct sentence from shuffled Japanese parts.",
-	},
-	{
-		id: "translate",
-		title: "Translate sentence practice",
-		description: "Translate the English sentence into Japanese.",
-	},
-	{
-		id: "conjugations",
-		title: "Conjugation practice",
-		description: "Choose the right conjugation for the sentence.",
-	},
-	{
-		id: "fix sentence",
-		title: "Fix sentence practice",
-		description: "Find and fix the mistake in the Japanese sentence.",
-	},
-	{
-		id: "particles",
-		title: "Particle practice",
-		description: "Choose the particle that fits the sentence.",
-	},
-	{
-		id: "reorder",
-		title: "Reorder practice",
-		description: "Put the sentence elements in the correct order.",
-	},
-]
-
 export default function SentenceBuilderPage({ currentUser, onLogout }) {
-	const [selectedGameMode, setSelectedGameMode] = useState(GAME_MODES[0].id)
+	const [selectedGameMode, setSelectedGameMode] = useState("sandbox")
 	const [workspaceResetCount, setWorkspaceResetCount] = useState(0)
 	const [gamePrompt, setGamePrompt] = useState("")
 	const [gamePromptStatus, setGamePromptStatus] = useState("idle")
 	const [japaneseSentence, setJapaneseSentence] = useState("")
 	const [hasSentenceElements, setHasSentenceElements] = useState(false)
-	const isGame = selectedGameMode !== "sandbox"
+	const isGame = selectedGameMode && selectedGameMode !== "sandbox"
 
 	const handleSentenceChange = useCallback(({ sentence, hasElements }) => {
 		setJapaneseSentence(sentence)
@@ -80,11 +42,7 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 	return (
 		<div className="app">
 			<AccountMenu currentUser={currentUser} onLogout={onLogout} />
-			<GameModeSelector
-				gameModes={GAME_MODES}
-				selectedGameMode={selectedGameMode}
-				onSelectGameMode={selectGameMode}
-			/>
+			<GameModeSelector selectedGameMode={selectedGameMode} onSelectGameMode={selectGameMode} />
 			<GamePrompt
 				isVisible={isGame}
 				gameMode={selectedGameMode}
