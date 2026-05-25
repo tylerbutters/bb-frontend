@@ -26,7 +26,7 @@ export default function LoginPage({ onLogin }) {
 		setLoginMessage("")
 
 		try {
-			const response = await fetch("/api/v1/login", {
+			const response = await fetch(`${process.env.API_URL}/api/v1/login`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
