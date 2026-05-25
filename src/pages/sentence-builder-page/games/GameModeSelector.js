@@ -1,5 +1,3 @@
-import { useEffect } from "react"
-
 const GAME_MODES = [
 	{
 		id: "sandbox",

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react"
 
+const PROMPT_DIFFICULTIES = ["easy", "medium", "hard"]
+
 export default function GamePrompt({
 	isVisible,
 	gameMode,
@@ -9,7 +11,7 @@ export default function GamePrompt({
 }) {
 	const [prompt, setPrompt] = useState("")
 	const [status, setStatus] = useState("idle")
-	const label = getGamePromptLabel(gameMode)
+	const [difficulty, setDifficulty] = useState(PROMPT_DIFFICULTIES[0])
 	const hasPromptGenerator = hasGamePromptGenerator(gameMode)
 
 	useEffect(() => {
@@ -27,7 +29,7 @@ export default function GamePrompt({
 			onPromptChange?.({ prompt: "", status: "loading" })
 
 			try {
-				const nextPrompt = await generateGamePrompt(gameMode)
+				const nextPrompt = await generateGamePrompt({ gameMode, difficulty })
 				if (ignore) return
 
 				setPrompt(nextPrompt)
@@ -48,14 +50,33 @@ export default function GamePrompt({
 		return () => {
 			ignore = true
 		}
-	}, [gameMode, hasPromptGenerator, isVisible, onPromptChange, requestKey])
+	}, [difficulty, gameMode, hasPromptGenerator, isVisible, onPromptChange, requestKey])
+
+	function selectDifficulty(nextDifficulty) {
+		if (nextDifficulty === difficulty) return
+		setDifficulty(nextDifficulty)
+		onRegenerate()
+	}
 
 	if (!isVisible || !hasPromptGenerator) return null
 
 	return (
 		<section className="gamePromptPanel" aria-live="polite">
 			<div className="gamePromptHeader">
-				<div className="gamePromptLabel">{label}</div>
+				<div className="gamePromptDifficulty" aria-label="Prompt difficulty">
+					{PROMPT_DIFFICULTIES.map((option) => (
+						<button
+							key={option}
+							type="button"
+							className={`gamePromptDifficultyButton ${
+								difficulty === option ? "gamePromptDifficultyButtonSelected" : ""
+							}`}
+							onClick={() => selectDifficulty(option)}
+						>
+							{option}
+						</button>
+					))}
+				</div>
 				<button
 					type="button"
 					className="gamePromptRegenerateButton"
@@ -83,31 +104,25 @@ function hasGamePromptGenerator(gameMode) {
 	}
 }
 
-function getGamePromptLabel(gameMode) {
+async function generateGamePrompt({ gameMode, difficulty }) {
 	switch (gameMode) {
 		case "translate":
-			return "English sentence"
-		default:
-			return "Prompt"
-	}
-}
-
-async function generateGamePrompt(gameMode) {
-	switch (gameMode) {
-		case "translate":
-			return generateTranslatePrompt()
+			return generateTranslatePrompt(difficulty)
 		default:
 			throw new Error(`No prompt generator configured for ${gameMode}.`)
 	}
 }
 
-async function generateTranslatePrompt() {
-	const response = await fetch("/api/v1/games/translate/prompt", {
-		method: "GET",
-		headers: {
-			"Content-Type": "application/json",
+async function generateTranslatePrompt(difficulty) {
+	const response = await fetch(
+		`/api/v1/games/translate/prompt?difficulty=${encodeURIComponent(difficulty)}`,
+		{
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
 		},
-	})
+	)
 
 	if (!response.ok) {
 		throw new Error(`Prompt request failed with ${response.status}.`)

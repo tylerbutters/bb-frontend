@@ -65,7 +65,7 @@ beforeEach(() => {
 			})
 		}
 
-		if (url === "/api/v1/games/translate/prompt") {
+		if (String(url).startsWith("/api/v1/games/translate/prompt")) {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
@@ -368,11 +368,57 @@ test("clears all sentence elements", async () => {
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
 })
 
+test("changing translate difficulty regenerates the prompt and clears sentence elements", async () => {
+	global.fetch.mockImplementation((url, options = {}) => {
+		const requestUrl = String(url)
+		if (requestUrl.startsWith("/api/v1/games/translate/prompt")) {
+			const difficulty = new URL(requestUrl, "http://localhost").searchParams.get("difficulty")
+
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					sentence: `${difficulty} prompt.`,
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("easy prompt.")).toBeInTheDocument()
+	})
+
+	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
+	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
+	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	expect(screen.getAllByText("。").length).toBeGreaterThan(0)
+
+	fireEvent.click(screen.getByRole("button", { name: "medium" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("medium prompt.")).toBeInTheDocument()
+	})
+	expect(screen.queryByText("。")).not.toBeInTheDocument()
+	expect(
+		global.fetch.mock.calls.some(([url]) =>
+			String(url).includes("/api/v1/games/translate/prompt?difficulty=medium"),
+		),
+	).toBe(true)
+})
+
 test("regenerates the translate prompt and clears sentence elements", async () => {
 	global.fetch.mockImplementation((url, options = {}) => {
-		if (url === "/api/v1/games/translate/prompt") {
+		if (String(url).startsWith("/api/v1/games/translate/prompt")) {
 			const promptRequestCount = global.fetch.mock.calls.filter(
-				([requestUrl]) => requestUrl === "/api/v1/games/translate/prompt",
+				([requestUrl]) => String(requestUrl).startsWith("/api/v1/games/translate/prompt"),
 			).length
 
 			return Promise.resolve({
@@ -423,7 +469,9 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 		expect(screen.getByText("I drink tea.")).toBeInTheDocument()
 	})
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
-	expect(global.fetch.mock.calls.filter(([url]) => url === "/api/v1/games/translate/prompt")).toHaveLength(
-		2,
+	const promptRequests = global.fetch.mock.calls.filter(([url]) =>
+		String(url).startsWith("/api/v1/games/translate/prompt"),
 	)
+	expect(promptRequests).toHaveLength(2)
+	expect(promptRequests[0][0]).toContain("difficulty=easy")
 })

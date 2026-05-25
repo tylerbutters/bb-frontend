@@ -10,7 +10,7 @@ export default function AddButton({
 	text,
 	disabled = false,
 }) {
-	const EDGE_SIZE = 100
+	const EDGE_SIZE = 30
 	const ref = useRef(null)
 	const buttonText = text || getOptionsButtonText(elementOptions)
 	// const visibleWidth = getVisibleButtonWidth(buttonText)
