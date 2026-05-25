@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react"
-import { Link } from "react-router-dom"
+import AccountMenu from "./components/AccountMenu"
 import AddButton from "./components/AddButton"
+import GameModeSelector from "./components/GameModeSelector"
 import Element from "./elements/Element"
 import normalizeElement from "./grammar/normalizeElement"
 import useSentenceDragDrop from "./hooks/useSentenceDragDrop"
@@ -59,7 +60,6 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 	const scaleTimeoutRef = useRef(null)
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const [addedElements, setAddedElements] = useState([])
-	const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
 	const [selectedGameMode, setSelectedGameMode] = useState(GAME_MODES[0].id)
 	const [sentenceElementsScale, setSentenceElementsScale] = useState(1)
 	const [translatePrompt, setTranslatePrompt] = useState("")
@@ -67,8 +67,6 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 	const [translatePromptRequestCount, setTranslatePromptRequestCount] = useState(0)
 	const [translateCheckStatus, setTranslateCheckStatus] = useState("idle")
 	const [translateFeedback, setTranslateFeedback] = useState(null)
-	const selectedGameModeDetails =
-		GAME_MODES.find((gameMode) => gameMode.id === selectedGameMode) || GAME_MODES[0]
 	const isTranslateGame = selectedGameMode === "translate"
 	const japaneseSentence = textPartsToString(elementsToTextParts(addedElements))
 	const grammarStore = useGrammarStore((state) => state)
@@ -301,11 +299,6 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 		clearAllElements()
 	}
 
-	function logout() {
-		setIsUserMenuOpen(false)
-		onLogout()
-	}
-
 	async function checkTranslateAnswer() {
 		if (!translatePrompt || !japaneseSentence || translateCheckStatus === "checking") return
 
@@ -346,55 +339,12 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 
 	return (
 		<div className="app">
-			{currentUser ? (
-				<div className="topRightUserMenu">
-					<button
-						type="button"
-						className="topRightUserButton"
-						aria-expanded={isUserMenuOpen}
-						onClick={() => setIsUserMenuOpen((isOpen) => !isOpen)}
-					>
-						{currentUser.displayName}
-					</button>
-					{isUserMenuOpen && (
-						<div className="userDropdown" role="menu">
-							<Link to="/account" role="menuitem">
-								Account
-							</Link>
-							<button type="button" role="menuitem" onClick={logout}>
-								Log out
-							</button>
-						</div>
-					)}
-				</div>
-			) : (
-				<nav className="topRightActions" aria-label="Account">
-					<Link className="topRightButton" to="/login">
-						Login
-					</Link>
-					<Link className="topRightButton topRightSignupButton" to="/signup">
-						Sign up
-					</Link>
-				</nav>
-			)}
-			<div className="gameTabs" role="tablist" aria-label="Game modes">
-				{GAME_MODES.map((gameMode) => (
-					<button
-						key={gameMode.id}
-						type="button"
-						role="tab"
-						aria-selected={selectedGameMode === gameMode.id}
-						className={`gameTab ${selectedGameMode === gameMode.id ? "gameTabSelected" : ""}`}
-						onClick={() => selectGameMode(gameMode.id)}
-					>
-						{gameMode.id}
-					</button>
-				))}
-			</div>
-			<header className="gameModeDetails">
-				<h1>{selectedGameModeDetails.title}</h1>
-				<p>{selectedGameModeDetails.description}</p>
-			</header>
+			<AccountMenu currentUser={currentUser} onLogout={onLogout} />
+			<GameModeSelector
+				gameModes={GAME_MODES}
+				selectedGameMode={selectedGameMode}
+				onSelectGameMode={selectGameMode}
+			/>
 			{isTranslateGame && (
 				<section className="translateGamePanel" aria-live="polite">
 					<div className="translatePromptHeader">
