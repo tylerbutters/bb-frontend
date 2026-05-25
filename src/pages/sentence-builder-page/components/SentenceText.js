@@ -41,13 +41,16 @@ export default function SentenceText({ addedElements, showTranslation = true }) 
 
 export async function translateJapanese(text) {
 	try {
-		const response = await fetch(`${process.env.API_URL}/games/sandbox/translate-japanese`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
+		const response = await fetch(
+			`${process.env.REACT_APP_API_URL}/games/sandbox/translate-japanese`,
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ text }),
 			},
-			body: JSON.stringify({ text }),
-		})
+		)
 
 		if (!response.ok) {
 			throw new Error(`Translation request failed with ${response.status}.`)

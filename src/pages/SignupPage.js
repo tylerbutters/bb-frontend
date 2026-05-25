@@ -27,7 +27,7 @@ export default function SignupPage({ onSignup }) {
 		setSignupMessage("")
 
 		try {
-			const response = await fetch(`${process.env.API_URL}/users/`, {
+			const response = await fetch(`${process.env.REACT_APP_API_URL}/users/`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

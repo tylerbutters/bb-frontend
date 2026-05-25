@@ -99,7 +99,7 @@ async function checkGameAnswer({ gameMode, prompt, answer }) {
 }
 
 async function checkTranslateAnswer({ prompt, answer }) {
-	const response = await fetch(`${process.env.API_URL}/games/translate/check`, {
+	const response = await fetch(`${process.env.REACT_APP_API_URL}/games/translate/check`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",

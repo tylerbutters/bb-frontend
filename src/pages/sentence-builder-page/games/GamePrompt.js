@@ -115,7 +115,7 @@ async function generateGamePrompt({ gameMode, difficulty }) {
 
 async function generateTranslatePrompt(difficulty) {
 	const response = await fetch(
-		`/games/translate/prompt?difficulty=${encodeURIComponent(difficulty)}`,
+		`${process.env.REACT_APP_API_URL}/games/translate/prompt?difficulty=${encodeURIComponent(difficulty)}`,
 		{
 			method: "GET",
 			headers: {
