@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { checkTranslateAnswer } from "../../../api/games"
 
 export default function GameControls({
 	isVisible,
@@ -95,28 +96,5 @@ async function checkGameAnswer({ gameMode, prompt, answer }) {
 			return checkTranslateAnswer({ prompt, answer })
 		default:
 			throw new Error(`No answer checker configured for ${gameMode}.`)
-	}
-}
-
-async function checkTranslateAnswer({ prompt, answer }) {
-	const response = await fetch(`${process.env.REACT_APP_API_URL}/games/translate/check`, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({
-			englishSentence: prompt,
-			japaneseSentence: answer,
-		}),
-	})
-
-	if (!response.ok) {
-		throw new Error(`Check request failed with ${response.status}.`)
-	}
-
-	const data = await response.json()
-	return {
-		correct: Boolean(data.correct),
-		feedback: data.feedback || "",
 	}
 }

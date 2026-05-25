@@ -4,6 +4,7 @@ import SentenceText, {
 	textPartsToString,
 	translateJapanese,
 } from "./SentenceText"
+import { API_BASE_URL } from "../../../api/client"
 
 describe("sentence text conversion", () => {
 	test("builds text parts for nouns with prefix, suffix, and particle", () => {
@@ -111,13 +112,16 @@ describe("translateJapanese", () => {
 		})
 
 		await expect(translateJapanese("食べる")).resolves.toBe("I eat")
-		expect(global.fetch).toHaveBeenCalledWith("/games/sandbox/translate-japanese", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
+		expect(global.fetch).toHaveBeenCalledWith(
+			`${API_BASE_URL}/games/sandbox/translate-japanese`,
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ text: "食べる" }),
 			},
-			body: JSON.stringify({ text: "食べる" }),
-		})
+		)
 	})
 })
 

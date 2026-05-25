@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { login } from "../api/auth"
 
 export default function LoginPage({ onLogin }) {
 	const navigate = useNavigate()
@@ -26,24 +27,12 @@ export default function LoginPage({ onLogin }) {
 		setLoginMessage("")
 
 		try {
-			const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(loginForm),
-			})
-			const data = await response.json()
-
-			if (!response.ok) {
-				throw new Error(data?.error?.message || data?.message || "Login failed.")
-			}
-
-			onLogin(data.user)
+			const user = await login(loginForm)
+			onLogin(user)
 			navigate("/")
 		} catch (error) {
 			setLoginStatus("error")
-			setLoginMessage(error.message)
+			setLoginMessage(error.message || "Login failed.")
 		}
 	}
 

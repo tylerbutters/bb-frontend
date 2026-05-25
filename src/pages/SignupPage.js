@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { createUser } from "../api/users"
 
 export default function SignupPage({ onSignup }) {
 	const navigate = useNavigate()
@@ -27,24 +28,12 @@ export default function SignupPage({ onSignup }) {
 		setSignupMessage("")
 
 		try {
-			const response = await fetch(`${process.env.REACT_APP_API_URL}/users/`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(signupForm),
-			})
-			const data = await response.json()
-
-			if (!response.ok) {
-				throw new Error(data?.error?.message || data?.message || "Sign up failed.")
-			}
-
-			onSignup(data.user)
+			const user = await createUser(signupForm)
+			onSignup(user)
 			navigate("/")
 		} catch (error) {
 			setSignupStatus("error")
-			setSignupMessage(error.message)
+			setSignupMessage(error.message || "Sign up failed.")
 		}
 	}
 

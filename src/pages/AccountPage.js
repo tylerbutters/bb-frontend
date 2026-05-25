@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Link, Navigate } from "react-router-dom"
+import { deleteUser, updateUser } from "../api/users"
 
 export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate }) {
 	const [accountForm, setAccountForm] = useState({
@@ -53,19 +54,7 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 		}
 
 		try {
-			const response = await fetch(`${process.env.REACT_APP_API_URL}/users/${currentUser.id}`, {
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(payload),
-			})
-			const data = await response.json()
-
-			if (!response.ok) {
-				throw new Error(data?.error?.message || data?.message || "Account update failed.")
-			}
-
+			const data = await updateUser(currentUser.id, payload)
 			onUserUpdate(data.user)
 			setAccountForm({
 				displayName: data.user.displayName || "",
@@ -76,7 +65,7 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 			setAccountMessage(data.message || "Account updated.")
 		} catch (error) {
 			setAccountStatus("error")
-			setAccountMessage(error.message)
+			setAccountMessage(error.message || "Account update failed.")
 		}
 	}
 
@@ -92,20 +81,12 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 		setDeleteMessage("")
 
 		try {
-			const response = await fetch(`${process.env.REACT_APP_API_URL}/users/${currentUser.id}`, {
-				method: "DELETE",
-			})
-			const data = await response.json()
-
-			if (!response.ok) {
-				throw new Error(data?.error?.message || data?.message || "Account delete failed.")
-			}
-
+			await deleteUser(currentUser.id)
 			setIsAccountDeleted(true)
 			onAccountDelete()
 		} catch (error) {
 			setDeleteStatus("error")
-			setDeleteMessage(error.message)
+			setDeleteMessage(error.message || "Account delete failed.")
 		}
 	}
 

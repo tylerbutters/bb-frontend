@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { generateTranslatePrompt } from "../../../api/games"
 
 const PROMPT_DIFFICULTIES = ["easy", "medium", "hard"]
 
@@ -22,22 +23,26 @@ export default function GamePrompt({
 			return
 		}
 
-		let ignore = false
+		const controller = new AbortController()
 
 		async function loadPrompt() {
 			setStatus("loading")
 			onPromptChange?.({ prompt: "", status: "loading" })
 
 			try {
-				const nextPrompt = await generateGamePrompt({ gameMode, difficulty })
-				if (ignore) return
+				const nextPrompt = await generateGamePrompt({
+					gameMode,
+					difficulty,
+					signal: controller.signal,
+				})
+				if (controller.signal.aborted) return
 
 				setPrompt(nextPrompt)
 				setStatus("ready")
 				onPromptChange?.({ prompt: nextPrompt, status: "ready" })
 			} catch (error) {
+				if (controller.signal.aborted) return
 				console.log(error)
-				if (ignore) return
 
 				setPrompt("")
 				setStatus("error")
@@ -48,7 +53,7 @@ export default function GamePrompt({
 		loadPrompt()
 
 		return () => {
-			ignore = true
+			controller.abort()
 		}
 	}, [difficulty, gameMode, hasPromptGenerator, isVisible, onPromptChange, requestKey])
 
@@ -104,30 +109,11 @@ function hasGamePromptGenerator(gameMode) {
 	}
 }
 
-async function generateGamePrompt({ gameMode, difficulty }) {
+async function generateGamePrompt({ gameMode, difficulty, signal }) {
 	switch (gameMode) {
 		case "translate":
-			return generateTranslatePrompt(difficulty)
+			return generateTranslatePrompt(difficulty, { signal })
 		default:
 			throw new Error(`No prompt generator configured for ${gameMode}.`)
 	}
-}
-
-async function generateTranslatePrompt(difficulty) {
-	const response = await fetch(
-		`${process.env.REACT_APP_API_URL}/games/translate/prompt?difficulty=${encodeURIComponent(difficulty)}`,
-		{
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-			},
-		},
-	)
-
-	if (!response.ok) {
-		throw new Error(`Prompt request failed with ${response.status}.`)
-	}
-
-	const data = await response.json()
-	return data.sentence || ""
 }

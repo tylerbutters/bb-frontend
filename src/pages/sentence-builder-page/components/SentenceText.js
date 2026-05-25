@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useMemo, useState } from "react"
+import { translateJapanese as requestJapaneseTranslation } from "../../../api/games"
 import JapaneseText from "./JapaneseText"
 
 export default function SentenceText({ addedElements, showTranslation = true }) {
@@ -12,16 +13,22 @@ export default function SentenceText({ addedElements, showTranslation = true }) 
 			return
 		}
 
-		handleTranslate(sentenceString)
+		const controller = new AbortController()
+		handleTranslate(sentenceString, controller.signal)
+
+		return () => {
+			controller.abort()
+		}
 	}, [sentenceString, showTranslation])
 
-	async function handleTranslate(sentence) {
+	async function handleTranslate(sentence, signal) {
 		if (!sentence) {
 			setTranslation("")
 			return
 		}
 
-		const result = await translateJapanese(sentence)
+		const result = await translateJapanese(sentence, { signal })
+		if (signal.aborted) return
 		setTranslation(result)
 	}
 
@@ -39,27 +46,13 @@ export default function SentenceText({ addedElements, showTranslation = true }) 
 	)
 }
 
-export async function translateJapanese(text) {
+export async function translateJapanese(text, options = {}) {
 	try {
-		const response = await fetch(
-			`${process.env.REACT_APP_API_URL}/games/sandbox/translate-japanese`,
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ text }),
-			},
-		)
-
-		if (!response.ok) {
-			throw new Error(`Translation request failed with ${response.status}.`)
-		}
-
-		const data = await response.json()
-		return data.translation
+		return await requestJapaneseTranslation(text, options)
 	} catch (error) {
-		console.log(error)
+		if (error.name !== "AbortError") {
+			console.log(error)
+		}
 		return null
 	}
 }

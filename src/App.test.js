@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { API_BASE_URL } from "./api/client"
 import App from "./App"
 
 beforeAll(() => {
@@ -16,7 +17,7 @@ beforeEach(() => {
 	window.history.pushState({}, "", "/")
 	window.localStorage.clear()
 	global.fetch = jest.fn((url, options = {}) => {
-		if (url === "/users/") {
+		if (url === `${API_BASE_URL}/users`) {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
@@ -29,7 +30,7 @@ beforeEach(() => {
 			})
 		}
 
-		if (url === "/login") {
+		if (url === `${API_BASE_URL}/login`) {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
@@ -42,7 +43,7 @@ beforeEach(() => {
 			})
 		}
 
-		if (url === "/users/1" && options.method === "PATCH") {
+		if (url === `${API_BASE_URL}/users/1` && options.method === "PATCH") {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
@@ -56,7 +57,7 @@ beforeEach(() => {
 			})
 		}
 
-		if (url === "/users/1" && options.method === "DELETE") {
+		if (url === `${API_BASE_URL}/users/1` && options.method === "DELETE") {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
@@ -65,7 +66,7 @@ beforeEach(() => {
 			})
 		}
 
-		if (String(url).startsWith("/games/translate/prompt")) {
+		if (String(url).startsWith(`${API_BASE_URL}/games/translate/prompt`)) {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
@@ -112,7 +113,7 @@ test("opens the sign up page and creates an account", async () => {
 		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
 	})
 	expect(window.location.pathname).toBe("/")
-	const signupRequest = global.fetch.mock.calls.find(([url]) => url === "/users/")
+	const signupRequest = global.fetch.mock.calls.find(([url]) => url === `${API_BASE_URL}/users`)
 	expect(signupRequest[1]).toMatchObject({
 		method: "POST",
 		headers: {
@@ -187,7 +188,7 @@ test("logs in and replaces auth links with the user name", async () => {
 	expect(screen.queryByRole("button", { name: "Tyler" })).not.toBeInTheDocument()
 	expect(window.localStorage.getItem("jsbCurrentUser")).toBeNull()
 
-	const loginRequest = global.fetch.mock.calls.find(([url]) => url === "/login")
+	const loginRequest = global.fetch.mock.calls.find(([url]) => url === `${API_BASE_URL}/login`)
 	expect(loginRequest[1]).toMatchObject({
 		method: "POST",
 		headers: {
@@ -232,7 +233,7 @@ test("opens account from the user menu and updates account details", async () =>
 	})
 
 	const accountRequest = global.fetch.mock.calls.find(
-		([url, options]) => url === "/users/1" && options.method === "PATCH",
+		([url, options]) => url === `${API_BASE_URL}/users/1` && options.method === "PATCH",
 	)
 	expect(accountRequest[1]).toMatchObject({
 		method: "PATCH",
@@ -286,7 +287,7 @@ test("deletes an account from the account page", async () => {
 	})
 
 	const deleteRequest = global.fetch.mock.calls.find(
-		([url, options]) => url === "/users/1" && options.method === "DELETE",
+		([url, options]) => url === `${API_BASE_URL}/users/1` && options.method === "DELETE",
 	)
 	expect(deleteRequest[1]).toMatchObject({
 		method: "DELETE",
@@ -374,7 +375,7 @@ test("clears all sentence elements", async () => {
 test("changing translate difficulty regenerates the prompt and clears sentence elements", async () => {
 	global.fetch.mockImplementation((url, options = {}) => {
 		const requestUrl = String(url)
-		if (requestUrl.startsWith("/games/translate/prompt")) {
+		if (requestUrl.startsWith(`${API_BASE_URL}/games/translate/prompt`)) {
 			const difficulty = new URL(requestUrl, "http://localhost").searchParams.get("difficulty")
 
 			return Promise.resolve({
@@ -419,9 +420,9 @@ test("changing translate difficulty regenerates the prompt and clears sentence e
 
 test("regenerates the translate prompt and clears sentence elements", async () => {
 	global.fetch.mockImplementation((url, options = {}) => {
-		if (String(url).startsWith("/games/translate/prompt")) {
+		if (String(url).startsWith(`${API_BASE_URL}/games/translate/prompt`)) {
 			const promptRequestCount = global.fetch.mock.calls.filter(([requestUrl]) =>
-				String(requestUrl).startsWith("/games/translate/prompt"),
+				String(requestUrl).startsWith(`${API_BASE_URL}/games/translate/prompt`),
 			).length
 
 			return Promise.resolve({
@@ -432,7 +433,7 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 			})
 		}
 
-		if (url === "/games/translate/check") {
+		if (url === `${API_BASE_URL}/games/translate/check`) {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
@@ -473,7 +474,7 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 	})
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
 	const promptRequests = global.fetch.mock.calls.filter(([url]) =>
-		String(url).startsWith("/games/translate/prompt"),
+		String(url).startsWith(`${API_BASE_URL}/games/translate/prompt`),
 	)
 	expect(promptRequests).toHaveLength(2)
 	expect(promptRequests[0][0]).toContain("difficulty=easy")
