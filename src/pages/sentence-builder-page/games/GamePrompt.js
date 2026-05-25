@@ -28,11 +28,15 @@ export default function GamePrompt({
 		const controller = new AbortController()
 
 		async function loadPrompt() {
+			const promptRequestMode = resolvePromptRequestMode(gameMode)
 			setStatus("loading")
-			onPromptChange?.({ prompt: "", status: "loading", promptData: null })
+			onPromptChange?.({
+				prompt: "",
+				status: "loading",
+				promptData: { mode: promptRequestMode },
+			})
 
 			try {
-				const promptRequestMode = resolvePromptRequestMode(gameMode)
 				const nextPromptData = await generateGamePrompt({
 					gameMode: promptRequestMode,
 					difficulty,

@@ -8,8 +8,6 @@ const GAME_MODES = [
 	},
 	{
 		id: "shuffle",
-		title: "Shuffle practice",
-		description: "Practice a random mix of the game modes.",
 	},
 	{
 		id: "translate",
@@ -38,9 +36,15 @@ const GAME_MODES = [
 	},
 ]
 
-export default function GameModeSelector({ selectedGameMode, onSelectGameMode }) {
+export default function GameModeSelector({
+	selectedGameMode,
+	generatedGameMode,
+	onSelectGameMode,
+}) {
+	const displayGameMode =
+		selectedGameMode === "shuffle" && generatedGameMode ? generatedGameMode : selectedGameMode
 	const selectedGameModeDetails =
-		GAME_MODES.find((gameMode) => gameMode.id === selectedGameMode) || GAME_MODES[0]
+		GAME_MODES.find((gameMode) => gameMode.id === displayGameMode) || GAME_MODES[0]
 
 	return (
 		<>
@@ -59,8 +63,8 @@ export default function GameModeSelector({ selectedGameMode, onSelectGameMode })
 				))}
 			</div>
 			<header className="gameModeDetails">
-				<h1>{selectedGameModeDetails.title}</h1>
-				<p>{selectedGameModeDetails.description}</p>
+				{selectedGameModeDetails.title && <h1>{selectedGameModeDetails.title}</h1>}
+				{selectedGameModeDetails.description && <p>{selectedGameModeDetails.description}</p>}
 			</header>
 		</>
 	)

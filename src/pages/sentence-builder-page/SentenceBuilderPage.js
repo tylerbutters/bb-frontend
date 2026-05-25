@@ -50,7 +50,11 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 	return (
 		<div className="app">
 			<AccountMenu currentUser={currentUser} onLogout={onLogout} />
-			<GameModeSelector selectedGameMode={selectedGameMode} onSelectGameMode={selectGameMode} />
+			<GameModeSelector
+				selectedGameMode={selectedGameMode}
+				generatedGameMode={gamePromptData?.mode}
+				onSelectGameMode={selectGameMode}
+			/>
 			<GamePrompt
 				isVisible={isGame}
 				gameMode={selectedGameMode}
