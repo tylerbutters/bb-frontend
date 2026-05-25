@@ -3,7 +3,7 @@ import Counter from "./Counter"
 
 const allColors = {
 	counter: {
-		secondary: "rgba(207, 143, 255, 0.24)",
+		secondary: "var(--color-element-counter-secondary)",
 	},
 }
 

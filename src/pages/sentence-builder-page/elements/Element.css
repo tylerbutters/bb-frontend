@@ -1,6 +1,6 @@
 .elementText {
 	padding: 0 2px;
-	color: white;
+	color: var(--color-text-primary);
 	font-size: 40px;
 	line-height: 1;
 }
@@ -29,7 +29,7 @@
 	height: 110px;
 	margin: 0 2.5px;
 	padding: 0 5px;
-	border: 1px solid rgba(255, 255, 255, 0.18);
+	border: 1px solid var(--color-border);
 	border-radius: 10px;
 	cursor: pointer;
 	transition:
@@ -49,11 +49,11 @@
 	align-items: center;
 	min-width: 40px;
 	height: 90px;
-	border: 1px solid rgba(255, 255, 255, 0.14);
+	border: 1px solid var(--color-surface-control-hover);
 	border-radius: 10px;
 	box-sizing: border-box;
 	backdrop-filter: blur(2px);
-	color: white;
+	color: var(--color-text-primary);
 	font-size: 40px;
 	line-height: 1;
 	cursor: pointer;
@@ -68,12 +68,12 @@
 }
 
 .pressedElement {
-	border-color: white;
+	border-color: var(--color-text-primary);
 	transform: scale(0.95);
 }
 
 .hoverElement {
-	border-color: white;
+	border-color: var(--color-text-primary);
 }
 
 .insideElementText {
@@ -84,7 +84,7 @@
 }
 
 .particleElement {
-	background: rgba(255, 119, 148, 0.24);
+	background: var(--color-element-particle-background);
 }
 
 .counterInput {
@@ -93,16 +93,16 @@
 	justify-content: center;
 	min-width: 44px;
 	padding: 0 8px;
-	border-color: rgba(255, 255, 255, 0.14);
+	border-color: var(--color-surface-control-hover);
 	font-family: inherit;
 	text-align: center;
 	outline: none;
 }
 
 .counterInput::placeholder {
-	color: rgba(255, 255, 255, 0.5);
+	color: var(--color-text-faint);
 }
 
 .counterInput:focus {
-	border-color: white;
+	border-color: var(--color-text-primary);
 }

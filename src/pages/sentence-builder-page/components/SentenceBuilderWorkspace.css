@@ -33,7 +33,7 @@
 
 .mainElementDragging .elementContainer {
 	cursor: grabbing;
-	box-shadow: 0 18px 34px rgba(0, 0, 0, 0.34);
+	box-shadow: 0 18px 34px var(--color-shadow-soft);
 }
 
 .mainElementDragContentDropping {
@@ -50,10 +50,10 @@
 	bottom: 28px;
 	z-index: 1500;
 	padding: 10px 16px;
-	border: 1px solid rgba(255, 92, 92, 0.3);
+	border: 1px solid var(--color-danger-border);
 	border-radius: 8px;
-	background: rgba(255, 92, 92, 0.16);
-	color: white;
+	background: var(--color-danger-soft);
+	color: var(--color-text-primary);
 	font-family: inherit;
 	font-size: 14px;
 	font-weight: 700;
@@ -75,8 +75,8 @@
 }
 
 .clearAllButtonVisible:hover {
-	border-color: rgba(255, 92, 92, 0.52);
-	background: rgba(255, 92, 92, 0.28);
+	border-color: var(--color-danger-border-hover);
+	background: var(--color-danger-soft-hover);
 	cursor: pointer;
 }
 

@@ -13,7 +13,7 @@
 
 .elementOptionsMenuButtonMeanings {
 	margin-top: 3px;
-	color: rgba(255, 255, 255, 0.62);
+	color: var(--color-text-subtle);
 	font-size: 12px;
 	line-height: 1.25;
 }
@@ -36,34 +36,34 @@
 }
 
 .elementListItemContainer::-webkit-scrollbar-thumb {
-	border: 2px solid #202124;
+	border: 2px solid var(--color-surface-menu);
 	border-radius: 999px;
-	background: rgba(255, 255, 255, 0.28);
+	background: var(--color-surface-pill);
 }
 
 .searchInputContainer {
 	display: flex;
 	padding: 8px;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	background-color: #2b2d31;
+	border-bottom: 1px solid var(--color-surface-control);
+	background-color: var(--color-surface-menu-header);
 }
 
 .searchInput {
 	width: 100%;
 	padding: 8px 10px;
-	border: 1px solid rgba(255, 255, 255, 0.12);
+	border: 1px solid var(--color-border-faint);
 	border-radius: 7px;
-	background: #17181a;
-	color: white;
+	background: var(--color-surface-list-item);
+	color: var(--color-text-primary);
 	font-size: 15px;
 	outline: none;
 }
 
 .searchInput::placeholder {
-	color: rgba(255, 255, 255, 0.5);
+	color: var(--color-text-faint);
 }
 
 .searchInput:focus {
-	border-color: #8ab4ff;
-	box-shadow: 0 0 0 2px rgba(138, 180, 255, 0.18);
+	border-color: var(--color-accent-blue);
+	box-shadow: 0 0 0 2px var(--color-accent-blue-ring);
 }

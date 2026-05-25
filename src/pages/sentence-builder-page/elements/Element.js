@@ -4,11 +4,7 @@ import "./Element.css"
 import useGrammarStore from "../../../store/useGrammarStore"
 import Particle from "../element-attachments/Particle"
 import AnimatedWidth from "./AnimatedWidth"
-import {
-	ELEMENT_TYPE_COLORS,
-	getElementTypeColors,
-	getElementTypeComponent,
-} from "./elementTypes"
+import { ELEMENT_TYPE_COLORS, getElementTypeColors, getElementTypeComponent } from "./elementTypes"
 
 export default function Element({
 	element,
@@ -103,17 +99,13 @@ export default function Element({
 				hasDelete={true}
 				menuTitle="Word"
 			/>
-			<AnimatedWidth
-				measureKey={element}
-				isClosing={isClosing}
-				onCloseComplete={deleteElement}
-			>
+			<AnimatedWidth measureKey={element} isClosing={isClosing} onCloseComplete={deleteElement}>
 				<div
 					ref={elementContainerRef}
 					className="elementContainer"
 					style={{
 						backgroundColor: elementColors.primary,
-						borderColor: isModalOpen && "white",
+						borderColor: isModalOpen && "var(--color-text-primary)",
 					}}
 					onClick={openMenuFromElementContainer}
 				>

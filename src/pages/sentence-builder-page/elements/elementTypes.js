@@ -13,36 +13,36 @@ import Verb from "./Verb"
 
 export const ELEMENT_TYPE_COLORS = {
 	noun: {
-		primary: "rgba(255, 138, 138, 0.72)",
-		secondary: "rgba(255, 138, 138, 0.24)",
+		primary: "var(--color-element-noun-primary)",
+		secondary: "var(--color-element-noun-secondary)",
 	},
 	adjective: {
-		primary: "rgba(255, 184, 112, 0.74)",
-		secondary: "rgba(255, 184, 112, 0.24)",
+		primary: "var(--color-element-adjective-primary)",
+		secondary: "var(--color-element-adjective-secondary)",
 	},
 	verb: {
-		primary: "rgba(138, 180, 255, 0.74)",
-		secondary: "rgba(138, 180, 255, 0.24)",
+		primary: "var(--color-element-verb-primary)",
+		secondary: "var(--color-element-verb-secondary)",
 	},
 	adverb: {
-		primary: "rgba(139, 199, 149, 0.72)",
-		secondary: "rgba(139, 199, 149, 0.24)",
+		primary: "var(--color-element-adverb-primary)",
+		secondary: "var(--color-element-adverb-secondary)",
 	},
 	counter: {
-		primary: "rgba(207, 143, 255, 0.72)",
-		secondary: "rgba(207, 143, 255, 0.24)",
+		primary: "var(--color-element-counter-primary)",
+		secondary: "var(--color-element-counter-secondary)",
 	},
 	desu: {
-		primary: "rgba(130, 204, 214, 0.72)",
-		secondary: "rgba(130, 204, 214, 0.24)",
+		primary: "var(--color-element-desu-primary)",
+		secondary: "var(--color-element-desu-secondary)",
 	},
 	punctuation: {
-		primary: "rgba(180, 184, 191, 0.72)",
-		secondary: "rgba(180, 184, 191, 0.24)",
+		primary: "var(--color-element-punctuation-primary)",
+		secondary: "var(--color-element-punctuation-secondary)",
 	},
 	default: {
-		primary: "rgba(255, 255, 255, 0.18)",
-		secondary: "rgba(255, 255, 255, 0.12)",
+		primary: "var(--color-element-default-primary)",
+		secondary: "var(--color-element-default-secondary)",
 	},
 }
 

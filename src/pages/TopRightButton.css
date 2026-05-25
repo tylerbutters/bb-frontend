@@ -4,10 +4,10 @@
 	right: 18px;
 	z-index: 1600;
 	padding: 10px 14px;
-	border: 1px solid rgba(255, 255, 255, 0.18);
+	border: 1px solid var(--color-border);
 	border-radius: 8px;
-	background: rgba(20, 20, 20, 0.9);
-	color: white;
+	background: var(--color-surface-overlay);
+	color: var(--color-text-primary);
 	font-family: inherit;
 	font-size: 14px;
 	font-weight: 800;
@@ -21,20 +21,20 @@
 }
 
 .topRightSignupButton {
-	border-color: white;
-	background: white;
-	color: black;
+	border-color: var(--color-text-primary);
+	background: var(--color-text-primary);
+	color: var(--color-text-inverse);
 }
 
 .topRightButton:hover {
-	border-color: rgba(255, 255, 255, 0.36);
-	background: rgba(255, 255, 255, 0.12);
+	border-color: var(--color-border-hover);
+	background: var(--color-border-faint);
 }
 
 .topRightSignupButton:hover {
-	border-color: rgb(232, 232, 232);
-	background: rgb(232, 232, 232);
-	color: black;
+	border-color: var(--color-surface-light);
+	background: var(--color-surface-light);
+	color: var(--color-text-inverse);
 }
 
 .topRightButton:active {

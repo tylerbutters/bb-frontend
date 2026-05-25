@@ -255,9 +255,7 @@ export default function Conjugation({
 					anchorRef={elementRef}
 					isModalOpen={isModalOpen}
 					setIsModalOpen={setIsModalOpen}
-					elementOptions={
-						parentConjugation.conjugationType === "aux" ? auxiliaries : verbs
-					}
+					elementOptions={parentConjugation.conjugationType === "aux" ? auxiliaries : verbs}
 					onSelect={getConjugationUpdate}
 					deleteElement={clearCurrentConjugation}
 					hasDelete={true}
@@ -328,7 +326,7 @@ export default function Conjugation({
 			<div
 				ref={elementRef}
 				className="baseInsideElement conjugationElement"
-				style={{ backgroundColor: color, borderColor: isModalOpen && "white" }}
+				style={{ backgroundColor: color, borderColor: isModalOpen && "var(--color-text-primary)" }}
 				onClick={openConjugationMenu}
 			>
 				<div className="insideElementText">

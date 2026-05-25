@@ -13,11 +13,11 @@
 	flex-direction: column;
 	gap: 16px;
 	padding: 28px;
-	border: 1px solid rgba(255, 255, 255, 0.16);
+	border: 1px solid var(--color-surface-control-active);
 	border-radius: 8px;
-	background: rgba(20, 20, 20, 0.92);
+	background: var(--color-surface);
 	box-sizing: border-box;
-	color: white;
+	color: var(--color-text-primary);
 }
 
 .deleteAccountPanel {
@@ -27,11 +27,11 @@
 	gap: 12px;
 	margin-top: 14px;
 	padding: 18px;
-	border: 1px solid rgba(255, 126, 126, 0.34);
+	border: 1px solid var(--color-danger-panel-border);
 	border-radius: 8px;
-	background: rgba(32, 12, 12, 0.72);
+	background: var(--color-danger-panel-background);
 	box-sizing: border-box;
-	color: white;
+	color: var(--color-text-primary);
 }
 
 .accountForm h1,
@@ -61,7 +61,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 7px;
-	color: rgba(255, 255, 255, 0.72);
+	color: var(--color-text-muted);
 	font-size: 13px;
 	font-weight: 800;
 }
@@ -72,11 +72,11 @@
 	width: 100%;
 	height: 42px;
 	padding: 0 12px;
-	border: 1px solid rgba(255, 255, 255, 0.18);
+	border: 1px solid var(--color-border);
 	border-radius: 8px;
-	background: rgba(255, 255, 255, 0.08);
+	background: var(--color-surface-input);
 	box-sizing: border-box;
-	color: white;
+	color: var(--color-text-primary);
 	font: inherit;
 	font-size: 15px;
 	font-weight: 650;
@@ -98,10 +98,10 @@
 	right: 6px;
 	height: 30px;
 	padding: 0 10px;
-	border: 1px solid rgba(255, 255, 255, 0.18);
+	border: 1px solid var(--color-border);
 	border-radius: 7px;
-	background: rgba(255, 255, 255, 0.1);
-	color: rgba(255, 255, 255, 0.82);
+	background: var(--color-surface-control);
+	color: var(--color-text-control);
 	font: inherit;
 	font-size: 12px;
 	font-weight: 800;
@@ -109,20 +109,20 @@
 }
 
 .passwordToggleButton:hover {
-	background: rgba(255, 255, 255, 0.16);
-	color: white;
+	background: var(--color-surface-control-active);
+	color: var(--color-text-primary);
 }
 
 .passwordToggleButton:focus-visible {
-	outline: 2px solid rgba(255, 255, 255, 0.62);
+	outline: 2px solid var(--color-text-subtle);
 	outline-offset: 2px;
 }
 
 .accountField input:focus,
 .loginField input:focus,
 .signupField input:focus {
-	border-color: rgba(255, 255, 255, 0.48);
-	background: rgba(255, 255, 255, 0.12);
+	border-color: var(--color-border-focus);
+	background: var(--color-border-faint);
 }
 
 .accountSubmitButton,
@@ -130,10 +130,10 @@
 .signupSubmitButton {
 	height: 44px;
 	margin-top: 4px;
-	border: 1px solid rgba(255, 255, 255, 0.24);
+	border: 1px solid var(--color-border-strong);
 	border-radius: 8px;
-	background: white;
-	color: black;
+	background: var(--color-text-primary);
+	color: var(--color-text-inverse);
 	font: inherit;
 	font-size: 15px;
 	font-weight: 850;
@@ -144,10 +144,10 @@
 .deleteAccountButton {
 	height: 40px;
 	padding: 0 12px;
-	border: 1px solid rgba(255, 126, 126, 0.44);
+	border: 1px solid var(--color-danger-button-border);
 	border-radius: 8px;
-	background: rgb(255, 126, 126);
-	color: black;
+	background: var(--color-danger);
+	color: var(--color-text-inverse);
 	font: inherit;
 	font-size: 14px;
 	font-weight: 850;
@@ -155,9 +155,9 @@
 }
 
 .cancelDeleteButton {
-	border-color: rgba(255, 255, 255, 0.2);
-	background: rgba(255, 255, 255, 0.08);
-	color: white;
+	border-color: var(--color-border-strong);
+	background: var(--color-surface-input);
+	color: var(--color-text-primary);
 }
 
 .deleteAccountButton:disabled {
@@ -185,18 +185,18 @@
 .accountMessagesuccess,
 .loginMessagesuccess,
 .signupMessagesuccess {
-	color: rgb(119, 224, 147);
+	color: var(--color-success);
 }
 
 .accountMessageerror,
 .loginMessageerror,
 .signupMessageerror {
-	color: rgb(255, 126, 126);
+	color: var(--color-danger);
 }
 
 .authSwitchText {
 	margin: 2px 0 0;
-	color: rgba(255, 255, 255, 0.62);
+	color: var(--color-text-subtle);
 	font-size: 13px;
 	font-weight: 700;
 	line-height: 1.35;
@@ -204,7 +204,7 @@
 }
 
 .authSwitchText a {
-	color: white;
+	color: var(--color-text-primary);
 	font-weight: 850;
 	text-decoration: none;
 }

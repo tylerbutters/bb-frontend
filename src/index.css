@@ -1,9 +1,11 @@
+@import "./theme.css";
+
 html,
 body,
 #root {
 	min-height: 100%;
 	margin: 0;
-	background: black;
+	background: var(--color-app-background);
 }
 
 body {

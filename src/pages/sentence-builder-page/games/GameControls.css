@@ -14,10 +14,10 @@
 
 .gameControlButton {
 	padding: 12px 18px;
-	border: 1px solid rgba(78, 196, 126, 0.46);
+	border: 1px solid var(--color-success-border);
 	border-radius: 8px;
-	background: rgba(78, 196, 126, 0.18);
-	color: white;
+	background: var(--color-success-background);
+	color: var(--color-text-primary);
 	font-family: inherit;
 	font-size: 15px;
 	font-weight: 800;
@@ -30,8 +30,8 @@
 }
 
 .gameControlButton:hover:not(:disabled) {
-	border-color: rgba(78, 196, 126, 0.72);
-	background: rgba(78, 196, 126, 0.3);
+	border-color: var(--color-success-border-hover);
+	background: var(--color-success-background-hover);
 }
 
 .gameControlButton:active:not(:disabled) {
@@ -44,23 +44,23 @@
 }
 
 .gameControlButtonPrimary {
-	border-color: rgba(255, 255, 255, 0.24);
-	background: white;
-	color: black;
+	border-color: var(--color-border-strong);
+	background: var(--color-text-primary);
+	color: var(--color-text-inverse);
 }
 
 .gameControlButtonPrimary:hover:not(:disabled) {
-	border-color: rgb(232, 232, 232);
-	background: rgb(232, 232, 232);
+	border-color: var(--color-surface-light);
+	background: var(--color-surface-light);
 }
 
 .gameFeedback {
 	flex: 0 0 100%;
 	padding: 12px 14px;
-	border: 1px solid rgba(255, 255, 255, 0.16);
+	border: 1px solid var(--color-surface-control-active);
 	border-radius: 8px;
-	background: rgba(20, 20, 20, 0.92);
-	color: white;
+	background: var(--color-surface);
+	color: var(--color-text-primary);
 	font-size: 14px;
 	font-weight: 700;
 	line-height: 1.35;
@@ -68,9 +68,9 @@
 }
 
 .gameFeedbackSuccess {
-	border-color: rgba(78, 196, 126, 0.44);
+	border-color: var(--color-success-subtle-border);
 }
 
 .gameFeedbackWarning {
-	border-color: rgba(255, 201, 92, 0.44);
+	border-color: var(--color-warning-subtle-border);
 }
