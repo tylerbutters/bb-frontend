@@ -206,7 +206,7 @@ body {
 	line-height: 1.35;
 }
 
-.translateGamePanel {
+.gamePromptPanel {
 	position: fixed;
 	top: 132px;
 	left: 50%;
@@ -222,7 +222,7 @@ body {
 	transform: translateX(-50%);
 }
 
-.translatePromptHeader {
+.gamePromptHeader {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -230,7 +230,7 @@ body {
 	margin-bottom: 8px;
 }
 
-.translatePromptLabel {
+.gamePromptLabel {
 	color: rgba(255, 255, 255, 0.58);
 	font-size: 12px;
 	font-weight: 800;
@@ -238,7 +238,7 @@ body {
 	text-transform: uppercase;
 }
 
-.translateRegenerateButton {
+.gamePromptRegenerateButton {
 	flex: 0 0 auto;
 	padding: 7px 10px;
 	border: 1px solid rgba(255, 255, 255, 0.18);
@@ -256,21 +256,21 @@ body {
 		transform 0.15s ease;
 }
 
-.translateRegenerateButton:hover:not(:disabled) {
+.gamePromptRegenerateButton:hover:not(:disabled) {
 	border-color: rgba(255, 255, 255, 0.36);
 	background: rgba(255, 255, 255, 0.14);
 }
 
-.translateRegenerateButton:active:not(:disabled) {
+.gamePromptRegenerateButton:active:not(:disabled) {
 	transform: scale(0.96);
 }
 
-.translateRegenerateButton:disabled {
+.gamePromptRegenerateButton:disabled {
 	cursor: default;
 	opacity: 0.58;
 }
 
-.translatePromptText {
+.gamePromptText {
 	min-height: 24px;
 	font-size: 20px;
 	font-weight: 800;
@@ -567,7 +567,7 @@ body {
 	transform: translateX(-50%) translateY(0) scale(0.96);
 }
 
-.translateCheckContainer {
+.gameControls {
 	position: fixed;
 	left: 50%;
 	bottom: 70px;
@@ -581,7 +581,7 @@ body {
 	transform: translateX(-50%);
 }
 
-.translateCheckButton {
+.gameControlButton {
 	padding: 12px 18px;
 	border: 1px solid rgba(78, 196, 126, 0.46);
 	border-radius: 8px;
@@ -598,32 +598,32 @@ body {
 		transform 0.15s ease;
 }
 
-.translateCheckButton:hover:not(:disabled) {
+.gameControlButton:hover:not(:disabled) {
 	border-color: rgba(78, 196, 126, 0.72);
 	background: rgba(78, 196, 126, 0.3);
 }
 
-.translateCheckButton:active:not(:disabled) {
+.gameControlButton:active:not(:disabled) {
 	transform: scale(0.96);
 }
 
-.translateCheckButton:disabled {
+.gameControlButton:disabled {
 	cursor: not-allowed;
 	opacity: 0.58;
 }
 
-.translateNextButton {
+.gameControlButtonPrimary {
 	border-color: rgba(255, 255, 255, 0.24);
 	background: white;
 	color: black;
 }
 
-.translateNextButton:hover:not(:disabled) {
+.gameControlButtonPrimary:hover:not(:disabled) {
 	border-color: rgb(232, 232, 232);
 	background: rgb(232, 232, 232);
 }
 
-.translateFeedback {
+.gameFeedback {
 	flex: 0 0 100%;
 	padding: 12px 14px;
 	border: 1px solid rgba(255, 255, 255, 0.16);
@@ -636,11 +636,11 @@ body {
 	text-align: center;
 }
 
-.translateFeedbackCorrect {
+.gameFeedbackSuccess {
 	border-color: rgba(78, 196, 126, 0.44);
 }
 
-.translateFeedbackIncorrect {
+.gameFeedbackWarning {
 	border-color: rgba(255, 201, 92, 0.44);
 }
 
