@@ -10,8 +10,11 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 		email: currentUser?.email || "",
 		password: "",
 	})
-	const [accountStatus, setAccountStatus] = useState("idle")
-	const [accountMessage, setAccountMessage] = useState("")
+	const [accountFeedback, setAccountFeedback] = useState({
+		displayName: { status: "idle", message: "" },
+		email: { status: "idle", message: "" },
+		password: { status: "idle", message: "" },
+	})
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 	const [isDeleteConfirming, setIsDeleteConfirming] = useState(false)
 	const [isAccountDeleted, setIsAccountDeleted] = useState(false)
@@ -31,8 +34,10 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 			...prev,
 			[field]: value,
 		}))
-		setAccountStatus("idle")
-		setAccountMessage("")
+		setAccountFeedback((prev) => ({
+			...prev,
+			[field]: { status: "idle", message: "" },
+		}))
 	}
 
 	function cancelDeleteAccount() {
@@ -41,33 +46,31 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 		setDeleteMessage("")
 	}
 
-	async function submitAccount(e) {
+	async function submitAccountSection(e, field) {
 		e.preventDefault()
-		setAccountStatus("submitting")
-		setAccountMessage("")
-
-		const payload = {
-			displayName: accountForm.displayName,
-			email: accountForm.email,
-		}
-
-		if (accountForm.password) {
-			payload.password = accountForm.password
-		}
+		setAccountFeedback((prev) => ({
+			...prev,
+			[field]: { status: "submitting", message: "" },
+		}))
 
 		try {
-			const data = await updateUser(currentUser.id, payload)
+			const data = await updateUser(currentUser.id, { [field]: accountForm[field] })
 			onUserUpdate(data.user)
-			setAccountForm({
+			setAccountForm((prev) => ({
+				...prev,
 				displayName: data.user.displayName || "",
 				email: data.user.email || "",
-				password: "",
-			})
-			setAccountStatus("success")
-			setAccountMessage(data.message || "Account updated.")
+				password: field === "password" ? "" : prev.password,
+			}))
+			setAccountFeedback((prev) => ({
+				...prev,
+				[field]: { status: "success", message: data.message || "Account updated." },
+			}))
 		} catch (error) {
-			setAccountStatus("error")
-			setAccountMessage(error.message || "Account update failed.")
+			setAccountFeedback((prev) => ({
+				...prev,
+				[field]: { status: "error", message: error.message || "Account update failed." },
+			}))
 		}
 	}
 
@@ -97,82 +100,134 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 			<Link className="topRightButton" to="/">
 				Back
 			</Link>
-			<form className="accountForm" onSubmit={submitAccount}>
-				<h1>Account</h1>
-				<label className="accountField">
-					<span>Display name</span>
-					<input
-						type="text"
-						value={accountForm.displayName}
-						onChange={(e) => updateAccountField("displayName", e.target.value)}
-						autoComplete="name"
-					/>
-				</label>
-				<label className="accountField">
-					<span>Email</span>
-					<input
-						type="email"
-						value={accountForm.email}
-						onChange={(e) => updateAccountField("email", e.target.value)}
-						autoComplete="email"
-					/>
-				</label>
-				<label className="accountField">
-					<span>New password</span>
-					<div className="passwordInputWrap">
+			<main className="accountContent" aria-labelledby="account-heading">
+				<h1 id="account-heading">Account</h1>
+				<form
+					className="accountSection"
+					aria-label="Display name settings"
+					onSubmit={(e) => submitAccountSection(e, "displayName")}
+				>
+					<h2>Display name</h2>
+					<label className="accountField" htmlFor="account-display-name">
+						<span>Display name</span>
 						<input
-							type={isPasswordVisible ? "text" : "password"}
-							value={accountForm.password}
-							onChange={(e) => updateAccountField("password", e.target.value)}
-							autoComplete="new-password"
+							id="account-display-name"
+							type="text"
+							value={accountForm.displayName}
+							onChange={(e) => updateAccountField("displayName", e.target.value)}
+							autoComplete="name"
 						/>
+					</label>
+					<button
+						type="submit"
+						className="accountSubmitButton"
+						disabled={accountFeedback.displayName.status === "submitting"}
+					>
+						{accountFeedback.displayName.status === "submitting" ? "Saving..." : "Save changes"}
+					</button>
+					{accountFeedback.displayName.message && (
+						<p
+							className={`accountMessage accountMessage${accountFeedback.displayName.status}`}
+						>
+							{accountFeedback.displayName.message}
+						</p>
+					)}
+				</form>
+				<form
+					className="accountSection"
+					aria-label="Email settings"
+					onSubmit={(e) => submitAccountSection(e, "email")}
+				>
+					<h2>Email</h2>
+					<label className="accountField" htmlFor="account-email">
+						<span>Email</span>
+						<input
+							id="account-email"
+							type="email"
+							value={accountForm.email}
+							onChange={(e) => updateAccountField("email", e.target.value)}
+							autoComplete="email"
+						/>
+					</label>
+					<button
+						type="submit"
+						className="accountSubmitButton"
+						disabled={accountFeedback.email.status === "submitting"}
+					>
+						{accountFeedback.email.status === "submitting" ? "Saving..." : "Save changes"}
+					</button>
+					{accountFeedback.email.message && (
+						<p className={`accountMessage accountMessage${accountFeedback.email.status}`}>
+							{accountFeedback.email.message}
+						</p>
+					)}
+				</form>
+				<form
+					className="accountSection"
+					aria-label="Password settings"
+					onSubmit={(e) => submitAccountSection(e, "password")}
+				>
+					<h2>Password</h2>
+					<label className="accountField" htmlFor="account-password">
+						<span>New password</span>
+						<div className="passwordInputWrap">
+							<input
+								id="account-password"
+								type={isPasswordVisible ? "text" : "password"}
+								value={accountForm.password}
+								onChange={(e) => updateAccountField("password", e.target.value)}
+								autoComplete="new-password"
+							/>
+							<button
+								type="button"
+								className="passwordToggleButton"
+								aria-label={isPasswordVisible ? "Hide password" : "Show password"}
+								aria-pressed={isPasswordVisible}
+								onClick={() => setIsPasswordVisible((isVisible) => !isVisible)}
+							>
+								{isPasswordVisible ? "Hide" : "Show"}
+							</button>
+						</div>
+					</label>
+					<button
+						type="submit"
+						className="accountSubmitButton"
+						disabled={accountFeedback.password.status === "submitting"}
+					>
+						{accountFeedback.password.status === "submitting" ? "Saving..." : "Save changes"}
+					</button>
+					{accountFeedback.password.message && (
+						<p className={`accountMessage accountMessage${accountFeedback.password.status}`}>
+							{accountFeedback.password.message}
+						</p>
+					)}
+				</form>
+				<div className="deleteAccountPanel">
+					<h2>Delete account</h2>
+					<div className="deleteAccountActions">
 						<button
 							type="button"
-							className="passwordToggleButton"
-							aria-label={isPasswordVisible ? "Hide password" : "Show password"}
-							aria-pressed={isPasswordVisible}
-							onClick={() => setIsPasswordVisible((isVisible) => !isVisible)}
+							className="deleteAccountButton"
+							disabled={deleteStatus === "submitting"}
+							onClick={deleteAccount}
 						>
-							{isPasswordVisible ? "Hide" : "Show"}
+							{deleteStatus === "submitting"
+								? "Deleting..."
+								: isDeleteConfirming
+									? "Confirm delete"
+									: "Delete account"}
 						</button>
+						{isDeleteConfirming && (
+							<button type="button" className="cancelDeleteButton" onClick={cancelDeleteAccount}>
+								Cancel
+							</button>
+						)}
 					</div>
-				</label>
-				<button
-					type="submit"
-					className="accountSubmitButton"
-					disabled={accountStatus === "submitting"}
-				>
-					{accountStatus === "submitting" ? "Saving..." : "Save changes"}
-				</button>
-				{accountMessage && (
-					<p className={`accountMessage accountMessage${accountStatus}`}>{accountMessage}</p>
-				)}
-			</form>
-			<div className="deleteAccountPanel">
-				<h2>Delete account</h2>
-				<div className="deleteAccountActions">
-					<button
-						type="button"
-						className="deleteAccountButton"
-						disabled={deleteStatus === "submitting"}
-						onClick={deleteAccount}
-					>
-						{deleteStatus === "submitting"
-							? "Deleting..."
-							: isDeleteConfirming
-								? "Confirm delete"
-								: "Delete account"}
-					</button>
-					{isDeleteConfirming && (
-						<button type="button" className="cancelDeleteButton" onClick={cancelDeleteAccount}>
-							Cancel
-						</button>
+					{deleteMessage && (
+						<p className={`accountMessage accountMessage${deleteStatus}`}>{deleteMessage}</p>
 					)}
 				</div>
-				{deleteMessage && (
-					<p className={`accountMessage accountMessage${deleteStatus}`}>{deleteMessage}</p>
-				)}
-			</div>
+			</main>
 		</div>
 	)
 }

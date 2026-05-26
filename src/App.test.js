@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import { API_BASE_URL } from "./api/client"
 import App from "./App"
 
@@ -16,6 +16,11 @@ beforeAll(() => {
 beforeEach(() => {
 	window.history.pushState({}, "", "/")
 	window.localStorage.clear()
+	let mockCurrentUser = {
+		id: 1,
+		email: "tyler@example.com",
+		displayName: "Tyler",
+	}
 	global.fetch = jest.fn((url, options = {}) => {
 		if (url === `${API_BASE_URL}/users/signup-confirmation/request`) {
 			return Promise.resolve({
@@ -54,11 +59,7 @@ beforeEach(() => {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
-					user: {
-						id: 1,
-						email: "tyler@example.com",
-						displayName: "Tyler",
-					},
+					user: mockCurrentUser,
 				}),
 			})
 		}
@@ -82,15 +83,18 @@ beforeEach(() => {
 		}
 
 		if (url === `${API_BASE_URL}/users/1` && options.method === "PATCH") {
+			const accountChanges = JSON.parse(options.body)
+			delete accountChanges.password
+			mockCurrentUser = {
+				...mockCurrentUser,
+				...accountChanges,
+			}
+
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
 					message: "Account updated.",
-					user: {
-						id: 1,
-						email: "taylor@example.com",
-						displayName: "Taylor",
-					},
+					user: mockCurrentUser,
 				}),
 			})
 		}
@@ -370,32 +374,50 @@ test("opens account from the user menu and updates account details", async () =>
 	expect(screen.getByRole("heading", { name: "Account" })).toBeInTheDocument()
 	expect(screen.getByLabelText("Display name")).toHaveValue("Tyler")
 	expect(screen.getByLabelText("Email")).toHaveValue("tyler@example.com")
+	expect(screen.getAllByRole("button", { name: "Save changes" })).toHaveLength(3)
+
+	const displayNameSection = screen.getByRole("form", { name: "Display name settings" })
+	const emailSection = screen.getByRole("form", { name: "Email settings" })
+	const passwordSection = screen.getByRole("form", { name: "Password settings" })
 
 	fireEvent.change(screen.getByLabelText("Display name"), { target: { value: "Taylor" } })
+	fireEvent.click(within(displayNameSection).getByRole("button", { name: "Save changes" }))
+
+	await waitFor(() => {
+		expect(within(displayNameSection).getByText("Account updated.")).toBeInTheDocument()
+	})
+
 	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "taylor@example.com" } })
+	fireEvent.click(within(emailSection).getByRole("button", { name: "Save changes" }))
+
+	await waitFor(() => {
+		expect(within(emailSection).getByText("Account updated.")).toBeInTheDocument()
+	})
+
 	fireEvent.change(screen.getByLabelText("New password"), { target: { value: "password2" } })
 	fireEvent.click(screen.getByRole("button", { name: "Show password" }))
 	expect(screen.getByLabelText("New password")).toHaveAttribute("type", "text")
-	fireEvent.click(screen.getByRole("button", { name: "Save changes" }))
+	fireEvent.click(within(passwordSection).getByRole("button", { name: "Save changes" }))
 
 	await waitFor(() => {
-		expect(screen.getByText("Account updated.")).toBeInTheDocument()
+		expect(within(passwordSection).getByText("Account updated.")).toBeInTheDocument()
 	})
 
-	const accountRequest = global.fetch.mock.calls.find(
+	const accountRequests = global.fetch.mock.calls.filter(
 		([url, options]) => url === `${API_BASE_URL}/users/1` && options.method === "PATCH",
 	)
-	expect(accountRequest[1]).toMatchObject({
+	expect(accountRequests).toHaveLength(3)
+	expect(accountRequests[0][1]).toMatchObject({
 		method: "PATCH",
 		headers: {
 			"Content-Type": "application/json",
 		},
 	})
-	expect(JSON.parse(accountRequest[1].body)).toEqual({
-		displayName: "Taylor",
-		email: "taylor@example.com",
-		password: "password2",
-	})
+	expect(accountRequests.map(([, options]) => JSON.parse(options.body))).toEqual([
+		{ displayName: "Taylor" },
+		{ email: "taylor@example.com" },
+		{ password: "password2" },
+	])
 	expect(screen.getByLabelText("New password")).toHaveValue("")
 	expect(JSON.parse(window.localStorage.getItem("jsbCurrentUser"))).toEqual({
 		id: 1,

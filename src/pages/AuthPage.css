@@ -5,7 +5,10 @@
 	box-sizing: border-box;
 }
 
-.accountForm,
+.accountPage {
+	justify-content: flex-start;
+}
+
 .loginForm,
 .signupForm {
 	display: flex;
@@ -20,12 +23,33 @@
 	color: var(--color-text-primary);
 }
 
-.deleteAccountPanel {
+.accountContent {
 	display: flex;
 	width: min(380px, 100%);
 	flex-direction: column;
+	gap: 14px;
+	box-sizing: border-box;
+	color: var(--color-text-primary);
+}
+
+.accountSection {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	gap: 14px;
+	padding: 18px;
+	border: 1px solid var(--color-surface-control-active);
+	border-radius: 8px;
+	background: var(--color-surface);
+	box-sizing: border-box;
+	color: var(--color-text-primary);
+}
+
+.deleteAccountPanel {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
 	gap: 12px;
-	margin-top: 14px;
 	padding: 18px;
 	border: 1px solid var(--color-danger-panel-border);
 	border-radius: 8px;
@@ -34,7 +58,7 @@
 	color: var(--color-text-primary);
 }
 
-.accountForm h1,
+.accountContent > h1,
 .loginForm h1,
 .signupForm h1 {
 	margin: 0 0 4px;
@@ -43,6 +67,7 @@
 	line-height: 1.2;
 }
 
+.accountSection h2,
 .deleteAccountPanel h2 {
 	margin: 0;
 	font-size: 16px;
