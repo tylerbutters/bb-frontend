@@ -140,6 +140,26 @@
 	cursor: pointer;
 }
 
+.authTextButton {
+	align-self: center;
+	border: 0;
+	background: transparent;
+	color: var(--color-text-primary);
+	font: inherit;
+	font-size: 13px;
+	font-weight: 850;
+	cursor: pointer;
+}
+
+.authTextButton:hover {
+	text-decoration: underline;
+}
+
+.authTextButton:focus-visible {
+	outline: 2px solid var(--color-text-subtle);
+	outline-offset: 2px;
+}
+
 .cancelDeleteButton,
 .deleteAccountButton {
 	height: 40px;

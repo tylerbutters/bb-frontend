@@ -43,6 +43,24 @@ beforeEach(() => {
 			})
 		}
 
+		if (url === `${API_BASE_URL}/login/password-reset/request`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					message: "If an account exists for that email, a reset code has been sent.",
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/login/password-reset/confirm`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					message: "Password reset successful.",
+				}),
+			})
+		}
+
 		if (url === `${API_BASE_URL}/users/1` && options.method === "PATCH") {
 			return Promise.resolve({
 				ok: true,
@@ -161,6 +179,54 @@ test("opens the login page", () => {
 	expect(screen.getByText(/Don't have an account\?/)).toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Sign up" })).toHaveAttribute("href", "/signup")
 	expect(window.location.pathname).toBe("/login")
+})
+
+test("requests a reset code and resets the password from the login page", async () => {
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("link", { name: "Login" }))
+	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
+	fireEvent.click(screen.getByRole("button", { name: "Forgot password?" }))
+
+	expect(screen.getByRole("heading", { name: "Reset Password" })).toBeInTheDocument()
+	expect(screen.getByLabelText("Email")).toHaveValue("tyler@example.com")
+
+	fireEvent.click(screen.getByRole("button", { name: "Send code" }))
+
+	await waitFor(() => {
+		expect(screen.getByLabelText("Code")).toBeInTheDocument()
+	})
+	expect(
+		screen.getByText("If an account exists for that email, a reset code has been sent."),
+	).toBeInTheDocument()
+
+	fireEvent.change(screen.getByLabelText("Code"), { target: { value: "123456" } })
+	fireEvent.change(screen.getByLabelText("New password"), { target: { value: "password2" } })
+	fireEvent.click(screen.getByRole("button", { name: "Reset password" }))
+
+	await waitFor(() => {
+		expect(screen.getByRole("heading", { name: "Login" })).toBeInTheDocument()
+	})
+	expect(
+		screen.getByText("Password reset successful. You can log in with your new password."),
+	).toBeInTheDocument()
+	expect(screen.getByLabelText("Email")).toHaveValue("tyler@example.com")
+
+	const requestResetRequest = global.fetch.mock.calls.find(
+		([url]) => url === `${API_BASE_URL}/login/password-reset/request`,
+	)
+	expect(JSON.parse(requestResetRequest[1].body)).toEqual({
+		email: "tyler@example.com",
+	})
+
+	const confirmResetRequest = global.fetch.mock.calls.find(
+		([url]) => url === `${API_BASE_URL}/login/password-reset/confirm`,
+	)
+	expect(JSON.parse(confirmResetRequest[1].body)).toEqual({
+		email: "tyler@example.com",
+		code: "123456",
+		password: "password2",
+	})
 })
 
 test("logs in and replaces auth links with the user name", async () => {

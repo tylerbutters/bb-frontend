@@ -8,3 +8,17 @@ export async function login(credentials) {
 
 	return data.user
 }
+
+export async function requestPasswordReset({ email }) {
+	return apiRequest("/login/password-reset/request", {
+		method: "POST",
+		body: { email },
+	})
+}
+
+export async function confirmPasswordReset({ email, code, password }) {
+	return apiRequest("/login/password-reset/confirm", {
+		method: "POST",
+		body: { email, code, password },
+	})
+}
