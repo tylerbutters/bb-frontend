@@ -270,10 +270,44 @@ describe("japaneseTranslationToElements", () => {
 				{ kanji: "日本語", kana: "にほんご", particle: "を" },
 				{ kanji: "勉強する", kana: "べんきょうする", conjugation: ["past"] },
 			],
+			[
+				{ kanji: "図書館", kana: "としょかん", particle: "は" },
+				{ kanji: "古い", kana: "ふるい" },
+			],
+			[
+				{ kanji: "先生", kana: "せんせい", particle: "は" },
+				{ kanji: "良く", kana: "よく" },
+				{ kanji: "お茶", kana: "おちゃ", particle: "を" },
+				{ kanji: "飲む", kana: "のむ", conjugation: ["past"] },
+			],
+			[
+				{ kanji: "先生", kana: "せんせい", particle: "は" },
+				{ kanji: "公園", kana: "こうえん", particle: "で" },
+				{ kanji: "手紙", kana: "てがみ", particle: "を" },
+				{ kanji: "枚", kana: "枚", form: { number: "4" } },
+				{ kanji: "買う", kana: "かう", conjugation: ["past"] },
+			],
 		]
 
 		for (const payload of generatedPayloads) {
 			expect(japaneseTranslationToElements(payload)).toHaveLength(payload.length)
 		}
+	})
+
+	test("applies generated adverb, adjective, and counter elements", () => {
+		const elements = japaneseTranslationToElements([
+			{ kanji: "図書館", kana: "としょかん", particle: "は" },
+			{ kanji: "古い", kana: "ふるい" },
+			{ kanji: "良く", kana: "よく" },
+			{ kanji: "枚", kana: "枚", form: { number: "4" } },
+		])
+
+		expect(elements.map((element) => element.elementType)).toEqual([
+			"noun",
+			"adjective",
+			"adverb",
+			"counter",
+		])
+		expect(elements[3].number).toBe("4")
 	})
 })
