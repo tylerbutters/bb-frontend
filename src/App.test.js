@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { API_BASE_URL } from "./api/client"
 import App from "./App"
 
@@ -102,6 +102,7 @@ beforeEach(() => {
 
 afterEach(() => {
 	jest.restoreAllMocks()
+	jest.useRealTimers()
 })
 
 test("renders the initial add button", () => {
@@ -182,6 +183,8 @@ test("opens the login page", () => {
 })
 
 test("requests a reset code and resets the password from the login page", async () => {
+	jest.useFakeTimers()
+
 	render(<App />)
 
 	fireEvent.click(screen.getByRole("link", { name: "Login" }))
@@ -196,9 +199,40 @@ test("requests a reset code and resets the password from the login page", async 
 	await waitFor(() => {
 		expect(screen.getByLabelText("Code")).toBeInTheDocument()
 	})
+	const resetEmailNotice = screen.getByText("tyler@example.com").closest(".resetEmailNotice")
+	expect(resetEmailNotice).toHaveTextContent("Email sent to tyler@example.com. Change email")
+	expect(resetEmailNotice).toContainElement(screen.getByRole("button", { name: "Change email" }))
+	expect(screen.queryByLabelText("Email")).not.toBeInTheDocument()
 	expect(
 		screen.getByText("If an account exists for that email, a reset code has been sent."),
 	).toBeInTheDocument()
+	const resetRequestCalls = () =>
+		global.fetch.mock.calls.filter(([url]) => url === `${API_BASE_URL}/login/password-reset/request`)
+
+	let resendButton = screen.getByRole("button", { name: "Resend code in 30s" })
+	expect(resendButton).toBeDisabled()
+	fireEvent.click(resendButton)
+	expect(resetRequestCalls()).toHaveLength(1)
+
+	for (let seconds = 0; seconds < 30; seconds += 1) {
+		await act(async () => {
+			jest.advanceTimersByTime(1000)
+		})
+	}
+
+	resendButton = screen.getByRole("button", { name: "Resend code" })
+	expect(resendButton).toBeEnabled()
+	fireEvent.change(screen.getByLabelText("Code"), { target: { value: "111111" } })
+	fireEvent.click(resendButton)
+
+	await waitFor(() => {
+		expect(screen.getByRole("button", { name: "Resend code in 30s" })).toBeDisabled()
+	})
+	expect(screen.getByLabelText("Code")).toHaveValue("")
+	expect(resetRequestCalls()).toHaveLength(2)
+	expect(JSON.parse(resetRequestCalls()[1][1].body)).toEqual({
+		email: "tyler@example.com",
+	})
 
 	fireEvent.change(screen.getByLabelText("Code"), { target: { value: "123456" } })
 	fireEvent.change(screen.getByLabelText("New password"), { target: { value: "password2" } })
@@ -212,9 +246,7 @@ test("requests a reset code and resets the password from the login page", async 
 	).toBeInTheDocument()
 	expect(screen.getByLabelText("Email")).toHaveValue("tyler@example.com")
 
-	const requestResetRequest = global.fetch.mock.calls.find(
-		([url]) => url === `${API_BASE_URL}/login/password-reset/request`,
-	)
+	const requestResetRequest = resetRequestCalls()[0]
 	expect(JSON.parse(requestResetRequest[1].body)).toEqual({
 		email: "tyler@example.com",
 	})
@@ -488,6 +520,78 @@ test("populates conjugation game elements from Japanese translation prompt data"
 	await waitFor(() => {
 		expect(screen.getByRole("button", { name: "Check" })).toBeEnabled()
 	})
+})
+
+test("does not restore generated elements when switching to translate or sandbox", async () => {
+	global.fetch.mockImplementation((url, options = {}) => {
+		const requestUrl = String(url)
+		if (requestUrl.startsWith(`${API_BASE_URL}/games/prompt`)) {
+			const mode = new URL(requestUrl, "http://localhost").searchParams.get("mode")
+			const promptData =
+				mode === "conjugations"
+					? {
+							mode: "conjugations",
+							difficulty: "easy",
+							prompt: "I want to eat sushi.",
+							japaneseTranslation: [
+								{ kanji: "私", kana: "わたし", particle: "は" },
+								{ kanji: "寿司", kana: "すし", particle: "を" },
+								{ kanji: "食べる", kana: "たべる" },
+							],
+						}
+					: {
+							mode,
+							difficulty: "easy",
+							prompt: "Translate this sentence.",
+						}
+
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue(promptData),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("tab", { name: "conjugations" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("I want to eat sushi.")).toBeInTheDocument()
+	})
+	await waitFor(() => {
+		expect(screen.getAllByText("私").length).toBeGreaterThan(0)
+	})
+
+	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("Translate this sentence.")).toBeInTheDocument()
+	})
+	expect(screen.queryAllByText("私")).toHaveLength(0)
+	expect(screen.queryAllByText("寿司")).toHaveLength(0)
+
+	fireEvent.click(screen.getByRole("tab", { name: "conjugations" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("I want to eat sushi.")).toBeInTheDocument()
+	})
+	await waitFor(() => {
+		expect(screen.getAllByText("私").length).toBeGreaterThan(0)
+	})
+
+	fireEvent.click(screen.getByRole("tab", { name: "sandbox" }))
+
+	await waitFor(() => {
+		expect(screen.getByRole("heading", { name: "Sandbox" })).toBeInTheDocument()
+	})
+	expect(screen.queryAllByText("私")).toHaveLength(0)
+	expect(screen.queryAllByText("寿司")).toHaveLength(0)
 })
 
 test("populates particle game elements without preselected particles", async () => {

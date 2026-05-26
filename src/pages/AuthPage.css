@@ -118,6 +118,44 @@
 	outline-offset: 2px;
 }
 
+.resetEmailNotice {
+	margin: 0;
+	color: var(--color-text-subtle);
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1.35;
+}
+
+.resetEmailAddress {
+	color: var(--color-text-muted);
+	font-weight: 750;
+}
+
+.resetEmailChangeButton {
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: var(--color-text-primary);
+	font: inherit;
+	font-weight: 850;
+	cursor: pointer;
+}
+
+.resetEmailChangeButton:hover {
+	text-decoration: underline;
+}
+
+.resetEmailChangeButton:disabled {
+	cursor: default;
+	opacity: 0.62;
+	text-decoration: none;
+}
+
+.resetEmailChangeButton:focus-visible {
+	outline: 2px solid var(--color-text-subtle);
+	outline-offset: 2px;
+}
+
 .accountField input:focus,
 .loginField input:focus,
 .signupField input:focus {
@@ -153,6 +191,12 @@
 
 .authTextButton:hover {
 	text-decoration: underline;
+}
+
+.authTextButton:disabled {
+	cursor: default;
+	opacity: 0.62;
+	text-decoration: none;
 }
 
 .authTextButton:focus-visible {

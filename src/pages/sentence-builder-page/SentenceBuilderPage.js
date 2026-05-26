@@ -6,6 +6,8 @@ import GamePrompt from "./games/GamePrompt"
 import SentenceBuilderWorkspace from "./components/SentenceBuilderWorkspace"
 import { japaneseTranslationToElements } from "./grammar/japaneseTranslationElements"
 
+const PROMPT_ELEMENT_GAME_MODES = new Set(["conjugations", "fix sentence", "particles", "reorder"])
+
 export default function SentenceBuilderPage({ currentUser, onLogout }) {
 	const [selectedGameMode, setSelectedGameMode] = useState("sandbox")
 	const [workspaceResetCount, setWorkspaceResetCount] = useState(0)
@@ -38,12 +40,20 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 		setHasSentenceElements(false)
 	}
 
+	function clearGamePrompt() {
+		setGamePrompt("")
+		setGamePromptData(null)
+		setGamePromptStatus("idle")
+	}
+
 	function regenerateGamePrompt() {
+		clearGamePrompt()
 		resetSentence()
 	}
 
 	function selectGameMode(gameMode) {
 		setSelectedGameMode(gameMode)
+		clearGamePrompt()
 		resetSentence()
 	}
 
@@ -81,9 +91,10 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 }
 
 function shouldPopulatePromptElements(gameMode, promptData) {
-	const generatedGameMode = promptData?.mode || gameMode
-	if (!generatedGameMode || generatedGameMode === "sandbox" || generatedGameMode === "translate") {
-		return false
-	}
+	const generatedGameMode = promptData?.mode
+	if (!generatedGameMode) return false
+	if (gameMode !== "shuffle" && generatedGameMode !== gameMode) return false
+	if (!PROMPT_ELEMENT_GAME_MODES.has(generatedGameMode)) return false
+
 	return Array.isArray(promptData?.japaneseTranslation)
 }

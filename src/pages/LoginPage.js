@@ -1,8 +1,10 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { confirmPasswordReset, login, requestPasswordReset } from "../api/auth"
 import "./TopRightButton.css"
 import "./AuthPage.css"
+
+const RESEND_CODE_COOLDOWN_SECONDS = 30
 
 export default function LoginPage({ onLogin }) {
 	const navigate = useNavigate()
@@ -20,9 +22,26 @@ export default function LoginPage({ onLogin }) {
 	const [loginMessage, setLoginMessage] = useState("")
 	const [loginMessageType, setLoginMessageType] = useState("error")
 	const [resetStatus, setResetStatus] = useState("idle")
+	const [resetAction, setResetAction] = useState(null)
 	const [resetMessage, setResetMessage] = useState("")
 	const [resetMessageType, setResetMessageType] = useState("error")
+	const [resendCooldown, setResendCooldown] = useState(0)
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+
+	useEffect(() => {
+		if (authMode !== "confirmReset" || resendCooldown <= 0) return undefined
+
+		const timerId = setTimeout(() => {
+			setResendCooldown((cooldown) => Math.max(cooldown - 1, 0))
+		}, 1000)
+
+		return () => clearTimeout(timerId)
+	}, [authMode, resendCooldown])
+
+	const isSendingResetRequest = resetStatus === "submitting" && resetAction === "request"
+	const isConfirmingReset = resetStatus === "submitting" && resetAction === "confirm"
+	const isResendingResetCode = resetStatus === "submitting" && resetAction === "resend"
+	const isResendDisabled = resendCooldown > 0 || isResendingResetCode || isConfirmingReset
 
 	function updateLoginField(field, value) {
 		setLoginForm((prev) => ({
@@ -39,6 +58,7 @@ export default function LoginPage({ onLogin }) {
 			[field]: value,
 		}))
 		setResetStatus("idle")
+		setResetAction(null)
 		setResetMessage("")
 	}
 
@@ -56,6 +76,7 @@ export default function LoginPage({ onLogin }) {
 		setAuthMode("login")
 		setResetMessage("")
 		setResetStatus("idle")
+		setResetAction(null)
 	}
 
 	async function submitLogin(e) {
@@ -77,16 +98,20 @@ export default function LoginPage({ onLogin }) {
 	async function submitPasswordResetRequest(e) {
 		e.preventDefault()
 		setResetStatus("submitting")
+		setResetAction("request")
 		setResetMessage("")
 
 		try {
 			const result = await requestPasswordReset({ email: resetForm.email })
 			setResetStatus("success")
+			setResetAction(null)
 			setResetMessageType("success")
 			setResetMessage(result.message || "If an account exists, a reset code has been sent.")
+			setResendCooldown(RESEND_CODE_COOLDOWN_SECONDS)
 			setAuthMode("confirmReset")
 		} catch (error) {
 			setResetStatus("error")
+			setResetAction(null)
 			setResetMessageType("error")
 			setResetMessage(error.message || "Could not send reset code.")
 		}
@@ -95,6 +120,7 @@ export default function LoginPage({ onLogin }) {
 	async function submitPasswordResetConfirm(e) {
 		e.preventDefault()
 		setResetStatus("submitting")
+		setResetAction("confirm")
 		setResetMessage("")
 
 		try {
@@ -105,10 +131,40 @@ export default function LoginPage({ onLogin }) {
 			setLoginStatus("success")
 			setLoginMessageType("success")
 			setLoginMessage("Password reset successful. You can log in with your new password.")
+			setResetStatus("idle")
+			setResetAction(null)
+			setResendCooldown(0)
 		} catch (error) {
 			setResetStatus("error")
+			setResetAction(null)
 			setResetMessageType("error")
 			setResetMessage(error.message || "Password reset failed.")
+		}
+	}
+
+	async function resendPasswordResetCode() {
+		if (isResendDisabled) return
+
+		setResetStatus("submitting")
+		setResetAction("resend")
+		setResetMessage("")
+
+		try {
+			const result = await requestPasswordReset({ email: resetForm.email })
+			setResetStatus("success")
+			setResetAction(null)
+			setResetMessageType("success")
+			setResetMessage(result.message || "If an account exists, a reset code has been sent.")
+			setResetForm((prev) => ({
+				...prev,
+				code: "",
+			}))
+			setResendCooldown(RESEND_CODE_COOLDOWN_SECONDS)
+		} catch (error) {
+			setResetStatus("error")
+			setResetAction(null)
+			setResetMessageType("error")
+			setResetMessage(error.message || "Could not send reset code.")
 		}
 	}
 
@@ -193,9 +249,9 @@ export default function LoginPage({ onLogin }) {
 					<button
 						type="submit"
 						className="loginSubmitButton"
-						disabled={resetStatus === "submitting"}
+						disabled={isSendingResetRequest}
 					>
-						{resetStatus === "submitting" ? "Sending code..." : "Send code"}
+						{isSendingResetRequest ? "Sending code..." : "Send code"}
 					</button>
 					<button type="button" className="authTextButton" onClick={showLogin}>
 						Back to login
@@ -213,17 +269,17 @@ export default function LoginPage({ onLogin }) {
 					onSubmit={submitPasswordResetConfirm}
 				>
 					<h1>Reset Password</h1>
-					<label className="loginField" htmlFor="confirm-reset-email">
-						<span>Email</span>
-						<input
-							id="confirm-reset-email"
-							name="email"
-							type="email"
-							value={resetForm.email}
-							onChange={(e) => updateResetField("email", e.target.value)}
-							autoComplete="username"
-						/>
-					</label>
+					<p className="resetEmailNotice">
+						Email sent to <span className="resetEmailAddress">{resetForm.email}</span>.{" "}
+						<button
+							type="button"
+							className="resetEmailChangeButton"
+							onClick={showPasswordResetRequest}
+							disabled={isConfirmingReset || isResendingResetCode}
+						>
+							Change email
+						</button>
+					</p>
 					<label className="loginField" htmlFor="reset-code">
 						<span>Code</span>
 						<input
@@ -262,12 +318,21 @@ export default function LoginPage({ onLogin }) {
 					<button
 						type="submit"
 						className="loginSubmitButton"
-						disabled={resetStatus === "submitting"}
+						disabled={isConfirmingReset}
 					>
-						{resetStatus === "submitting" ? "Resetting password..." : "Reset password"}
+						{isConfirmingReset ? "Resetting password..." : "Reset password"}
 					</button>
-					<button type="button" className="authTextButton" onClick={showPasswordResetRequest}>
-						Send a new code
+					<button
+						type="button"
+						className="authTextButton"
+						onClick={resendPasswordResetCode}
+						disabled={isResendDisabled}
+					>
+						{isResendingResetCode
+							? "Sending code..."
+							: resendCooldown > 0
+								? `Resend code in ${resendCooldown}s`
+								: "Resend code"}
 					</button>
 					{resetMessage && (
 						<p className={`loginMessage loginMessage${resetMessageType}`}>{resetMessage}</p>
