@@ -17,7 +17,17 @@ beforeEach(() => {
 	window.history.pushState({}, "", "/")
 	window.localStorage.clear()
 	global.fetch = jest.fn((url, options = {}) => {
-		if (url === `${API_BASE_URL}/users`) {
+		if (url === `${API_BASE_URL}/users/signup-confirmation/request`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					message:
+						"Confirmation code sent. Check your email to finish creating your account.",
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/users/signup-confirmation/confirm`) {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
@@ -26,6 +36,16 @@ beforeEach(() => {
 						email: "tyler@example.com",
 						displayName: "Tyler",
 					},
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/users`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					message:
+						"Confirmation code sent. Check your email to finish creating your account.",
 				}),
 			})
 		}
@@ -112,7 +132,7 @@ test("renders the initial add button", () => {
 	expect(screen.getByRole("link", { name: "Sign up" })).toBeInTheDocument()
 })
 
-test("opens the sign up page and creates an account", async () => {
+test("opens the sign up page, confirms the email code, and creates an account", async () => {
 	render(<App />)
 
 	fireEvent.click(screen.getByRole("link", { name: "Sign up" }))
@@ -126,13 +146,23 @@ test("opens the sign up page and creates an account", async () => {
 	fireEvent.change(screen.getByLabelText("Display name"), { target: { value: "Tyler" } })
 	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
 	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
-	fireEvent.click(screen.getByRole("button", { name: "Create account" }))
+	fireEvent.click(screen.getByRole("button", { name: "Send code" }))
 
 	await waitFor(() => {
-		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+		expect(screen.getByRole("heading", { name: "Confirm email" })).toBeInTheDocument()
 	})
-	expect(window.location.pathname).toBe("/")
-	const signupRequest = global.fetch.mock.calls.find(([url]) => url === `${API_BASE_URL}/users`)
+	const signupNotice = screen.getByText("tyler@example.com").closest(".resetEmailNotice")
+	expect(signupNotice).toHaveTextContent("Email sent to tyler@example.com. Change details")
+	expect(signupNotice).toContainElement(screen.getByRole("button", { name: "Change details" }))
+	expect(screen.getByLabelText("Code")).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Resend code in 30s" })).toBeDisabled()
+	expect(
+		screen.getByText("Confirmation code sent. Check your email to finish creating your account."),
+	).toBeInTheDocument()
+
+	const signupRequest = global.fetch.mock.calls.find(
+		([url]) => url === `${API_BASE_URL}/users/signup-confirmation/request`,
+	)
 	expect(signupRequest[1]).toMatchObject({
 		method: "POST",
 		headers: {
@@ -143,6 +173,28 @@ test("opens the sign up page and creates an account", async () => {
 		displayName: "Tyler",
 		email: "tyler@example.com",
 		password: "password1",
+	})
+
+	fireEvent.change(screen.getByLabelText("Code"), { target: { value: "123456" } })
+	fireEvent.click(screen.getByRole("button", { name: "Create account" }))
+
+	await waitFor(() => {
+		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+	})
+	expect(window.location.pathname).toBe("/")
+
+	const confirmSignupRequest = global.fetch.mock.calls.find(
+		([url]) => url === `${API_BASE_URL}/users/signup-confirmation/confirm`,
+	)
+	expect(confirmSignupRequest[1]).toMatchObject({
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	})
+	expect(JSON.parse(confirmSignupRequest[1].body)).toEqual({
+		email: "tyler@example.com",
+		code: "123456",
 	})
 })
 
