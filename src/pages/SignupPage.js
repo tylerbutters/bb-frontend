@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { confirmSignup, requestSignupConfirmation } from "../api/users"
+import InputBox from "../components/InputBox"
 import "./TopRightButton.css"
 import "./AuthPage.css"
 
@@ -20,7 +21,6 @@ export default function SignupPage({ onSignup }) {
 	const [signupMessage, setSignupMessage] = useState("")
 	const [signupMessageType, setSignupMessageType] = useState("error")
 	const [resendCooldown, setResendCooldown] = useState(0)
-	const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 
 	useEffect(() => {
 		if (signupStep !== "confirm" || resendCooldown <= 0) return undefined
@@ -149,50 +149,35 @@ export default function SignupPage({ onSignup }) {
 					onSubmit={submitSignupRequest}
 				>
 					<h1>Sign up</h1>
-					<label className="signupField" htmlFor="signup-display-name">
-						<span>Display name</span>
-						<input
-							id="signup-display-name"
-							name="displayName"
-							type="text"
-							value={signupForm.displayName}
-							onChange={(e) => updateSignupField("displayName", e.target.value)}
-							autoComplete="name"
-						/>
-					</label>
-					<label className="signupField" htmlFor="signup-email">
-						<span>Email</span>
-						<input
-							id="signup-email"
-							name="email"
-							type="email"
-							value={signupForm.email}
-							onChange={(e) => updateSignupField("email", e.target.value)}
-							autoComplete="username"
-						/>
-					</label>
-					<label className="signupField" htmlFor="signup-password">
-						<span>Password</span>
-						<div className="passwordInputWrap">
-							<input
-								id="signup-password"
-								name="password"
-								type={isPasswordVisible ? "text" : "password"}
-								value={signupForm.password}
-								onChange={(e) => updateSignupField("password", e.target.value)}
-								autoComplete="new-password"
-							/>
-							<button
-								type="button"
-								className="passwordToggleButton"
-								aria-label={isPasswordVisible ? "Hide password" : "Show password"}
-								aria-pressed={isPasswordVisible}
-								onClick={() => setIsPasswordVisible((isVisible) => !isVisible)}
-							>
-								{isPasswordVisible ? "Hide" : "Show"}
-							</button>
-						</div>
-					</label>
+					<InputBox
+						id="signup-display-name"
+						name="displayName"
+						fieldClassName="signupField"
+						label="Display name"
+						value={signupForm.displayName}
+						onChange={(value) => updateSignupField("displayName", value)}
+						autoComplete="name"
+					/>
+					<InputBox
+						id="signup-email"
+						name="email"
+						fieldClassName="signupField"
+						label="Email"
+						type="email"
+						value={signupForm.email}
+						onChange={(value) => updateSignupField("email", value)}
+						autoComplete="username"
+					/>
+					<InputBox
+						id="signup-password"
+						name="password"
+						fieldClassName="signupField"
+						label="Password"
+						value={signupForm.password}
+						onChange={(value) => updateSignupField("password", value)}
+						autoComplete="new-password"
+						isPassword
+					/>
 					<button type="submit" className="signupSubmitButton" disabled={isRequestingSignupCode}>
 						{isRequestingSignupCode ? "Sending code..." : "Send code"}
 					</button>
@@ -223,19 +208,17 @@ export default function SignupPage({ onSignup }) {
 							Change details
 						</button>
 					</p>
-					<label className="signupField" htmlFor="signup-code">
-						<span>Code</span>
-						<input
-							id="signup-code"
-							name="code"
-							type="text"
-							inputMode="numeric"
-							pattern="[0-9]{6}"
-							value={confirmationCode}
-							onChange={(e) => updateConfirmationCode(e.target.value)}
-							autoComplete="one-time-code"
-						/>
-					</label>
+					<InputBox
+						id="signup-code"
+						name="code"
+						fieldClassName="signupField"
+						label="Code"
+						inputMode="numeric"
+						pattern="[0-9]{6}"
+						value={confirmationCode}
+						onChange={updateConfirmationCode}
+						autoComplete="one-time-code"
+					/>
 					<button type="submit" className="signupSubmitButton" disabled={isConfirmingSignup}>
 						{isConfirmingSignup ? "Creating account..." : "Create account"}
 					</button>

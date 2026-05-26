@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { confirmPasswordReset, login, requestPasswordReset } from "../api/auth"
+import InputBox from "../components/InputBox"
 import "./TopRightButton.css"
 import "./AuthPage.css"
 
@@ -26,7 +27,6 @@ export default function LoginPage({ onLogin }) {
 	const [resetMessage, setResetMessage] = useState("")
 	const [resetMessageType, setResetMessageType] = useState("error")
 	const [resendCooldown, setResendCooldown] = useState(0)
-	const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 
 	useEffect(() => {
 		if (authMode !== "confirmReset" || resendCooldown <= 0) return undefined
@@ -176,39 +176,26 @@ export default function LoginPage({ onLogin }) {
 			{authMode === "login" && (
 				<form className="loginForm" method="post" action="/login" onSubmit={submitLogin}>
 					<h1>Login</h1>
-					<label className="loginField" htmlFor="login-email">
-						<span>Email</span>
-						<input
-							id="login-email"
-							name="email"
-							type="email"
-							value={loginForm.email}
-							onChange={(e) => updateLoginField("email", e.target.value)}
-							autoComplete="username"
-						/>
-					</label>
-					<label className="loginField" htmlFor="login-password">
-						<span>Password</span>
-						<div className="passwordInputWrap">
-							<input
-								id="login-password"
-								name="password"
-								type={isPasswordVisible ? "text" : "password"}
-								value={loginForm.password}
-								onChange={(e) => updateLoginField("password", e.target.value)}
-								autoComplete="current-password"
-							/>
-							<button
-								type="button"
-								className="passwordToggleButton"
-								aria-label={isPasswordVisible ? "Hide password" : "Show password"}
-								aria-pressed={isPasswordVisible}
-								onClick={() => setIsPasswordVisible((isVisible) => !isVisible)}
-							>
-								{isPasswordVisible ? "Hide" : "Show"}
-							</button>
-						</div>
-					</label>
+					<InputBox
+						id="login-email"
+						name="email"
+						fieldClassName="loginField"
+						label="Email"
+						type="email"
+						value={loginForm.email}
+						onChange={(value) => updateLoginField("email", value)}
+						autoComplete="username"
+					/>
+					<InputBox
+						id="login-password"
+						name="password"
+						fieldClassName="loginField"
+						label="Password"
+						value={loginForm.password}
+						onChange={(value) => updateLoginField("password", value)}
+						autoComplete="current-password"
+						isPassword
+					/>
 					<button
 						type="submit"
 						className="loginSubmitButton"
@@ -235,17 +222,16 @@ export default function LoginPage({ onLogin }) {
 					onSubmit={submitPasswordResetRequest}
 				>
 					<h1>Reset Password</h1>
-					<label className="loginField" htmlFor="reset-email">
-						<span>Email</span>
-						<input
-							id="reset-email"
-							name="email"
-							type="email"
-							value={resetForm.email}
-							onChange={(e) => updateResetField("email", e.target.value)}
-							autoComplete="username"
-						/>
-					</label>
+					<InputBox
+						id="reset-email"
+						name="email"
+						fieldClassName="loginField"
+						label="Email"
+						type="email"
+						value={resetForm.email}
+						onChange={(value) => updateResetField("email", value)}
+						autoComplete="username"
+					/>
 					<button
 						type="submit"
 						className="loginSubmitButton"
@@ -280,41 +266,27 @@ export default function LoginPage({ onLogin }) {
 							Change email
 						</button>
 					</p>
-					<label className="loginField" htmlFor="reset-code">
-						<span>Code</span>
-						<input
-							id="reset-code"
-							name="code"
-							type="text"
-							inputMode="numeric"
-							pattern="[0-9]{6}"
-							value={resetForm.code}
-							onChange={(e) => updateResetField("code", e.target.value)}
-							autoComplete="one-time-code"
-						/>
-					</label>
-					<label className="loginField" htmlFor="reset-password">
-						<span>New password</span>
-						<div className="passwordInputWrap">
-							<input
-								id="reset-password"
-								name="password"
-								type={isPasswordVisible ? "text" : "password"}
-								value={resetForm.password}
-								onChange={(e) => updateResetField("password", e.target.value)}
-								autoComplete="new-password"
-							/>
-							<button
-								type="button"
-								className="passwordToggleButton"
-								aria-label={isPasswordVisible ? "Hide password" : "Show password"}
-								aria-pressed={isPasswordVisible}
-								onClick={() => setIsPasswordVisible((isVisible) => !isVisible)}
-							>
-								{isPasswordVisible ? "Hide" : "Show"}
-							</button>
-						</div>
-					</label>
+					<InputBox
+						id="reset-code"
+						name="code"
+						fieldClassName="loginField"
+						label="Code"
+						inputMode="numeric"
+						pattern="[0-9]{6}"
+						value={resetForm.code}
+						onChange={(value) => updateResetField("code", value)}
+						autoComplete="one-time-code"
+					/>
+					<InputBox
+						id="reset-password"
+						name="password"
+						fieldClassName="loginField"
+						label="New password"
+						value={resetForm.password}
+						onChange={(value) => updateResetField("password", value)}
+						autoComplete="new-password"
+						isPassword
+					/>
 					<button
 						type="submit"
 						className="loginSubmitButton"

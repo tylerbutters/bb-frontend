@@ -84,6 +84,7 @@ beforeEach(() => {
 
 		if (url === `${API_BASE_URL}/users/1` && options.method === "PATCH") {
 			const accountChanges = JSON.parse(options.body)
+			delete accountChanges.currentPassword
 			delete accountChanges.password
 			mockCurrentUser = {
 				...mockCurrentUser,
@@ -395,8 +396,22 @@ test("opens account from the user menu and updates account details", async () =>
 	})
 
 	fireEvent.change(screen.getByLabelText("New password"), { target: { value: "password2" } })
-	fireEvent.click(screen.getByRole("button", { name: "Show password" }))
+	fireEvent.change(screen.getByLabelText("Confirm new password"), {
+		target: { value: "password2" },
+	})
+	fireEvent.change(screen.getByLabelText("Current password"), {
+		target: { value: "password1" },
+	})
+	expect(within(passwordSection).getAllByRole("button", { name: /password/i })).toHaveLength(3)
+	fireEvent.click(screen.getByRole("button", { name: "Show current password" }))
+	expect(screen.getByLabelText("Current password")).toHaveAttribute("type", "text")
+	expect(screen.getByRole("button", { name: "Hide current password" })).toBeInTheDocument()
+	expect(screen.getByLabelText("New password")).toHaveAttribute("type", "password")
+	expect(screen.getByLabelText("Confirm new password")).toHaveAttribute("type", "password")
+	fireEvent.click(screen.getByRole("button", { name: "Show new password" }))
+	fireEvent.click(screen.getByRole("button", { name: "Show confirm new password" }))
 	expect(screen.getByLabelText("New password")).toHaveAttribute("type", "text")
+	expect(screen.getByLabelText("Confirm new password")).toHaveAttribute("type", "text")
 	fireEvent.click(within(passwordSection).getByRole("button", { name: "Save changes" }))
 
 	await waitFor(() => {
@@ -416,9 +431,11 @@ test("opens account from the user menu and updates account details", async () =>
 	expect(accountRequests.map(([, options]) => JSON.parse(options.body))).toEqual([
 		{ displayName: "Taylor" },
 		{ email: "taylor@example.com" },
-		{ password: "password2" },
+		{ currentPassword: "password1", password: "password2" },
 	])
+	expect(screen.getByLabelText("Current password")).toHaveValue("")
 	expect(screen.getByLabelText("New password")).toHaveValue("")
+	expect(screen.getByLabelText("Confirm new password")).toHaveValue("")
 	expect(JSON.parse(window.localStorage.getItem("jsbCurrentUser"))).toEqual({
 		id: 1,
 		email: "taylor@example.com",

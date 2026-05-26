@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
+import InputBox from "../../../components/InputBox"
 import JapaneseText from "../components/JapaneseText"
 import { filterElementOptions } from "./elementOptionsSearch"
 import "./ElementOptionsList.css"
@@ -62,11 +63,11 @@ export default function ElementOptionsList({
 		<>
 			{hasSearch && (
 				<div className="searchInputContainer">
-					<input
+					<InputBox
 						type="text"
 						className="searchInput"
 						value={searchText}
-						onChange={(e) => setSearchText(e.target.value)}
+						onChange={setSearchText}
 						placeholder="Search..."
 					/>
 				</div>

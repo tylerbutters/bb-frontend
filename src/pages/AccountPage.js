@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Link, Navigate } from "react-router-dom"
 import { deleteUser, updateUser } from "../api/users"
+import InputBox from "../components/InputBox"
 import "./TopRightButton.css"
 import "./AuthPage.css"
 
@@ -8,14 +9,15 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 	const [accountForm, setAccountForm] = useState({
 		displayName: currentUser?.displayName || "",
 		email: currentUser?.email || "",
+		currentPassword: "",
 		password: "",
+		passwordConfirmation: "",
 	})
 	const [accountFeedback, setAccountFeedback] = useState({
 		displayName: { status: "idle", message: "" },
 		email: { status: "idle", message: "" },
 		password: { status: "idle", message: "" },
 	})
-	const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 	const [isDeleteConfirming, setIsDeleteConfirming] = useState(false)
 	const [isAccountDeleted, setIsAccountDeleted] = useState(false)
 	const [deleteStatus, setDeleteStatus] = useState("idle")
@@ -34,9 +36,11 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 			...prev,
 			[field]: value,
 		}))
+		const feedbackField =
+			field === "currentPassword" || field === "passwordConfirmation" ? "password" : field
 		setAccountFeedback((prev) => ({
 			...prev,
-			[field]: { status: "idle", message: "" },
+			[feedbackField]: { status: "idle", message: "" },
 		}))
 	}
 
@@ -53,14 +57,32 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 			[field]: { status: "submitting", message: "" },
 		}))
 
+		let payload = { [field]: accountForm[field] }
+		if (field === "password") {
+			if (accountForm.password !== accountForm.passwordConfirmation) {
+				setAccountFeedback((prev) => ({
+					...prev,
+					password: { status: "error", message: "New passwords do not match." },
+				}))
+				return
+			}
+
+			payload = {
+				currentPassword: accountForm.currentPassword,
+				password: accountForm.password,
+			}
+		}
+
 		try {
-			const data = await updateUser(currentUser.id, { [field]: accountForm[field] })
+			const data = await updateUser(currentUser.id, payload)
 			onUserUpdate(data.user)
 			setAccountForm((prev) => ({
 				...prev,
 				displayName: data.user.displayName || "",
 				email: data.user.email || "",
+				currentPassword: field === "password" ? "" : prev.currentPassword,
 				password: field === "password" ? "" : prev.password,
+				passwordConfirmation: field === "password" ? "" : prev.passwordConfirmation,
 			}))
 			setAccountFeedback((prev) => ({
 				...prev,
@@ -108,16 +130,14 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 					onSubmit={(e) => submitAccountSection(e, "displayName")}
 				>
 					<h2>Display name</h2>
-					<label className="accountField" htmlFor="account-display-name">
-						<span>Display name</span>
-						<input
-							id="account-display-name"
-							type="text"
-							value={accountForm.displayName}
-							onChange={(e) => updateAccountField("displayName", e.target.value)}
-							autoComplete="name"
-						/>
-					</label>
+					<InputBox
+						id="account-display-name"
+						fieldClassName="accountField"
+						label="Display name"
+						value={accountForm.displayName}
+						onChange={(value) => updateAccountField("displayName", value)}
+						autoComplete="name"
+					/>
 					<button
 						type="submit"
 						className="accountSubmitButton"
@@ -139,16 +159,15 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 					onSubmit={(e) => submitAccountSection(e, "email")}
 				>
 					<h2>Email</h2>
-					<label className="accountField" htmlFor="account-email">
-						<span>Email</span>
-						<input
-							id="account-email"
-							type="email"
-							value={accountForm.email}
-							onChange={(e) => updateAccountField("email", e.target.value)}
-							autoComplete="email"
-						/>
-					</label>
+					<InputBox
+						id="account-email"
+						fieldClassName="accountField"
+						label="Email"
+						type="email"
+						value={accountForm.email}
+						onChange={(value) => updateAccountField("email", value)}
+						autoComplete="email"
+					/>
 					<button
 						type="submit"
 						className="accountSubmitButton"
@@ -168,27 +187,36 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 					onSubmit={(e) => submitAccountSection(e, "password")}
 				>
 					<h2>Password</h2>
-					<label className="accountField" htmlFor="account-password">
-						<span>New password</span>
-						<div className="passwordInputWrap">
-							<input
-								id="account-password"
-								type={isPasswordVisible ? "text" : "password"}
-								value={accountForm.password}
-								onChange={(e) => updateAccountField("password", e.target.value)}
-								autoComplete="new-password"
-							/>
-							<button
-								type="button"
-								className="passwordToggleButton"
-								aria-label={isPasswordVisible ? "Hide password" : "Show password"}
-								aria-pressed={isPasswordVisible}
-								onClick={() => setIsPasswordVisible((isVisible) => !isVisible)}
-							>
-								{isPasswordVisible ? "Hide" : "Show"}
-							</button>
-						</div>
-					</label>
+					<InputBox
+						id="account-current-password"
+						fieldClassName="accountField"
+						label="Current password"
+						value={accountForm.currentPassword}
+						onChange={(value) => updateAccountField("currentPassword", value)}
+						autoComplete="current-password"
+						isPassword
+						required
+					/>
+					<InputBox
+						id="account-password"
+						fieldClassName="accountField"
+						label="New password"
+						value={accountForm.password}
+						onChange={(value) => updateAccountField("password", value)}
+						autoComplete="new-password"
+						isPassword
+						required
+					/>
+					<InputBox
+						id="account-password-confirmation"
+						fieldClassName="accountField"
+						label="Confirm new password"
+						value={accountForm.passwordConfirmation}
+						onChange={(value) => updateAccountField("passwordConfirmation", value)}
+						autoComplete="new-password"
+						isPassword
+						required
+					/>
 					<button
 						type="submit"
 						className="accountSubmitButton"

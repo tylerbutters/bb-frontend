@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import InputBox from "../../../components/InputBox"
 import "./Element.css"
 import JapaneseText from "../components/JapaneseText"
 
@@ -9,8 +10,7 @@ export default function Counter({ mouse, element, updateElement, allColors }) {
 		setNumber(element.number ?? "0")
 	}, [element.number])
 
-	function onChange(e) {
-		const nextNumber = e.target.value
+	function handleNumberChange(nextNumber) {
 		if (!/^\d*$/.test(nextNumber)) return
 
 		setNumber(nextNumber)
@@ -28,7 +28,7 @@ export default function Counter({ mouse, element, updateElement, allColors }) {
 
 	return (
 		<div className="baseElement">
-			<input
+			<InputBox
 				type="text"
 				className="baseInsideElement counterInput"
 				style={{
@@ -36,7 +36,7 @@ export default function Counter({ mouse, element, updateElement, allColors }) {
 					width: `${Math.max(number.length + 1, 2)}ch`,
 				}}
 				value={number}
-				onChange={onChange}
+				onChange={handleNumberChange}
 				onKeyDown={handleKeyDown}
 				onFocus={(e) => e.target.select()}
 				placeholder="0"
