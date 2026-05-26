@@ -52,6 +52,39 @@ describe("sentence text conversion", () => {
 		])
 	})
 
+	test("prefixes a changed godan ending before the current conjugation", () => {
+		const parts = elementsToTextParts([
+			{
+				elementType: "verb",
+				verbType: "godan-iku",
+				stem: "行",
+				stemKana: "い",
+				ending: "か",
+				conjugation: {
+					stem: "せ",
+					ending: "る",
+					conjugation: {
+						stem: "られ",
+						ending: "る",
+						conjugation: {
+							stem: "た",
+							conjugation: {},
+						},
+					},
+				},
+			},
+		])
+
+		expect(parts).toEqual([
+			{ text: "行", reading: "い" },
+			{ text: "か", reading: undefined },
+			{ text: "せ", reading: undefined },
+			{ text: "られ", reading: undefined },
+			{ text: "た", reading: undefined },
+		])
+		expect(textPartsToString(parts)).toBe("行かせられた")
+	})
+
 	test("uses replacement conjugation text for aru's special negative", () => {
 		const parts = elementsToTextParts([
 			{

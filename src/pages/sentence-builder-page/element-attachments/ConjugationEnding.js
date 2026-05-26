@@ -11,12 +11,19 @@ export function getConjugationEndingUpdate(conjugations, selectedConjugation) {
 	return createConjugationFromData(conjugationData)
 }
 
+export function getConjugationEndingOptions(conjugations, conjugation) {
+	return (
+		conjugation?.conjugationOptions ||
+		conjugations[`${conjugation?.stem || ""}${conjugation?.ending || ""}`]?.conjugationOptions ||
+		[]
+	)
+}
+
 export default function ConjugationEnding({ conjugation, updateConjugation, color }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const elementRef = useRef(null)
 	const verbConjugations = useGrammarStore((state) => state.conjugations)
-	const conjugationOptions =
-		verbConjugations[`${conjugation?.stem}${conjugation?.ending}`]?.conjugationOptions || []
+	const conjugationOptions = getConjugationEndingOptions(verbConjugations, conjugation)
 
 	function onSelect(selectedConjugation) {
 		updateConjugation(getConjugationEndingUpdate(verbConjugations, selectedConjugation))

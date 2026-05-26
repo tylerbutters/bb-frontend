@@ -1,4 +1,4 @@
-import { getConjugationEndingUpdate } from "./ConjugationEnding"
+import { getConjugationEndingOptions, getConjugationEndingUpdate } from "./ConjugationEnding"
 
 describe("getConjugationEndingUpdate", () => {
 	test("preserves te conjugation metadata when changing an existing ending", () => {
@@ -42,5 +42,38 @@ describe("getConjugationEndingUpdate", () => {
 
 	test("returns an empty update when the selected conjugation is not defined", () => {
 		expect(getConjugationEndingUpdate({}, { text: "missing" })).toEqual({})
+	})
+})
+
+describe("getConjugationEndingOptions", () => {
+	test("uses prompt-attached options before table lookup", () => {
+		const promptOptions = [{ text: "た" }]
+
+		expect(
+			getConjugationEndingOptions(
+				{},
+				{
+					stem: "られ",
+					ending: "る",
+					conjugationOptions: promptOptions,
+				},
+			),
+		).toBe(promptOptions)
+	})
+
+	test("falls back to the local conjugation table", () => {
+		expect(
+			getConjugationEndingOptions(
+				{
+					られる: {
+						conjugationOptions: [{ text: "た" }],
+					},
+				},
+				{
+					stem: "られ",
+					ending: "る",
+				},
+			),
+		).toEqual([{ text: "た" }])
 	})
 })

@@ -14,6 +14,45 @@ import {
 	initializeNestedElement,
 } from "../grammar/conjugationOptions"
 
+export function getConjugationOptionsForParent(parentConjugation, conjugations) {
+	let conjugationOptions
+
+	switch (parentConjugation.elementType) {
+		case "adjective":
+			conjugationOptions = conjugations["iAdjDefault"]?.conjugationOptions
+			break
+		case "verb": //is the first conjugation
+			switch (parentConjugation.verbType) {
+				case "suru":
+					conjugationOptions = conjugations["suruDefault"]?.conjugationOptions || []
+					break
+				case "kuru":
+					conjugationOptions = conjugations["kuruDefault"]?.conjugationOptions || []
+					break
+				case "ichidan":
+					conjugationOptions = conjugations["ichidanDefault"]?.conjugationOptions || []
+					break
+				case "kureru":
+					conjugationOptions = conjugations["kureruDefault"]?.conjugationOptions || []
+					break
+				default:
+					conjugationOptions = getGodanConjugationOptions(parentConjugation)
+					break
+			}
+			break
+		case "desu":
+			conjugationOptions = conjugations["desuDefault"]?.conjugationOptions
+			break
+		default:
+			conjugationOptions =
+				parentConjugation.conjugationOptions ||
+				conjugations[`${parentConjugation.stem || ""}${parentConjugation.ending || ""}`]
+					?.conjugationOptions ||
+				[]
+	}
+	return conjugationOptions || []
+}
+
 export default function Conjugation({
 	parentConjugation,
 	updateConjugation,
@@ -29,7 +68,7 @@ export default function Conjugation({
 	const currentConjugation = parentConjugation?.conjugation
 	const auxiliaries = useGrammarStore((state) => state.auxiliaries)
 	const particles = useGrammarStore((state) => state.particles)
-	const conjugationOptions = getConjugationOptions()
+	const conjugationOptions = getConjugationOptionsForParent(parentConjugation, conjugations)
 	const particleOptions = useMemo(
 		() => particles.filter((particle) => particle.attachesTo.includes("te")),
 		[particles],
@@ -63,43 +102,6 @@ export default function Conjugation({
 		if (clickedInsideChildElement && clickedInsideChildElement !== e.currentTarget) return
 
 		setIsModalOpen(true)
-	}
-
-	function getConjugationOptions() {
-		let conjugationOptions
-
-		switch (parentConjugation.elementType) {
-			case "adjective":
-				conjugationOptions = conjugations["iAdjDefault"]?.conjugationOptions
-				break
-			case "verb": //is the first conjugation
-				switch (parentConjugation.verbType) {
-					case "suru":
-						conjugationOptions = conjugations["suruDefault"]?.conjugationOptions || []
-						break
-					case "kuru":
-						conjugationOptions = conjugations["kuruDefault"]?.conjugationOptions || []
-						break
-					case "ichidan":
-						conjugationOptions = conjugations["ichidanDefault"]?.conjugationOptions || []
-						break
-					case "kureru":
-						conjugationOptions = conjugations["kureruDefault"]?.conjugationOptions || []
-						break
-					default:
-						conjugationOptions = getGodanConjugationOptions(parentConjugation)
-						break
-				}
-				break
-			case "desu":
-				conjugationOptions = conjugations["desuDefault"]?.conjugationOptions
-				break
-			default:
-				conjugationOptions =
-					conjugations[`${parentConjugation.stem || ""}${parentConjugation.ending || ""}`]
-						?.conjugationOptions || []
-		}
-		return conjugationOptions || []
 	}
 
 	function getConjugationUpdate(selectedConjugation) {
@@ -151,6 +153,7 @@ export default function Conjugation({
 
 				updateConjugation({
 					...parentConjugation,
+					baseEnding: parentConjugation.baseEnding || parentConjugation.ending,
 					ending: selectedConjugation.text,
 					conjugation: {
 						conjugationType: selectedConjugation.conjugationType,
@@ -166,6 +169,7 @@ export default function Conjugation({
 				//change the ending of verb and add conjugation
 				updateConjugation({
 					...parentConjugation,
+					baseEnding: parentConjugation.baseEnding || parentConjugation.ending,
 					ending: selectedCategory.text,
 					conjugation: createConjugationFromData(conjugationData),
 				})

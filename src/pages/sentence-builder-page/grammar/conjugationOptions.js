@@ -20,7 +20,9 @@ const GODAN_DEFAULTS = {
 const ARU_B1_OPTIONS = GODAN_DEFAULTS.B1.filter((option) => option.text !== "ない")
 
 function getGodanEnding(parentConjugation) {
-	return parentConjugation.verbType === "godan-haru" ? "る" : parentConjugation.ending
+	return parentConjugation.verbType === "godan-haru"
+		? "る"
+		: parentConjugation.baseEnding || parentConjugation.ending
 }
 
 function createGodanCategory(text, list) {

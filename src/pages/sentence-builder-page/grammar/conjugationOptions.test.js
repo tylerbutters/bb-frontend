@@ -47,6 +47,24 @@ describe("getGodanConjugationOptions", () => {
 			list: [{ text: "った" }],
 		})
 	})
+
+	test("uses the base ending after a godan verb ending has shifted", () => {
+		const options = getGodanConjugationOptions({
+			elementType: "verb",
+			verbType: "godan-iku",
+			baseEnding: "く",
+			ending: "か",
+		})
+
+		expect(findCategory(options, "か")).toEqual({
+			text: "か",
+			list: [{ text: "ない" }, { text: "れる" }, { text: "せる" }, { text: "ず" }],
+		})
+		expect(findCategory(options, "った")).toEqual({
+			text: "った",
+			list: [{ text: "った" }],
+		})
+	})
 })
 
 describe("initializeNestedElement", () => {
