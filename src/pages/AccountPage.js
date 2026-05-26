@@ -4,8 +4,10 @@ import { deleteUser, updateUser } from "../api/users"
 import InputBox from "../components/InputBox"
 import "./TopRightButton.css"
 import "./AuthPage.css"
+import ResetPasswordPage from "./ResetPasswordPage"
 
 export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate }) {
+	const [currentPage, setCurrentPage] = useState("account")
 	const [accountForm, setAccountForm] = useState({
 		displayName: currentUser?.displayName || "",
 		email: currentUser?.email || "",
@@ -110,6 +112,10 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 		}
 	}
 
+	if (currentPage === "resetPassword") {
+		return <ResetPasswordPage goBack={() => setCurrentPage("account")} />
+	}
+
 	return (
 		<div className="app accountPage">
 			<Link className="topRightButton" to="/">
@@ -208,7 +214,11 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 						isPassword
 						required
 					/>
-					<button type="button" className="authTextButton">
+					<button
+						type="button"
+						className="authTextButton"
+						onClick={() => setCurrentPage("resetPassword")}
+					>
 						Forgot password?
 					</button>
 					<button

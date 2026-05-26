@@ -26,12 +26,14 @@ export default function LoginPage({ onLogin }) {
 		setLoginMessage("")
 	}
 
-	function showLogin() {
-		setAuthMode("login")
-	}
-
-	function showResetPassword() {
-		setAuthMode("requestReset")
+	function finishResetPassword(payload) {
+		setLoginForm({
+			email: payload.email,
+			password: "",
+		})
+		setLoginStatus(payload.status)
+		setLoginMessage(payload.message)
+		setLoginMessageType(payload.messageType)
 	}
 
 	async function submitLogin(e) {
@@ -50,61 +52,54 @@ export default function LoginPage({ onLogin }) {
 		}
 	}
 
+	if (authMode === "resetPassword") {
+		return <ResetPasswordPage onFinish={finishResetPassword} goBack={() => setAuthMode("login")} />
+	}
+
 	return (
 		<div className="app loginPage">
 			<Link className="topRightButton" to="/">
 				Back
 			</Link>
-			{authMode === "login" && (
-				<form className="loginForm" method="post" action="/login" onSubmit={submitLogin}>
-					<h1>Login</h1>
-					<InputBox
-						id="login-email"
-						name="email"
-						fieldClassName="loginField"
-						label="Email"
-						type="email"
-						value={loginForm.email}
-						onChange={(value) => updateLoginField("email", value)}
-						autoComplete="username"
-					/>
-					<InputBox
-						id="login-password"
-						name="password"
-						fieldClassName="loginField"
-						label="Password"
-						value={loginForm.password}
-						onChange={(value) => updateLoginField("password", value)}
-						autoComplete="current-password"
-						isPassword
-					/>
-					<button
-						type="submit"
-						className="loginSubmitButton"
-						disabled={loginStatus === "submitting"}
-					>
-						{loginStatus === "submitting" ? "Logging in..." : "Login"}
-					</button>
-					<button type="button" className="authTextButton" onClick={showResetPassword}>
-						Forgot password?
-					</button>
-					{loginMessage && (
-						<p className={`loginMessage loginMessage${loginMessageType}`}>{loginMessage}</p>
-					)}
-					<p className="authSwitchText">
-						Don't have an account? <Link to="/signup">Sign up</Link>
-					</p>
-				</form>
-			)}
-			{authMode === "requestReset" && (
-				<ResetPasswordPage
-					setLoginForm
-					setLoginStatus
-					setLoginMessage
-					setLoginMessageType
-					showLogin={showLogin}
+			<form className="loginForm" method="post" action="/login" onSubmit={submitLogin}>
+				<h1>Login</h1>
+				<InputBox
+					id="login-email"
+					name="email"
+					fieldClassName="loginField"
+					label="Email"
+					type="email"
+					value={loginForm.email}
+					onChange={(value) => updateLoginField("email", value)}
+					autoComplete="username"
 				/>
-			)}
+				<InputBox
+					id="login-password"
+					name="password"
+					fieldClassName="loginField"
+					label="Password"
+					value={loginForm.password}
+					onChange={(value) => updateLoginField("password", value)}
+					autoComplete="current-password"
+					isPassword
+				/>
+				<button type="submit" className="loginSubmitButton" disabled={loginStatus === "submitting"}>
+					{loginStatus === "submitting" ? "Logging in..." : "Login"}
+				</button>
+				<button
+					type="button"
+					className="authTextButton"
+					onClick={() => setAuthMode("resetPassword")}
+				>
+					Forgot password?
+				</button>
+				{loginMessage && (
+					<p className={`loginMessage loginMessage${loginMessageType}`}>{loginMessage}</p>
+				)}
+				<p className="authSwitchText">
+					Don't have an account? <Link to="/signup">Sign up</Link>
+				</p>
+			</form>
 		</div>
 	)
 }
