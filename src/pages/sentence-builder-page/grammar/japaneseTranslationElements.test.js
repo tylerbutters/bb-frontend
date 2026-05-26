@@ -186,4 +186,94 @@ describe("japaneseTranslationToElements", () => {
 			undefined,
 		])
 	})
+
+	test("normalizes generated potential negative past chains", () => {
+		const [element] = japaneseTranslationToElements([
+			{
+				kanji: "読む",
+				kana: "よむ",
+				conjugation: ["potential", "negative", "past"],
+			},
+		])
+
+		expect(element).toEqual(
+			expect.objectContaining({
+				ending: "め",
+				baseEnding: "む",
+				conjugation: expect.objectContaining({
+					ending: "る",
+					conjugation: expect.objectContaining({
+						stem: "な",
+						ending: "い",
+						conjugation: {
+							stem: "かった",
+							conjugation: {},
+						},
+					}),
+				}),
+			}),
+		)
+	})
+
+	test("normalizes generated hard causative passive desire negative chains", () => {
+		const [element] = japaneseTranslationToElements([
+			{
+				kanji: "行く",
+				kana: "いく",
+				conjugation: ["causative", "passive", "want", "negative"],
+			},
+		])
+
+		expect(element).toEqual(
+			expect.objectContaining({
+				ending: "か",
+				baseEnding: "く",
+				conjugation: expect.objectContaining({
+					stem: "せ",
+					ending: "る",
+					conjugation: expect.objectContaining({
+						stem: "られ",
+						ending: "る",
+						conjugation: expect.objectContaining({
+							stem: "た",
+							ending: "い",
+							conjugation: expect.objectContaining({
+								stem: "くな",
+								ending: "い",
+								conjugation: {},
+							}),
+						}),
+					}),
+				}),
+			}),
+		)
+	})
+
+	test("converts representative generated prompt payloads without dropping words", () => {
+		const generatedPayloads = [
+			[
+				{ kanji: "私", kana: "わたし", particle: "は" },
+				{ kanji: "寿司", kana: "すし", particle: "を" },
+				{ kanji: "食べる", kana: "たべる" },
+			],
+			[
+				{ kanji: "私", kana: "わたし", particle: "は" },
+				{ kanji: "学校", kana: "がっこう", particle: "で" },
+				{ kanji: "日本語", kana: "にほんご", particle: "を" },
+				{ kanji: "勉強する", kana: "べんきょうする", conjugation: ["past"] },
+			],
+			[
+				{ kanji: "雨", kana: "あめ", particle: "が" },
+				{ kanji: "降る", kana: "ふる", conjugation: ["te"] },
+				{ kanji: "私", kana: "わたし", particle: "は" },
+				{ kanji: "学校", kana: "がっこう", particle: "で" },
+				{ kanji: "日本語", kana: "にほんご", particle: "を" },
+				{ kanji: "勉強する", kana: "べんきょうする", conjugation: ["past"] },
+			],
+		]
+
+		for (const payload of generatedPayloads) {
+			expect(japaneseTranslationToElements(payload)).toHaveLength(payload.length)
+		}
+	})
 })

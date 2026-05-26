@@ -36,11 +36,46 @@ const BASE_VERB_CONJUGATION_TYPES = {
 		kuru: "きた",
 		suru: "した",
 	},
+	negative: {
+		ichidan: "ない",
+		kureru: "ない",
+		kuru: "こない",
+		suru: "しない",
+	},
+	polite: {
+		ichidan: "ます",
+		kureru: "ます",
+		kuru: "きます",
+		suru: "します",
+	},
+	potential: {
+		ichidan: "られる",
+		kureru: "られる",
+		kuru: "こられる",
+		suru: "できる",
+	},
+	te: {
+		ichidan: "て",
+		kureru: "て",
+		kuru: "きて",
+		suru: "して",
+	},
+	want: {
+		ichidan: "たい",
+		kureru: "たい",
+		kuru: "きたい",
+		suru: "したい",
+	},
 }
 const CONJUGATION_TYPE_OPTIONS = {
 	causative: ["させる", "せる", "こさせる"],
+	negative: ["ない", "くない", "しない", "こない", "せん"],
 	passive: ["られる", "れる", "される", "こられる"],
 	past: ["た", "した", "きた", "かった", "だった"],
+	polite: ["ます", "します", "きます"],
+	potential: ["られる", "る", "できる", "こられる"],
+	te: ["て", "して", "きて", "くて"],
+	want: ["たい", "したい", "きたい"],
 }
 const PROMPT_CONJUGATION_TYPES = new Set([
 	...Object.keys(BASE_VERB_CONJUGATION_TYPES),
@@ -204,9 +239,20 @@ function resolveGodanConjugationTypeTexts(element, type) {
 
 	const optionText = {
 		causative: "せる",
+		negative: "ない",
 		passive: "れる",
+		polite: "ます",
+		potential: "る",
+		te: "__te__",
+		want: "たい",
 	}[type]
 	if (!optionText) return []
+
+	if (optionText === "__te__") {
+		const godanOptions = getGodanConjugationOptions(element)
+		const teCategory = godanOptions[godanOptions.length - 2]
+		return teCategory ? [teCategory.text] : []
+	}
 
 	const category = getGodanCategoryByListText(element, optionText)
 	return category ? [category.text, optionText] : []
