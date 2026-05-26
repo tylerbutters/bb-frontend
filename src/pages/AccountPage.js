@@ -11,7 +11,7 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 		email: currentUser?.email || "",
 		currentPassword: "",
 		password: "",
-		passwordConfirmation: "",
+		confirmPassword: "",
 	})
 	const [accountFeedback, setAccountFeedback] = useState({
 		displayName: { status: "idle", message: "" },
@@ -37,7 +37,7 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 			[field]: value,
 		}))
 		const feedbackField =
-			field === "currentPassword" || field === "passwordConfirmation" ? "password" : field
+			field === "currentPassword" || field === "confirmPassword" ? "password" : field
 		setAccountFeedback((prev) => ({
 			...prev,
 			[feedbackField]: { status: "idle", message: "" },
@@ -59,17 +59,10 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 
 		let payload = { [field]: accountForm[field] }
 		if (field === "password") {
-			if (accountForm.password !== accountForm.passwordConfirmation) {
-				setAccountFeedback((prev) => ({
-					...prev,
-					password: { status: "error", message: "New passwords do not match." },
-				}))
-				return
-			}
-
 			payload = {
 				currentPassword: accountForm.currentPassword,
 				password: accountForm.password,
+				confirmPassword: accountForm.confirmPassword,
 			}
 		}
 
@@ -82,7 +75,7 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 				email: data.user.email || "",
 				currentPassword: field === "password" ? "" : prev.currentPassword,
 				password: field === "password" ? "" : prev.password,
-				passwordConfirmation: field === "password" ? "" : prev.passwordConfirmation,
+				confirmPassword: field === "password" ? "" : prev.confirmPassword,
 			}))
 			setAccountFeedback((prev) => ({
 				...prev,
@@ -146,9 +139,7 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 						{accountFeedback.displayName.status === "submitting" ? "Saving..." : "Save changes"}
 					</button>
 					{accountFeedback.displayName.message && (
-						<p
-							className={`accountMessage accountMessage${accountFeedback.displayName.status}`}
-						>
+						<p className={`accountMessage accountMessage${accountFeedback.displayName.status}`}>
 							{accountFeedback.displayName.message}
 						</p>
 					)}
@@ -211,12 +202,15 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 						id="account-password-confirmation"
 						fieldClassName="accountField"
 						label="Confirm new password"
-						value={accountForm.passwordConfirmation}
-						onChange={(value) => updateAccountField("passwordConfirmation", value)}
+						value={accountForm.confirmPassword}
+						onChange={(value) => updateAccountField("confirmPassword", value)}
 						autoComplete="new-password"
 						isPassword
 						required
 					/>
+					<button type="button" className="authTextButton">
+						Forgot password?
+					</button>
 					<button
 						type="submit"
 						className="accountSubmitButton"

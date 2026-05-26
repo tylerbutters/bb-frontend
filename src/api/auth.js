@@ -16,9 +16,9 @@ export async function requestPasswordReset({ email }) {
 	})
 }
 
-export async function confirmPasswordReset({ email, code, password }) {
+export async function confirmPasswordReset({ email, code, password, confirmPassword }) {
 	return apiRequest("/login/password-reset/confirm", {
 		method: "POST",
-		body: { email, code, password },
+		body: { email, code, password, confirmPassword },
 	})
 }
