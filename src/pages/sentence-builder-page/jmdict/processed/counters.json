@@ -1,7 +1,7 @@
 [
   {
     "elementType": "counter",
-    "text": "頁",
+    "text": "ページ",
     "number": "",
     "particle": null,
     "meanings": [
@@ -268,7 +268,7 @@
   },
   {
     "elementType": "counter",
-    "text": "山",
+    "text": "やま",
     "number": "",
     "particle": null,
     "meanings": [
@@ -320,7 +320,7 @@
   },
   {
     "elementType": "counter",
-    "text": "振り",
+    "text": "ふり",
     "number": "",
     "particle": null,
     "meanings": [
@@ -343,7 +343,7 @@
   },
   {
     "elementType": "counter",
-    "text": "切り",
+    "text": "きり",
     "number": "",
     "particle": null,
     "meanings": [

@@ -2,7 +2,7 @@
   {
     "elementType": "suffix",
     "text": "さん",
-    "textKana": "さん",
+    "textKana": "",
     "meanings": [
       "Mr",
       "Mrs",
@@ -15,7 +15,7 @@
   {
     "elementType": "suffix",
     "text": "たっぷり",
-    "textKana": "たっぷり",
+    "textKana": "",
     "meanings": [
       "plentifully",
       "amply",
@@ -29,15 +29,15 @@
   {
     "elementType": "suffix",
     "text": "ちゃん",
-    "textKana": "ちゃん",
+    "textKana": "",
     "meanings": [
       "suffix for familiar person"
     ]
   },
   {
     "elementType": "suffix",
-    "text": "っ放し",
-    "textKana": "っぱなし",
+    "text": "っぱなし",
+    "textKana": "",
     "meanings": [
       "leaving (on, open, unfinished, etc.)",
       "(doing) continuously",
@@ -48,7 +48,7 @@
   {
     "elementType": "suffix",
     "text": "のみ",
-    "textKana": "のみ",
+    "textKana": "",
     "meanings": [
       "only",
       "nothing but"
@@ -56,8 +56,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "惚け",
-    "textKana": "ぼけ",
+    "text": "ぼけ",
+    "textKana": "",
     "meanings": [
       "touched in the head (from)",
       "out of it (from)",
@@ -68,7 +68,7 @@
   {
     "elementType": "suffix",
     "text": "めく",
-    "textKana": "めく",
+    "textKana": "",
     "meanings": [
       "to show signs of ...",
       "to have the appearance of ..."
@@ -76,8 +76,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "遣る",
-    "textKana": "やる",
+    "text": "やる",
+    "textKana": "",
     "meanings": [
       "to do ... completely",
       "to do ... broadly",
@@ -87,7 +87,7 @@
   {
     "elementType": "suffix",
     "text": "らしい",
-    "textKana": "らしい",
+    "textKana": "",
     "meanings": [
       "-ish",
       "like a ...",
@@ -100,7 +100,7 @@
   {
     "elementType": "suffix",
     "text": "イズム",
-    "textKana": "イズム",
+    "textKana": "",
     "meanings": [
       "ism",
       "-ism"
@@ -109,7 +109,7 @@
   {
     "elementType": "suffix",
     "text": "オンリー",
-    "textKana": "オンリー",
+    "textKana": "",
     "meanings": [
       "only",
       "just",
@@ -119,7 +119,7 @@
   {
     "elementType": "suffix",
     "text": "ジャスト",
-    "textKana": "ジャスト",
+    "textKana": "",
     "meanings": [
       "just",
       "exactly",
@@ -131,7 +131,7 @@
   {
     "elementType": "suffix",
     "text": "ナウ",
-    "textKana": "ナウ",
+    "textKana": "",
     "meanings": [
       "currently at ...",
       "now doing ...",
@@ -141,7 +141,7 @@
   {
     "elementType": "suffix",
     "text": "ネス",
-    "textKana": "ネス",
+    "textKana": "",
     "meanings": [
       "-ness"
     ]
@@ -149,7 +149,7 @@
   {
     "elementType": "suffix",
     "text": "プラス",
-    "textKana": "プラス",
+    "textKana": "",
     "meanings": [
       "plus",
       "addition"
@@ -158,7 +158,7 @@
   {
     "elementType": "suffix",
     "text": "くらい",
-    "textKana": "くらい",
+    "textKana": "",
     "meanings": [
       "approximately",
       "about",
@@ -174,8 +174,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "易い",
-    "textKana": "やすい",
+    "text": "やすい",
+    "textKana": "",
     "meanings": [
       "likely to ...",
       "have a tendency to ...",
@@ -184,8 +184,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "成す",
-    "textKana": "なす",
+    "text": "なす",
+    "textKana": "",
     "meanings": [
       "to do intentionally"
     ]
@@ -193,7 +193,7 @@
   {
     "elementType": "suffix",
     "text": "する",
-    "textKana": "する",
+    "textKana": "",
     "meanings": [
       "verbalizing suffix (applies to nouns noted in this dictionary with the part of speech \"vs\")"
     ]
@@ -217,8 +217,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "一寸",
-    "textKana": "ちょっと",
+    "text": "ちょっと",
+    "textKana": "",
     "meanings": [
       "a little more than (a week, month, etc.)",
       "slightly more than"
@@ -244,8 +244,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "過ぎる",
-    "textKana": "すぎる",
+    "text": "すぎる",
+    "textKana": "",
     "meanings": [
       "to be excessive",
       "to be too much",
@@ -281,8 +281,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "掛け",
-    "textKana": "かけ",
+    "text": "かけ",
+    "textKana": "",
     "meanings": [
       "hanger",
       "holder",
@@ -300,8 +300,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "掛ける",
-    "textKana": "かける",
+    "text": "かける",
+    "textKana": "",
     "meanings": [
       "to be partway doing ...",
       "to begin (but not complete) ...",
@@ -334,8 +334,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "共",
-    "textKana": "ども",
+    "text": "ども",
+    "textKana": "",
     "meanings": [
       "first-person plural (or singular)",
       "second or third person plural (implies speaker is of higher status than those referred to)"
@@ -386,8 +386,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "兼ねる",
-    "textKana": "かねる",
+    "text": "かねる",
+    "textKana": "",
     "meanings": [
       "to be unable to",
       "to find difficult (unpleasant, awkward, painful) to do"
@@ -395,8 +395,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "御",
-    "textKana": "ご",
+    "text": "ご",
+    "textKana": "",
     "meanings": [
       "honorific suffix"
     ]
@@ -412,8 +412,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "攻め",
-    "textKana": "せめ",
+    "text": "せめ",
+    "textKana": "",
     "meanings": [
       "barrage (of)",
       "flood (of)"
@@ -554,8 +554,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "所",
-    "textKana": "ところ",
+    "text": "ところ",
+    "textKana": "",
     "meanings": [
       "place",
       "spot",
@@ -618,8 +618,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "上がり",
-    "textKana": "あがり",
+    "text": "あがり",
+    "textKana": "",
     "meanings": [
       "after (rain, illness, etc.)",
       "ex- (e.g. ex-bureaucrat)",
@@ -638,8 +638,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "上げる",
-    "textKana": "あげる",
+    "text": "あげる",
+    "textKana": "",
     "meanings": [
       "to complete ...",
       "to humbly do ..."
@@ -647,8 +647,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "振り",
-    "textKana": "ぶり",
+    "text": "ぶり",
+    "textKana": "",
     "meanings": [
       "way",
       "manner",
@@ -714,8 +714,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "千切る",
-    "textKana": "ちぎる",
+    "text": "ちぎる",
+    "textKana": "",
     "meanings": [
       "to do ... heavily",
       "to do ... heartily",
@@ -753,8 +753,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "達",
-    "textKana": "たち",
+    "text": "たち",
+    "textKana": "",
     "meanings": [
       "pluralizing suffix (esp. for people and animals; formerly honorific)"
     ]
@@ -816,8 +816,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "摘み",
-    "textKana": "つまみ",
+    "text": "つまみ",
+    "textKana": "",
     "meanings": [
       "a pinch (e.g. of salt)"
     ]
@@ -870,8 +870,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "当たり",
-    "textKana": "あたり",
+    "text": "あたり",
+    "textKana": "",
     "meanings": [
       "per",
       "each"
@@ -879,8 +879,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "当て",
-    "textKana": "あて",
+    "text": "あて",
+    "textKana": "",
     "meanings": [
       "addressed to",
       "per"
@@ -968,8 +968,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "付ける",
-    "textKana": "つける",
+    "text": "つける",
+    "textKana": "",
     "meanings": [
       "to do intensely",
       "to do fiercely",
@@ -1060,8 +1060,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "毎に",
-    "textKana": "ごとに",
+    "text": "ごとに",
+    "textKana": "",
     "meanings": [
       "one by one",
       "each",
@@ -1167,16 +1167,16 @@
   },
   {
     "elementType": "suffix",
-    "text": "居る",
-    "textKana": "おる",
+    "text": "おる",
+    "textKana": "",
     "meanings": [
       "to (have the audacity to) do"
     ]
   },
   {
     "elementType": "suffix",
-    "text": "共",
-    "textKana": "とも",
+    "text": "とも",
+    "textKana": "",
     "meanings": [
       "both",
       "all",
@@ -1320,8 +1320,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "目",
-    "textKana": "め",
+    "text": "め",
+    "textKana": "",
     "meanings": [
       "ordinal number suffix",
       "somewhat",
@@ -1342,8 +1342,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "いい",
-    "textKana": "いい",
+    "text": "良い",
+    "textKana": "よい",
     "meanings": [
       "easy to ..."
     ]
@@ -1359,8 +1359,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "熟す",
-    "textKana": "こなす",
+    "text": "こなす",
+    "textKana": "",
     "meanings": [
       "to do ... well",
       "to do ... completely"
@@ -1389,7 +1389,7 @@
   {
     "elementType": "suffix",
     "text": "がる",
-    "textKana": "がる",
+    "textKana": "",
     "meanings": [
       "to show signs of being",
       "to feel",
@@ -1484,16 +1484,16 @@
   },
   {
     "elementType": "suffix",
-    "text": "開き",
-    "textKana": "ひらき",
+    "text": "ひらき",
+    "textKana": "",
     "meanings": [
       "dried and opened fish"
     ]
   },
   {
     "elementType": "suffix",
-    "text": "宛",
-    "textKana": "ずつ",
+    "text": "ずつ",
+    "textKana": "",
     "meanings": [
       "apiece",
       "each",
@@ -1513,7 +1513,7 @@
   {
     "elementType": "suffix",
     "text": "みたい",
-    "textKana": "みたい",
+    "textKana": "",
     "meanings": [
       "-like",
       "sort of",
@@ -1524,7 +1524,7 @@
   {
     "elementType": "suffix",
     "text": "たい",
-    "textKana": "たい",
+    "textKana": "",
     "meanings": [
       "very ..."
     ]
@@ -1544,7 +1544,7 @@
   {
     "elementType": "suffix",
     "text": "か",
-    "textKana": "か",
+    "textKana": "",
     "meanings": [
       "-al",
       "-ial",
@@ -1557,15 +1557,15 @@
   {
     "elementType": "suffix",
     "text": "さ",
-    "textKana": "さ",
+    "textKana": "",
     "meanings": [
       "-ness"
     ]
   },
   {
     "elementType": "suffix",
-    "text": "等",
-    "textKana": "ら",
+    "text": "ら",
+    "textKana": "",
     "meanings": [
       "pluralizing suffix",
       "or so",
@@ -1588,7 +1588,7 @@
   {
     "elementType": "suffix",
     "text": "だてらに",
-    "textKana": "だてらに",
+    "textKana": "",
     "meanings": [
       "in a way that is uncharacteristic of ...",
       "in a way that is unbecoming to ...",
@@ -1635,7 +1635,7 @@
   {
     "elementType": "suffix",
     "text": "っぽい",
-    "textKana": "っぽい",
+    "textKana": "",
     "meanings": [
       "-ish",
       "-like"
@@ -1693,8 +1693,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "無さそう",
-    "textKana": "なさそう",
+    "text": "なさそう",
+    "textKana": "",
     "meanings": [
       "does not seem",
       "unlikely",
@@ -1704,7 +1704,7 @@
   {
     "elementType": "suffix",
     "text": "ない",
-    "textKana": "ない",
+    "textKana": "",
     "meanings": [
       "not"
     ]
@@ -1712,7 +1712,7 @@
   {
     "elementType": "suffix",
     "text": "デー",
-    "textKana": "デー",
+    "textKana": "",
     "meanings": [
       "day (as in holiday)"
     ]
@@ -1730,8 +1730,8 @@
   },
   {
     "elementType": "suffix",
-    "text": "難い",
-    "textKana": "にくい",
+    "text": "にくい",
+    "textKana": "",
     "meanings": [
       "difficult to ...",
       "hard to ..."

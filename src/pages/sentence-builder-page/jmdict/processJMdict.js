@@ -17,27 +17,28 @@ const __dirname = path.dirname(__filename)
 
 // -------------------- helpers --------------------
 
-function hasPos(entry, tag) {
-	return entry.sense?.some((s) => s.partOfSpeech?.includes(tag))
-}
-
-function getFirstKanji(entry) {
-	const kanji = entry.kanji?.[0]?.text || entry.kana?.[0]?.text || ""
+function getTextAndKana(entry, hasUsuallyKanaTag) {
+	const kanji = entry.kanji?.[0]?.text || ""
 	const kana = entry.kana?.[0]?.text || ""
 
-	if (kanji === "為る" && kana === "する") return "する"
-	if (kanji === "来る") return "くる"
-	if (kanji === "良い") return "いい"
+	if (hasUsuallyKanaTag) {
+		return {
+			text: kana,
+			kana: "",
+		}
+	}
 
-	return kanji
-}
+	if (kanji) {
+		return {
+			text: kanji,
+			kana,
+		}
+	}
 
-function getFirstKana(entry) {
-	const kana = entry.kana?.[0]?.text || ""
-
-	if (kana === "よい") return "いい"
-
-	return kana
+	return {
+		text: kana,
+		kana: "",
+	}
 }
 
 function getStem(word, type) {
@@ -58,18 +59,6 @@ function getEnding(word, type) {
 	}
 
 	return word.slice(-1)
-}
-
-function isSuruVerb(entry) {
-	const word = entry.kanji?.[0]?.text || entry.kana?.[0]?.text || ""
-
-	// pure verbs
-	if (word === "する" || word === "為る") return false
-
-	// JMdict suru compounds are tagged vs BUT NOT vk
-	const posList = entry.sense?.flatMap((s) => s.partOfSpeech || []) || []
-
-	return posList.includes("vs") || posList.includes("vs-s")
 }
 
 function getMeanings(entry, wordTag) {
@@ -94,11 +83,9 @@ function mapVerbType(wordTag) {
 	return null
 }
 
-function mapAdjectiveType(wordTag, kana) {
-	if (wordTag === "adj-i") {
-		if (kana === "いい") return "ii"
-		return "i-type"
-	}
+function mapAdjectiveType(wordTag) {
+	if (wordTag === "adj-ix") return "ii"
+	if (wordTag === "adj-i") return "i-type"
 	if (wordTag === "adj-na") return "na-type"
 	return null
 }
@@ -111,9 +98,9 @@ function addVerb(wordTag, word, kana, entry) {
 	if (!verbType) return
 
 	//if its a suru verb then add する on the end
-	if (verbType === "suru" && isSuruVerb(entry)) {
+	if (verbType === "suru" && !word.endsWith("する")) {
 		word += "する"
-		kana += "する"
+		if (kana) kana += "する"
 	}
 
 	output.verbs.push({
@@ -130,7 +117,7 @@ function addVerb(wordTag, word, kana, entry) {
 	})
 }
 function addAdjective(wordTag, word, kana, entry) {
-	const adjectiveType = mapAdjectiveType(wordTag, kana)
+	const adjectiveType = mapAdjectiveType(wordTag)
 
 	if (!adjectiveType) return
 
@@ -214,21 +201,19 @@ function processJMdict() {
 	const JMdictJSON = JSON.parse(fs.readFileSync(sourcePath, "utf8"))
 
 	for (const entry of JMdictJSON.words) {
-		let word = getFirstKanji(entry)
-		let kana = getFirstKana(entry)
-
-		if (!word) continue
-
 		const wordTags = [...new Set(entry.sense?.flatMap((s) => s.partOfSpeech || []) || [])]
+		const miscTags = [...new Set(entry.sense?.flatMap((s) => s.misc || []) || [])]
+		const hasUsuallyKanaTag = miscTags.includes("uk")
+		const { text, kana } = getTextAndKana(entry, hasUsuallyKanaTag)
 
 		for (const wordTag of wordTags) {
-			addVerb(wordTag, word, kana, entry)
-			addAdjective(wordTag, word, kana, entry)
-			addPrefix(wordTag, word, kana, entry)
-			addSuffix(wordTag, word, kana, entry)
-			addCounter(wordTag, word, entry)
-			addAdverb(wordTag, word, kana, entry)
-			addNoun(wordTag, word, kana, entry)
+			addVerb(wordTag, text, kana, entry)
+			addAdjective(wordTag, text, kana, entry)
+			addPrefix(wordTag, text, kana, entry)
+			addSuffix(wordTag, text, kana, entry)
+			addCounter(wordTag, text, entry)
+			addAdverb(wordTag, text, kana, entry)
+			addNoun(wordTag, text, kana, entry)
 		}
 	}
 

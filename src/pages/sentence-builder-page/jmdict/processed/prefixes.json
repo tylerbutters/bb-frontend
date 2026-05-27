@@ -1,8 +1,8 @@
 [
   {
     "elementType": "prefix",
-    "text": "彼の",
-    "textKana": "あの",
+    "text": "あの",
+    "textKana": "",
     "meanings": [
       "that",
       "those",
@@ -12,7 +12,7 @@
   {
     "elementType": "prefix",
     "text": "あんな",
-    "textKana": "あんな",
+    "textKana": "",
     "meanings": [
       "that sort of",
       "that kind of",
@@ -23,8 +23,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "こう言う",
-    "textKana": "こういう",
+    "text": "こういう",
+    "textKana": "",
     "meanings": [
       "such",
       "this sort of",
@@ -34,7 +34,7 @@
   {
     "elementType": "prefix",
     "text": "こんな",
-    "textKana": "こんな",
+    "textKana": "",
     "meanings": [
       "this sort of",
       "this kind of",
@@ -44,8 +44,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "其の",
-    "textKana": "その",
+    "text": "その",
+    "textKana": "",
     "meanings": [
       "that",
       "the",
@@ -55,7 +55,7 @@
   {
     "elementType": "prefix",
     "text": "そんな",
-    "textKana": "そんな",
+    "textKana": "",
     "meanings": [
       "such",
       "that sort of",
@@ -66,7 +66,7 @@
   {
     "elementType": "prefix",
     "text": "でも",
-    "textKana": "でも",
+    "textKana": "",
     "meanings": [
       "pseudo-",
       "quack",
@@ -76,8 +76,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "飛んだ",
-    "textKana": "とんだ",
+    "text": "とんだ",
+    "textKana": "",
     "meanings": [
       "unexpected",
       "unlikely",
@@ -91,8 +91,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "どう言う",
-    "textKana": "どういう",
+    "text": "どういう",
+    "textKana": "",
     "meanings": [
       "what kind of",
       "what sort of",
@@ -102,7 +102,7 @@
   {
     "elementType": "prefix",
     "text": "どんな",
-    "textKana": "どんな",
+    "textKana": "",
     "meanings": [
       "what kind of",
       "what sort of",
@@ -115,8 +115,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "本の",
-    "textKana": "ほんの",
+    "text": "ほんの",
+    "textKana": "",
     "meanings": [
       "mere",
       "only",
@@ -127,7 +127,7 @@
   {
     "elementType": "prefix",
     "text": "アフター",
-    "textKana": "アフター",
+    "textKana": "",
     "meanings": [
       "after"
     ]
@@ -135,7 +135,7 @@
   {
     "elementType": "prefix",
     "text": "アンチ",
-    "textKana": "アンチ",
+    "textKana": "",
     "meanings": [
       "anti-"
     ]
@@ -143,7 +143,7 @@
   {
     "elementType": "prefix",
     "text": "インター",
-    "textKana": "インター",
+    "textKana": "",
     "meanings": [
       "inter-"
     ]
@@ -151,7 +151,7 @@
   {
     "elementType": "prefix",
     "text": "ウルトラ",
-    "textKana": "ウルトラ",
+    "textKana": "",
     "meanings": [
       "ultra"
     ]
@@ -166,8 +166,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "Ｈ",
-    "textKana": "エッチ",
+    "text": "エッチ",
+    "textKana": "",
     "meanings": [
       "nth year in the Heisei era (1989.1.8-2019.4.30)"
     ]
@@ -175,7 +175,7 @@
   {
     "elementType": "prefix",
     "text": "キロ",
-    "textKana": "キロ",
+    "textKana": "",
     "meanings": [
       "kilo-",
       "1000",
@@ -186,7 +186,7 @@
   {
     "elementType": "prefix",
     "text": "ギガ",
-    "textKana": "ギガ",
+    "textKana": "",
     "meanings": [
       "giga-",
       "10^9"
@@ -195,7 +195,7 @@
   {
     "elementType": "prefix",
     "text": "サブ",
-    "textKana": "サブ",
+    "textKana": "",
     "meanings": [
       "sub-"
     ]
@@ -203,7 +203,7 @@
   {
     "elementType": "prefix",
     "text": "セルフ",
-    "textKana": "セルフ",
+    "textKana": "",
     "meanings": [
       "self-"
     ]
@@ -211,7 +211,7 @@
   {
     "elementType": "prefix",
     "text": "センチ",
-    "textKana": "センチ",
+    "textKana": "",
     "meanings": [
       "centi-",
       "10^-2"
@@ -219,8 +219,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "禿び",
-    "textKana": "ちび",
+    "text": "ちび",
+    "textKana": "",
     "meanings": [
       "worn down (pencil, etc.)"
     ]
@@ -228,7 +228,7 @@
   {
     "elementType": "prefix",
     "text": "デシ",
-    "textKana": "デシ",
+    "textKana": "",
     "meanings": [
       "deci-",
       "10^-1"
@@ -237,7 +237,7 @@
   {
     "elementType": "prefix",
     "text": "ナノ",
-    "textKana": "ナノ",
+    "textKana": "",
     "meanings": [
       "nano-",
       "10^-9"
@@ -246,7 +246,7 @@
   {
     "elementType": "prefix",
     "text": "ネオ",
-    "textKana": "ネオ",
+    "textKana": "",
     "meanings": [
       "neo"
     ]
@@ -254,7 +254,7 @@
   {
     "elementType": "prefix",
     "text": "ノン",
-    "textKana": "ノン",
+    "textKana": "",
     "meanings": [
       "non-"
     ]
@@ -262,7 +262,7 @@
   {
     "elementType": "prefix",
     "text": "バイオ",
-    "textKana": "バイオ",
+    "textKana": "",
     "meanings": [
       "bio-"
     ]
@@ -270,7 +270,7 @@
   {
     "elementType": "prefix",
     "text": "ピコ",
-    "textKana": "ピコ",
+    "textKana": "",
     "meanings": [
       "pico-",
       "10^-12"
@@ -279,7 +279,7 @@
   {
     "elementType": "prefix",
     "text": "プチ",
-    "textKana": "プチ",
+    "textKana": "",
     "meanings": [
       "small"
     ]
@@ -287,7 +287,7 @@
   {
     "elementType": "prefix",
     "text": "プラス",
-    "textKana": "プラス",
+    "textKana": "",
     "meanings": [
       "plus",
       "addition"
@@ -296,7 +296,7 @@
   {
     "elementType": "prefix",
     "text": "ヘクト",
-    "textKana": "ヘクト",
+    "textKana": "",
     "meanings": [
       "hecto-",
       "10^2"
@@ -305,7 +305,7 @@
   {
     "elementType": "prefix",
     "text": "ホモ",
-    "textKana": "ホモ",
+    "textKana": "",
     "meanings": [
       "homo-"
     ]
@@ -313,7 +313,7 @@
   {
     "elementType": "prefix",
     "text": "ポリ",
-    "textKana": "ポリ",
+    "textKana": "",
     "meanings": [
       "poly-"
     ]
@@ -321,7 +321,7 @@
   {
     "elementType": "prefix",
     "text": "マイ",
-    "textKana": "マイ",
+    "textKana": "",
     "meanings": [
       "my",
       "one's own",
@@ -332,7 +332,7 @@
   {
     "elementType": "prefix",
     "text": "マルチ",
-    "textKana": "マルチ",
+    "textKana": "",
     "meanings": [
       "multi-"
     ]
@@ -340,7 +340,7 @@
   {
     "elementType": "prefix",
     "text": "ミニ",
-    "textKana": "ミニ",
+    "textKana": "",
     "meanings": [
       "mini-"
     ]
@@ -348,7 +348,7 @@
   {
     "elementType": "prefix",
     "text": "ミリ",
-    "textKana": "ミリ",
+    "textKana": "",
     "meanings": [
       "milli-",
       "10^-3"
@@ -357,7 +357,7 @@
   {
     "elementType": "prefix",
     "text": "メガ",
-    "textKana": "メガ",
+    "textKana": "",
     "meanings": [
       "mega- (i.e. 10^6)",
       "mega",
@@ -368,7 +368,7 @@
   {
     "elementType": "prefix",
     "text": "ユーロ",
-    "textKana": "ユーロ",
+    "textKana": "",
     "meanings": [
       "Euro-",
       "European"
@@ -377,7 +377,7 @@
   {
     "elementType": "prefix",
     "text": "リア",
-    "textKana": "リア",
+    "textKana": "",
     "meanings": [
       "rear"
     ]
@@ -403,8 +403,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "押し",
-    "textKana": "おし",
+    "text": "おし",
+    "textKana": "",
     "meanings": [
       "to forcibly ...",
       "to strongly ..."
@@ -528,8 +528,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "御",
-    "textKana": "ご",
+    "text": "ご",
+    "textKana": "",
     "meanings": [
       "honorific/polite/humble prefix"
     ]
@@ -567,8 +567,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "所謂",
-    "textKana": "いわゆる",
+    "text": "いわゆる",
+    "textKana": "",
     "meanings": [
       "what is called",
       "what you call",
@@ -627,8 +627,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "生き",
-    "textKana": "いき",
+    "text": "いき",
+    "textKana": "",
     "meanings": [
       "damned"
     ]
@@ -645,8 +645,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "そう言う",
-    "textKana": "そういう",
+    "text": "そういう",
+    "textKana": "",
     "meanings": [
       "such",
       "like that",
@@ -761,8 +761,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "豆",
-    "textKana": "まめ",
+    "text": "まめ",
+    "textKana": "",
     "meanings": [
       "small",
       "miniature",
@@ -783,8 +783,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "乍ら",
-    "textKana": "ながら",
+    "text": "ながら",
+    "textKana": "",
     "meanings": [
       "while doing something else (at the same time)"
     ]
@@ -843,8 +843,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "物",
-    "textKana": "もの",
+    "text": "もの",
+    "textKana": "",
     "meanings": [
       "somehow",
       "somewhat",
@@ -855,8 +855,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "糞",
-    "textKana": "くそ",
+    "text": "くそ",
+    "textKana": "",
     "meanings": [
       "damn",
       "damned",
@@ -915,16 +915,16 @@
   },
   {
     "elementType": "prefix",
-    "text": "又",
-    "textKana": "また",
+    "text": "また",
+    "textKana": "",
     "meanings": [
       "indirect"
     ]
   },
   {
     "elementType": "prefix",
-    "text": "明くる",
-    "textKana": "あくる",
+    "text": "あくる",
+    "textKana": "",
     "meanings": [
       "next (day, morning, etc.)",
       "following"
@@ -976,8 +976,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "此の",
-    "textKana": "この",
+    "text": "この",
+    "textKana": "",
     "meanings": [
       "this",
       "last (couple of years, etc.)",
@@ -988,8 +988,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "凡ゆる",
-    "textKana": "あらゆる",
+    "text": "あらゆる",
+    "textKana": "",
     "meanings": [
       "all",
       "every"
@@ -997,8 +997,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "或る",
-    "textKana": "ある",
+    "text": "ある",
+    "textKana": "",
     "meanings": [
       "a certain ...",
       "some ..."
@@ -1037,8 +1037,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "色んな",
-    "textKana": "いろんな",
+    "text": "いろんな",
+    "textKana": "",
     "meanings": [
       "various",
       "a variety of",
@@ -1048,8 +1048,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "碌な",
-    "textKana": "ろくな",
+    "text": "ろくな",
+    "textKana": "",
     "meanings": [
       "satisfactory",
       "decent",
@@ -1060,8 +1060,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "可笑しな",
-    "textKana": "おかしな",
+    "text": "おかしな",
+    "textKana": "",
     "meanings": [
       "funny",
       "amusing",
@@ -1096,7 +1096,7 @@
   {
     "elementType": "prefix",
     "text": "ふん",
-    "textKana": "ふん",
+    "textKana": "",
     "meanings": [
       "roughly",
       "harshly",
@@ -1106,15 +1106,15 @@
   {
     "elementType": "prefix",
     "text": "デミ",
-    "textKana": "デミ",
+    "textKana": "",
     "meanings": [
       "demi-"
     ]
   },
   {
     "elementType": "prefix",
-    "text": "何の",
-    "textKana": "どの",
+    "text": "どの",
+    "textKana": "",
     "meanings": [
       "which",
       "what (way)"
@@ -1156,8 +1156,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "有りとあらゆる",
-    "textKana": "ありとあらゆる",
+    "text": "ありとあらゆる",
+    "textKana": "",
     "meanings": [
       "every conceivable",
       "every single",
@@ -1183,8 +1183,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "然うした",
-    "textKana": "そうした",
+    "text": "そうした",
+    "textKana": "",
     "meanings": [
       "such"
     ]
@@ -1192,7 +1192,7 @@
   {
     "elementType": "prefix",
     "text": "か",
-    "textKana": "か",
+    "textKana": "",
     "meanings": [
       "very"
     ]
@@ -1210,7 +1210,7 @@
   {
     "elementType": "prefix",
     "text": "ノー",
-    "textKana": "ノー",
+    "textKana": "",
     "meanings": [
       "no",
       "without",
@@ -1269,8 +1269,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "ああ言う",
-    "textKana": "ああいう",
+    "text": "ああいう",
+    "textKana": "",
     "meanings": [
       "that sort of",
       "like that"
@@ -1324,7 +1324,7 @@
   {
     "elementType": "prefix",
     "text": "エコ",
-    "textKana": "エコ",
+    "textKana": "",
     "meanings": [
       "ecological",
       "eco-"
@@ -1349,8 +1349,8 @@
   },
   {
     "elementType": "prefix",
-    "text": "御",
-    "textKana": "お",
+    "text": "お",
+    "textKana": "",
     "meanings": [
       "honorific/polite/humble prefix"
     ]
