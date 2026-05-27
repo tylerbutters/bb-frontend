@@ -1,9 +1,10 @@
 import { useState } from "react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
-import AccountPage from "./pages/AccountPage"
+import AccountPage from "./pages/account-page/AccountPage"
 import SentenceBuilderPage from "./pages/sentence-builder-page/SentenceBuilderPage"
 import LoginPage from "./pages/LoginPage"
 import SignupPage from "./pages/SignupPage"
+import ForgotPasswordPage from "./pages/ForgotPasswordPage"
 
 const CURRENT_USER_STORAGE_KEY = "jsbCurrentUser"
 
@@ -52,6 +53,7 @@ export default function App() {
 						/>
 					}
 				/>
+				<Route path="/forgot-password" element={<ForgotPasswordPage />} />
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
 		</BrowserRouter>

@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { confirmPasswordReset, login, requestPasswordReset } from "../api/auth"
 import InputBox from "../components/InputBox"
 import "./TopRightButton.css"
 import "./AuthPage.css"
-import ResetPasswordPage from "./ResetPasswordPage"
+import ForgotPasswordPage from "./ForgotPasswordPage"
 
 export default function LoginPage({ onLogin }) {
 	const navigate = useNavigate()
+	const location = useLocation()
+
 	const [authMode, setAuthMode] = useState("login")
 	const [loginForm, setLoginForm] = useState({
 		email: "",
@@ -16,6 +18,11 @@ export default function LoginPage({ onLogin }) {
 	const [loginStatus, setLoginStatus] = useState("idle")
 	const [loginMessage, setLoginMessage] = useState("")
 	const [loginMessageType, setLoginMessageType] = useState("error")
+
+	useEffect(() => {
+		if (!location.state) return
+		finishResetPassword(location.state)
+	}, [location.state])
 
 	function updateLoginField(field, value) {
 		setLoginForm((prev) => ({
@@ -52,10 +59,6 @@ export default function LoginPage({ onLogin }) {
 		}
 	}
 
-	if (authMode === "resetPassword") {
-		return <ResetPasswordPage onFinish={finishResetPassword} goBack={() => setAuthMode("login")} />
-	}
-
 	return (
 		<div className="app loginPage">
 			<Link className="topRightButton" to="/">
@@ -86,13 +89,9 @@ export default function LoginPage({ onLogin }) {
 				<button type="submit" className="loginSubmitButton" disabled={loginStatus === "submitting"}>
 					{loginStatus === "submitting" ? "Logging in..." : "Login"}
 				</button>
-				<button
-					type="button"
-					className="authTextButton"
-					onClick={() => setAuthMode("resetPassword")}
-				>
+				<Link to="/forgot-password" className="authTextButton">
 					Forgot password?
-				</button>
+				</Link>
 				{loginMessage && (
 					<p className={`loginMessage loginMessage${loginMessageType}`}>{loginMessage}</p>
 				)}

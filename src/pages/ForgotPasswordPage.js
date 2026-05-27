@@ -3,10 +3,15 @@ import { confirmPasswordReset, requestPasswordReset } from "../api/auth"
 import InputBox from "../components/InputBox"
 import "./TopRightButton.css"
 import "./AuthPage.css"
+import { useLocation, useNavigate } from "react-router-dom"
 
 const RESEND_CODE_COOLDOWN_SECONDS = 30
 
-export default function ResetPasswordPage({ goBack, onComplete }) {
+export default function ForgotPasswordPage() {
+	const navigate = useNavigate()
+	const location = useLocation()
+	const prevPage = location.state?.from
+
 	const [currentPage, setCurrentPage] = useState("requestReset")
 
 	const [isRequestingReset, setIsRequestingReset] = useState(false)
@@ -87,27 +92,35 @@ export default function ResetPasswordPage({ goBack, onComplete }) {
 	async function submitPasswordResetConfirm(e) {
 		e.preventDefault()
 
+		if (resetForm.password !== resetForm.confirmPassword) {
+			setConfirmResetMessage({ text: "Passwords must match", type: "error" })
+			return
+		}
+
 		setIsConfirmingReset(true)
 		setConfirmResetMessage({ text: "", type: "error" })
 
 		try {
 			await confirmPasswordReset(resetForm)
 
-			onComplete({
-				email: resetForm.email,
-				status: "success",
-				messageType: "success",
-				message: "Password reset successful. You can log in with your new password.",
-			})
-
-			setResetForm({
-				email: resetForm.email,
-				code: "",
-				password: "",
-				confirmPassword: "",
-			})
-
-			setResendCooldown(0)
+			if (prevPage === "account") {
+				navigate("/account", {
+					state: {
+						status: "success",
+						messageType: "success",
+						message: "Password reset successful",
+					},
+				})
+			} else {
+				navigate("/login", {
+					state: {
+						email: resetForm.email,
+						status: "success",
+						messageType: "success",
+						message: "Password reset successful. You can log in with your new password.",
+					},
+				})
+			}
 		} catch (error) {
 			setConfirmResetMessage({
 				text: error.message || "Password reset failed.",
@@ -243,7 +256,7 @@ export default function ResetPasswordPage({ goBack, onComplete }) {
 
 	return (
 		<div className="app loginPage">
-			<button className="topRightButton" onClick={goBack}>
+			<button className="topRightButton" onClick={() => navigate(-1)}>
 				Back
 			</button>
 			<form
