@@ -1,23 +1,6 @@
-const GODAN_ROWS = {
-	く: ["か", "き", "く", "け", "こ", "いて", "いた"],
-	ぐ: ["が", "ぎ", "ぐ", "げ", "ご", "いで", "いだ"],
-	す: ["さ", "し", "す", "せ", "そ", "して", "した"],
-	ぶ: ["ば", "び", "ぶ", "べ", "ぼ", "んで", "んだ"],
-	む: ["ま", "み", "む", "め", "も", "んで", "んだ"],
-	ぬ: ["な", "に", "ぬ", "ね", "の", "んで", "んだ"],
-	る: ["ら", "り", "る", "れ", "ろ", "って", "った"],
-	つ: ["た", "ち", "つ", "て", "と", "って", "った"],
-	う: ["わ", "い", "う", "え", "お", "って", "った"],
-}
+import { godanDefaults, godanRows } from "./conjugationData"
 
-const GODAN_DEFAULTS = {
-	B1: [{ text: "ない" }, { text: "れる" }, { text: "せる" }, { text: "ず" }],
-	B2: [{ text: "ます" }, { text: "たい" }],
-	B4: [{ text: "ば" }, { text: "る" }, { text: "れ" }],
-	B5: [{ text: "う" }],
-}
-
-const ARU_B1_OPTIONS = GODAN_DEFAULTS.B1.filter((option) => option.text !== "ない")
+const ARU_B1_OPTIONS = godanDefaults.B1.filter((option) => option.text !== "ない")
 
 function getGodanEnding(parentConjugation) {
 	return parentConjugation.verbType === "godan-haru"
@@ -30,7 +13,7 @@ function createGodanCategory(text, list) {
 }
 
 export function getGodanConjugationOptions(parentConjugation) {
-	const row = GODAN_ROWS[getGodanEnding(parentConjugation)]
+	const row = godanRows[getGodanEnding(parentConjugation)]
 	if (!row) return []
 
 	const [B1, B2, B3, B4, B5, Bte, Bta] = row
@@ -39,10 +22,10 @@ export function getGodanConjugationOptions(parentConjugation) {
 		return [
 			{ text: "ない", replacesParent: true },
 			createGodanCategory(B1, ARU_B1_OPTIONS),
-			createGodanCategory(B2, [...GODAN_DEFAULTS.B2, { text: B2, conjugationType: "aux" }]),
+			createGodanCategory(B2, [...godanDefaults.B2, { text: B2, conjugationType: "aux" }]),
 			createGodanCategory(B3, [{ text: B3 }]),
-			createGodanCategory(B4, GODAN_DEFAULTS.B4),
-			createGodanCategory(B5, GODAN_DEFAULTS.B5),
+			createGodanCategory(B4, godanDefaults.B4),
+			createGodanCategory(B5, godanDefaults.B5),
 			createGodanCategory(Bte, [{ text: Bte, conjugationType: "te" }]),
 			createGodanCategory(Bta, [{ text: Bta }]),
 		]
@@ -50,12 +33,12 @@ export function getGodanConjugationOptions(parentConjugation) {
 
 	if (parentConjugation.verbType === "godan-haru") {
 		return [
-			createGodanCategory(B1, GODAN_DEFAULTS.B1),
-			createGodanCategory("い", [...GODAN_DEFAULTS.B2, { text: "い" }]),
+			createGodanCategory(B1, godanDefaults.B1),
+			createGodanCategory("い", [...godanDefaults.B2, { text: "い" }]),
 			createGodanCategory(B2, [{ text: B2, conjugationType: "aux" }]),
 			createGodanCategory(B3, [{ text: B3 }]),
-			createGodanCategory(B4, GODAN_DEFAULTS.B4),
-			createGodanCategory(B5, GODAN_DEFAULTS.B5),
+			createGodanCategory(B4, godanDefaults.B4),
+			createGodanCategory(B5, godanDefaults.B5),
 			createGodanCategory(Bte, [{ text: Bte, conjugationType: "te" }]),
 			createGodanCategory(Bta, [{ text: Bta }]),
 		]
@@ -63,22 +46,22 @@ export function getGodanConjugationOptions(parentConjugation) {
 
 	if (parentConjugation.verbType === "godan-iku") {
 		return [
-			createGodanCategory(B1, GODAN_DEFAULTS.B1),
-			createGodanCategory(B2, [...GODAN_DEFAULTS.B2, { text: B2, conjugationType: "aux" }]),
+			createGodanCategory(B1, godanDefaults.B1),
+			createGodanCategory(B2, [...godanDefaults.B2, { text: B2, conjugationType: "aux" }]),
 			createGodanCategory(B3, [{ text: B3 }]),
-			createGodanCategory(B4, GODAN_DEFAULTS.B4),
-			createGodanCategory(B5, GODAN_DEFAULTS.B5),
+			createGodanCategory(B4, godanDefaults.B4),
+			createGodanCategory(B5, godanDefaults.B5),
 			createGodanCategory("って", [{ text: "って", conjugationType: "te" }]),
 			createGodanCategory("った", [{ text: "った" }]),
 		]
 	}
 
 	return [
-		createGodanCategory(B1, GODAN_DEFAULTS.B1),
-		createGodanCategory(B2, [...GODAN_DEFAULTS.B2, { text: B2, conjugationType: "aux" }]),
+		createGodanCategory(B1, godanDefaults.B1),
+		createGodanCategory(B2, [...godanDefaults.B2, { text: B2, conjugationType: "aux" }]),
 		createGodanCategory(B3, [{ text: B3 }]),
-		createGodanCategory(B4, GODAN_DEFAULTS.B4),
-		createGodanCategory(B5, GODAN_DEFAULTS.B5),
+		createGodanCategory(B4, godanDefaults.B4),
+		createGodanCategory(B5, godanDefaults.B5),
 		createGodanCategory(Bte, [{ text: Bte, conjugationType: "te" }]),
 		createGodanCategory(Bta, [{ text: Bta }]),
 	]

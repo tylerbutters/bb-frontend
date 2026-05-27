@@ -7,7 +7,6 @@ import { getDefaultElementOptions } from "../elements/elementTypes"
 import normalizeElement from "../grammar/normalizeElement"
 import useNestedElementPointerGuard from "../hooks/useNestedElementPointerGuard"
 import useSentenceDragDrop from "../hooks/useSentenceDragDrop"
-import useGrammarStore from "../../../store/useGrammarStore"
 
 const SENTENCE_ELEMENTS_VIEWPORT_PADDING = 100
 
@@ -26,9 +25,8 @@ export default function SentenceBuilderWorkspace({
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const [addedElements, setAddedElements] = useState([])
 	const [sentenceElementsScale, setSentenceElementsScale] = useState(1)
-	const punctuation = useGrammarStore((state) => state.punctuation)
 	const sentenceString = textPartsToString(elementsToTextParts(addedElements))
-	const defaultElements = useMemo(() => getDefaultElementOptions({ punctuation }), [punctuation])
+	const defaultElements = useMemo(() => getDefaultElementOptions(), [])
 	const {
 		dragState,
 		getDragPreviewTransform,

@@ -1,7 +1,6 @@
 import { useMemo, useRef, useState } from "react"
 import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
 import "../elements/Element.css"
-import useGrammarStore from "../../../store/useGrammarStore"
 import AddButton from "../components/AddButton"
 import verbs from "../jmdict/processed/verbs.json"
 import Verb from "../elements/Verb"
@@ -13,6 +12,8 @@ import {
 	getGodanConjugationOptions,
 	initializeNestedElement,
 } from "../grammar/conjugationOptions"
+import { auxiliaries, conjugations } from "../grammar/conjugationData"
+import { particles } from "../grammar/particleData"
 
 export function getConjugationOptionsForParent(parentConjugation, conjugations) {
 	let conjugationOptions
@@ -71,10 +72,7 @@ export default function Conjugation({
 }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const elementRef = useRef(null)
-	const conjugations = useGrammarStore((state) => state.conjugations)
 	const currentConjugation = parentConjugation?.conjugation
-	const auxiliaries = useGrammarStore((state) => state.auxiliaries)
-	const particles = useGrammarStore((state) => state.particles)
 	const conjugationOptions = getConjugationOptionsForParent(parentConjugation, conjugations)
 	const particleOptions = useMemo(
 		() => particles.filter((particle) => particle.attachesTo.includes("te")),

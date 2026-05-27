@@ -3,8 +3,8 @@ import adverbs from "../jmdict/processed/adverbs.json"
 import counters from "../jmdict/processed/counters.json"
 import nouns from "../jmdict/processed/nouns.json"
 import verbs from "../jmdict/processed/verbs.json"
+import { conjugations } from "./conjugationData"
 import { getGodanConjugationOptions } from "./conjugationOptions"
-import { conjugations } from "./elementData"
 import normalizeElement from "./normalizeElement"
 
 const dictionaryGroups = {
@@ -264,9 +264,8 @@ function resolveBaseVerbConjugationTypeText(element, type) {
 
 function resolveConjugationOptionTypeText(element, type) {
 	const candidates = CONJUGATION_TYPE_OPTIONS[type] || []
-	return getConjugationOptionsForElement(element).find((option) =>
-		candidates.includes(option.text),
-	)?.text
+	return getConjugationOptionsForElement(element).find((option) => candidates.includes(option.text))
+		?.text
 }
 
 function resolvePromptConjugationStepTexts(element, step) {
@@ -368,11 +367,7 @@ function applyPromptForm(element, form) {
 		return applyPromptConjugations(element, form.conjugations)
 	}
 
-	if (
-		Array.isArray(form.conjugation) ||
-		form.conjugation?.text ||
-		form.conjugation?.type
-	) {
+	if (Array.isArray(form.conjugation) || form.conjugation?.text || form.conjugation?.type) {
 		return applyPromptConjugation(element, form.conjugation)
 	}
 

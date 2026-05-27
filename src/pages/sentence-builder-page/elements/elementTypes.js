@@ -46,6 +46,25 @@ export const ELEMENT_TYPE_COLORS = {
 	},
 }
 
+const punctuation = [
+	{
+		elementType: "punctuation",
+		text: "、",
+	},
+	{
+		elementType: "punctuation",
+		text: "？",
+	},
+	{
+		elementType: "punctuation",
+		text: "！",
+	},
+	{
+		elementType: "punctuation",
+		text: "。",
+	},
+]
+
 export const ELEMENT_TYPE_LABELS = {
 	noun: "Noun",
 	verb: "Verb",
@@ -74,7 +93,7 @@ export function getElementTypeComponent(elementType) {
 	return ELEMENT_TYPE_COMPONENTS[elementType] || null
 }
 
-export function getDefaultElementOptions({ punctuation = [] } = {}) {
+export function getDefaultElementOptions() {
 	return [
 		{ text: "Nouns", list: nouns },
 		{ text: "Verbs", list: verbs },

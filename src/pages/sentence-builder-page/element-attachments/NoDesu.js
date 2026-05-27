@@ -1,13 +1,12 @@
 import { useRef, useState } from "react"
 import "../elements/Element.css"
 import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
-import useGrammarStore from "../../../store/useGrammarStore"
 import AddButton from "../components/AddButton"
+import { noDesu } from "../grammar/conjugationData"
 
 export default function NoDesu({ element, updateElement, deleteElement, mouse, color, disabled }) {
 	const [isModalOpen, setIsModalOpen] = useState()
 	const elementRef = useRef(null)
-	const noDesuOptions = useGrammarStore((state) => state.noDesu)
 
 	return (
 		<div className="modalContainer">
@@ -15,7 +14,7 @@ export default function NoDesu({ element, updateElement, deleteElement, mouse, c
 				anchorRef={elementRef}
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
-				elementOptions={noDesuOptions}
+				elementOptions={noDesu}
 				onSelect={updateElement}
 				deleteElement={deleteElement}
 				hasDelete={true}
@@ -33,7 +32,7 @@ export default function NoDesu({ element, updateElement, deleteElement, mouse, c
 			) : (
 				<AddButton
 					mouse={mouse}
-					elementOptions={noDesuOptions}
+					elementOptions={noDesu}
 					addElement={updateElement}
 					text="no"
 					disabled={disabled}

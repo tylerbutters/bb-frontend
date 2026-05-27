@@ -1,10 +1,10 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react"
 import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
 import "./Element.css"
-import useGrammarStore from "../../../store/useGrammarStore"
 import Particle from "../element-attachments/Particle"
 import AnimatedWidth from "./AnimatedWidth"
 import { ELEMENT_TYPE_COLORS, getElementTypeColors, getElementTypeComponent } from "./elementTypes"
+import { particles } from "../grammar/particleData"
 
 export default function Element({
 	element,
@@ -17,7 +17,6 @@ export default function Element({
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [isClosing, setIsClosing] = useState(false)
 	const elementContainerRef = useRef(null)
-	const particles = useGrammarStore((state) => state.particles)
 	const ElementComponent = getElementTypeComponent(element?.elementType)
 	const elementColors = getElementTypeColors(element?.elementType)
 	const particleOptions = useMemo(() => {
