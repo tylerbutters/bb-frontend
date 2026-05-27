@@ -95,7 +95,7 @@ export const punctuation = [
 export const particles = [
 	{
 		text: "から",
-		attachesTo: ["noun", "verb", "te"],
+		attachesTo: ["noun", "verb", "te", "ii", "i-type"],
 	},
 	{
 		text: "は",
@@ -127,11 +127,11 @@ export const particles = [
 	},
 	{
 		text: "と",
-		attachesTo: ["noun", "verb", "i-type", "na-type", "counter"],
+		attachesTo: ["noun", "verb", "i-type", "na-type", "counter", "ii"],
 	},
 	{
 		text: "こそ",
-		attachesTo: ["noun", "verb"],
+		attachesTo: ["noun", "verb", "ii", "i-type"],
 	},
 	{
 		text: "さえ",
@@ -147,11 +147,11 @@ export const particles = [
 	},
 	{
 		text: "だけ",
-		attachesTo: ["noun", "verb", "i-type", "na-type"],
+		attachesTo: ["noun", "verb", "i-type", "na-type", "ii"],
 	},
 	{
 		text: "のみ",
-		attachesTo: ["noun", "verb", "i-type", "na-type"],
+		attachesTo: ["noun", "verb", "i-type", "na-type", "ii"],
 	},
 	{
 		text: "の",
@@ -167,30 +167,30 @@ export const noDesu = [{ text: "の" }, { text: "なの" }, { text: "ん" }, { t
 
 export const conjugations = {
 	//kuru
-	kuruDefault: {
-		stem: "くる",
-		conjugationOptions: [
-			{ text: "きて" },
-			{ text: "きた" },
-			{ text: "きたり" },
-			{ text: "きます" },
-			{ text: "きたい" },
-			{ text: "きたら" },
-			{ text: "くれば" },
-			{ text: "くる" },
-			{ text: "こない" },
-			{ text: "こないで" },
-			{ text: "こられる" },
-			{ text: "こい" },
-			{ text: "こよう" },
-			{ text: "こさせる" },
-			{ text: "こず" },
-			{ text: "き" },
-		],
-	},
+	kuruDefault: [
+		{ text: "きて" },
+		{ text: "きた" },
+		{ text: "きたり" },
+		{ text: "きます" },
+		{ text: "きたい" },
+		{ text: "きたら" },
+		{ text: "くれば" },
+		{ text: "くる" },
+		{ text: "こない" },
+		{ text: "こないで" },
+		{ text: "こられる" },
+		{ text: "こい" },
+		{ text: "こよう" },
+		{ text: "こさせる" },
+		{ text: "こず" },
+		{ text: "き" },
+	],
 	き: {
 		stem: "き",
 		conjugationType: "aux",
+	},
+	くる: {
+		stem: "くる",
 	},
 	こない: {
 		stem: "こな",
@@ -242,25 +242,25 @@ export const conjugations = {
 		stem: "こず",
 	},
 	//suru
-	suruDefault: {
-		// stem: "する",
-		conjugationOptions: [
-			{ text: "される" },
-			{ text: "させる" },
-			{ text: "した" },
-			{ text: "します" },
-			{ text: "して" },
-			{ text: "しない" },
-			{ text: "しないで" },
-			{ text: "したい" },
-			{ text: "したり" },
-			{ text: "しよう" },
-			{ text: "する" },
-			{ text: "すれば" },
-			{ text: "せず" },
-			{ text: "できる" },
-			{ text: "し" },
-		],
+	suruDefault: [
+		{ text: "される" },
+		{ text: "させる" },
+		{ text: "した" },
+		{ text: "します" },
+		{ text: "して" },
+		{ text: "しない" },
+		{ text: "しないで" },
+		{ text: "したい" },
+		{ text: "したり" },
+		{ text: "しよう" },
+		{ text: "する" },
+		{ text: "すれば" },
+		{ text: "せず" },
+		{ text: "できる" },
+		{ text: "し" },
+	],
+	する: {
+		stem: "する",
 	},
 	し: {
 		stem: "し",
@@ -322,42 +322,36 @@ export const conjugations = {
 		conjugationOptions: saseruOptions,
 	},
 	//ichidan
-	ichidanDefault: {
-		stem: "る",
-		conjugationOptions: [
-			{ text: "ない" },
-			{ text: "ないで" },
-			{ text: "たい" },
-			{ text: "た" },
-			{ text: "る" },
-			{ text: "ろ" },
-			{ text: "たり" },
-			{ text: "て" },
-			{ text: "られる" },
-			{ text: "させる" },
-			{ text: "よう" },
-			{ text: "ます" },
-			{ text: "ず" },
-			{ text: "blank" },
-		],
-	},
-	kureruDefault: {
-		stem: "る",
-		conjugationOptions: [
-			{ text: "ない" },
-			{ text: "たい" },
-			{ text: "た" },
-			{ text: "る" },
-			{ text: "たり" },
-			{ text: "て" },
-			{ text: "られる" },
-			{ text: "させる" },
-			{ text: "よう" },
-			{ text: "ます" },
-			{ text: "ず" },
-			{ text: "blank" },
-		],
-	},
+	ichidanDefault: [
+		{ text: "ない" },
+		{ text: "ないで" },
+		{ text: "たい" },
+		{ text: "た" },
+		{ text: "る" },
+		{ text: "ろ" },
+		{ text: "たり" },
+		{ text: "て" },
+		{ text: "られる" },
+		{ text: "させる" },
+		{ text: "よう" },
+		{ text: "ます" },
+		{ text: "ず" },
+		{ text: "blank" },
+	],
+	kureruDefault: [
+		{ text: "ない" },
+		{ text: "たい" },
+		{ text: "た" },
+		{ text: "る" },
+		{ text: "たり" },
+		{ text: "て" },
+		{ text: "られる" },
+		{ text: "させる" },
+		{ text: "よう" },
+		{ text: "ます" },
+		{ text: "ず" },
+		{ text: "blank" },
+	],
 	blank: {
 		// stem: "",
 		conjugationType: "aux",
@@ -424,10 +418,35 @@ export const conjugations = {
 		stem: "て",
 		conjugationType: "te",
 	},
-	iAdjDefault: {
-		stem: "い",
-		conjugationOptions: iadjOptions,
+	//ii
+	iiDefault: [
+		{ text: "いい" },
+		{ text: "よくない" },
+		{ text: "よかった" },
+		{ text: "よく" },
+		{ text: "よくて" },
+	],
+	いい: {
+		stem: "いい",
 	},
+	よく: {
+		stem: "よく",
+	},
+	よくて: {
+		stem: "よくて",
+		conjugationType: "te",
+	},
+	よくない: {
+		stem: "よくな",
+		ending: "い",
+		conjugationOptions: kunaiOptions,
+	},
+
+	よかった: {
+		stem: "よかった",
+	},
+	//i adjectives
+	iAdjDefault: iadjOptions,
 	い: {
 		stem: "い",
 	},
@@ -447,7 +466,7 @@ export const conjugations = {
 	かった: {
 		stem: "かった",
 	},
-
+	//other
 	ます: {
 		stem: "ま",
 		ending: "す",
@@ -460,10 +479,7 @@ export const conjugations = {
 		stem: "よう",
 	},
 	//desu
-	desuDefault: {
-		text: "た",
-		conjugationOptions: [{ text: "だった" }, { text: "で" }, { text: "です" }, { text: "だ" }],
-	},
+	desuDefault: [{ text: "だった" }, { text: "で" }, { text: "です" }, { text: "だ" }],
 	だ: {
 		stem: "だ",
 	},

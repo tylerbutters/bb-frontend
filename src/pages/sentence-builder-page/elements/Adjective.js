@@ -13,7 +13,7 @@ export default function Adjective({
 	return (
 		<div className="modalContainer">
 			<div className="baseElement">
-				{element.conjugation && element.adjectiveType === "i-type" && (
+				{element.conjugation && element.adjectiveType !== "na-type" ? (
 					<>
 						<div className="elementText">
 							<JapaneseText text={element.stem} reading={element.stemKana} />
@@ -28,8 +28,7 @@ export default function Adjective({
 							addButtonsDisabled={addButtonsDisabled}
 						/>
 					</>
-				)}
-				{element.adjectiveType === "na-type" && (
+				) : (
 					<>
 						<div className="elementText">
 							<JapaneseText text={element.text} reading={element.textKana} />

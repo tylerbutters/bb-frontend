@@ -19,21 +19,28 @@ export function getConjugationOptionsForParent(parentConjugation, conjugations) 
 
 	switch (parentConjugation.elementType) {
 		case "adjective":
-			conjugationOptions = conjugations["iAdjDefault"]?.conjugationOptions
+			switch (parentConjugation.adjectiveType) {
+				case "i-type":
+					conjugationOptions = conjugations["iAdjDefault"]
+					break
+				case "ii":
+					conjugationOptions = conjugations["iiDefault"]
+					break
+			}
 			break
 		case "verb": //is the first conjugation
 			switch (parentConjugation.verbType) {
 				case "suru":
-					conjugationOptions = conjugations["suruDefault"]?.conjugationOptions || []
+					conjugationOptions = conjugations["suruDefault"] || []
 					break
 				case "kuru":
-					conjugationOptions = conjugations["kuruDefault"]?.conjugationOptions || []
+					conjugationOptions = conjugations["kuruDefault"] || []
 					break
 				case "ichidan":
-					conjugationOptions = conjugations["ichidanDefault"]?.conjugationOptions || []
+					conjugationOptions = conjugations["ichidanDefault"] || []
 					break
 				case "kureru":
-					conjugationOptions = conjugations["kureruDefault"]?.conjugationOptions || []
+					conjugationOptions = conjugations["kureruDefault"] || []
 					break
 				default:
 					conjugationOptions = getGodanConjugationOptions(parentConjugation)
@@ -41,7 +48,7 @@ export function getConjugationOptionsForParent(parentConjugation, conjugations) 
 			}
 			break
 		case "desu":
-			conjugationOptions = conjugations["desuDefault"]?.conjugationOptions
+			conjugationOptions = conjugations["desuDefault"]
 			break
 		default:
 			conjugationOptions =

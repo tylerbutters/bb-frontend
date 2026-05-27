@@ -10,7 +10,7 @@ export default function normalizeElement(element) {
 
 	if (
 		element.elementType === "adjective" &&
-		element.adjectiveType === "i-type" &&
+		element.adjectiveType !== "na-type" &&
 		!element.conjugation
 	) {
 		return {
@@ -30,7 +30,10 @@ export default function normalizeElement(element) {
 		}
 	}
 
-	if (element.elementType === "counter" && (element.number == null || element.number.length === 0)) {
+	if (
+		element.elementType === "counter" &&
+		(element.number == null || element.number.length === 0)
+	) {
 		return {
 			...element,
 			number: "0",

@@ -86,9 +86,10 @@ function adjectiveToTextParts(element) {
 	const reading = shouldUseStem
 		? element?.stemKana || element?.textKana
 		: element?.textKana || element?.stemKana
+	const isIi = element.adjectiveType === "ii"
 
 	return [
-		...textPart(text, reading),
+		...(isIi ? [] : textPart(text, reading)),
 		...(hasConjugation(element) ? verbToTextParts(element.conjugation) : []),
 		...plainTextPart(element?.particle?.text),
 	]
