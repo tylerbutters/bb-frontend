@@ -5,6 +5,7 @@ import SentenceBuilderPage from "./pages/sentence-builder-page/SentenceBuilderPa
 import LoginPage from "./pages/LoginPage"
 import SignupPage from "./pages/SignupPage"
 import ForgotPasswordPage from "./pages/ForgotPasswordPage"
+import ConfirmEmailChangePage from "./pages/ConfirmEmailChangePage"
 
 const CURRENT_USER_STORAGE_KEY = "jsbCurrentUser"
 
@@ -54,6 +55,7 @@ export default function App() {
 					}
 				/>
 				<Route path="/forgot-password" element={<ForgotPasswordPage />} />
+				<Route path="/confirm-email-change" element={<ConfirmEmailChangePage />} />
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
 		</BrowserRouter>

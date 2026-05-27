@@ -28,3 +28,21 @@ export async function deleteUser(userId) {
 		method: "DELETE",
 	})
 }
+export async function confirmEmailChange({ token }) {
+	const data = await apiRequest(`/users/email-change/confirm`, {
+		method: "POST",
+		body: { token },
+	})
+
+	return data
+}
+
+export async function requestEmailChange(userId, { email }) {
+	const data = await apiRequest(`/users/${userId}/email-change/request`, {
+		method: "POST",
+		body: {
+			email,
+		},
+	})
+	return data
+}

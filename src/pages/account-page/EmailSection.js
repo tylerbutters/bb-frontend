@@ -1,19 +1,29 @@
 import { useEffect, useState } from "react"
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom"
-import { deleteUser, updateUser } from "../../api/users"
+import { deleteUser, requestEmailChange, updateUser } from "../../api/users"
 import InputBox from "../../components/InputBox"
 import "../TopRightButton.css"
 import "../AuthPage.css"
 
 export default function EmailSection({ currentUser, onUserUpdate }) {
-	const [email, setEmail] = useState(currentUser?.email || "")
+	const location = useLocation()
+
+	const [newEmail, setNewEmail] = useState(currentUser?.email || "")
 	const [feedback, setFeedback] = useState({
 		status: "idle",
 		message: "",
 	})
 
 	useEffect(() => {
-		setEmail(currentUser?.email || "")
+		if (!location.state?.emailState) return
+		setFeedback({
+			status: location.state.emailState.status,
+			message: location.state.emailState.message,
+		})
+	}, [location.state?.emailState])
+
+	useEffect(() => {
+		setNewEmail(currentUser?.email || "")
 	}, [currentUser?.email])
 
 	async function submitEmail(e) {
@@ -25,15 +35,11 @@ export default function EmailSection({ currentUser, onUserUpdate }) {
 		})
 
 		try {
-			const data = await updateUser(currentUser.id, { email })
-
-			onUserUpdate(data.user)
-
-			setEmail(data.user.email || "")
+			const data = await requestEmailChange(currentUser.id, { email: newEmail })
 
 			setFeedback({
 				status: "success",
-				message: data.message || "Email updated.",
+				message: `A verification link has been sent to ${currentUser.email}`,
 			})
 		} catch (error) {
 			setFeedback({
@@ -44,7 +50,7 @@ export default function EmailSection({ currentUser, onUserUpdate }) {
 	}
 
 	function updateEmail(value) {
-		setEmail(value)
+		setNewEmail(value)
 		setFeedback({
 			status: "idle",
 			message: "",
@@ -60,7 +66,7 @@ export default function EmailSection({ currentUser, onUserUpdate }) {
 				fieldClassName="accountField"
 				label="Email"
 				type="email"
-				value={email}
+				value={newEmail}
 				onChange={updateEmail}
 				autoComplete="email"
 			/>
