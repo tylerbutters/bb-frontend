@@ -61,18 +61,16 @@ export default function ElementDetailPanel({ element, isOpen, panelRef, style })
 function VocabularyDetail({ detail }) {
 	return (
 		<div className="elementDetailContent">
-			<DetailRows
-				rows={[
-					["Type", detail.type],
-					[
-						detail.hasReading ? "Word (with furigana)" : "Word",
-						<JapaneseText text={detail.word} reading={detail.kana} />,
-					],
-					["Kana", detail.kana],
-					["Romaji", detail.romaji],
-				]}
-			/>
-			<TranslationList translations={detail.translations} />
+			<div className="elementDetailHeader">
+				<span className="elementDetailType">{detail.type}</span>
+				<span className="elementDetailName">
+					<JapaneseText text={detail.word} reading={detail.kana} />
+				</span>
+				<span className="elementDetailTranslation">{detail.romaji}</span>
+			</div>
+			<div className="elementDetailSection">
+				<div className="elementDetailTranslations">{detail.translations.join("; ")}</div>
+			</div>
 		</div>
 	)
 }
@@ -109,30 +107,6 @@ function ConjugationDetail({ detail }) {
 				</div>
 			</div>
 		</div>
-	)
-}
-
-function TranslationList({ translations }) {
-	return (
-		<div className="elementDetailSection">
-			<div className="elementDetailLabel">English translations</div>
-			<div className="elementDetailTranslations">{translations.join("; ")}</div>
-		</div>
-	)
-}
-
-function DetailRows({ rows }) {
-	return (
-		<dl className="elementDetailRows">
-			{rows
-				.filter(([, value]) => Boolean(value))
-				.map(([label, value]) => (
-					<div key={label} className="elementDetailRow">
-						<dt>{label}</dt>
-						<dd>{value}</dd>
-					</div>
-				))}
-		</dl>
 	)
 }
 

@@ -58,10 +58,6 @@ export default function MenuList({
 		return element?.meanings?.slice(0, 3).join("; ")
 	}
 
-	function getMeaningsTitle(element) {
-		return element?.meanings?.join("; ")
-	}
-
 	function showOptionDetail(e, element) {
 		const rect = e.currentTarget.getBoundingClientRect()
 
@@ -103,7 +99,6 @@ export default function MenuList({
 						onClick={() => onSelectOption(element)}
 						onFocus={(e) => showOptionDetail(e, element)}
 						onMouseEnter={(e) => showOptionDetail(e, element)}
-						title={getMeaningsTitle(element)}
 					>
 						<div className="elementsMenuButtonText">
 							<JapaneseText text={element?.text} reading={element?.textKana} />
