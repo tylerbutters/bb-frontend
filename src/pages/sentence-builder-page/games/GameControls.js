@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react"
 import { checkGameAnswer, checkSandboxSentence } from "../../../api/games"
+import { recordLocalGameResult } from "../../../gameStatsStorage"
 import "./GameControls.css"
 
 export default function GameControls({
 	isVisible,
 	gameMode,
+	challengeId,
+	currentUser,
 	prompt,
 	promptStatus,
 	answer,
@@ -26,7 +29,7 @@ export default function GameControls({
 	useEffect(() => {
 		setFeedback(null)
 		setCheckStatus("idle")
-	}, [answer, gameMode, isVisible, prompt])
+	}, [answer, challengeId, gameMode, isVisible, prompt])
 
 	async function checkAnswer() {
 		if (isCheckDisabled) return
@@ -37,7 +40,15 @@ export default function GameControls({
 		try {
 			const nextFeedback = isSandboxCheck
 				? await checkSandboxSentence({ answer })
-				: await checkGameAnswer({ gameMode, prompt, answer })
+				: await checkGameAnswer({ gameMode, prompt, answer, challengeId })
+			if (!isSandboxCheck) {
+				recordLocalGameResult(currentUser?.id, {
+					challengeId,
+					mode: gameMode,
+					prompt,
+					correct: nextFeedback.correct,
+				})
+			}
 			setFeedback(nextFeedback)
 			setCheckStatus("ready")
 		} catch (error) {

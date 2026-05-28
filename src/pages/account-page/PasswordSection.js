@@ -55,13 +55,17 @@ export default function PasswordSection({ currentUser, onUserUpdate, resetMessag
 		})
 
 		try {
-			const data = await updateUser(currentUser.id, passwordForm)
+			const data = await updateUser(currentUser.id, {
+				currentPassword: passwordForm.currentPassword,
+				password: passwordForm.password,
+			})
 
 			onUserUpdate(data.user)
 
 			setPasswordForm({
 				currentPassword: "",
 				password: "",
+				confirmPassword: "",
 			})
 
 			setFeedback({

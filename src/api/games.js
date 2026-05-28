@@ -6,7 +6,7 @@ export async function generateGamePrompt({ gameMode, difficulty, signal }) {
 	return apiRequest(`/games/prompt?${params}`, { signal })
 }
 
-export async function checkGameAnswer({ gameMode, prompt, answer, signal }) {
+export async function checkGameAnswer({ gameMode, prompt, answer, challengeId, signal }) {
 	const data = await apiRequest("/games/check", {
 		method: "POST",
 		signal,
@@ -14,6 +14,7 @@ export async function checkGameAnswer({ gameMode, prompt, answer, signal }) {
 			mode: gameMode,
 			prompt,
 			answer,
+			...(challengeId ? { challengeId } : {}),
 		},
 	})
 

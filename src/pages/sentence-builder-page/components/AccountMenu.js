@@ -39,6 +39,9 @@ export default function AccountMenu({ currentUser, onLogout }) {
 					<Link to="/account" role="menuitem">
 						Account
 					</Link>
+					<Link to="/stats" role="menuitem">
+						Stats
+					</Link>
 					<button type="button" role="menuitem" onClick={logout}>
 						Log out
 					</button>

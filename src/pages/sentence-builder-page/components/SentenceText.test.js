@@ -149,6 +149,7 @@ describe("translateJapanese", () => {
 			`${API_BASE_URL}/games/sandbox/translate-japanese`,
 			{
 				method: "POST",
+				credentials: "include",
 				headers: {
 					"Content-Type": "application/json",
 				},

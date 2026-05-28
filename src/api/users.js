@@ -28,6 +28,11 @@ export async function deleteUser(userId) {
 		method: "DELETE",
 	})
 }
+
+export async function getUserStats(userId, { signal } = {}) {
+	return apiRequest(`/users/${userId}/stats`, { signal })
+}
+
 export async function confirmEmailChange({ token }) {
 	const data = await apiRequest(`/users/email-change/confirm`, {
 		method: "POST",

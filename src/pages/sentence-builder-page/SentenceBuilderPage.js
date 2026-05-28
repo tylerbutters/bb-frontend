@@ -86,6 +86,8 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 			<GameControls
 				isVisible={hasSentenceElements}
 				gameMode={gamePromptData?.mode || selectedGameMode}
+				challengeId={gamePromptData?.challengeId}
+				currentUser={currentUser}
 				prompt={gamePrompt}
 				promptStatus={gamePromptStatus}
 				answer={japaneseSentence}

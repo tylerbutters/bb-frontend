@@ -109,6 +109,62 @@ beforeEach(() => {
 			})
 		}
 
+		if (url === `${API_BASE_URL}/users/1/stats`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					total: {
+						totalGames: 6,
+						won: 4,
+						failed: 2,
+						accuracy: 67,
+					},
+					games: [
+						{
+							mode: "translate",
+							label: "Translate",
+							totalGames: 3,
+							won: 2,
+							failed: 1,
+							accuracy: 67,
+						},
+						{
+							mode: "conjugations",
+							label: "Conjugations",
+							totalGames: 1,
+							won: 1,
+							failed: 0,
+							accuracy: 100,
+						},
+						{
+							mode: "fix sentence",
+							label: "Fix sentence",
+							totalGames: 0,
+							won: 0,
+							failed: 0,
+							accuracy: 0,
+						},
+						{
+							mode: "particles",
+							label: "Particles",
+							totalGames: 2,
+							won: 1,
+							failed: 1,
+							accuracy: 50,
+						},
+						{
+							mode: "reorder",
+							label: "Reorder",
+							totalGames: 0,
+							won: 0,
+							failed: 0,
+							accuracy: 0,
+						},
+					],
+				}),
+			})
+		}
+
 		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
 			return Promise.resolve({
 				ok: true,
@@ -265,10 +321,11 @@ test("requests a reset code and resets the password from the login page", async 
 
 	fireEvent.click(screen.getByRole("link", { name: "Login" }))
 	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
-	fireEvent.click(screen.getByRole("button", { name: "Forgot password?" }))
+	fireEvent.click(screen.getByRole("link", { name: "Forgot password?" }))
 
 	expect(screen.getByRole("heading", { name: "Reset Password" })).toBeInTheDocument()
-	expect(screen.getByLabelText("Email")).toHaveValue("tyler@example.com")
+	expect(screen.getByLabelText("Email")).toHaveValue("")
+	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
 
 	fireEvent.click(screen.getByRole("button", { name: "Send code" }))
 
@@ -312,6 +369,9 @@ test("requests a reset code and resets the password from the login page", async 
 
 	fireEvent.change(screen.getByLabelText("Code"), { target: { value: "123456" } })
 	fireEvent.change(screen.getByLabelText("New password"), { target: { value: "password2" } })
+	fireEvent.change(screen.getByLabelText("Confirm new password"), {
+		target: { value: "password2" },
+	})
 	fireEvent.click(screen.getByRole("button", { name: "Reset password" }))
 
 	await waitFor(() => {
@@ -411,7 +471,11 @@ test("opens account from the user menu and updates account details", async () =>
 	fireEvent.click(within(emailSection).getByRole("button", { name: "Save changes" }))
 
 	await waitFor(() => {
-		expect(within(emailSection).getByText("Account updated.")).toBeInTheDocument()
+		expect(
+			within(emailSection).getByText(
+				"A verification link has been sent to tyler@example.com",
+			),
+		).toBeInTheDocument()
 	})
 
 	fireEvent.change(screen.getByLabelText("New password"), { target: { value: "password2" } })
@@ -440,7 +504,12 @@ test("opens account from the user menu and updates account details", async () =>
 	const accountRequests = global.fetch.mock.calls.filter(
 		([url, options]) => url === `${API_BASE_URL}/users/1` && options.method === "PATCH",
 	)
-	expect(accountRequests).toHaveLength(3)
+	const emailChangeRequests = global.fetch.mock.calls.filter(
+		([url, options]) =>
+			url === `${API_BASE_URL}/users/1/email-change/request` && options.method === "POST",
+	)
+	expect(accountRequests).toHaveLength(2)
+	expect(emailChangeRequests).toHaveLength(1)
 	expect(accountRequests[0][1]).toMatchObject({
 		method: "PATCH",
 		headers: {
@@ -449,15 +518,17 @@ test("opens account from the user menu and updates account details", async () =>
 	})
 	expect(accountRequests.map(([, options]) => JSON.parse(options.body))).toEqual([
 		{ displayName: "Taylor" },
-		{ email: "taylor@example.com" },
 		{ currentPassword: "password1", password: "password2" },
 	])
+	expect(JSON.parse(emailChangeRequests[0][1].body)).toEqual({
+		email: "taylor@example.com",
+	})
 	expect(screen.getByLabelText("Current password")).toHaveValue("")
 	expect(screen.getByLabelText("New password")).toHaveValue("")
 	expect(screen.getByLabelText("Confirm new password")).toHaveValue("")
 	expect(JSON.parse(window.localStorage.getItem("jsbCurrentUser"))).toEqual({
 		id: 1,
-		email: "taylor@example.com",
+		email: "tyler@example.com",
 		displayName: "Taylor",
 	})
 
@@ -491,7 +562,7 @@ test("deletes an account from the account page", async () => {
 	fireEvent.click(screen.getByRole("button", { name: "Confirm delete" }))
 
 	await waitFor(() => {
-		expect(window.location.pathname).toBe("/")
+		expect(window.location.pathname).toBe("/login")
 	})
 
 	const deleteRequest = global.fetch.mock.calls.find(
@@ -501,8 +572,218 @@ test("deletes an account from the account page", async () => {
 		method: "DELETE",
 	})
 	expect(window.localStorage.getItem("jsbCurrentUser")).toBeNull()
-	expect(screen.getByRole("link", { name: "Login" })).toBeInTheDocument()
+	expect(screen.getByRole("heading", { name: "Login" })).toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Sign up" })).toBeInTheDocument()
+})
+
+test("opens stats from the account menu", async () => {
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("link", { name: "Login" }))
+	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
+	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
+	fireEvent.click(screen.getByRole("button", { name: "Login" }))
+
+	await waitFor(() => {
+		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+	})
+
+	fireEvent.click(screen.getByRole("button", { name: "Tyler" }))
+	fireEvent.click(screen.getByRole("menuitem", { name: "Stats" }))
+
+	await waitFor(() => {
+		expect(screen.getByRole("heading", { name: "Stats" })).toBeInTheDocument()
+	})
+	expect(window.location.pathname).toBe("/stats")
+
+	const allGamesPanel = screen.getByLabelText("All games stats")
+	await waitFor(() => {
+		expect(within(allGamesPanel).getByText("6")).toBeInTheDocument()
+	})
+	expect(within(allGamesPanel).getByText("Total games")).toBeInTheDocument()
+	expect(within(allGamesPanel).getByText("4")).toBeInTheDocument()
+	expect(within(allGamesPanel).getByText("2")).toBeInTheDocument()
+	expect(within(allGamesPanel).getByText("67%")).toBeInTheDocument()
+	expect(screen.getByLabelText("Translate stats")).toBeInTheDocument()
+	expect(screen.getByLabelText("Fix sentence stats")).toHaveTextContent("0%")
+
+	const statsRequest = global.fetch.mock.calls.find(
+		([url]) => url === `${API_BASE_URL}/users/1/stats`,
+	)
+	expect(statsRequest[1]).toMatchObject({
+		method: "GET",
+	})
+})
+
+test("shows zero-filled stats panels when stats have not been created yet", async () => {
+	global.fetch.mockImplementation((url, options = {}) => {
+		if (url === `${API_BASE_URL}/login`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					user: {
+						id: 1,
+						email: "tyler@example.com",
+						displayName: "Tyler",
+					},
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/users/1/stats`) {
+			return Promise.resolve({
+				ok: false,
+				status: 404,
+				json: jest.fn().mockResolvedValue({
+					error: {
+						message: "Stats not found.",
+					},
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("link", { name: "Login" }))
+	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
+	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
+	fireEvent.click(screen.getByRole("button", { name: "Login" }))
+
+	await waitFor(() => {
+		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+	})
+
+	fireEvent.click(screen.getByRole("button", { name: "Tyler" }))
+	fireEvent.click(screen.getByRole("menuitem", { name: "Stats" }))
+
+	const allGamesPanel = screen.getByLabelText("All games stats")
+	expect(within(allGamesPanel).getAllByText("0")).toHaveLength(3)
+	expect(within(allGamesPanel).getByText("0%")).toBeInTheDocument()
+	expect(screen.getByLabelText("Translate stats")).toHaveTextContent("0%")
+	expect(screen.getByLabelText("Conjugations stats")).toHaveTextContent("0%")
+	expect(screen.getByLabelText("Fix sentence stats")).toHaveTextContent("0%")
+	expect(screen.getByLabelText("Particles stats")).toHaveTextContent("0%")
+	expect(screen.getByLabelText("Reorder stats")).toHaveTextContent("0%")
+
+	await waitFor(() => {
+		const statsRequest = global.fetch.mock.calls.find(
+			([url]) => url === `${API_BASE_URL}/users/1/stats`,
+		)
+		expect(statsRequest).toBeTruthy()
+	})
+	expect(screen.queryByText("Stats not found.")).not.toBeInTheDocument()
+})
+
+test("shows locally recorded stats when backend stats are unavailable", async () => {
+	const challengeId = "1e5eb8e7-f91a-4c61-8f37-62b1a27ddf95"
+
+	global.fetch.mockImplementation((url) => {
+		if (url === `${API_BASE_URL}/login`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					user: {
+						id: 1,
+						email: "tyler@example.com",
+						displayName: "Tyler",
+					},
+				}),
+			})
+		}
+
+		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					prompt: "I eat rice.",
+					challengeId,
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/games/check`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					correct: true,
+					feedback: "Good.",
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/users/1/stats`) {
+			return Promise.resolve({
+				ok: false,
+				status: 404,
+				json: jest.fn().mockResolvedValue({
+					error: {
+						message: "Stats not found.",
+					},
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("link", { name: "Login" }))
+	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
+	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
+	fireEvent.click(screen.getByRole("button", { name: "Login" }))
+
+	await waitFor(() => {
+		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+	})
+
+	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	await waitFor(() => {
+		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
+	})
+	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
+	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
+	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	fireEvent.click(screen.getByRole("button", { name: "Check" }))
+	await waitFor(() => {
+		expect(screen.getByText("Correct. Good.")).toBeInTheDocument()
+	})
+
+	fireEvent.click(screen.getByRole("button", { name: "Tyler" }))
+	fireEvent.click(screen.getByRole("menuitem", { name: "Stats" }))
+
+	const allGamesPanel = screen.getByLabelText("All games stats")
+	expect(within(allGamesPanel).getAllByText("1")).toHaveLength(2)
+	expect(within(allGamesPanel).getByText("100%")).toBeInTheDocument()
+	expect(screen.getByLabelText("Translate stats")).toHaveTextContent("100%")
+	expect(screen.getByLabelText("Conjugations stats")).toHaveTextContent("0%")
+
+	await waitFor(() => {
+		const statsRequest = global.fetch.mock.calls.find(
+			([url]) => url === `${API_BASE_URL}/users/1/stats`,
+		)
+		expect(statsRequest).toBeTruthy()
+	})
+})
+
+test("redirects logged-out users away from stats", async () => {
+	window.history.pushState({}, "", "/stats")
+
+	render(<App />)
+
+	await waitFor(() => {
+		expect(window.location.pathname).toBe("/login")
+	})
+	expect(screen.getByRole("heading", { name: "Login" })).toBeInTheDocument()
 })
 
 test("renders the login page at the login route", () => {
@@ -998,6 +1279,80 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 	)
 	expect(promptRequests).toHaveLength(2)
 	expect(promptRequests[0][0]).toContain("difficulty=easy")
+})
+
+test("sends the same challenge ID for repeated checks on one prompt", async () => {
+	const challengeId = "1e5eb8e7-f91a-4c61-8f37-62b1a27ddf95"
+
+	global.fetch.mockImplementation((url) => {
+		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					prompt: "I eat rice.",
+					challengeId,
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/games/check`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					correct: true,
+					feedback: "Good.",
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
+	})
+
+	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
+	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
+	fireEvent.click(screen.getByRole("button", { name: "。" }))
+
+	fireEvent.click(screen.getByRole("button", { name: "Check" }))
+	await waitFor(() => {
+		expect(screen.getByText("Correct. Good.")).toBeInTheDocument()
+	})
+
+	fireEvent.click(screen.getByRole("button", { name: "Check" }))
+	await waitFor(() => {
+		const checkRequests = global.fetch.mock.calls.filter(
+			([url]) => url === `${API_BASE_URL}/games/check`,
+		)
+		expect(checkRequests).toHaveLength(2)
+	})
+
+	const checkBodies = global.fetch.mock.calls
+		.filter(([url]) => url === `${API_BASE_URL}/games/check`)
+		.map(([, options]) => JSON.parse(options.body))
+	expect(checkBodies).toEqual([
+		{
+			mode: "translate",
+			prompt: "I eat rice.",
+			answer: "。",
+			challengeId,
+		},
+		{
+			mode: "translate",
+			prompt: "I eat rice.",
+			answer: "。",
+			challengeId,
+		},
+	])
 })
 
 test("calls prompt and check endpoints with a random real mode for shuffle", async () => {
