@@ -1,6 +1,6 @@
 import { useRef, useState } from "react"
 import "../elements/Element.css"
-import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
+import ElementsMenu from "../element-options-menu/ElementsMenu"
 import suffixes from "../jmdict/processed/suffixes.json"
 import AddButton from "../components/AddButton"
 import JapaneseText from "../components/JapaneseText"
@@ -12,7 +12,7 @@ export default function Suffix({ element, updateElement, deleteElement, mouse, c
 
 	return (
 		<div className="modalContainer">
-			<ElementOptionsMenu
+			<ElementsMenu
 				anchorRef={elementRef}
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}

@@ -1,4 +1,4 @@
-.elementOptionsMenuContainer {
+.elementsMenuContainer {
 	--element-options-anchor-gap: 10px;
 	--element-options-panel-gap: 8px;
 	inset: auto;
@@ -17,20 +17,20 @@
 	will-change: opacity, transform;
 }
 
-.elementOptionsMenuContainer:popover-open {
+.elementsMenuContainer:popover-open {
 	display: block;
 }
 
-.elementOptionsMenuOpen {
-	animation: elementOptionsMenuIn 160ms ease-in-out both;
+.elementsMenuOpen {
+	animation: elementsMenuIn 160ms ease-in-out both;
 }
 
-.elementOptionsMenuClosing {
+.elementsMenuClosing {
 	pointer-events: none;
-	animation: elementOptionsMenuOut 160ms ease-in-out both;
+	animation: elementsMenuOut 160ms ease-in-out both;
 }
 
-@keyframes elementOptionsMenuIn {
+@keyframes elementsMenuIn {
 	from {
 		transform: scale(0.95);
 		opacity: 0;
@@ -42,7 +42,7 @@
 	}
 }
 
-@keyframes elementOptionsMenuOut {
+@keyframes elementsMenuOut {
 	from {
 		opacity: 1;
 		transform: scale(1);
@@ -54,7 +54,7 @@
 	}
 }
 
-.elementOptionsMenuButton {
+.elementsMenuButton {
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
@@ -76,22 +76,22 @@
 		color 0.15s ease;
 }
 
-.elementOptionsMenuButton:hover {
+.elementsMenuButton:hover {
 	border-color: var(--color-border-faint);
 	background: var(--color-surface-control);
 }
 
-.selectedElementOptionsMenuButton {
+.selectedElementsMenuButton {
 	border: 1px solid var(--color-accent-blue);
 	background: var(--color-accent-blue-soft);
 }
 
-.selectedElementOptionsMenuButton:hover {
+.selectedElementsMenuButton:hover {
 	border: 1px solid var(--color-accent-blue);
 	background: var(--color-accent-blue-soft);
 }
 
-.elementOptionsMenuTitle {
+.elementsMenuTitle {
 	padding: 9px 12px;
 	border-bottom: 1px solid var(--color-surface-control);
 	background-color: var(--color-surface-menu-header);
@@ -123,7 +123,7 @@
 	background-color: var(--color-danger-soft-hover);
 }
 
-.elementListContainer {
+.menuPanel {
 	display: flex;
 	flex-direction: column;
 	width: min(250px, calc(100vw - 32px));
@@ -135,31 +135,31 @@
 	z-index: 999;
 }
 
-.secondaryElementOptionsPanel {
+.secondaryMenuPanel {
 	position: absolute;
 	top: 0;
 }
 
-.secondaryElementOptionsPanelOpen {
-	animation: secondaryElementOptionsPanelIn 300ms ease-in-out both;
+.secondaryMenuPanelOpen {
+	animation: secondaryMenuPanelIn 300ms ease-in-out both;
 }
 
-.secondaryElementOptionsPanelClosing {
+.secondaryMenuPanelClosing {
 	pointer-events: none;
-	animation: secondaryElementOptionsPanelOut 160ms ease-in-out both;
+	animation: secondaryMenuPanelOut 160ms ease-in-out both;
 }
 
-.secondaryElementOptionsPanel-right {
+.secondaryMenuPanel-right {
 	left: calc(100% + var(--element-options-panel-gap));
 	transform-origin: top left;
 }
 
-.secondaryElementOptionsPanel-left {
+.secondaryMenuPanel-left {
 	right: calc(100% + var(--element-options-panel-gap));
 	transform-origin: top right;
 }
 
-@keyframes secondaryElementOptionsPanelIn {
+@keyframes secondaryMenuPanelIn {
 	from {
 		transform: scale(0.95);
 		opacity: 0;
@@ -171,7 +171,7 @@
 	}
 }
 
-@keyframes secondaryElementOptionsPanelOut {
+@keyframes secondaryMenuPanelOut {
 	from {
 		transform: scale(1);
 		opacity: 1;

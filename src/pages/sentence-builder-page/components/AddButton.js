@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
+import ElementsMenu from "../element-options-menu/ElementsMenu"
 import "./AddButton.css"
 
 export default function AddButton({
@@ -40,7 +40,7 @@ export default function AddButton({
 
 	return (
 		<div className="modalContainer">
-			<ElementOptionsMenu
+			<ElementsMenu
 				anchorRef={ref}
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}

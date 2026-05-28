@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 
 const ELEMENT_POINTER_SELECTOR = ".baseInsideElement,.elementContainer,.addButton"
-const ELEMENT_MENU_SELECTOR = ".elementOptionsMenuContainer"
+const ELEMENT_MENU_SELECTOR = ".elementsMenuContainer"
 const NESTED_CONTROL_SELECTOR = "input, button"
 
 export default function useNestedElementPointerGuard() {

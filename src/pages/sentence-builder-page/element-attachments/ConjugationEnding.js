@@ -1,5 +1,5 @@
 import { useRef, useState } from "react"
-import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
+import ElementsMenu from "../element-options-menu/ElementsMenu"
 import "../elements/Element.css"
 import { createConjugationFromData } from "../grammar/conjugationOptions"
 import { conjugations } from "../grammar/conjugationData"
@@ -30,7 +30,7 @@ export default function ConjugationEnding({ conjugation, updateConjugation, colo
 
 	return (
 		<div className="modalContainer">
-			<ElementOptionsMenu
+			<ElementsMenu
 				anchorRef={elementRef}
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}

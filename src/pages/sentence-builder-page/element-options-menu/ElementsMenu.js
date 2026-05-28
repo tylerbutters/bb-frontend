@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import "./ElementOptionsMenu.css"
-import ElementOptionsList from "./ElementOptionsList"
+import "./ElementsMenu.css"
+import MenuList from "./MenuList"
 import {
 	MENU_CLOSE_EVENT,
 	MENU_OPEN_EVENT,
 	MENU_TRANSITION_MS,
-} from "./elementOptionsMenuConstants"
+} from "./elementsMenuConstants"
 
 const MENU_VIEWPORT_PADDING = 16
 
-export default function ElementOptionsMenu({
+export default function ElementsMenu({
 	anchorRef,
 	isModalOpen,
 	setIsModalOpen,
@@ -25,7 +25,7 @@ export default function ElementOptionsMenu({
 	const modalRef = useRef(null)
 	const secondaryPanelRef = useRef(null)
 	const secondaryCloseTimeoutRef = useRef(null)
-	const menuIdRef = useRef(Symbol("element-options-menu"))
+	const menuIdRef = useRef(Symbol("elements-menu"))
 	const [shouldRenderMenu, setShouldRenderMenu] = useState(isModalOpen)
 	const [shouldRenderSecondaryPanel, setShouldRenderSecondaryPanel] = useState(false)
 	const [isSecondaryPanelOpen, setIsSecondaryPanelOpen] = useState(false)
@@ -227,43 +227,43 @@ export default function ElementOptionsMenu({
 	if (!shouldRenderMenu) return null
 
 	const secondaryPanel = shouldRenderSecondaryPanel && (
-		<ElementOptionsPanel
+		<MenuPanel
 			panelRef={secondaryPanelRef}
-			className={`secondaryElementOptionsPanel secondaryElementOptionsPanel-${secondaryPlacement} ${
+			className={`secondaryMenuPanel secondaryMenuPanel-${secondaryPlacement} ${
 				isSecondaryPanelOpen
-					? "secondaryElementOptionsPanelOpen"
-					: "secondaryElementOptionsPanelClosing"
+					? "secondaryMenuPanelOpen"
+					: "secondaryMenuPanelClosing"
 			}`}
 			menuTitle={selectedCategory}
 		>
-			<ElementOptionsList
+			<MenuList
 				hasSearch={selectedCategory === "Punctuation" ? false : secondHasSearch}
 				elementOptions={secondaryElementOptions}
 				onSelectOption={(selectedElement) => handleSelectOption(selectedElement, selectedCategory)}
 			/>
-		</ElementOptionsPanel>
+		</MenuPanel>
 	)
 	const primaryPanel = (
-		<ElementOptionsPanel
+		<MenuPanel
 			hasDelete={hasDelete}
 			onDelete={handleDelete}
 			menuTitle={menuTitle}
 		>
-			<ElementOptionsList
+			<MenuList
 				hasSearch={hasSearch}
 				elementOptions={elementOptions}
 				selectedCategory={selectedCategory}
 				onSelectOption={handleSelectCategory}
 			/>
-		</ElementOptionsPanel>
+		</MenuPanel>
 	)
 
 	return createPortal(
 		<div
 			ref={modalRef}
 			popover="manual"
-			className={`elementOptionsMenuContainer ${
-				isModalOpen ? "elementOptionsMenuOpen" : "elementOptionsMenuClosing"
+			className={`elementsMenuContainer ${
+				isModalOpen ? "elementsMenuOpen" : "elementsMenuClosing"
 			}`}
 		>
 			{primaryPanel}
@@ -273,7 +273,7 @@ export default function ElementOptionsMenu({
 	)
 }
 
-function ElementOptionsPanel({
+function MenuPanel({
 	children,
 	hasDelete,
 	onDelete,
@@ -282,14 +282,14 @@ function ElementOptionsPanel({
 	panelRef,
 }) {
 	return (
-		<div ref={panelRef} className={`elementListContainer ${className}`}>
-			{menuTitle && <div className="elementOptionsMenuTitle">{menuTitle}</div>}
+		<div ref={panelRef} className={`menuPanel ${className}`}>
+			{menuTitle && <div className="elementsMenuTitle">{menuTitle}</div>}
 			{children}
 			{hasDelete && (
 				<div className="deleteElementButtonContainer">
 					<button
 						type="button"
-						className="elementOptionsMenuButton deleteElementButton"
+						className="elementsMenuButton deleteElementButton"
 						onClick={onDelete}
 					>
 						Delete

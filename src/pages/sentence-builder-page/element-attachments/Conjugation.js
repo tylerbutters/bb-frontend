@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react"
-import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
+import ElementsMenu from "../element-options-menu/ElementsMenu"
 import "../elements/Element.css"
 import AddButton from "../components/AddButton"
 import verbs from "../jmdict/processed/verbs.json"
@@ -260,7 +260,7 @@ export default function Conjugation({
 		// alert(JSON.stringify(currentConjugation))
 		return (
 			<div className="modalContainer">
-				<ElementOptionsMenu
+				<ElementsMenu
 					anchorRef={elementRef}
 					isModalOpen={isModalOpen}
 					setIsModalOpen={setIsModalOpen}
@@ -291,7 +291,7 @@ export default function Conjugation({
 	} else if (currentConjugation?.elementType === "adjective") {
 		return (
 			<div className="modalContainer">
-				<ElementOptionsMenu
+				<ElementsMenu
 					anchorRef={elementRef}
 					isModalOpen={isModalOpen}
 					setIsModalOpen={setIsModalOpen}
@@ -323,7 +323,7 @@ export default function Conjugation({
 
 	return (
 		<div className="modalContainer">
-			<ElementOptionsMenu
+			<ElementsMenu
 				anchorRef={elementRef}
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}

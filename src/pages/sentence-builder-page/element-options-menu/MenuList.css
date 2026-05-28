@@ -1,5 +1,5 @@
-.elementOptionsMenuButtonText,
-.elementOptionsMenuButtonMeanings {
+.elementsMenuButtonText,
+.elementsMenuButtonMeanings {
 	display: block;
 	width: 100%;
 	overflow: hidden;
@@ -7,18 +7,18 @@
 	white-space: nowrap;
 }
 
-.elementOptionsMenuButtonText rt {
+.elementsMenuButtonText rt {
 	font-size: 10px;
 }
 
-.elementOptionsMenuButtonMeanings {
+.elementsMenuButtonMeanings {
 	margin-top: 3px;
 	color: var(--color-text-subtle);
 	font-size: 12px;
 	line-height: 1.25;
 }
 
-.elementListItemContainer {
+.menuListItemContainer {
 	display: flex;
 	flex-direction: column;
 	gap: 3px;
@@ -27,15 +27,15 @@
 	overflow-y: auto;
 }
 
-.elementListItemContainer::-webkit-scrollbar {
+.menuListItemContainer::-webkit-scrollbar {
 	width: 8px;
 }
 
-.elementListItemContainer::-webkit-scrollbar-track {
+.menuListItemContainer::-webkit-scrollbar-track {
 	background: transparent;
 }
 
-.elementListItemContainer::-webkit-scrollbar-thumb {
+.menuListItemContainer::-webkit-scrollbar-thumb {
 	border: 2px solid var(--color-surface-menu);
 	border-radius: 999px;
 	background: var(--color-surface-pill);

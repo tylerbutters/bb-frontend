@@ -1,6 +1,6 @@
 import { useRef, useState } from "react"
 import "../elements/Element.css"
-import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
+import ElementsMenu from "../element-options-menu/ElementsMenu"
 import AddButton from "../components/AddButton"
 import { noDesu } from "../grammar/conjugationData"
 
@@ -10,7 +10,7 @@ export default function NoDesu({ element, updateElement, deleteElement, mouse, c
 
 	return (
 		<div className="modalContainer">
-			<ElementOptionsMenu
+			<ElementsMenu
 				anchorRef={elementRef}
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}

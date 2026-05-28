@@ -2,11 +2,11 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import InputBox from "../../../components/InputBox"
 import JapaneseText from "../components/JapaneseText"
 import { filterElementOptions } from "./elementOptionsSearch"
-import "./ElementOptionsList.css"
+import "./MenuList.css"
 
 const PAGE_SIZE = 50
 
-export default function ElementOptionsList({
+export default function MenuList({
 	hasSearch,
 	elementOptions = [],
 	onSelectOption,
@@ -73,25 +73,25 @@ export default function ElementOptionsList({
 				</div>
 			)}
 			<div
-				className="elementListItemContainer"
+				className="menuListItemContainer"
 				style={{ height: hasSearch && 300, width: hasSearch && 250 }}
 			>
 				{visibleOptions.map((element, index) => (
 					<button
 						type="button"
 						key={index}
-						className={`elementOptionsMenuButton ${
-							selectedCategory === element?.text && "selectedElementOptionsMenuButton"
+						className={`elementsMenuButton ${
+							selectedCategory === element?.text && "selectedElementsMenuButton"
 						}`}
 						onClick={() => onSelectOption(element)}
 						title={getMeaningsTitle(element)}
 					>
-						<div className="elementOptionsMenuButtonText">
+						<div className="elementsMenuButtonText">
 							<JapaneseText text={element?.text} reading={element?.textKana} />
 						</div>
 
 						{element?.meanings?.length > 0 && (
-							<span className="elementOptionsMenuButtonMeanings">
+							<span className="elementsMenuButtonMeanings">
 								{getVisibleMeaningsText(element)}
 							</span>
 						)}

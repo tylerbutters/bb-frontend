@@ -9,7 +9,7 @@ function TestNestedElementPointerGuard() {
 			<div data-testid="element" className="elementContainer">
 				<button type="button">Nested button</button>
 			</div>
-			<div data-testid="menu" className="elementOptionsMenuContainer">
+			<div data-testid="menu" className="elementsMenuContainer">
 				<div data-testid="menu-child" className="elementContainer" />
 			</div>
 		</>

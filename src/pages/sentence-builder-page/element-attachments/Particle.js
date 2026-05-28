@@ -1,5 +1,5 @@
 import { useRef, useState } from "react"
-import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
+import ElementsMenu from "../element-options-menu/ElementsMenu"
 import "../elements/Element.css"
 import AddButton from "../components/AddButton"
 
@@ -16,7 +16,7 @@ export default function Particle({
 
 	return (
 		<div className="modalContainer">
-			<ElementOptionsMenu
+			<ElementsMenu
 				anchorRef={elementRef}
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}

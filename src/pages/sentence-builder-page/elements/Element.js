@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react"
-import ElementOptionsMenu from "../element-options-menu/ElementOptionsMenu"
+import ElementsMenu from "../element-options-menu/ElementsMenu"
 import "./Element.css"
 import Particle from "../element-attachments/Particle"
 import AnimatedWidth from "./AnimatedWidth"
@@ -88,7 +88,7 @@ export default function Element({
 
 	return (
 		<div className="modalContainer">
-			<ElementOptionsMenu
+			<ElementsMenu
 				anchorRef={elementContainerRef}
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
