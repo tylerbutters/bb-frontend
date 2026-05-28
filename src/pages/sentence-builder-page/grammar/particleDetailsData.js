@@ -253,6 +253,42 @@ export const particleDetails = [
 			},
 		],
 	},
+	{
+		text: "か",
+		type: "Particle",
+		englishTranslation: "question / uncertainty",
+		uses: [
+			{
+				label: "Question",
+				meaning: "Marks a question or uncertainty.",
+				examples: ["学生ですか => are you a student?"],
+			},
+		],
+	},
+	{
+		text: "よ",
+		type: "Particle",
+		englishTranslation: "emphasis / new information",
+		uses: [
+			{
+				label: "Emphasis",
+				meaning: "Adds emphasis or presents information the listener may not know.",
+				examples: ["大丈夫ですよ => it's okay"],
+			},
+		],
+	},
+	{
+		text: "ね",
+		type: "Particle",
+		englishTranslation: "confirmation / agreement",
+		uses: [
+			{
+				label: "Confirmation",
+				meaning: "Seeks agreement or shared understanding from the listener.",
+				examples: ["きれいですね => it's pretty, isn't it?"],
+			},
+		],
+	},
 ]
 
 const particleDetailsByText = new Map(

@@ -1,7 +1,7 @@
 export const particles = [
 	{
 		text: "から",
-		attachesTo: ["noun", "verb", "te", "ii", "i-type"],
+		attachesTo: ["noun", "verb", "te", "ii", "i-type", "desu"],
 	},
 	{
 		text: "は",
@@ -13,7 +13,7 @@ export const particles = [
 	},
 	{
 		text: "が",
-		attachesTo: ["noun", "verb", "i-type", "na-type"],
+		attachesTo: ["noun", "verb", "i-type", "na-type", "desu"],
 	},
 	{
 		text: "を",
@@ -33,7 +33,7 @@ export const particles = [
 	},
 	{
 		text: "と",
-		attachesTo: ["noun", "verb", "i-type", "na-type", "counter", "ii"],
+		attachesTo: ["noun", "verb", "i-type", "na-type", "counter", "ii", "desu"],
 	},
 	{
 		text: "こそ",
@@ -66,5 +66,17 @@ export const particles = [
 	{
 		text: "な",
 		attachesTo: ["na-type"],
+	},
+	{
+		text: "か",
+		attachesTo: ["desu"],
+	},
+	{
+		text: "よ",
+		attachesTo: ["desu"],
+	},
+	{
+		text: "ね",
+		attachesTo: ["desu"],
 	},
 ]
