@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom"
-import { deleteUser, updateUser } from "../../api/users"
+import { updateUser } from "../../api/users"
 import InputBox from "../../components/InputBox"
 import "../TopRightButton.css"
 import "../AuthPage.css"

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom"
-import { deleteUser, requestEmailChange, updateUser } from "../../api/users"
+import { useLocation } from "react-router-dom"
+import { requestEmailChange } from "../../api/users"
 import InputBox from "../../components/InputBox"
 import "../TopRightButton.css"
 import "../AuthPage.css"
@@ -35,7 +35,7 @@ export default function EmailSection({ currentUser, onUserUpdate }) {
 		})
 
 		try {
-			const data = await requestEmailChange(currentUser.id, { email: newEmail })
+			await requestEmailChange(currentUser.id, { email: newEmail })
 
 			setFeedback({
 				status: "success",

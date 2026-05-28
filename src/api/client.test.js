@@ -28,6 +28,7 @@ test("apiRequest sends JSON requests against the API base URL", async () => {
 
 	expect(global.fetch).toHaveBeenCalledWith(`${API_BASE_URL}/users`, {
 		method: "POST",
+		credentials: "include",
 		headers: {
 			"Content-Type": "application/json",
 			"X-Test": "true",
@@ -53,6 +54,7 @@ test("apiRequest preserves fetch signals", async () => {
 		`${API_BASE_URL}/games/prompt?mode=translate&difficulty=easy`,
 		{
 			method: "GET",
+			credentials: "include",
 			headers: {},
 			body: undefined,
 			signal: controller.signal,

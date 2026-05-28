@@ -29,7 +29,7 @@ export default function Element({
 			)
 		}
 		return availableParticles?.map((particle) => ({ elementType: "particle", text: particle.text }))
-	}, [element.adjectiveType, element.elementType, particles])
+	}, [element.adjectiveType, element.elementType])
 
 	useEffect(() => {
 		setIsModalOpen(false)

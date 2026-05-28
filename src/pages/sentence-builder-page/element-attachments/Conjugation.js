@@ -27,6 +27,9 @@ export function getConjugationOptionsForParent(parentConjugation, conjugations) 
 				case "ii":
 					conjugationOptions = conjugations["iiDefault"]
 					break
+				default:
+					conjugationOptions = []
+					break
 			}
 			break
 		case "verb": //is the first conjugation
@@ -76,7 +79,7 @@ export default function Conjugation({
 	const conjugationOptions = getConjugationOptionsForParent(parentConjugation, conjugations)
 	const particleOptions = useMemo(
 		() => particles.filter((particle) => particle.attachesTo.includes("te")),
-		[particles],
+		[],
 	)
 
 	function addParticle(selectedElement) {

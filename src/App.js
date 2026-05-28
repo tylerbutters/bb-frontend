@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage"
 import SignupPage from "./pages/SignupPage"
 import ForgotPasswordPage from "./pages/ForgotPasswordPage"
 import ConfirmEmailChangePage from "./pages/ConfirmEmailChangePage"
+import { logout } from "./api/auth"
 
 const CURRENT_USER_STORAGE_KEY = "jsbCurrentUser"
 
@@ -34,6 +35,7 @@ export default function App() {
 	function handleLogout() {
 		setCurrentUser(null)
 		window.localStorage.removeItem(CURRENT_USER_STORAGE_KEY)
+		logout().catch(() => {})
 	}
 
 	return (

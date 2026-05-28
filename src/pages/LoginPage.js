@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { confirmPasswordReset, login, requestPasswordReset } from "../api/auth"
+import { login } from "../api/auth"
 import InputBox from "../components/InputBox"
 import "./TopRightButton.css"
 import "./AuthPage.css"
-import ForgotPasswordPage from "./ForgotPasswordPage"
 
 export default function LoginPage({ onLogin }) {
 	const navigate = useNavigate()
 	const location = useLocation()
 
-	const [authMode, setAuthMode] = useState("login")
 	const [loginForm, setLoginForm] = useState({
 		email: "",
 		password: "",

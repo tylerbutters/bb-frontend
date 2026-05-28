@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react"
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom"
-import { deleteUser, updateUser } from "../../api/users"
-import InputBox from "../../components/InputBox"
+import { useState } from "react"
+import { Navigate } from "react-router-dom"
+import { deleteUser } from "../../api/users"
 import "../TopRightButton.css"
 import "../AuthPage.css"
 

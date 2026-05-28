@@ -9,6 +9,12 @@ export async function login(credentials) {
 	return data.user
 }
 
+export async function logout() {
+	return apiRequest("/login/session", {
+		method: "DELETE",
+	})
+}
+
 export async function requestPasswordReset({ email }) {
 	return apiRequest("/login/password-reset/request", {
 		method: "POST",

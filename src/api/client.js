@@ -44,6 +44,7 @@ export async function apiRequest(path, { method = "GET", body, headers = {}, sig
 	const hasBody = body !== undefined
 	const requestOptions = {
 		method,
+		credentials: "include",
 		headers: {
 			...(hasBody ? { "Content-Type": "application/json" } : {}),
 			...headers,
