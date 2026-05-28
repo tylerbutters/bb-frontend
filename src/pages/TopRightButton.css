@@ -20,6 +20,15 @@
 		transform 0.15s ease;
 }
 
+.topLeftButton {
+	right: auto;
+	left: 18px;
+	max-width: calc(100vw - 210px);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 .topRightSignupButton {
 	border-color: var(--color-text-primary);
 	background: var(--color-text-primary);

@@ -1,10 +1,12 @@
 import { useCallback, useMemo, useState } from "react"
+import { Link } from "react-router-dom"
 import AccountMenu from "./components/AccountMenu"
 import GameControls from "./games/GameControls"
 import GameModeSelector from "./games/GameModeSelector"
 import GamePrompt from "./games/GamePrompt"
 import SentenceBuilderWorkspace from "./components/SentenceBuilderWorkspace"
 import { japaneseTranslationToElements } from "./grammar/japaneseTranslationElements"
+import "../TopRightButton.css"
 
 const PROMPT_ELEMENT_GAME_MODES = new Set(["conjugations", "fix sentence", "particles", "reorder"])
 
@@ -59,6 +61,9 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 
 	return (
 		<div className="app">
+			<Link className="topRightButton topLeftButton" to="/about">
+				About Bunsho Builder
+			</Link>
 			<AccountMenu currentUser={currentUser} onLogout={onLogout} />
 			<GameModeSelector
 				selectedGameMode={selectedGameMode}

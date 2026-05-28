@@ -133,8 +133,27 @@ afterEach(() => {
 test("renders the initial add button", () => {
 	render(<App />)
 	expect(screen.getByRole("button", { name: "+ word" })).toBeInTheDocument()
+	expect(screen.getByRole("link", { name: "About Bunsho Builder" })).toHaveAttribute(
+		"href",
+		"/about",
+	)
 	expect(screen.getByRole("link", { name: "Login" })).toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Sign up" })).toBeInTheDocument()
+})
+
+test("opens the about page", () => {
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("link", { name: "About Bunsho Builder" }))
+
+	expect(window.location.pathname).toBe("/about")
+	expect(screen.getByRole("heading", { name: "About Bunsho Builder" })).toBeInTheDocument()
+	expect(screen.getByText(/practice sentence structure/)).toBeInTheDocument()
+	expect(screen.getByRole("link", { name: "support@bunshobuilder.com" })).toHaveAttribute(
+		"href",
+		"mailto:support@bunshobuilder.com",
+	)
+	expect(screen.getByRole("link", { name: "Back" })).toHaveAttribute("href", "/")
 })
 
 test("opens the sign up page, confirms the email code, and creates an account", async () => {
