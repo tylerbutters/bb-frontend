@@ -1,27 +1,24 @@
 import { useEffect, useState } from "react"
 import { Link, Navigate } from "react-router-dom"
-import { getUserStats } from "../api/users"
+import { getUserGameHistory, getUserStats } from "../api/users"
 import {
 	emptyGameStatsResponse,
+	GAME_RECENT_FILTERS,
 	GAME_STAT_FILTERS,
+	getGameStatsGroupFromHistoryItems,
+	getLocalGameHistory,
 	getLocalGameStats,
 	hasRecordedStats,
+	normalizeGameStats,
+	normalizeGameStatsResponse,
+	parseGameRecentLimit,
 } from "../gameStatsStorage"
 import { GameHistoryDrawer, useGameHistoryDrawer } from "./GameHistoryDrawer"
 import "./TopRightButton.css"
 import "./AuthPage.css"
 
-function normalizeStats(stats) {
-	return {
-		totalGames: Number(stats?.totalGames || 0),
-		won: Number(stats?.won || 0),
-		failed: Number(stats?.failed || 0),
-		accuracy: Number(stats?.accuracy || 0),
-	}
-}
-
 function StatPanel({ title, stats, onHistoryClick }) {
-	const normalizedStats = normalizeStats(stats)
+	const normalizedStats = normalizeGameStats(stats)
 
 	return (
 		<section className="statsPanel" aria-label={`${title} stats`}>
@@ -57,57 +54,26 @@ function StatPanel({ title, stats, onHistoryClick }) {
 	)
 }
 
-function normalizeStatsGroup(statsGroup, fallbackStatsGroup = emptyGameStatsResponse()) {
-	const statsByMode = new Map((statsGroup?.games || []).map((game) => [game.mode, game]))
-
-	return {
-		total: normalizeStats(statsGroup?.total || fallbackStatsGroup.total),
-		games: fallbackStatsGroup.games.map((fallbackGameStats) => ({
-			...fallbackGameStats,
-			...normalizeStats(statsByMode.get(fallbackGameStats.mode) || fallbackGameStats),
-		})),
-	}
-}
-
-function normalizeStatsResponse(stats, fallbackStats = emptyGameStatsResponse()) {
-	const emptyStats = emptyGameStatsResponse()
-	const fallbackByDifficulty = fallbackStats.byDifficulty || emptyStats.byDifficulty
-	const sourceByDifficulty = stats?.byDifficulty || {}
-	const byDifficulty = Object.fromEntries(
-		GAME_STAT_FILTERS.map((difficulty) => {
-			const sourceStats =
-				difficulty === "all"
-					? sourceByDifficulty.all || {
-							total: stats?.total,
-							games: stats?.games,
-						}
-					: sourceByDifficulty[difficulty]
-
-			return [
-				difficulty,
-				normalizeStatsGroup(
-					sourceStats,
-					fallbackByDifficulty[difficulty] || emptyStats.byDifficulty[difficulty],
-				),
-			]
-		}),
-	)
-
-	return {
-		...byDifficulty.all,
-		byDifficulty,
-	}
+function hasHistoryItems(history) {
+	return Array.isArray(history?.items) && history.items.length > 0
 }
 
 export default function StatsPage({ currentUser }) {
 	const [stats, setStats] = useState(() =>
 		currentUser ? getLocalGameStats(currentUser.id) : emptyGameStatsResponse(),
 	)
+	const [recentStats, setRecentStats] = useState(() => getGameStatsGroupFromHistoryItems())
 	const [selectedDifficulty, setSelectedDifficulty] = useState("all")
+	const [selectedRecentRange, setSelectedRecentRange] = useState("all")
 	const [status, setStatus] = useState("idle")
 	const [message, setMessage] = useState("")
+	const [recentStatus, setRecentStatus] = useState("idle")
+	const [recentMessage, setRecentMessage] = useState("")
 	const gameHistory = useGameHistoryDrawer(currentUser)
-	const visibleStats = stats.byDifficulty?.[selectedDifficulty] || stats
+	const selectedRecentLimit = parseGameRecentLimit(selectedRecentRange)
+	const visibleStats = selectedRecentLimit
+		? recentStats
+		: stats.byDifficulty?.[selectedDifficulty] || stats
 
 	useEffect(() => {
 		if (!currentUser) return
@@ -123,7 +89,7 @@ export default function StatsPage({ currentUser }) {
 			try {
 				const nextStats = await getUserStats(currentUser.id, { signal: controller.signal })
 				if (controller.signal.aborted) return
-				const normalizedStats = normalizeStatsResponse(nextStats, localStats)
+				const normalizedStats = normalizeGameStatsResponse(nextStats, localStats)
 				setStats(hasRecordedStats(normalizedStats) ? normalizedStats : localStats)
 				setStatus("ready")
 			} catch (error) {
@@ -147,6 +113,66 @@ export default function StatsPage({ currentUser }) {
 			controller.abort()
 		}
 	}, [currentUser])
+
+	useEffect(() => {
+		if (!currentUser) return
+
+		if (!selectedRecentLimit) {
+			setRecentStatus("idle")
+			setRecentMessage("")
+			setRecentStats(getGameStatsGroupFromHistoryItems())
+			return
+		}
+
+		const controller = new AbortController()
+		const query = {
+			mode: "all",
+			difficulty: selectedDifficulty,
+			limit: selectedRecentLimit,
+			offset: 0,
+		}
+		const localHistory = getLocalGameHistory(currentUser.id, query)
+
+		async function loadRecentStats() {
+			setRecentStatus("loading")
+			setRecentMessage("")
+			setRecentStats(getGameStatsGroupFromHistoryItems())
+
+			try {
+				const remoteHistory = await getUserGameHistory(currentUser.id, {
+					...query,
+					signal: controller.signal,
+				})
+				if (controller.signal.aborted) return
+
+				const history =
+					hasHistoryItems(remoteHistory) || !hasHistoryItems(localHistory)
+						? remoteHistory
+						: localHistory
+				setRecentStats(getGameStatsGroupFromHistoryItems(history.items || []))
+				setRecentStatus("ready")
+			} catch (error) {
+				if (error.name === "AbortError") return
+
+				if (hasHistoryItems(localHistory) || error.status === 404) {
+					setRecentStats(getGameStatsGroupFromHistoryItems(localHistory.items || []))
+					setRecentStatus("ready")
+					return
+				}
+
+				console.log(error)
+				setRecentStats(getGameStatsGroupFromHistoryItems())
+				setRecentStatus("error")
+				setRecentMessage(error.message || "Could not load recent stats.")
+			}
+		}
+
+		loadRecentStats()
+
+		return () => {
+			controller.abort()
+		}
+	}, [currentUser, selectedDifficulty, selectedRecentLimit])
 
 	if (!currentUser) {
 		return <Navigate to="/login" replace />
@@ -180,9 +206,32 @@ export default function StatsPage({ currentUser }) {
 						</button>
 					))}
 				</div>
-				{status === "loading" && <p className="accountMessage">Loading stats...</p>}
-				{status === "error" && (
+				<div className="statsRangeTabs" aria-label="Stats range">
+					{GAME_RECENT_FILTERS.map((range) => (
+						<button
+							key={range.value}
+							type="button"
+							className={`statsRangeButton ${
+								selectedRecentRange === range.value ? "statsRangeButtonSelected" : ""
+							}`}
+							aria-pressed={selectedRecentRange === range.value}
+							onClick={() => setSelectedRecentRange(range.value)}
+						>
+							{range.label}
+						</button>
+					))}
+				</div>
+				{status === "loading" && !selectedRecentLimit && (
+					<p className="accountMessage">Loading stats...</p>
+				)}
+				{recentStatus === "loading" && selectedRecentLimit && (
+					<p className="accountMessage">Loading recent stats...</p>
+				)}
+				{status === "error" && !selectedRecentLimit && (
 					<p className="accountMessage accountMessageerror">{message}</p>
+				)}
+				{recentStatus === "error" && selectedRecentLimit && (
+					<p className="accountMessage accountMessageerror">{recentMessage}</p>
 				)}
 				<StatPanel
 					title="All games"
@@ -192,6 +241,7 @@ export default function StatsPage({ currentUser }) {
 							mode: "all",
 							label: "All games",
 							difficulty: selectedDifficulty,
+							recentLimit: selectedRecentRange,
 						})
 					}
 				/>
@@ -206,6 +256,7 @@ export default function StatsPage({ currentUser }) {
 									mode: game.mode,
 									label: game.label,
 									difficulty: selectedDifficulty,
+									recentLimit: selectedRecentRange,
 								})
 							}
 						/>

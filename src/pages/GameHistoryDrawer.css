@@ -120,6 +120,79 @@
 	flex: 0 0 auto;
 }
 
+.statsHistoryRangeTabs {
+	display: grid;
+	flex: 0 0 auto;
+	width: 100%;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 8px;
+	padding: 6px;
+	border: 1px solid var(--color-surface-control-active);
+	border-radius: 8px;
+	background: var(--color-surface);
+	box-sizing: border-box;
+}
+
+.statsHistoryRangeButton {
+	min-height: 38px;
+	border: 1px solid transparent;
+	border-radius: 6px;
+	background: transparent;
+	color: var(--color-text-muted);
+	cursor: pointer;
+	font: inherit;
+	font-size: 13px;
+	font-weight: 850;
+	line-height: 1;
+}
+
+.statsHistoryRangeButton:hover,
+.statsHistoryRangeButton:focus-visible {
+	border-color: var(--color-surface-control-active);
+	color: var(--color-text-primary);
+	outline: none;
+}
+
+.statsHistoryRangeButtonSelected {
+	border-color: var(--color-surface-control-active);
+	background: var(--color-surface-control-active);
+	color: var(--color-text-primary);
+}
+
+.statsHistoryStats {
+	display: grid;
+	flex: 0 0 auto;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 6px;
+}
+
+.statsHistoryStat {
+	display: flex;
+	min-height: 68px;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 10px;
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	background: var(--color-surface);
+	box-sizing: border-box;
+}
+
+.statsHistoryStat span {
+	color: var(--color-text-muted);
+	font-size: 11px;
+	font-weight: 850;
+	line-height: 1.2;
+}
+
+.statsHistoryStat strong {
+	color: var(--color-text-primary);
+	font-size: 22px;
+	font-weight: 900;
+	line-height: 1;
+}
+
 .statsHistoryScrollArea {
 	display: flex;
 	min-height: 0;

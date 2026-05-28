@@ -793,6 +793,13 @@ test("opens stats from the account menu", async () => {
 	expect(screen.getByRole("tab", { name: "easy" })).toBeInTheDocument()
 	expect(screen.getByRole("tab", { name: "medium" })).toBeInTheDocument()
 	expect(screen.getByRole("tab", { name: "hard" })).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "all" })).toHaveAttribute(
+		"aria-pressed",
+		"true",
+	)
+	expect(screen.getByRole("button", { name: "past 10" })).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "past 20" })).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "past 50" })).toBeInTheDocument()
 
 	fireEvent.click(screen.getByRole("tab", { name: "easy" }))
 	expect(screen.getByRole("tab", { name: "easy" })).toHaveAttribute("aria-selected", "true")
@@ -814,6 +821,39 @@ test("opens stats from the account menu", async () => {
 	expect(allGamesPanel).toHaveTextContent(/Won\s*0/)
 	expect(allGamesPanel).toHaveTextContent(/Failed\s*1/)
 	expect(allGamesPanel).toHaveTextContent(/Accuracy\s*0%/)
+
+	fireEvent.click(screen.getByRole("tab", { name: "all" }))
+	await waitFor(() => {
+		expect(allGamesPanel).toHaveTextContent(/Total games\s*6/)
+	})
+	fireEvent.click(screen.getByRole("button", { name: "past 10" }))
+	expect(screen.getByRole("button", { name: "past 10" })).toHaveAttribute(
+		"aria-pressed",
+		"true",
+	)
+	await waitFor(() => {
+		expect(allGamesPanel).toHaveTextContent(/Total games\s*1/)
+	})
+	expect(allGamesPanel).toHaveTextContent(/Won\s*1/)
+	expect(allGamesPanel).toHaveTextContent(/Failed\s*0/)
+	expect(allGamesPanel).toHaveTextContent(/Accuracy\s*100%/)
+	expect(screen.getByLabelText("Translate stats")).toHaveTextContent("100%")
+	expect(screen.getByLabelText("Particles stats")).toHaveTextContent("0%")
+
+	const recentStatsRequest = global.fetch.mock.calls
+		.filter(([url]) => String(url).startsWith(`${API_BASE_URL}/users/1/game-history`))
+		.at(-1)
+	const recentStatsParams = new URL(String(recentStatsRequest[0]), "http://localhost")
+		.searchParams
+	expect(recentStatsParams.get("mode")).toBe("all")
+	expect(recentStatsParams.get("difficulty")).toBe("all")
+	expect(recentStatsParams.get("limit")).toBe("10")
+	expect(recentStatsParams.get("offset")).toBe("0")
+
+	fireEvent.click(screen.getByRole("button", { name: "all" }))
+	await waitFor(() => {
+		expect(allGamesPanel).toHaveTextContent(/Total games\s*6/)
+	})
 
 	const statsRequest = global.fetch.mock.calls.find(
 		([url]) => url === `${API_BASE_URL}/users/1/stats`,
@@ -854,6 +894,19 @@ test("opens paginated game history from a stats panel", async () => {
 		"aria-selected",
 		"true",
 	)
+	const historyStats = within(drawer).getByRole("group", {
+		name: "Translate history stats",
+	})
+	await waitFor(() => {
+		expect(historyStats).toHaveTextContent(/Total games\s*2/)
+	})
+	expect(historyStats).toHaveTextContent(/Won\s*1/)
+	expect(historyStats).toHaveTextContent(/Failed\s*1/)
+	expect(historyStats).toHaveTextContent(/Accuracy\s*50%/)
+	expect(within(drawer).getByRole("button", { name: "all" })).toHaveAttribute(
+		"aria-pressed",
+		"true",
+	)
 	expect(within(drawer).getByText("I eat rice.")).toBeInTheDocument()
 	expect(within(drawer).getByText("ご飯を食べます。")).toBeInTheDocument()
 	expect(within(drawer).getByText("Correct")).toBeInTheDocument()
@@ -869,16 +922,47 @@ test("opens paginated game history from a stats panel", async () => {
 	expect(firstHistoryParams.get("limit")).toBe("50")
 	expect(firstHistoryParams.get("offset")).toBe("0")
 
+	fireEvent.click(within(drawer).getByRole("button", { name: "past 10" }))
+	expect(within(drawer).getByRole("button", { name: "past 10" })).toHaveAttribute(
+		"aria-pressed",
+		"true",
+	)
+	await waitFor(() => {
+		expect(historyStats).toHaveTextContent(/Total games\s*1/)
+	})
+	expect(historyStats).toHaveTextContent(/Won\s*1/)
+	expect(historyStats).toHaveTextContent(/Failed\s*0/)
+	expect(historyStats).toHaveTextContent(/Accuracy\s*100%/)
+	expect(within(drawer).queryByRole("button", { name: "Load more" })).not.toBeInTheDocument()
+
+	const recentHistoryRequests = global.fetch.mock.calls.filter(([url]) =>
+		String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
+	)
+	const recentHistoryParams = new URL(
+		String(recentHistoryRequests[recentHistoryRequests.length - 1][0]),
+		"http://localhost",
+	).searchParams
+	expect(recentHistoryParams.get("limit")).toBe("10")
+	expect(recentHistoryParams.get("offset")).toBe("0")
+
+	fireEvent.click(within(drawer).getByRole("button", { name: "all" }))
+	await waitFor(() => {
+		expect(historyStats).toHaveTextContent(/Total games\s*2/)
+	})
+	await waitFor(() => {
+		expect(within(drawer).getByRole("button", { name: "Load more" })).toBeInTheDocument()
+	})
+
 	fireEvent.click(within(drawer).getByRole("button", { name: "Load more" }))
 	await waitFor(() => {
 		expect(within(drawer).getByText("I drink tea.")).toBeInTheDocument()
 	})
-	expect(within(drawer).getByText("Failed")).toBeInTheDocument()
+	expect(within(drawer).getAllByText("Failed").length).toBeGreaterThan(0)
 
 	const historyRequests = global.fetch.mock.calls.filter(([url]) =>
 		String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
 	)
-	const secondHistoryParams = new URL(String(historyRequests[1][0]), "http://localhost")
+	const secondHistoryParams = new URL(String(historyRequests[3][0]), "http://localhost")
 		.searchParams
 	expect(secondHistoryParams.get("offset")).toBe("50")
 
@@ -897,7 +981,7 @@ test("opens paginated game history from a stats panel", async () => {
 		String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
 	)
 	const difficultySwitchParams = new URL(
-		String(updatedHistoryRequests[2][0]),
+		String(updatedHistoryRequests[4][0]),
 		"http://localhost",
 	).searchParams
 	expect(difficultySwitchParams.get("mode")).toBe("translate")
@@ -949,6 +1033,15 @@ test("opens game history from the sentence builder prompt panel", async () => {
 		"aria-selected",
 		"true",
 	)
+	const historyStats = within(drawer).getByRole("group", {
+		name: "Translate history stats",
+	})
+	await waitFor(() => {
+		expect(historyStats).toHaveTextContent(/Total games\s*3/)
+	})
+	expect(historyStats).toHaveTextContent(/Won\s*2/)
+	expect(historyStats).toHaveTextContent(/Failed\s*1/)
+	expect(historyStats).toHaveTextContent(/Accuracy\s*67%/)
 	await waitFor(() => {
 		expect(within(drawer).getByText("I eat rice.")).toBeInTheDocument()
 	})
@@ -1164,6 +1257,11 @@ test("shows locally recorded stats when backend stats are unavailable", async ()
 		}),
 	)
 	const drawer = await screen.findByLabelText("Translate history drawer")
+	const historyStats = within(drawer).getByRole("group", {
+		name: "Translate history stats",
+	})
+	expect(historyStats).toHaveTextContent(/Total games\s*1/)
+	expect(historyStats).toHaveTextContent(/Accuracy\s*100%/)
 	expect(within(drawer).getByText("I eat rice.")).toBeInTheDocument()
 	expect(within(drawer).getByText("。")).toBeInTheDocument()
 	expect(within(drawer).getByText("Good.")).toBeInTheDocument()

@@ -9,6 +9,12 @@ export const TRACKED_GAME_MODES = [
 ]
 export const GAME_DIFFICULTIES = ["easy", "medium", "hard"]
 export const GAME_STAT_FILTERS = ["all", ...GAME_DIFFICULTIES]
+export const GAME_RECENT_FILTERS = [
+	{ value: "all", label: "all" },
+	{ value: "10", label: "past 10" },
+	{ value: "20", label: "past 20" },
+	{ value: "50", label: "past 50" },
+]
 
 const trackedModeLabels = new Map(
 	TRACKED_GAME_MODES.map((gameMode) => [gameMode.mode, gameMode.label]),
@@ -48,6 +54,43 @@ function createStats({ totalGames = 0, won = 0, failed = 0 } = {}) {
 		failed,
 		accuracy: calculateAccuracy(won, totalGames),
 	}
+}
+
+export function normalizeGameStats(stats) {
+	return {
+		totalGames: Number(stats?.totalGames || 0),
+		won: Number(stats?.won || 0),
+		failed: Number(stats?.failed || 0),
+		accuracy: Number(stats?.accuracy || 0),
+	}
+}
+
+export function getGameStatsFromHistoryItems(items = []) {
+	const totalGames = items.length
+	const won = items.filter((item) => item.correct).length
+	const failed = totalGames - won
+
+	return createStats({ totalGames, won, failed })
+}
+
+export function getGameStatsGroupFromHistoryItems(items = []) {
+	const statsByMode = createModeAccumulator()
+
+	for (const item of items) {
+		addStats(statsByMode, {
+			mode: item.mode,
+			correct: Boolean(item.correct),
+		})
+	}
+
+	return createStatsGroup(statsByMode)
+}
+
+export function parseGameRecentLimit(value) {
+	if (value === "all") return null
+
+	const limit = Number(value)
+	return Number.isFinite(limit) && limit > 0 ? limit : null
 }
 
 function normalizeDifficulty(difficulty) {
@@ -94,6 +137,82 @@ function createStatsGroup(statsByMode = createModeAccumulator()) {
 		total: createStats(total),
 		games,
 	}
+}
+
+export function normalizeGameStatsGroup(statsGroup, fallbackStatsGroup = createStatsGroup()) {
+	const statsByMode = new Map((statsGroup?.games || []).map((game) => [game.mode, game]))
+	const fallbackByMode = new Map(
+		(fallbackStatsGroup?.games || createStatsGroup().games).map((game) => [
+			game.mode,
+			game,
+		]),
+	)
+
+	return {
+		total: normalizeGameStats(statsGroup?.total || fallbackStatsGroup?.total),
+		games: TRACKED_GAME_MODES.map(({ mode, label }) => {
+			const fallbackGameStats = fallbackByMode.get(mode) || {
+				mode,
+				label,
+				...createStats(),
+			}
+			const sourceGameStats = statsByMode.get(mode) || fallbackGameStats
+
+			return {
+				...fallbackGameStats,
+				mode,
+				label,
+				...normalizeGameStats(sourceGameStats),
+			}
+		}),
+	}
+}
+
+export function normalizeGameStatsResponse(stats, fallbackStats = emptyGameStatsResponse()) {
+	const emptyStats = emptyGameStatsResponse()
+	const fallbackByDifficulty = fallbackStats.byDifficulty || emptyStats.byDifficulty
+	const sourceByDifficulty = stats?.byDifficulty || {}
+	const byDifficulty = Object.fromEntries(
+		GAME_STAT_FILTERS.map((difficulty) => {
+			const sourceStats =
+				difficulty === "all"
+					? sourceByDifficulty.all || {
+							total: stats?.total,
+							games: stats?.games,
+						}
+					: sourceByDifficulty[difficulty]
+
+			return [
+				difficulty,
+				normalizeGameStatsGroup(
+					sourceStats,
+					fallbackByDifficulty[difficulty] || emptyStats.byDifficulty[difficulty],
+				),
+			]
+		}),
+	)
+
+	return {
+		...byDifficulty.all,
+		byDifficulty,
+	}
+}
+
+export function getGameStatsForFilter(
+	stats,
+	{ mode = "all", difficulty = "all" } = {},
+) {
+	const normalizedStats = normalizeGameStatsResponse(stats)
+	const statsGroup =
+		normalizedStats.byDifficulty?.[difficulty] ||
+		normalizedStats.byDifficulty?.all ||
+		normalizedStats
+
+	if (mode === "all") return normalizeGameStats(statsGroup.total)
+
+	return normalizeGameStats(
+		(statsGroup.games || []).find((gameStats) => gameStats.mode === mode),
+	)
 }
 
 function challengeKey({ challengeId, mode, prompt }) {

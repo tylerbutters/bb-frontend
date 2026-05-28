@@ -1,8 +1,17 @@
 import { useEffect, useState } from "react"
-import { getUserGameHistory } from "../api/users"
+import { getUserGameHistory, getUserStats } from "../api/users"
 import {
+	emptyGameStatsResponse,
+	GAME_RECENT_FILTERS,
 	GAME_STAT_FILTERS,
+	getGameStatsFromHistoryItems,
+	getGameStatsForFilter,
 	getLocalGameHistory,
+	getLocalGameStats,
+	hasRecordedStats,
+	normalizeGameStats,
+	normalizeGameStatsResponse,
+	parseGameRecentLimit,
 } from "../gameStatsStorage"
 import "./GameHistoryDrawer.css"
 
@@ -57,6 +66,10 @@ export function useGameHistoryDrawer(currentUser) {
 	const [historyHasMore, setHistoryHasMore] = useState(false)
 	const [historyNextOffset, setHistoryNextOffset] = useState(0)
 	const [historySource, setHistorySource] = useState("backend")
+	const [stats, setStats] = useState(() =>
+		currentUser ? getLocalGameStats(currentUser.id) : emptyGameStatsResponse(),
+	)
+	const [statsStatus, setStatsStatus] = useState("idle")
 	const [isHistoryClosing, setIsHistoryClosing] = useState(false)
 
 	async function loadHistoryPage({
@@ -68,10 +81,11 @@ export function useGameHistoryDrawer(currentUser) {
 	} = {}) {
 		if (!currentUser || !filter) return
 
+		const recentLimit = parseGameRecentLimit(filter.recentLimit || "all")
 		const query = {
 			mode: filter.mode,
 			difficulty: filter.difficulty,
-			limit: HISTORY_PAGE_SIZE,
+			limit: recentLimit || HISTORY_PAGE_SIZE,
 			offset,
 		}
 		const localHistory = getLocalGameHistory(currentUser.id, query)
@@ -83,9 +97,11 @@ export function useGameHistoryDrawer(currentUser) {
 					? normalizedHistory.items
 					: [...currentItems, ...normalizedHistory.items],
 			)
-			setHistoryHasMore(normalizedHistory.hasMore)
+			setHistoryHasMore(recentLimit ? false : normalizedHistory.hasMore)
 			setHistoryNextOffset(
-				normalizedHistory.nextOffset ?? offset + normalizedHistory.items.length,
+				recentLimit
+					? null
+					: normalizedHistory.nextOffset ?? offset + normalizedHistory.items.length,
 			)
 			setHistorySource(source)
 			setHistoryStatus("ready")
@@ -149,6 +165,44 @@ export function useGameHistoryDrawer(currentUser) {
 	}, [currentUser, historyFilter, isHistoryClosing])
 
 	useEffect(() => {
+		if (!historyFilter || !currentUser) return
+		if (isHistoryClosing) return
+
+		const controller = new AbortController()
+		const localStats = getLocalGameStats(currentUser.id)
+		setStats(localStats)
+
+		async function loadStats() {
+			setStatsStatus("loading")
+
+			try {
+				const nextStats = await getUserStats(currentUser.id, {
+					signal: controller.signal,
+				})
+				if (controller.signal.aborted) return
+
+				const normalizedStats = normalizeGameStatsResponse(nextStats, localStats)
+				setStats(hasRecordedStats(normalizedStats) ? normalizedStats : localStats)
+				setStatsStatus("ready")
+			} catch (error) {
+				if (error.name === "AbortError") return
+
+				if (error.status !== 404) {
+					console.log(error)
+				}
+				setStats(localStats)
+				setStatsStatus("ready")
+			}
+		}
+
+		loadStats()
+
+		return () => {
+			controller.abort()
+		}
+	}, [currentUser, historyFilter, isHistoryClosing])
+
+	useEffect(() => {
 		if (!isHistoryClosing) return
 
 		const timeoutId = window.setTimeout(
@@ -161,7 +215,7 @@ export function useGameHistoryDrawer(currentUser) {
 		}
 	}, [isHistoryClosing])
 
-	function openHistory({ mode = "all", label, difficulty = "all" }) {
+	function openHistory({ mode = "all", label, difficulty = "all", recentLimit = "all" }) {
 		if (!currentUser) return
 
 		setIsHistoryClosing(false)
@@ -169,6 +223,7 @@ export function useGameHistoryDrawer(currentUser) {
 			mode,
 			label,
 			difficulty,
+			recentLimit,
 		})
 		setHistoryItems([])
 		setHistoryHasMore(false)
@@ -190,6 +245,7 @@ export function useGameHistoryDrawer(currentUser) {
 		setHistoryHasMore(false)
 		setHistoryNextOffset(0)
 		setHistorySource("backend")
+		setStatsStatus("idle")
 		setIsHistoryClosing(false)
 	}
 
@@ -205,7 +261,21 @@ export function useGameHistoryDrawer(currentUser) {
 		)
 	}
 
+	function selectRecentLimit(recentLimit) {
+		if (!historyFilter || isHistoryClosing || historyFilter.recentLimit === recentLimit) return
+
+		setHistoryItems([])
+		setHistoryHasMore(false)
+		setHistoryNextOffset(0)
+		setHistorySource("backend")
+		setHistoryFilter((currentFilter) =>
+			currentFilter ? { ...currentFilter, recentLimit } : currentFilter,
+		)
+	}
+
 	function loadMoreHistory() {
+		if (parseGameRecentLimit(historyFilter?.recentLimit || "all")) return
+
 		loadHistoryPage({
 			offset: historyNextOffset,
 			replace: false,
@@ -217,6 +287,11 @@ export function useGameHistoryDrawer(currentUser) {
 		closeHistory,
 		drawerProps: {
 			filter: historyFilter,
+			recentFilters: GAME_RECENT_FILTERS,
+			stats: parseGameRecentLimit(historyFilter?.recentLimit || "all")
+				? getGameStatsFromHistoryItems(historyItems)
+				: getGameStatsForFilter(stats, historyFilter || {}),
+			statsStatus,
 			items: historyItems,
 			status: historyStatus,
 			message: historyMessage,
@@ -225,6 +300,7 @@ export function useGameHistoryDrawer(currentUser) {
 			onClose: closeHistory,
 			onCloseAnimationEnd: finishClosingHistory,
 			onDifficultyChange: selectHistoryDifficulty,
+			onRecentLimitChange: selectRecentLimit,
 			onLoadMore: loadMoreHistory,
 		},
 		isOpen: Boolean(historyFilter && !isHistoryClosing),
@@ -234,6 +310,9 @@ export function useGameHistoryDrawer(currentUser) {
 
 export function GameHistoryDrawer({
 	filter,
+	recentFilters = GAME_RECENT_FILTERS,
+	stats,
+	statsStatus,
 	items,
 	status,
 	message,
@@ -242,6 +321,7 @@ export function GameHistoryDrawer({
 	onClose,
 	onCloseAnimationEnd,
 	onDifficultyChange,
+	onRecentLimitChange,
 	onLoadMore,
 }) {
 	if (!filter) return null
@@ -249,6 +329,7 @@ export function GameHistoryDrawer({
 	const isLoading = status === "loading"
 	const isLoadingMore = status === "loadingMore"
 	const isError = status === "error"
+	const normalizedStats = normalizeGameStats(stats)
 
 	return (
 		<div className="statsHistoryOverlay">
@@ -293,6 +374,51 @@ export function GameHistoryDrawer({
 						</button>
 					))}
 				</div>
+
+				<div
+					className="statsHistoryRangeTabs"
+					aria-label="History range"
+				>
+					{recentFilters.map((range) => (
+						<button
+							key={range.value}
+							type="button"
+							className={`statsHistoryRangeButton ${
+								(filter.recentLimit || "all") === range.value
+									? "statsHistoryRangeButtonSelected"
+									: ""
+							}`}
+							aria-pressed={(filter.recentLimit || "all") === range.value}
+							onClick={() => onRecentLimitChange(range.value)}
+						>
+							{range.label}
+						</button>
+					))}
+				</div>
+
+				<section
+					className="statsHistoryStats"
+					role="group"
+					aria-label={`${filter.label} history stats`}
+					aria-busy={statsStatus === "loading"}
+				>
+					<div className="statsHistoryStat">
+						<span>Total games</span>
+						<strong>{normalizedStats.totalGames}</strong>
+					</div>
+					<div className="statsHistoryStat">
+						<span>Won</span>
+						<strong>{normalizedStats.won}</strong>
+					</div>
+					<div className="statsHistoryStat">
+						<span>Failed</span>
+						<strong>{normalizedStats.failed}</strong>
+					</div>
+					<div className="statsHistoryStat">
+						<span>Accuracy</span>
+						<strong>{normalizedStats.accuracy}%</strong>
+					</div>
+				</section>
 
 				<div className="statsHistoryScrollArea">
 					{isLoading && <p className="statsHistoryMessage">Loading history...</p>}
