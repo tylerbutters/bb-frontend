@@ -111,7 +111,7 @@ describe("japaneseTranslationToElements", () => {
 				ending: "んだ",
 				conjugation: {
 					stem: "んだ",
-					conjugationOptions: [{ text: "んだ" }],
+					conjugationOptions: [expect.objectContaining({ text: "んだ" })],
 					conjugation: {},
 				},
 			}),

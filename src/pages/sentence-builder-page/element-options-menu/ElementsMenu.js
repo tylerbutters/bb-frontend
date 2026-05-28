@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import "./ElementsMenu.css"
+import ElementDetailPanel, { getElementDetail } from "./ElementDetailPanel"
 import MenuList from "./MenuList"
-import {
-	MENU_CLOSE_EVENT,
-	MENU_OPEN_EVENT,
-	MENU_TRANSITION_MS,
-} from "./elementsMenuConstants"
+import { MENU_CLOSE_EVENT, MENU_OPEN_EVENT, MENU_TRANSITION_MS } from "./elementsMenuConstants"
 
 const MENU_VIEWPORT_PADDING = 16
+const DETAIL_HOVER_DELAY_MS = 500
+const DETAIL_TRANSITION_MS = 160
 
 export default function ElementsMenu({
 	anchorRef,
@@ -24,6 +23,10 @@ export default function ElementsMenu({
 }) {
 	const modalRef = useRef(null)
 	const secondaryPanelRef = useRef(null)
+	const detailPanelRef = useRef(null)
+	const detailHoverTimeoutRef = useRef(null)
+	const detailHoverSourceRef = useRef(null)
+	const detailCloseTimeoutRef = useRef(null)
 	const secondaryCloseTimeoutRef = useRef(null)
 	const menuIdRef = useRef(Symbol("elements-menu"))
 	const [shouldRenderMenu, setShouldRenderMenu] = useState(isModalOpen)
@@ -32,6 +35,10 @@ export default function ElementsMenu({
 	const [selectedCategory, setSelectedCategory] = useState()
 	const [secondaryElementOptions, setSecondaryElementOptions] = useState([])
 	const [secondaryPlacement, setSecondaryPlacement] = useState("right")
+	const [shouldRenderDetailPanel, setShouldRenderDetailPanel] = useState(false)
+	const [isDetailPanelOpen, setIsDetailPanelOpen] = useState(false)
+	const [activeDetail, setActiveDetail] = useState(null)
+	const [detailPanelStyle, setDetailPanelStyle] = useState()
 
 	const closeMenu = useCallback(() => {
 		setIsModalOpen(false)
@@ -53,7 +60,10 @@ export default function ElementsMenu({
 				clearTimeout(secondaryCloseTimeoutRef.current)
 				secondaryCloseTimeoutRef.current = null
 			}
+			clearDetailHoverTimeout()
+			clearDetailCloseTimeout()
 
+			hideNativePopover(detailPanelRef.current)
 			hideNativePopover(modalRef.current)
 			setShouldRenderMenu(false)
 			setShouldRenderSecondaryPanel(false)
@@ -61,6 +71,10 @@ export default function ElementsMenu({
 			setSelectedCategory(null)
 			setSecondaryElementOptions([])
 			setSecondaryPlacement("right")
+			setShouldRenderDetailPanel(false)
+			setIsDetailPanelOpen(false)
+			setActiveDetail(null)
+			setDetailPanelStyle(undefined)
 		}, MENU_TRANSITION_MS)
 
 		return () => clearTimeout(timeout)
@@ -71,6 +85,8 @@ export default function ElementsMenu({
 			if (secondaryCloseTimeoutRef.current) {
 				clearTimeout(secondaryCloseTimeoutRef.current)
 			}
+			clearDetailHoverTimeout()
+			clearDetailCloseTimeout()
 		}
 	}, [])
 
@@ -95,6 +111,7 @@ export default function ElementsMenu({
 		function handlePointerDown(e) {
 			if (anchorRef?.current?.contains(e.target)) return
 			if (modalRef.current?.contains(e.target)) return
+			if (detailPanelRef.current?.contains(e.target)) return
 
 			closeMenu()
 		}
@@ -120,12 +137,7 @@ export default function ElementsMenu({
 	}, [anchorRef, isModalOpen, shouldRenderMenu])
 
 	useLayoutEffect(() => {
-		if (
-			!shouldRenderMenu ||
-			!shouldRenderSecondaryPanel ||
-			!isSecondaryPanelOpen ||
-			!isModalOpen
-		) {
+		if (!shouldRenderMenu || !shouldRenderSecondaryPanel || !isSecondaryPanelOpen || !isModalOpen) {
 			return
 		}
 
@@ -138,8 +150,7 @@ export default function ElementsMenu({
 		const styles = window.getComputedStyle(menu)
 		const panelGap = parseFloat(styles.getPropertyValue("--element-options-panel-gap")) || 0
 		const rightEdge = menuRect.right + panelGap + secondaryRect.width
-		const nextPlacement =
-			rightEdge > window.innerWidth - MENU_VIEWPORT_PADDING ? "left" : "right"
+		const nextPlacement = rightEdge > window.innerWidth - MENU_VIEWPORT_PADDING ? "left" : "right"
 
 		setSecondaryPlacement((currentPlacement) =>
 			currentPlacement === nextPlacement ? currentPlacement : nextPlacement,
@@ -152,16 +163,57 @@ export default function ElementsMenu({
 		shouldRenderSecondaryPanel,
 	])
 
+	useLayoutEffect(() => {
+		if (!shouldRenderDetailPanel || !activeDetail || !isModalOpen || !shouldRenderMenu) {
+			return
+		}
+
+		const detailPanel = detailPanelRef.current
+		const menu = modalRef.current
+		const anchorRect = activeDetail.anchorRect
+		if (!detailPanel || !menu || !anchorRect) return
+
+		showNativePopover(detailPanel)
+
+		const detailRect = detailPanel.getBoundingClientRect()
+		const styles = window.getComputedStyle(menu)
+		const panelGap = parseFloat(styles.getPropertyValue("--element-options-panel-gap")) || 0
+		const maxLeft = window.innerWidth - detailRect.width - MENU_VIEWPORT_PADDING
+		const maxTop = window.innerHeight - detailRect.height - MENU_VIEWPORT_PADDING
+		const rightSideLeft = anchorRect.right + panelGap
+		const leftSideLeft = anchorRect.left - detailRect.width - panelGap
+		let left = rightSideLeft
+
+		if (left > maxLeft) {
+			left = leftSideLeft
+		}
+
+		left = Math.max(MENU_VIEWPORT_PADDING, Math.min(left, maxLeft))
+		const top = Math.max(MENU_VIEWPORT_PADDING, Math.min(anchorRect.top, maxTop))
+
+		setDetailPanelStyle((currentStyle) => {
+			if (currentStyle?.left === left && currentStyle?.top === top) {
+				return currentStyle
+			}
+
+			return { left, top }
+		})
+	}, [
+		activeDetail,
+		isModalOpen,
+		secondaryPlacement,
+		shouldRenderDetailPanel,
+		shouldRenderMenu,
+		shouldRenderSecondaryPanel,
+	])
+
 	function closeSecondaryPanel() {
 		if (secondaryCloseTimeoutRef.current) {
 			clearTimeout(secondaryCloseTimeoutRef.current)
 		}
 
 		setIsSecondaryPanelOpen(false)
-		secondaryCloseTimeoutRef.current = setTimeout(
-			finishSecondaryPanelClose,
-			MENU_TRANSITION_MS,
-		)
+		secondaryCloseTimeoutRef.current = setTimeout(finishSecondaryPanelClose, MENU_TRANSITION_MS)
 	}
 
 	function openSecondaryPanel(selectedElement) {
@@ -187,6 +239,75 @@ export default function ElementsMenu({
 		setSelectedCategory(null)
 		setSecondaryElementOptions([])
 		setSecondaryPlacement("right")
+		clearActiveDetail("secondary")
+	}
+
+	function clearDetailHoverTimeout(source) {
+		if (!detailHoverTimeoutRef.current) return
+		if (source && detailHoverSourceRef.current !== source) return
+
+		clearTimeout(detailHoverTimeoutRef.current)
+		detailHoverTimeoutRef.current = null
+		detailHoverSourceRef.current = null
+	}
+
+	function clearDetailCloseTimeout() {
+		if (!detailCloseTimeoutRef.current) return
+
+		clearTimeout(detailCloseTimeoutRef.current)
+		detailCloseTimeoutRef.current = null
+	}
+
+	function finishDetailPanelClose() {
+		hideNativePopover(detailPanelRef.current)
+		setShouldRenderDetailPanel(false)
+		setIsDetailPanelOpen(false)
+		setActiveDetail(null)
+		setDetailPanelStyle(undefined)
+	}
+
+	function closeActiveDetail(source) {
+		clearDetailHoverTimeout(source)
+
+		if (!activeDetail) return
+		if (source && activeDetail.source !== source) return
+
+		clearDetailCloseTimeout()
+		setIsDetailPanelOpen(false)
+		detailCloseTimeoutRef.current = setTimeout(finishDetailPanelClose, DETAIL_TRANSITION_MS)
+	}
+
+	function showActiveDetail(element, source, categoryText, anchorRect) {
+		if (!getElementDetail(element)) {
+			closeActiveDetail(source)
+			return
+		}
+
+		if (activeDetail?.element === element && activeDetail?.source === source && isDetailPanelOpen) {
+			return
+		}
+
+		clearDetailHoverTimeout()
+		closeActiveDetail()
+		detailHoverSourceRef.current = source
+		detailHoverTimeoutRef.current = setTimeout(() => {
+			clearDetailCloseTimeout()
+			detailHoverTimeoutRef.current = null
+			detailHoverSourceRef.current = null
+			setActiveDetail({
+				element,
+				source,
+				categoryText,
+				anchorRect,
+			})
+			setDetailPanelStyle(undefined)
+			setShouldRenderDetailPanel(true)
+			setIsDetailPanelOpen(true)
+		}, DETAIL_HOVER_DELAY_MS)
+	}
+
+	function clearActiveDetail(source) {
+		closeActiveDetail(source)
 	}
 
 	function handleSelectOption(selectedElement, categoryText) {
@@ -230,57 +351,61 @@ export default function ElementsMenu({
 		<MenuPanel
 			panelRef={secondaryPanelRef}
 			className={`secondaryMenuPanel secondaryMenuPanel-${secondaryPlacement} ${
-				isSecondaryPanelOpen
-					? "secondaryMenuPanelOpen"
-					: "secondaryMenuPanelClosing"
+				isSecondaryPanelOpen ? "secondaryMenuPanelOpen" : "secondaryMenuPanelClosing"
 			}`}
 			menuTitle={selectedCategory}
 		>
 			<MenuList
 				hasSearch={selectedCategory === "Punctuation" ? false : secondHasSearch}
 				elementOptions={secondaryElementOptions}
+				selectedCategory={selectedCategory}
+				detailSource="secondary"
+				onHoverOption={showActiveDetail}
+				onLeaveOptions={clearActiveDetail}
 				onSelectOption={(selectedElement) => handleSelectOption(selectedElement, selectedCategory)}
 			/>
 		</MenuPanel>
 	)
 	const primaryPanel = (
-		<MenuPanel
-			hasDelete={hasDelete}
-			onDelete={handleDelete}
-			menuTitle={menuTitle}
-		>
+		<MenuPanel hasDelete={hasDelete} onDelete={handleDelete} menuTitle={menuTitle}>
 			<MenuList
 				hasSearch={hasSearch}
 				elementOptions={elementOptions}
 				selectedCategory={selectedCategory}
+				detailSource="primary"
+				onHoverOption={showActiveDetail}
+				onLeaveOptions={clearActiveDetail}
 				onSelectOption={handleSelectCategory}
 			/>
 		</MenuPanel>
 	)
 
 	return createPortal(
-		<div
-			ref={modalRef}
-			popover="manual"
-			className={`elementsMenuContainer ${
-				isModalOpen ? "elementsMenuOpen" : "elementsMenuClosing"
-			}`}
-		>
-			{primaryPanel}
-			{secondaryPanel}
-		</div>,
+		<>
+			<div
+				ref={modalRef}
+				popover="manual"
+				className={`elementsMenuContainer ${
+					isModalOpen ? "elementsMenuOpen" : "elementsMenuClosing"
+				}`}
+			>
+				{primaryPanel}
+				{secondaryPanel}
+			</div>
+			{shouldRenderDetailPanel && activeDetail && (
+				<ElementDetailPanel
+					panelRef={detailPanelRef}
+					element={activeDetail.element}
+					isOpen={isDetailPanelOpen}
+					style={detailPanelStyle || { left: 0, top: 0, visibility: "hidden" }}
+				/>
+			)}
+		</>,
 		document.body,
 	)
 }
 
-function MenuPanel({
-	children,
-	hasDelete,
-	onDelete,
-	className = "",
-	menuTitle,
-	panelRef,
-}) {
+function MenuPanel({ children, hasDelete, onDelete, className = "", menuTitle, panelRef }) {
 	return (
 		<div ref={panelRef} className={`menuPanel ${className}`}>
 			{menuTitle && <div className="elementsMenuTitle">{menuTitle}</div>}

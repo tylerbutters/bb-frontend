@@ -10,6 +10,9 @@ export default function MenuList({
 	hasSearch,
 	elementOptions = [],
 	onSelectOption,
+	onHoverOption,
+	onLeaveOptions,
+	detailSource,
 	selectedCategory,
 }) {
 	const [searchText, setSearchText] = useState("")
@@ -59,6 +62,19 @@ export default function MenuList({
 		return element?.meanings?.join("; ")
 	}
 
+	function showOptionDetail(e, element) {
+		const rect = e.currentTarget.getBoundingClientRect()
+
+		onHoverOption?.(element, detailSource, selectedCategory, {
+			top: rect.top,
+			right: rect.right,
+			bottom: rect.bottom,
+			left: rect.left,
+			width: rect.width,
+			height: rect.height,
+		})
+	}
+
 	return (
 		<>
 			{hasSearch && (
@@ -75,6 +91,7 @@ export default function MenuList({
 			<div
 				className="menuListItemContainer"
 				style={{ height: hasSearch && 300, width: hasSearch && 250 }}
+				onMouseLeave={() => onLeaveOptions?.(detailSource)}
 			>
 				{visibleOptions.map((element, index) => (
 					<button
@@ -84,6 +101,8 @@ export default function MenuList({
 							selectedCategory === element?.text && "selectedElementsMenuButton"
 						}`}
 						onClick={() => onSelectOption(element)}
+						onFocus={(e) => showOptionDetail(e, element)}
+						onMouseEnter={(e) => showOptionDetail(e, element)}
 						title={getMeaningsTitle(element)}
 					>
 						<div className="elementsMenuButtonText">

@@ -2,41 +2,65 @@ import verbs from "../jmdict/processed/verbs.json"
 import adjectives from "../jmdict/processed/adjectives.json"
 
 function textOptions(items, elementType) {
-	return items.map((text) => ({ text, ...(elementType && { elementType }) }))
+	return items.map((item) => {
+		const option = typeof item === "string" ? { text: item } : { ...item }
+
+		return {
+			...option,
+			...(elementType && !option.elementType && { elementType }),
+		}
+	})
 }
 
 const rareruOptions = textOptions([
-	"る",
-	"ない",
+	{ text: "る", detailId: "verb-non-past" },
+	{ text: "ない", detailId: "verb-negative" },
 	"ないで",
-	"たい",
-	"た",
+	{ text: "たい", detailId: "verb-desire" },
+	{ text: "た", detailId: "verb-past" },
 	"たり",
-	"て",
-	"よう",
-	"ます",
+	{ text: "て", detailId: "verb-te-form" },
+	{ text: "よう", detailId: "verb-volitional" },
+	{ text: "ます", detailId: "verb-polite-non-past" },
 	"ず",
 ])
 
 const saseruOptions = textOptions([
-	"る",
-	"ない",
+	{ text: "る", detailId: "verb-non-past" },
+	{ text: "ない", detailId: "verb-negative" },
 	"ないで",
-	"たい",
-	"ます",
-	"た",
+	{ text: "たい", detailId: "verb-desire" },
+	{ text: "ます", detailId: "verb-polite-non-past" },
+	{ text: "た", detailId: "verb-past" },
 	"たり",
-	"て",
-	"よう",
-	"られる",
+	{ text: "て", detailId: "verb-te-form" },
+	{ text: "よう", detailId: "verb-volitional" },
+	{ text: "られる", detailId: "verb-passive" },
 	"ず",
 ])
 
-const masuOptions = textOptions(["ます", "せん", "した", "して", "しょう"])
+const masuOptions = textOptions([
+	{ text: "ます", detailId: "verb-polite-non-past" },
+	{ text: "せん", detailId: "verb-polite-negative" },
+	{ text: "した", detailId: "verb-polite-past" },
+	{ text: "して", detailId: "verb-polite-te-form" },
+	{ text: "しょう", detailId: "verb-polite-volitional" },
+])
 
-const iadjOptions = textOptions(["い", "くない", "かった", "く", "くて"])
+const iadjOptions = textOptions([
+	{ text: "い", detailId: "i-adjective-i-form" },
+	{ text: "くない", detailId: "i-adjective-negative" },
+	{ text: "かった", detailId: "i-adjective-past" },
+	{ text: "く", detailId: "i-adjective-adverbial" },
+	{ text: "くて", detailId: "i-adjective-te-form" },
+])
 
-const kunaiOptions = textOptions(["い", "かった", "く", "くて"])
+const kunaiOptions = textOptions([
+	{ text: "い", detailId: "i-adjective-i-form" },
+	{ text: "かった", detailId: "i-adjective-past" },
+	{ text: "く", detailId: "i-adjective-adverbial" },
+	{ text: "くて", detailId: "i-adjective-te-form" },
+])
 
 export const godanRows = {
 	く: ["か", "き", "く", "け", "こ", "いて", "いた"],
@@ -51,10 +75,22 @@ export const godanRows = {
 }
 
 export const godanDefaults = {
-	B1: textOptions(["ない", "れる", "せる", "ず"]),
-	B2: textOptions(["ます", "たい"]),
-	B4: textOptions(["ば", "る", "れ"]),
-	B5: textOptions(["う"]),
+	B1: textOptions([
+		{ text: "ない", detailId: "verb-negative" },
+		{ text: "れる", detailId: "verb-passive" },
+		{ text: "せる", detailId: "verb-causative" },
+		"ず",
+	]),
+	B2: textOptions([
+		{ text: "ます", detailId: "verb-polite-non-past" },
+		{ text: "たい", detailId: "verb-desire" },
+	]),
+	B4: textOptions([
+		{ text: "ば", detailId: "verb-conditional-ba" },
+		{ text: "る", detailId: "verb-potential" },
+		{ text: "れ", detailId: "verb-imperative" },
+	]),
+	B5: textOptions([{ text: "う", detailId: "verb-volitional" }]),
 }
 
 export const auxiliaryDefinitions = [
@@ -63,7 +99,7 @@ export const auxiliaryDefinitions = [
 			"始める",
 			"終わる",
 			"続ける",
-			"すぎる",
+			{ text: "すぎる", detailId: "verb-too-much" },
 			"直す",
 			"切る",
 			"出す",
@@ -76,16 +112,26 @@ export const auxiliaryDefinitions = [
 		],
 		"verb",
 	),
-	...textOptions(["やすい", "にくい"], "adjective"),
+	...textOptions(
+		[
+			{ text: "やすい", detailId: "verb-easy-to-do" },
+			{ text: "にくい", detailId: "verb-hard-to-do" },
+		],
+		"adjective",
+	),
 ]
 
 function formatAuxiliaryDefinitions() {
 	return auxiliaryDefinitions
 		.map((aux) => {
 			if (aux.elementType === "verb") {
-				return verbs.find((verb) => verb.text === aux.text || verb.textKana === aux.text)
+				const verb = verbs.find((verb) => verb.text === aux.text || verb.textKana === aux.text)
+				return verb ? { ...verb, detailId: aux.detailId } : null
 			} else if (aux.elementType === "adjective") {
-				return adjectives.find((adj) => adj.text === aux.text || adj.textKana === aux.text)
+				const adjective = adjectives.find(
+					(adj) => adj.text === aux.text || adj.textKana === aux.text,
+				)
+				return adjective ? { ...adjective, detailId: aux.detailId } : null
 			}
 			return null
 		})

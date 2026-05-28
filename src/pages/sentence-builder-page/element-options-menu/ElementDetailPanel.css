@@ -1,0 +1,167 @@
+.elementDetailPanel {
+	inset: auto;
+	position: fixed;
+	z-index: 2001;
+	margin: 0;
+	width: min(340px, calc(100vw - 32px));
+	max-height: min(520px, calc(100vh - 32px));
+	padding: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
+	border: 1px solid var(--color-border-faint);
+	border-radius: 8px;
+	background: var(--color-surface-menu);
+	color: var(--color-text-primary);
+	box-shadow: 0 18px 30px var(--color-shadow);
+	transform-origin: top left;
+	will-change: opacity, transform;
+}
+
+.elementDetailPanel:popover-open {
+	display: block;
+}
+
+.elementDetailPanelOpen {
+	animation: elementDetailPanelIn 160ms ease-out both;
+}
+
+.elementDetailPanelClosing {
+	pointer-events: none;
+	animation: elementDetailPanelOut 140ms ease-in both;
+}
+
+@keyframes elementDetailPanelIn {
+	from {
+		opacity: 0;
+		transform: translateY(-4px) scale(0.98);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@keyframes elementDetailPanelOut {
+	from {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+
+	to {
+		opacity: 0;
+		transform: translateY(-4px) scale(0.98);
+	}
+}
+
+.elementDetailPanel::-webkit-scrollbar {
+	width: 8px;
+}
+
+.elementDetailPanel::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.elementDetailPanel::-webkit-scrollbar-thumb {
+	border: 2px solid var(--color-surface-menu);
+	border-radius: 999px;
+	background: var(--color-surface-pill);
+}
+
+.elementDetailContent {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	padding: 14px;
+}
+
+.elementDetailHeader {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+.elementDetailType {
+	color: var(--color-text-subtle);
+	font-size: 12px;
+	line-height: 1.25;
+}
+
+.elementDetailName {
+	color: var(--color-text-bright);
+	font-size: 20px;
+	font-weight: 700;
+	line-height: 1.15;
+}
+
+.elementDetailTranslation {
+	color: var(--color-text-subtle);
+	font-size: 14px;
+	font-style: italic;
+	line-height: 1.35;
+}
+
+.elementDetailRows {
+	display: flex;
+	flex-direction: column;
+	gap: 9px;
+	margin: 0;
+}
+
+.elementDetailRow {
+	display: grid;
+	grid-template-columns: minmax(96px, 0.42fr) minmax(0, 1fr);
+	gap: 12px;
+	align-items: baseline;
+}
+
+.elementDetailRow dt,
+.elementDetailLabel {
+	color: var(--color-text-menu-heading);
+	font-size: 11px;
+	font-weight: 700;
+	line-height: 1.25;
+	text-transform: uppercase;
+}
+
+.elementDetailRow dd {
+	min-width: 0;
+	margin: 0;
+	color: var(--color-text-bright);
+	font-size: 14px;
+	line-height: 1.35;
+	overflow-wrap: anywhere;
+}
+
+.elementDetailRow rt {
+	font-size: 10px;
+}
+
+.elementDetailSection {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+}
+
+.elementDetailTranslations,
+.elementDetailConstructionFormula,
+.elementDetailExamples {
+	color: var(--color-text-bright);
+	font-size: 14px;
+	line-height: 1.4;
+}
+
+.elementDetailConstructions {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.elementDetailConstructionLabel {
+	font-weight: 700;
+}
+
+.elementDetailExamples {
+	margin-top: 3px;
+	color: var(--color-text-subtle);
+}

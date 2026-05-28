@@ -23,11 +23,11 @@ export function getGodanConjugationOptions(parentConjugation) {
 			{ text: "ない", replacesParent: true },
 			createGodanCategory(B1, ARU_B1_OPTIONS),
 			createGodanCategory(B2, [...godanDefaults.B2, { text: B2, conjugationType: "aux" }]),
-			createGodanCategory(B3, [{ text: B3 }]),
+			createGodanCategory(B3, [{ text: B3, detailId: "verb-non-past" }]),
 			createGodanCategory(B4, godanDefaults.B4),
 			createGodanCategory(B5, godanDefaults.B5),
-			createGodanCategory(Bte, [{ text: Bte, conjugationType: "te" }]),
-			createGodanCategory(Bta, [{ text: Bta }]),
+			createGodanCategory(Bte, [{ text: Bte, conjugationType: "te", detailId: "verb-te-form" }]),
+			createGodanCategory(Bta, [{ text: Bta, detailId: "verb-past" }]),
 		]
 	}
 
@@ -36,11 +36,11 @@ export function getGodanConjugationOptions(parentConjugation) {
 			createGodanCategory(B1, godanDefaults.B1),
 			createGodanCategory("い", [...godanDefaults.B2, { text: "い" }]),
 			createGodanCategory(B2, [{ text: B2, conjugationType: "aux" }]),
-			createGodanCategory(B3, [{ text: B3 }]),
+			createGodanCategory(B3, [{ text: B3, detailId: "verb-non-past" }]),
 			createGodanCategory(B4, godanDefaults.B4),
 			createGodanCategory(B5, godanDefaults.B5),
-			createGodanCategory(Bte, [{ text: Bte, conjugationType: "te" }]),
-			createGodanCategory(Bta, [{ text: Bta }]),
+			createGodanCategory(Bte, [{ text: Bte, conjugationType: "te", detailId: "verb-te-form" }]),
+			createGodanCategory(Bta, [{ text: Bta, detailId: "verb-past" }]),
 		]
 	}
 
@@ -48,22 +48,22 @@ export function getGodanConjugationOptions(parentConjugation) {
 		return [
 			createGodanCategory(B1, godanDefaults.B1),
 			createGodanCategory(B2, [...godanDefaults.B2, { text: B2, conjugationType: "aux" }]),
-			createGodanCategory(B3, [{ text: B3 }]),
+			createGodanCategory(B3, [{ text: B3, detailId: "verb-non-past" }]),
 			createGodanCategory(B4, godanDefaults.B4),
 			createGodanCategory(B5, godanDefaults.B5),
-			createGodanCategory("って", [{ text: "って", conjugationType: "te" }]),
-			createGodanCategory("った", [{ text: "った" }]),
+			createGodanCategory("って", [{ text: "って", conjugationType: "te", detailId: "verb-te-form" }]),
+			createGodanCategory("った", [{ text: "った", detailId: "verb-past" }]),
 		]
 	}
 
 	return [
 		createGodanCategory(B1, godanDefaults.B1),
 		createGodanCategory(B2, [...godanDefaults.B2, { text: B2, conjugationType: "aux" }]),
-		createGodanCategory(B3, [{ text: B3 }]),
+		createGodanCategory(B3, [{ text: B3, detailId: "verb-non-past" }]),
 		createGodanCategory(B4, godanDefaults.B4),
 		createGodanCategory(B5, godanDefaults.B5),
-		createGodanCategory(Bte, [{ text: Bte, conjugationType: "te" }]),
-		createGodanCategory(Bta, [{ text: Bta }]),
+		createGodanCategory(Bte, [{ text: Bte, conjugationType: "te", detailId: "verb-te-form" }]),
+		createGodanCategory(Bta, [{ text: Bta, detailId: "verb-past" }]),
 	]
 }
 

@@ -40,11 +40,11 @@ describe("getGodanConjugationOptions", () => {
 
 		expect(findCategory(options, "って")).toEqual({
 			text: "って",
-			list: [{ text: "って", conjugationType: "te" }],
+			list: [{ text: "って", conjugationType: "te", detailId: "verb-te-form" }],
 		})
 		expect(findCategory(options, "った")).toEqual({
 			text: "った",
-			list: [{ text: "った" }],
+			list: [{ text: "った", detailId: "verb-past" }],
 		})
 	})
 
@@ -58,11 +58,16 @@ describe("getGodanConjugationOptions", () => {
 
 		expect(findCategory(options, "か")).toEqual({
 			text: "か",
-			list: [{ text: "ない" }, { text: "れる" }, { text: "せる" }, { text: "ず" }],
+			list: [
+				{ text: "ない", detailId: "verb-negative" },
+				{ text: "れる", detailId: "verb-passive" },
+				{ text: "せる", detailId: "verb-causative" },
+				{ text: "ず" },
+			],
 		})
 		expect(findCategory(options, "った")).toEqual({
 			text: "った",
-			list: [{ text: "った" }],
+			list: [{ text: "った", detailId: "verb-past" }],
 		})
 	})
 })
