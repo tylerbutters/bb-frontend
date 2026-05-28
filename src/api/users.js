@@ -33,6 +33,20 @@ export async function getUserStats(userId, { signal } = {}) {
 	return apiRequest(`/users/${userId}/stats`, { signal })
 }
 
+export async function getUserGameHistory(
+	userId,
+	{ mode = "all", difficulty = "all", limit = 50, offset = 0, signal } = {},
+) {
+	const params = new URLSearchParams({
+		mode,
+		difficulty,
+		limit: String(limit),
+		offset: String(offset),
+	})
+
+	return apiRequest(`/users/${userId}/game-history?${params}`, { signal })
+}
+
 export async function confirmEmailChange({ token }) {
 	const data = await apiRequest(`/users/email-change/confirm`, {
 		method: "POST",

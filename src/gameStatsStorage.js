@@ -14,6 +14,7 @@ const trackedModeLabels = new Map(
 	TRACKED_GAME_MODES.map((gameMode) => [gameMode.mode, gameMode.label]),
 )
 const validDifficulties = new Set(GAME_DIFFICULTIES)
+const HISTORY_PAGE_SIZE = 50
 
 function storageKey(userId) {
 	return `${STORAGE_KEY_PREFIX}:${userId}`
@@ -99,6 +100,25 @@ function challengeKey({ challengeId, mode, prompt }) {
 	return challengeId || `${mode}:${prompt}`
 }
 
+function modeLabel(mode) {
+	return trackedModeLabels.get(mode) || mode
+}
+
+function normalizeHistoryItem(result, key) {
+	return {
+		id: key,
+		challengeId: result.challengeId || key,
+		mode: result.mode,
+		label: modeLabel(result.mode),
+		difficulty: normalizeDifficulty(result.difficulty),
+		prompt: result.prompt || "",
+		answer: result.answer || "",
+		correct: Boolean(result.correct),
+		feedback: result.feedback || "",
+		createdAt: result.recordedAt || "",
+	}
+}
+
 export function emptyGameStatsResponse() {
 	const byDifficulty = Object.fromEntries(
 		GAME_STAT_FILTERS.map((difficulty) => [difficulty, createStatsGroup()]),
@@ -148,7 +168,7 @@ export function hasRecordedStats(stats) {
 
 export function recordLocalGameResult(
 	userId,
-	{ challengeId, mode, difficulty = "easy", prompt, correct },
+	{ challengeId, mode, difficulty = "easy", prompt, answer, correct, feedback },
 ) {
 	if (!userId || !trackedModeLabels.has(mode)) return false
 
@@ -159,12 +179,42 @@ export function recordLocalGameResult(
 	if (results[key]) return false
 
 	results[key] = {
+		challengeId: challengeId || "",
 		mode,
 		difficulty: normalizeDifficulty(difficulty) || "easy",
+		prompt: prompt || "",
+		answer: answer || "",
 		correct: Boolean(correct),
+		feedback: feedback || "",
 		recordedAt: new Date().toISOString(),
 	}
 	writeStoredResults(userId, results)
 
 	return true
+}
+
+export function getLocalGameHistory(
+	userId,
+	{ mode = "all", difficulty = "all", limit = HISTORY_PAGE_SIZE, offset = 0 } = {},
+) {
+	const normalizedLimit = Math.min(Math.max(Number(limit) || HISTORY_PAGE_SIZE, 1), 100)
+	const normalizedOffset = Math.max(Number(offset) || 0, 0)
+	const items = Object.entries(readStoredResults(userId))
+		.map(([key, result]) => normalizeHistoryItem(result, key))
+		.filter((item) => trackedModeLabels.has(item.mode))
+		.filter((item) => mode === "all" || item.mode === mode)
+		.filter((item) => difficulty === "all" || item.difficulty === difficulty)
+		.sort((firstItem, secondItem) => {
+			const firstTime = Date.parse(firstItem.createdAt) || 0
+			const secondTime = Date.parse(secondItem.createdAt) || 0
+			return secondTime - firstTime
+		})
+	const pageItems = items.slice(normalizedOffset, normalizedOffset + normalizedLimit)
+	const nextOffset = normalizedOffset + normalizedLimit
+
+	return {
+		items: pageItems,
+		hasMore: nextOffset < items.length,
+		nextOffset: nextOffset < items.length ? nextOffset : null,
+	}
 }

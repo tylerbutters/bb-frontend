@@ -281,6 +281,73 @@ beforeEach(() => {
 			})
 		}
 
+		if (String(url).startsWith(`${API_BASE_URL}/users/1/game-history`)) {
+			const requestUrl = new URL(String(url), "http://localhost")
+			const difficulty = requestUrl.searchParams.get("difficulty")
+			const offset = Number(requestUrl.searchParams.get("offset") || 0)
+			let items = []
+			let hasMore = false
+			let nextOffset = null
+
+			if (difficulty === "medium") {
+				items = [
+					{
+						id: 5,
+						challengeId: "3e5eb8e7-f91a-4c61-8f37-62b1a27ddf95",
+						mode: "translate",
+						label: "Translate",
+						difficulty: "medium",
+						prompt: "I write a letter.",
+						answer: "手紙を書きます。",
+						correct: true,
+						feedback: "Nice.",
+						createdAt: "2026-05-26T10:00:00.000Z",
+					},
+				]
+			} else if (offset === 0) {
+				items = [
+					{
+						id: 7,
+						challengeId: "1e5eb8e7-f91a-4c61-8f37-62b1a27ddf95",
+						mode: "translate",
+						label: "Translate",
+						difficulty: "easy",
+						prompt: "I eat rice.",
+						answer: "ご飯を食べます。",
+						correct: true,
+						feedback: "Good.",
+						createdAt: "2026-05-28T10:00:00.000Z",
+					},
+				]
+				hasMore = true
+				nextOffset = 50
+			} else {
+				items = [
+					{
+						id: 6,
+						challengeId: "2e5eb8e7-f91a-4c61-8f37-62b1a27ddf95",
+						mode: "translate",
+						label: "Translate",
+						difficulty: "easy",
+						prompt: "I drink tea.",
+						answer: "お茶を飲みます。",
+						correct: false,
+						feedback: "Use お茶.",
+						createdAt: "2026-05-27T10:00:00.000Z",
+					},
+				]
+			}
+
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					items,
+					hasMore,
+					nextOffset,
+				}),
+			})
+		}
+
 		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
 			return Promise.resolve({
 				ok: true,
@@ -756,6 +823,95 @@ test("opens stats from the account menu", async () => {
 	})
 })
 
+test("opens paginated game history from a stats panel", async () => {
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("link", { name: "Login" }))
+	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
+	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
+	fireEvent.click(screen.getByRole("button", { name: "Login" }))
+
+	await waitFor(() => {
+		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+	})
+
+	fireEvent.click(screen.getByRole("button", { name: "Tyler" }))
+	fireEvent.click(screen.getByRole("menuitem", { name: "Stats" }))
+	await waitFor(() => {
+		expect(screen.getByRole("heading", { name: "Stats" })).toBeInTheDocument()
+	})
+
+	fireEvent.click(screen.getByRole("tab", { name: "easy" }))
+	const translatePanel = screen.getByLabelText("Translate stats")
+	fireEvent.click(within(translatePanel).getByRole("button", { name: "History" }))
+
+	const drawer = await screen.findByLabelText("Translate history drawer")
+	expect(document.body.style.overflow).toBe("")
+	expect(within(drawer).getByRole("heading", { name: "Translate history" })).toBeInTheDocument()
+	expect(within(drawer).getByText("easy difficulty")).toBeInTheDocument()
+	expect(within(drawer).getByRole("tab", { name: "easy" })).toHaveAttribute(
+		"aria-selected",
+		"true",
+	)
+	expect(within(drawer).getByText("I eat rice.")).toBeInTheDocument()
+	expect(within(drawer).getByText("ご飯を食べます。")).toBeInTheDocument()
+	expect(within(drawer).getByText("Correct")).toBeInTheDocument()
+	expect(within(drawer).getByText("Good.")).toBeInTheDocument()
+
+	const firstHistoryRequest = global.fetch.mock.calls.find(([url]) =>
+		String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
+	)
+	const firstHistoryParams = new URL(String(firstHistoryRequest[0]), "http://localhost")
+		.searchParams
+	expect(firstHistoryParams.get("mode")).toBe("translate")
+	expect(firstHistoryParams.get("difficulty")).toBe("easy")
+	expect(firstHistoryParams.get("limit")).toBe("50")
+	expect(firstHistoryParams.get("offset")).toBe("0")
+
+	fireEvent.click(within(drawer).getByRole("button", { name: "Load more" }))
+	await waitFor(() => {
+		expect(within(drawer).getByText("I drink tea.")).toBeInTheDocument()
+	})
+	expect(within(drawer).getByText("Failed")).toBeInTheDocument()
+
+	const historyRequests = global.fetch.mock.calls.filter(([url]) =>
+		String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
+	)
+	const secondHistoryParams = new URL(String(historyRequests[1][0]), "http://localhost")
+		.searchParams
+	expect(secondHistoryParams.get("offset")).toBe("50")
+
+	fireEvent.click(within(drawer).getByRole("tab", { name: "medium" }))
+	await waitFor(() => {
+		expect(within(drawer).getByText("I write a letter.")).toBeInTheDocument()
+	})
+	expect(within(drawer).getByRole("tab", { name: "medium" })).toHaveAttribute(
+		"aria-selected",
+		"true",
+	)
+	expect(within(drawer).getByText("medium difficulty")).toBeInTheDocument()
+	expect(within(drawer).getByText("Nice.")).toBeInTheDocument()
+
+	const updatedHistoryRequests = global.fetch.mock.calls.filter(([url]) =>
+		String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
+	)
+	const difficultySwitchParams = new URL(
+		String(updatedHistoryRequests[2][0]),
+		"http://localhost",
+	).searchParams
+	expect(difficultySwitchParams.get("mode")).toBe("translate")
+	expect(difficultySwitchParams.get("difficulty")).toBe("medium")
+	expect(difficultySwitchParams.get("offset")).toBe("0")
+
+	fireEvent.mouseDown(drawer.parentElement)
+	expect(screen.getByLabelText("Translate history drawer")).toBeInTheDocument()
+
+	fireEvent.click(within(drawer).getByRole("button", { name: "Close" }))
+	await waitFor(() => {
+		expect(screen.queryByLabelText("Translate history drawer")).not.toBeInTheDocument()
+	})
+})
+
 test("shows zero-filled stats panels when stats have not been created yet", async () => {
 	global.fetch.mockImplementation((url, options = {}) => {
 		if (url === `${API_BASE_URL}/login`) {
@@ -778,6 +934,18 @@ test("shows zero-filled stats panels when stats have not been created yet", asyn
 				json: jest.fn().mockResolvedValue({
 					error: {
 						message: "Stats not found.",
+					},
+				}),
+			})
+		}
+
+		if (String(url).startsWith(`${API_BASE_URL}/users/1/game-history`)) {
+			return Promise.resolve({
+				ok: false,
+				status: 404,
+				json: jest.fn().mockResolvedValue({
+					error: {
+						message: "History not found.",
 					},
 				}),
 			})
@@ -899,6 +1067,13 @@ test("shows locally recorded stats when backend stats are unavailable", async ()
 	await waitFor(() => {
 		expect(screen.getByText("Correct. Good.")).toBeInTheDocument()
 	})
+	fireEvent.click(screen.getByRole("button", { name: "Check" }))
+	await waitFor(() => {
+		const checkRequests = global.fetch.mock.calls.filter(
+			([url]) => url === `${API_BASE_URL}/games/check`,
+		)
+		expect(checkRequests).toHaveLength(2)
+	})
 
 	fireEvent.click(screen.getByRole("button", { name: "Tyler" }))
 	fireEvent.click(screen.getByRole("menuitem", { name: "Stats" }))
@@ -916,6 +1091,18 @@ test("shows locally recorded stats when backend stats are unavailable", async ()
 	fireEvent.click(screen.getByRole("tab", { name: "medium" }))
 	expect(allGamesPanel).toHaveTextContent(/Total games\s*0/)
 	expect(allGamesPanel).toHaveTextContent(/Accuracy\s*0%/)
+
+	fireEvent.click(screen.getByRole("tab", { name: "easy" }))
+	fireEvent.click(
+		within(screen.getByLabelText("Translate stats")).getByRole("button", {
+			name: "History",
+		}),
+	)
+	const drawer = await screen.findByLabelText("Translate history drawer")
+	expect(within(drawer).getByText("I eat rice.")).toBeInTheDocument()
+	expect(within(drawer).getByText("。")).toBeInTheDocument()
+	expect(within(drawer).getByText("Good.")).toBeInTheDocument()
+	expect(within(drawer).getAllByText("I eat rice.")).toHaveLength(1)
 
 	await waitFor(() => {
 		const statsRequest = global.fetch.mock.calls.find(

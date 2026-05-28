@@ -48,7 +48,9 @@ export default function GameControls({
 					mode: gameMode,
 					difficulty,
 					prompt,
+					answer,
 					correct: nextFeedback.correct,
+					feedback: nextFeedback.feedback,
 				})
 			}
 			setFeedback(nextFeedback)
