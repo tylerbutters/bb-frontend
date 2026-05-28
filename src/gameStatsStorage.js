@@ -42,6 +42,29 @@ function writeStoredResults(userId, results) {
 	window.localStorage.setItem(storageKey(userId), JSON.stringify({ results }))
 }
 
+function utcDayRange(date = new Date()) {
+	const start = new Date(
+		Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
+	)
+	const end = new Date(start.getTime() + 24 * 60 * 60 * 1000)
+
+	return { start, end }
+}
+
+function isFromCurrentUtcDay(value, now = new Date()) {
+	const time = Date.parse(value)
+	if (!time) return false
+
+	const { start, end } = utcDayRange(now)
+	return time >= start.getTime() && time < end.getTime()
+}
+
+function filterTodayResults(results, { todayOnly = false, now = new Date() } = {}) {
+	if (!todayOnly) return results
+
+	return results.filter((result) => isFromCurrentUtcDay(result.recordedAt, now))
+}
+
 function calculateAccuracy(won, totalGames) {
 	if (!totalGames) return 0
 	return Math.round((won / totalGames) * 100)
@@ -249,8 +272,8 @@ export function emptyGameStatsResponse() {
 	}
 }
 
-export function getLocalGameStats(userId) {
-	const results = Object.values(readStoredResults(userId))
+export function getLocalGameStats(userId, options = {}) {
+	const results = filterTodayResults(Object.values(readStoredResults(userId)), options)
 	const statsByFilter = new Map(
 		GAME_STAT_FILTERS.map((difficulty) => [difficulty, createModeAccumulator()]),
 	)
@@ -315,10 +338,15 @@ export function recordLocalGameResult(
 export function getLocalGameHistory(
 	userId,
 	{ mode = "all", difficulty = "all", limit = HISTORY_PAGE_SIZE, offset = 0 } = {},
+	options = {},
 ) {
 	const normalizedLimit = Math.min(Math.max(Number(limit) || HISTORY_PAGE_SIZE, 1), 100)
 	const normalizedOffset = Math.max(Number(offset) || 0, 0)
 	const items = Object.entries(readStoredResults(userId))
+		.filter(
+			([, result]) =>
+				!options.todayOnly || isFromCurrentUtcDay(result.recordedAt, options.now),
+		)
 		.map(([key, result]) => normalizeHistoryItem(result, key))
 		.filter((item) => trackedModeLabels.has(item.mode))
 		.filter((item) => mode === "all" || item.mode === mode)

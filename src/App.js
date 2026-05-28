@@ -35,9 +35,13 @@ export default function App() {
 		window.localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(user))
 	}
 
-	function handleLogout() {
+	function clearCurrentUser() {
 		setCurrentUser(null)
 		window.localStorage.removeItem(CURRENT_USER_STORAGE_KEY)
+	}
+
+	function handleLogout() {
+		clearCurrentUser()
 		logout().catch(() => {})
 	}
 
@@ -65,7 +69,15 @@ export default function App() {
 				/>
 				<Route path="/forgot-password" element={<ForgotPasswordPage />} />
 				<Route path="/confirm-email-change" element={<ConfirmEmailChangePage />} />
-				<Route path="/stats" element={<StatsPage currentUser={currentUser} />} />
+				<Route
+					path="/stats"
+					element={
+						<StatsPage
+							currentUser={currentUser}
+							onAuthExpired={clearCurrentUser}
+						/>
+					}
+				/>
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
 		</BrowserRouter>

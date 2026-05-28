@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 import { getUserGameHistory, getUserStats } from "../api/users"
 import {
 	emptyGameStatsResponse,
@@ -67,10 +68,15 @@ export function useGameHistoryDrawer(currentUser) {
 	const [historyNextOffset, setHistoryNextOffset] = useState(0)
 	const [historySource, setHistorySource] = useState("backend")
 	const [stats, setStats] = useState(() =>
-		currentUser ? getLocalGameStats(currentUser.id) : emptyGameStatsResponse(),
+		currentUser
+			? getLocalGameStats(currentUser.id, {
+					todayOnly: currentUser.plan !== "premium",
+				})
+			: emptyGameStatsResponse(),
 	)
 	const [statsStatus, setStatsStatus] = useState("idle")
 	const [isHistoryClosing, setIsHistoryClosing] = useState(false)
+	const isFreeStatsLimited = currentUser?.plan !== "premium"
 
 	async function loadHistoryPage({
 		filter = historyFilter,
@@ -88,7 +94,9 @@ export function useGameHistoryDrawer(currentUser) {
 			limit: recentLimit || HISTORY_PAGE_SIZE,
 			offset,
 		}
-		const localHistory = getLocalGameHistory(currentUser.id, query)
+		const localHistory = getLocalGameHistory(currentUser.id, query, {
+			todayOnly: isFreeStatsLimited,
+		})
 
 		function applyHistory(nextHistory, source) {
 			const normalizedHistory = normalizeHistoryResponse(nextHistory)
@@ -162,14 +170,16 @@ export function useGameHistoryDrawer(currentUser) {
 		return () => {
 			controller.abort()
 		}
-	}, [currentUser, historyFilter, isHistoryClosing])
+	}, [currentUser, historyFilter, isFreeStatsLimited, isHistoryClosing])
 
 	useEffect(() => {
 		if (!historyFilter || !currentUser) return
 		if (isHistoryClosing) return
 
 		const controller = new AbortController()
-		const localStats = getLocalGameStats(currentUser.id)
+		const localStats = getLocalGameStats(currentUser.id, {
+			todayOnly: isFreeStatsLimited,
+		})
 		setStats(localStats)
 
 		async function loadStats() {
@@ -200,7 +210,7 @@ export function useGameHistoryDrawer(currentUser) {
 		return () => {
 			controller.abort()
 		}
-	}, [currentUser, historyFilter, isHistoryClosing])
+	}, [currentUser, historyFilter, isFreeStatsLimited, isHistoryClosing])
 
 	useEffect(() => {
 		if (!isHistoryClosing) return
@@ -291,6 +301,7 @@ export function useGameHistoryDrawer(currentUser) {
 			stats: parseGameRecentLimit(historyFilter?.recentLimit || "all")
 				? getGameStatsFromHistoryItems(historyItems)
 				: getGameStatsForFilter(stats, historyFilter || {}),
+			isFreeStatsLimited,
 			statsStatus,
 			items: historyItems,
 			status: historyStatus,
@@ -312,6 +323,7 @@ export function GameHistoryDrawer({
 	filter,
 	recentFilters = GAME_RECENT_FILTERS,
 	stats,
+	isFreeStatsLimited = false,
 	statsStatus,
 	items,
 	status,
@@ -353,6 +365,16 @@ export function GameHistoryDrawer({
 						Close
 					</button>
 				</header>
+
+				{isFreeStatsLimited && (
+					<section className="statsHistoryUpgradeNotice" aria-label="History limit">
+						<div>
+							<strong>Today only</strong>
+							<p>Free accounts can see today's stats and history.</p>
+						</div>
+						<Link to="/buy">Buy premium</Link>
+					</section>
+				)}
 
 				<div
 					className="statsDifficultyTabs statsHistoryDifficultyTabs"

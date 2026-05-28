@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Navigate } from "react-router-dom"
+import { Link, Navigate } from "react-router-dom"
 import { getUserGameHistory, getUserStats } from "../api/users"
 import {
 	emptyGameStatsResponse,
@@ -57,9 +57,17 @@ function hasHistoryItems(history) {
 	return Array.isArray(history?.items) && history.items.length > 0
 }
 
-export default function StatsPage({ currentUser }) {
+function isAuthenticationError(error) {
+	return error.status === 401
+}
+
+export default function StatsPage({ currentUser, onAuthExpired }) {
 	const [stats, setStats] = useState(() =>
-		currentUser ? getLocalGameStats(currentUser.id) : emptyGameStatsResponse(),
+		currentUser
+			? getLocalGameStats(currentUser.id, {
+					todayOnly: currentUser.plan !== "premium",
+				})
+			: emptyGameStatsResponse(),
 	)
 	const [recentStats, setRecentStats] = useState(() => getGameStatsGroupFromHistoryItems())
 	const [selectedDifficulty, setSelectedDifficulty] = useState("all")
@@ -69,6 +77,7 @@ export default function StatsPage({ currentUser }) {
 	const [recentStatus, setRecentStatus] = useState("idle")
 	const [recentMessage, setRecentMessage] = useState("")
 	const gameHistory = useGameHistoryDrawer(currentUser)
+	const isFreeStatsLimited = currentUser?.plan !== "premium"
 	const selectedRecentLimit = parseGameRecentLimit(selectedRecentRange)
 	const visibleStats = selectedRecentLimit
 		? recentStats
@@ -78,7 +87,9 @@ export default function StatsPage({ currentUser }) {
 		if (!currentUser) return
 
 		const controller = new AbortController()
-		const localStats = getLocalGameStats(currentUser.id)
+		const localStats = getLocalGameStats(currentUser.id, {
+			todayOnly: isFreeStatsLimited,
+		})
 		setStats(localStats)
 
 		async function loadStats() {
@@ -93,6 +104,11 @@ export default function StatsPage({ currentUser }) {
 				setStatus("ready")
 			} catch (error) {
 				if (error.name === "AbortError") return
+
+				if (isAuthenticationError(error)) {
+					onAuthExpired?.()
+					return
+				}
 
 				if (error.status === 404) {
 					setStats(localStats)
@@ -111,7 +127,7 @@ export default function StatsPage({ currentUser }) {
 		return () => {
 			controller.abort()
 		}
-	}, [currentUser])
+	}, [currentUser, isFreeStatsLimited, onAuthExpired])
 
 	useEffect(() => {
 		if (!currentUser) return
@@ -130,7 +146,9 @@ export default function StatsPage({ currentUser }) {
 			limit: selectedRecentLimit,
 			offset: 0,
 		}
-		const localHistory = getLocalGameHistory(currentUser.id, query)
+		const localHistory = getLocalGameHistory(currentUser.id, query, {
+			todayOnly: isFreeStatsLimited,
+		})
 
 		async function loadRecentStats() {
 			setRecentStatus("loading")
@@ -153,6 +171,11 @@ export default function StatsPage({ currentUser }) {
 			} catch (error) {
 				if (error.name === "AbortError") return
 
+				if (isAuthenticationError(error)) {
+					onAuthExpired?.()
+					return
+				}
+
 				if (hasHistoryItems(localHistory) || error.status === 404) {
 					setRecentStats(getGameStatsGroupFromHistoryItems(localHistory.items || []))
 					setRecentStatus("ready")
@@ -171,7 +194,13 @@ export default function StatsPage({ currentUser }) {
 		return () => {
 			controller.abort()
 		}
-	}, [currentUser, selectedDifficulty, selectedRecentLimit])
+	}, [
+		currentUser,
+		isFreeStatsLimited,
+		onAuthExpired,
+		selectedDifficulty,
+		selectedRecentLimit,
+	])
 
 	if (!currentUser) {
 		return <Navigate to="/login" replace />
@@ -185,6 +214,15 @@ export default function StatsPage({ currentUser }) {
 		<div className={statsPageClassName}>
 			<main className="accountContent statsContent" aria-labelledby="stats-heading">
 				<h1 id="stats-heading">Stats</h1>
+				{isFreeStatsLimited && (
+					<section className="statsUpgradeNotice" aria-label="Stats limit">
+						<div>
+							<strong>Today only</strong>
+							<p>Free accounts can see today's stats and history.</p>
+						</div>
+						<Link to="/buy">Buy premium</Link>
+					</section>
+				)}
 				<div className="statsDifficultyTabs" role="tablist" aria-label="Stats difficulty">
 					{GAME_STAT_FILTERS.map((difficulty) => (
 						<button

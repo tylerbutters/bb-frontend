@@ -831,6 +831,15 @@ test("opens stats from the top nav", async () => {
 	})
 	expect(window.location.pathname).toBe("/stats")
 
+	const statsLimitNotice = screen.getByLabelText("Stats limit")
+	expect(within(statsLimitNotice).getByText("Today only")).toBeInTheDocument()
+	expect(
+		within(statsLimitNotice).getByText("Free accounts can see today's stats and history."),
+	).toBeInTheDocument()
+	expect(
+		within(statsLimitNotice).getByRole("link", { name: "Buy premium" }),
+	).toHaveAttribute("href", "/buy")
+
 	const allGamesPanel = screen.getByLabelText("All games stats")
 	await waitFor(() => {
 		expect(within(allGamesPanel).getByText("6")).toBeInTheDocument()
@@ -940,6 +949,14 @@ test("opens paginated game history from a stats panel", async () => {
 	expect(document.body.style.overflow).toBe("")
 	expect(document.querySelector(".statsPage")).toHaveClass("statsPageHistoryOpen")
 	expect(within(drawer).getByRole("heading", { name: "Translate history" })).toBeInTheDocument()
+	const historyLimitNotice = within(drawer).getByLabelText("History limit")
+	expect(within(historyLimitNotice).getByText("Today only")).toBeInTheDocument()
+	expect(
+		within(historyLimitNotice).getByText("Free accounts can see today's stats and history."),
+	).toBeInTheDocument()
+	expect(
+		within(historyLimitNotice).getByRole("link", { name: "Buy premium" }),
+	).toHaveAttribute("href", "/buy")
 	expect(within(drawer).getByText("easy difficulty")).toBeInTheDocument()
 	expect(within(drawer).getByRole("tab", { name: "easy" })).toHaveAttribute(
 		"aria-selected",
@@ -1333,6 +1350,46 @@ test("redirects logged-out users away from stats", async () => {
 		expect(window.location.pathname).toBe("/login")
 	})
 	expect(screen.getByRole("heading", { name: "Login" })).toBeInTheDocument()
+})
+
+test("clears stale login state when stats auth has expired", async () => {
+	window.history.pushState({}, "", "/stats")
+	window.localStorage.setItem(
+		"jsbCurrentUser",
+		JSON.stringify({
+			id: 1,
+			email: "tyler@example.com",
+			displayName: "Tyler",
+		}),
+	)
+	global.fetch.mockImplementation((url) => {
+		if (url === `${API_BASE_URL}/users/1/stats`) {
+			return Promise.resolve({
+				ok: false,
+				status: 401,
+				json: jest.fn().mockResolvedValue({
+					error: {
+						code: "AUTHENTICATION_REQUIRED",
+						message: "Login is required.",
+					},
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({}),
+		})
+	})
+
+	render(<App />)
+
+	await waitFor(() => {
+		expect(window.location.pathname).toBe("/login")
+	})
+	expect(window.localStorage.getItem("jsbCurrentUser")).toBeNull()
+	expect(screen.getByRole("heading", { name: "Login" })).toBeInTheDocument()
+	expect(screen.queryByText("Login is required.")).not.toBeInTheDocument()
 })
 
 test("renders the login page at the login route", () => {
