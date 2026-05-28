@@ -177,6 +177,39 @@ const defaultStatsResponse = {
 		},
 	},
 }
+const defaultQuotaResponse = {
+	plan: "free",
+	limit: 3,
+	used: 1,
+	remaining: 2,
+	resetsAt: "2026-05-29T00:00:00.000Z",
+	canPlay: true,
+}
+const firstChallengeId = "1e5eb8e7-f91a-4c61-8f37-62b1a27ddf95"
+const secondChallengeId = "2e5eb8e7-f91a-4c61-8f37-62b1a27ddf95"
+
+async function loginDefaultUser() {
+	fireEvent.click(screen.getByRole("link", { name: "Login" }))
+	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
+	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
+	fireEvent.click(screen.getByRole("button", { name: "Login" }))
+
+	await waitFor(() => {
+		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+	})
+}
+
+function expectLoggedOutChallengeBlocker() {
+	const blocker = screen
+		.getByText("Log in to check challenge answers.")
+		.closest(".gameQuotaBlocker")
+	expect(blocker).toBeInTheDocument()
+	expect(within(blocker).getByRole("link", { name: "Login" })).toHaveAttribute(
+		"href",
+		"/login",
+	)
+	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
+}
 
 beforeEach(() => {
 	window.history.pushState({}, "", "/")
@@ -281,6 +314,13 @@ beforeEach(() => {
 			})
 		}
 
+		if (url === `${API_BASE_URL}/users/1/game-quota`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue(defaultQuotaResponse),
+			})
+		}
+
 		if (String(url).startsWith(`${API_BASE_URL}/users/1/game-history`)) {
 			const requestUrl = new URL(String(url), "http://localhost")
 			const difficulty = requestUrl.searchParams.get("difficulty")
@@ -353,6 +393,7 @@ beforeEach(() => {
 				ok: true,
 				json: jest.fn().mockResolvedValue({
 					prompt: "I eat rice.",
+					challengeId: firstChallengeId,
 				}),
 			})
 		}
@@ -392,6 +433,17 @@ test("opens the about page", () => {
 		"href",
 		"mailto:support@bunshobuilder.com",
 	)
+	expect(screen.getByRole("link", { name: "Back" })).toHaveAttribute("href", "/")
+})
+
+test("opens the buy premium page", () => {
+	window.history.pushState({}, "", "/buy")
+
+	render(<App />)
+
+	expect(screen.getByRole("heading", { name: "Buy premium" })).toBeInTheDocument()
+	expect(screen.getByText("Checkout is coming soon.")).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Buy premium" })).toBeDisabled()
 	expect(screen.getByRole("link", { name: "Back" })).toHaveAttribute("href", "/")
 })
 
@@ -1337,6 +1389,435 @@ test("switches game tabs and clears the sentence", async () => {
 	expect(screen.getByText("Translate the English sentence into Japanese.")).toBeInTheDocument()
 })
 
+test("shows the free challenge limit intro once without persistent quota text", async () => {
+	render(<App />)
+
+	await loginDefaultUser()
+
+	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	await waitFor(() => {
+		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
+	})
+
+	const introDialog = await screen.findByRole("dialog", {
+		name: "Free challenge checks",
+	})
+	expect(introDialog).toHaveTextContent("Free accounts get 3 challenge checks per day.")
+	expect(screen.queryByText(/free checks left today/)).not.toBeInTheDocument()
+
+	fireEvent.click(within(introDialog).getByRole("button", { name: "Okay" }))
+	expect(window.localStorage.getItem("bbFreeGameLimitIntroDismissed:1")).toBe("true")
+	await waitFor(() => {
+		expect(
+			screen.queryByRole("dialog", { name: "Free challenge checks" }),
+		).not.toBeInTheDocument()
+	})
+
+	fireEvent.click(screen.getByRole("tab", { name: "sandbox" }))
+	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	await waitFor(() => {
+		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
+	})
+	expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
+})
+
+test("shows a persistent buy premium blocker when free quota is exhausted", async () => {
+	global.fetch.mockImplementation((url) => {
+		if (url === `${API_BASE_URL}/login`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					user: {
+						id: 1,
+						email: "tyler@example.com",
+						displayName: "Tyler",
+						plan: "free",
+					},
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/users/1/game-quota`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					plan: "free",
+					limit: 3,
+					used: 3,
+					remaining: 0,
+					resetsAt: "2026-05-29T00:00:00.000Z",
+					canPlay: false,
+				}),
+			})
+		}
+
+		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
+			const mode = new URL(String(url), "http://localhost").searchParams.get("mode")
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					mode,
+					difficulty: "easy",
+					prompt: "I eat rice.",
+					challengeId: firstChallengeId,
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	await loginDefaultUser()
+
+	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	await waitFor(() => {
+		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
+	})
+	expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
+	expect(screen.getByText("You've used today's 3 free challenge checks.")).toBeInTheDocument()
+	expect(screen.getByText("Buy premium for unlimited practice.")).toBeInTheDocument()
+	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
+
+	const buyLink = screen.getByRole("link", { name: "Buy premium" })
+	expect(buyLink).toHaveAttribute("href", "/buy")
+
+	fireEvent.click(screen.getByRole("tab", { name: "particles" }))
+	await waitFor(() => {
+		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
+	})
+	expect(screen.getByText("You've used today's 3 free challenge checks.")).toBeInTheDocument()
+
+	fireEvent.click(screen.getByRole("link", { name: "Buy premium" }))
+	expect(window.location.pathname).toBe("/buy")
+})
+
+test("shows the buy premium blocker instead of a prompt error when prompt loading is quota-blocked", async () => {
+	global.fetch.mockImplementation((url) => {
+		if (url === `${API_BASE_URL}/login`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					user: {
+						id: 1,
+						email: "tyler@example.com",
+						displayName: "Tyler",
+						plan: "free",
+					},
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/users/1/game-quota`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					plan: "free",
+					limit: 3,
+					used: 2,
+					remaining: 1,
+					resetsAt: "2026-05-29T00:00:00.000Z",
+					canPlay: true,
+				}),
+			})
+		}
+
+		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
+			return Promise.resolve({
+				ok: false,
+				status: 403,
+				json: jest.fn().mockResolvedValue({
+					error: {
+						code: "DAILY_GAME_LIMIT_REACHED",
+						message: "You've used today's 3 free challenge checks.",
+						details: {
+							quota: {
+								plan: "free",
+								limit: 3,
+								used: 3,
+								remaining: 0,
+								resetsAt: "2026-05-29T00:00:00.000Z",
+								canPlay: false,
+							},
+						},
+					},
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	await loginDefaultUser()
+	window.localStorage.setItem("bbFreeGameLimitIntroDismissed:1", "true")
+
+	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("You've used today's 3 free challenge checks.")).toBeInTheDocument()
+	})
+	expect(screen.getByText("Buy premium for unlimited practice.")).toBeInTheDocument()
+	expect(screen.queryByText("Could not load a prompt.")).not.toBeInTheDocument()
+})
+
+test("shows the buy premium blocker immediately when logged-in quota loading is rejected", async () => {
+	window.localStorage.setItem(
+		"jsbCurrentUser",
+		JSON.stringify({
+			id: 1,
+			email: "tyler@example.com",
+			displayName: "Tyler",
+			plan: "free",
+		}),
+	)
+
+	global.fetch.mockImplementation((url) => {
+		if (url === `${API_BASE_URL}/users/1/game-quota`) {
+			return Promise.resolve({
+				ok: false,
+				status: 401,
+				json: jest.fn().mockResolvedValue({
+					error: {
+						code: "AUTHENTICATION_REQUIRED",
+						message: "Login is required.",
+					},
+				}),
+			})
+		}
+
+		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					mode: "translate",
+					difficulty: "easy",
+					prompt: "I eat rice.",
+					challengeId: firstChallengeId,
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("You've used today's 3 free challenge checks.")).toBeInTheDocument()
+	})
+	expect(screen.getByText("Buy premium for unlimited practice.")).toBeInTheDocument()
+	await waitFor(() => {
+		expect(
+			screen.queryByRole("dialog", { name: "Free challenge checks" }),
+		).not.toBeInTheDocument()
+	})
+	expect(screen.queryByText("Log in to check challenge answers.")).not.toBeInTheDocument()
+	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
+})
+
+test("shows the buy premium blocker when a logged-in challenge check is quota-gated", async () => {
+	window.localStorage.setItem(
+		"jsbCurrentUser",
+		JSON.stringify({
+			id: 1,
+			email: "tyler@example.com",
+			displayName: "Tyler",
+			plan: "free",
+		}),
+	)
+
+	global.fetch.mockImplementation((url) => {
+		if (url === `${API_BASE_URL}/users/1/game-quota`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					plan: "free",
+					limit: 3,
+					used: 0,
+					remaining: 3,
+					resetsAt: "2026-05-29T00:00:00.000Z",
+					canPlay: true,
+				}),
+			})
+		}
+
+		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					mode: "translate",
+					difficulty: "easy",
+					prompt: "I eat rice.",
+					challengeId: firstChallengeId,
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/games/check`) {
+			return Promise.resolve({
+				ok: false,
+				status: 401,
+				json: jest.fn().mockResolvedValue({
+					error: {
+						code: "LOGIN_REQUIRED_FOR_CHALLENGE_CHECKS",
+						message: "Log in to check challenge answers.",
+					},
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	await waitFor(() => {
+		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
+	})
+	const introDialog = await screen.findByRole("dialog", {
+		name: "Free challenge checks",
+	})
+	fireEvent.click(within(introDialog).getByRole("button", { name: "Okay" }))
+
+	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
+	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
+	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	fireEvent.click(screen.getByRole("button", { name: "Check" }))
+
+	const blocker = await screen.findByText("You've used today's 3 free challenge checks.")
+		.then((element) => element.closest(".gameQuotaBlocker"))
+	expect(blocker).toBeInTheDocument()
+	expect(within(blocker).getByText("Buy premium for unlimited practice.")).toBeInTheDocument()
+	expect(within(blocker).getByRole("link", { name: "Buy premium" })).toHaveAttribute("href", "/buy")
+	expect(screen.queryByText("Not quite. Log in to check challenge answers.")).not.toBeInTheDocument()
+	expect(screen.queryByText("Log in to check challenge answers.")).not.toBeInTheDocument()
+	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
+})
+
+test("blocks after three local fallback challenge checks with stale backend quota", async () => {
+	let promptIndex = 0
+
+	global.fetch.mockImplementation((url) => {
+		if (url === `${API_BASE_URL}/login`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					user: {
+						id: 1,
+						email: "tyler@example.com",
+						displayName: "Tyler",
+						plan: "free",
+					},
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/users/1/game-quota`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					plan: "free",
+					limit: 15,
+					used: 0,
+					remaining: 15,
+					resetsAt: "2026-05-29T00:00:00.000Z",
+					canPlay: true,
+				}),
+			})
+		}
+
+		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
+			const promptNumber = promptIndex + 1
+			promptIndex += 1
+
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					mode: "translate",
+					difficulty: "easy",
+					prompt: `Prompt ${promptNumber}.`,
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/games/check`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					correct: true,
+					feedback: "Good.",
+					quota: {
+						plan: "free",
+						limit: 15,
+						used: 1,
+						remaining: 14,
+						resetsAt: "2026-05-29T00:00:00.000Z",
+						canPlay: true,
+					},
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	await loginDefaultUser()
+
+	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	await waitFor(() => {
+		expect(screen.getByText("Prompt 1.")).toBeInTheDocument()
+	})
+	const introDialog = await screen.findByRole("dialog", {
+		name: "Free challenge checks",
+	})
+	fireEvent.click(within(introDialog).getByRole("button", { name: "Okay" }))
+
+	for (let promptNumber = 1; promptNumber <= 3; promptNumber += 1) {
+		await waitFor(() => {
+			expect(screen.getByText(`Prompt ${promptNumber}.`)).toBeInTheDocument()
+		})
+		fireEvent.click(screen.getByRole("button", { name: "+ word" }))
+		fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
+		fireEvent.click(screen.getByRole("button", { name: "。" }))
+		fireEvent.click(screen.getByRole("button", { name: "Check" }))
+
+		await waitFor(() => {
+			expect(screen.getByText("Correct. Good.")).toBeInTheDocument()
+		})
+
+		if (promptNumber < 3) {
+			fireEvent.click(screen.getByRole("button", { name: "Next" }))
+		}
+	}
+
+	expect(screen.getByText("You've used today's 3 free challenge checks.")).toBeInTheDocument()
+	expect(screen.getByText("Buy premium for unlimited practice.")).toBeInTheDocument()
+	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
+})
+
 test("clears all sentence elements", async () => {
 	render(<App />)
 
@@ -1452,9 +1933,7 @@ test("populates conjugation game elements from Japanese translation prompt data"
 	expect(screen.getAllByText("食べ").length).toBeGreaterThan(0)
 	expect(screen.getAllByText("たべ").length).toBeGreaterThan(0)
 	expect(screen.getAllByText("る").length).toBeGreaterThan(0)
-	await waitFor(() => {
-		expect(screen.getByRole("button", { name: "Check" })).toBeEnabled()
-	})
+	expectLoggedOutChallengeBlocker()
 })
 
 test("does not restore generated elements when switching to translate or sandbox", async () => {
@@ -1568,9 +2047,7 @@ test("populates particle game elements without preselected particles", async () 
 	expect(screen.getAllByText("食べ").length).toBeGreaterThan(0)
 	expect(screen.queryByText("は")).not.toBeInTheDocument()
 	expect(screen.queryByText("を")).not.toBeInTheDocument()
-	await waitFor(() => {
-		expect(screen.getByRole("button", { name: "Check" })).toBeEnabled()
-	})
+	expectLoggedOutChallengeBlocker()
 })
 
 test("populates reorder game elements in the generated scrambled order", async () => {
@@ -1613,9 +2090,7 @@ test("populates reorder game elements in the generated scrambled order", async (
 	expect(screen.getAllByText("む").length).toBeGreaterThan(0)
 	expect(screen.getAllByText("彼女").length).toBeGreaterThan(0)
 	expect(screen.getAllByText("は").length).toBeGreaterThan(0)
-	await waitFor(() => {
-		expect(screen.getByRole("button", { name: "Check" })).toBeEnabled()
-	})
+	expectLoggedOutChallengeBlocker()
 })
 
 test("populates fix sentence game elements with one mistake", async () => {
@@ -1658,9 +2133,7 @@ test("populates fix sentence game elements with one mistake", async () => {
 	expect(screen.getAllByText("に").length).toBeGreaterThan(0)
 	expect(screen.getAllByText("食べ").length).toBeGreaterThan(0)
 	expect(screen.queryByText("を")).not.toBeInTheDocument()
-	await waitFor(() => {
-		expect(screen.getByRole("button", { name: "Check" })).toBeEnabled()
-	})
+	expectLoggedOutChallengeBlocker()
 })
 
 test("changing translate difficulty regenerates the prompt and clears sentence elements", async () => {
@@ -1715,6 +2188,26 @@ test("changing translate difficulty regenerates the prompt and clears sentence e
 
 test("regenerates the translate prompt and clears sentence elements", async () => {
 	global.fetch.mockImplementation((url, options = {}) => {
+		if (url === `${API_BASE_URL}/login`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					user: {
+						id: 1,
+						email: "tyler@example.com",
+						displayName: "Tyler",
+					},
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/users/1/game-quota`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue(defaultQuotaResponse),
+			})
+		}
+
 		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
 			const promptRequestCount = global.fetch.mock.calls.filter(([requestUrl]) =>
 				String(requestUrl).startsWith(`${API_BASE_URL}/games/prompt`),
@@ -1724,6 +2217,8 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 				ok: true,
 				json: jest.fn().mockResolvedValue({
 					prompt: promptRequestCount > 1 ? "I drink tea." : "I eat rice.",
+					challengeId:
+						promptRequestCount > 1 ? secondChallengeId : firstChallengeId,
 				}),
 			})
 		}
@@ -1734,6 +2229,7 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 				json: jest.fn().mockResolvedValue({
 					correct: false,
 					feedback: "Use a full Japanese sentence.",
+					quota: defaultQuotaResponse,
 				}),
 			})
 		}
@@ -1745,6 +2241,8 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 	})
 
 	render(<App />)
+
+	await loginDefaultUser()
 
 	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
 
@@ -1767,6 +2265,7 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 		difficulty: "easy",
 		prompt: "I eat rice.",
 		answer: "。",
+		challengeId: firstChallengeId,
 	})
 
 	fireEvent.click(screen.getByRole("button", { name: "Next" }))
@@ -1786,6 +2285,26 @@ test("sends the same challenge ID for repeated checks on one prompt", async () =
 	const challengeId = "1e5eb8e7-f91a-4c61-8f37-62b1a27ddf95"
 
 	global.fetch.mockImplementation((url) => {
+		if (url === `${API_BASE_URL}/login`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					user: {
+						id: 1,
+						email: "tyler@example.com",
+						displayName: "Tyler",
+					},
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/users/1/game-quota`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue(defaultQuotaResponse),
+			})
+		}
+
 		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
 			return Promise.resolve({
 				ok: true,
@@ -1802,6 +2321,7 @@ test("sends the same challenge ID for repeated checks on one prompt", async () =
 				json: jest.fn().mockResolvedValue({
 					correct: true,
 					feedback: "Good.",
+					quota: defaultQuotaResponse,
 				}),
 			})
 		}
@@ -1813,6 +2333,8 @@ test("sends the same challenge ID for repeated checks on one prompt", async () =
 	})
 
 	render(<App />)
+
+	await loginDefaultUser()
 
 	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
 
@@ -1862,6 +2384,26 @@ test("calls prompt and check endpoints with a random real mode for shuffle", asy
 	jest.spyOn(Math, "random").mockReturnValue(0.6)
 
 	global.fetch.mockImplementation((url, options = {}) => {
+		if (url === `${API_BASE_URL}/login`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					user: {
+						id: 1,
+						email: "tyler@example.com",
+						displayName: "Tyler",
+					},
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/users/1/game-quota`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue(defaultQuotaResponse),
+			})
+		}
+
 		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
 			return Promise.resolve({
 				ok: true,
@@ -1869,6 +2411,7 @@ test("calls prompt and check endpoints with a random real mode for shuffle", asy
 					mode: "particles",
 					difficulty: "easy",
 					prompt: "I eat sushi.",
+					challengeId: firstChallengeId,
 				}),
 			})
 		}
@@ -1879,6 +2422,7 @@ test("calls prompt and check endpoints with a random real mode for shuffle", asy
 				json: jest.fn().mockResolvedValue({
 					correct: true,
 					feedback: "Good.",
+					quota: defaultQuotaResponse,
 				}),
 			})
 		}
@@ -1890,6 +2434,8 @@ test("calls prompt and check endpoints with a random real mode for shuffle", asy
 	})
 
 	render(<App />)
+
+	await loginDefaultUser()
 
 	fireEvent.click(screen.getByRole("tab", { name: "shuffle" }))
 
@@ -1921,5 +2467,6 @@ test("calls prompt and check endpoints with a random real mode for shuffle", asy
 		difficulty: "easy",
 		prompt: "I eat sushi.",
 		answer: "。",
+		challengeId: firstChallengeId,
 	})
 })

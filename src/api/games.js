@@ -36,6 +36,7 @@ export async function checkGameAnswer({
 	return {
 		correct: Boolean(data.correct),
 		feedback: data.feedback || "",
+		quota: data.quota || null,
 	}
 }
 

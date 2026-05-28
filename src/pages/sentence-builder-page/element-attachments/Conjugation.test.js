@@ -1,4 +1,4 @@
-import { conjugations } from "../grammar/elementData"
+import { conjugations } from "../grammar/conjugationData"
 import { getConjugationOptionsForParent } from "./Conjugation"
 
 describe("getConjugationOptionsForParent", () => {
@@ -25,7 +25,7 @@ describe("getConjugationOptionsForParent", () => {
 				},
 				conjugations,
 			),
-		).toEqual(expect.arrayContaining([{ text: "た" }]))
+		).toEqual(expect.arrayContaining([expect.objectContaining({ text: "た" })]))
 	})
 
 	test("keeps godan options available after the visible ending changes", () => {

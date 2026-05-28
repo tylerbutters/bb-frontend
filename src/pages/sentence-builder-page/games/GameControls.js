@@ -1,7 +1,17 @@
 import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 import { checkGameAnswer, checkSandboxSentence } from "../../../api/games"
 import { recordLocalGameResult } from "../../../gameStatsStorage"
 import "./GameControls.css"
+
+const FREE_DAILY_CHALLENGE_LIMIT = 3
+const EXHAUSTED_FREE_QUOTA = {
+	plan: "free",
+	limit: FREE_DAILY_CHALLENGE_LIMIT,
+	used: FREE_DAILY_CHALLENGE_LIMIT,
+	remaining: 0,
+	canPlay: false,
+}
 
 export default function GameControls({
 	isVisible,
@@ -9,9 +19,12 @@ export default function GameControls({
 	challengeId,
 	difficulty,
 	currentUser,
+	gameQuota,
 	prompt,
 	promptStatus,
 	answer,
+	onGameQuotaChange,
+	onLocalGameQuotaUse,
 	onNext,
 }) {
 	const [checkStatus, setCheckStatus] = useState("idle")
@@ -19,8 +32,17 @@ export default function GameControls({
 	const hasAnswerChecker = hasGameAnswerChecker(gameMode)
 	const isSandboxCheck = gameMode === "sandbox"
 	const isChecking = checkStatus === "checking"
+	const isChallengeCheck = hasAnswerChecker && !isSandboxCheck
+	const requiresLogin = isChallengeCheck && !currentUser
+	const isFreeQuota =
+		isChallengeCheck && !requiresLogin && currentUser && gameQuota?.plan !== "premium"
+	const isQuotaExhausted = Boolean(!requiresLogin && isFreeQuota && gameQuota?.remaining === 0)
 	const isCheckDisabled =
-		!answer || isChecking || (!isSandboxCheck && (!prompt || promptStatus !== "ready"))
+		!answer ||
+		isChecking ||
+		(!isSandboxCheck && (!prompt || promptStatus !== "ready")) ||
+		requiresLogin ||
+		isQuotaExhausted
 	const feedbackText =
 		feedback &&
 		`${feedback.correct ? "Correct." : "Not quite."}${
@@ -42,6 +64,16 @@ export default function GameControls({
 			const nextFeedback = isSandboxCheck
 				? await checkSandboxSentence({ answer })
 				: await checkGameAnswer({ gameMode, difficulty, prompt, answer, challengeId })
+			if (nextFeedback.quota) onGameQuotaChange?.(nextFeedback.quota)
+			if (!isSandboxCheck) {
+				onLocalGameQuotaUse?.({
+					challengeId,
+					gameMode,
+					difficulty,
+					prompt,
+					serverQuota: nextFeedback.quota,
+				})
+			}
 			if (!isSandboxCheck) {
 				recordLocalGameResult(currentUser?.id, {
 					challengeId,
@@ -57,9 +89,26 @@ export default function GameControls({
 			setCheckStatus("ready")
 		} catch (error) {
 			console.log(error)
+			const errorCode = error.data?.error?.code
+			const quota = error.data?.error?.details?.quota
+			if (quota) onGameQuotaChange?.(quota)
+
+			if (errorCode === "LOGIN_REQUIRED_FOR_CHALLENGE_CHECKS") {
+				if (currentUser) {
+					onGameQuotaChange?.(EXHAUSTED_FREE_QUOTA)
+				}
+				setFeedback(null)
+				setCheckStatus("idle")
+				return
+			}
+
+			const errorFeedback =
+				errorCode === "DAILY_GAME_LIMIT_REACHED"
+					? `You've used today's ${FREE_DAILY_CHALLENGE_LIMIT} free challenge checks.`
+					: "Could not check the sentence right now. Try again in a moment."
 			setFeedback({
 				correct: false,
-				feedback: "Could not check the sentence right now. Try again in a moment.",
+				feedback: errorFeedback,
 			})
 			setCheckStatus("error")
 		}
@@ -69,6 +118,23 @@ export default function GameControls({
 
 	return (
 		<div className="gameControls">
+			{requiresLogin && (
+				<div className="gameQuotaBlocker" role="status">
+					<p>Log in to check challenge answers.</p>
+					<Link className="gameQuotaButton" to="/login">
+						Login
+					</Link>
+				</div>
+			)}
+			{isQuotaExhausted && (
+				<div className="gameQuotaBlocker" role="status">
+					<p>You've used today's {FREE_DAILY_CHALLENGE_LIMIT} free challenge checks.</p>
+					<p>Buy premium for unlimited practice.</p>
+					<Link className="gameQuotaButton" to="/buy">
+						Buy premium
+					</Link>
+				</div>
+			)}
 			{feedback && (
 				<div
 					className={`gameFeedback ${
@@ -79,14 +145,16 @@ export default function GameControls({
 					{feedbackText}
 				</div>
 			)}
-			<button
-				type="button"
-				className="gameControlButton"
-				onClick={checkAnswer}
-				disabled={isCheckDisabled}
-			>
-				{isChecking ? "Checking..." : "Check"}
-			</button>
+			{!requiresLogin && !isQuotaExhausted && (
+				<button
+					type="button"
+					className="gameControlButton"
+					onClick={checkAnswer}
+					disabled={isCheckDisabled}
+				>
+					{isChecking ? "Checking..." : "Check"}
+				</button>
+			)}
 			{feedback && !isSandboxCheck && (
 				<button
 					type="button"

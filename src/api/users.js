@@ -33,6 +33,10 @@ export async function getUserStats(userId, { signal } = {}) {
 	return apiRequest(`/users/${userId}/stats`, { signal })
 }
 
+export async function getUserGameQuota(userId, { signal } = {}) {
+	return apiRequest(`/users/${userId}/game-quota`, { signal })
+}
+
 export async function getUserGameHistory(
 	userId,
 	{ mode = "all", difficulty = "all", limit = 50, offset = 0, signal } = {},

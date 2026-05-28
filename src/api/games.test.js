@@ -29,6 +29,7 @@ test("checkGameAnswer sends difficulty with challenge checks", async () => {
 	).resolves.toEqual({
 		correct: true,
 		feedback: "Good.",
+		quota: null,
 	})
 
 	expect(global.fetch).toHaveBeenCalledWith(`${API_BASE_URL}/games/check`, {
@@ -77,6 +78,7 @@ test("checkGameAnswer retries without difficulty against stale backends", async 
 	).resolves.toEqual({
 		correct: false,
 		feedback: "Try again.",
+		quota: null,
 	})
 
 	expect(global.fetch).toHaveBeenCalledTimes(2)

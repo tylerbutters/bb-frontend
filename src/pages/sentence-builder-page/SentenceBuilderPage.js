@@ -1,5 +1,6 @@
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
+import { useGameQuota } from "../../useGameQuota"
 import AccountMenu from "./components/AccountMenu"
 import GameControls from "./games/GameControls"
 import GameModeSelector from "./games/GameModeSelector"
@@ -8,8 +9,11 @@ import SentenceBuilderWorkspace from "./components/SentenceBuilderWorkspace"
 import { japaneseTranslationToElements } from "./grammar/japaneseTranslationElements"
 import { GameHistoryDrawer, useGameHistoryDrawer } from "../GameHistoryDrawer"
 import "../TopRightButton.css"
+import "./GameQuota.css"
 
 const PROMPT_ELEMENT_GAME_MODES = new Set(["conjugations", "fix sentence", "particles", "reorder"])
+const FREE_LIMIT_INTRO_STORAGE_PREFIX = "bbFreeGameLimitIntroDismissed"
+const FREE_DAILY_CHALLENGE_LIMIT = 3
 const GAME_HISTORY_LABELS = {
 	translate: "Translate",
 	conjugations: "Conjugations",
@@ -27,7 +31,12 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 	const [japaneseSentence, setJapaneseSentence] = useState("")
 	const [hasSentenceElements, setHasSentenceElements] = useState(false)
 	const gameHistory = useGameHistoryDrawer(currentUser)
+	const gameQuota = useGameQuota(currentUser)
+	const [isFreeLimitIntroVisible, setIsFreeLimitIntroVisible] = useState(false)
 	const isGame = selectedGameMode && selectedGameMode !== "sandbox"
+	const isFreeQuotaExhausted = Boolean(
+		currentUser && gameQuota.quota?.plan !== "premium" && gameQuota.quota?.remaining === 0,
+	)
 	const historyGameMode = resolveHistoryGameMode(selectedGameMode, gamePromptData?.mode)
 	const historyGameLabel = historyGameMode
 		? GAME_HISTORY_LABELS[historyGameMode] || historyGameMode
@@ -50,6 +59,23 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 		setGamePromptData(promptData || null)
 		setGamePromptStatus(status)
 	}, [])
+
+	useEffect(() => {
+		if (
+			!currentUser ||
+			!isGame ||
+			gameQuota.quota?.plan !== "free" ||
+			gameQuota.quota?.remaining === 0
+		) {
+			setIsFreeLimitIntroVisible(false)
+			return
+		}
+
+		const storageKey = `${FREE_LIMIT_INTRO_STORAGE_PREFIX}:${currentUser.id}`
+		if (window.localStorage.getItem(storageKey)) return
+
+		setIsFreeLimitIntroVisible(true)
+	}, [currentUser, gameQuota.quota?.plan, gameQuota.quota?.remaining, isGame])
 
 	function resetSentence() {
 		setWorkspaceResetCount((count) => count + 1)
@@ -92,6 +118,14 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 		})
 	}
 
+	function dismissFreeLimitIntro() {
+		if (currentUser) {
+			window.localStorage.setItem(`${FREE_LIMIT_INTRO_STORAGE_PREFIX}:${currentUser.id}`, "true")
+		}
+
+		setIsFreeLimitIntroVisible(false)
+	}
+
 	return (
 		<div className="app">
 			<Link className="topRightButton topLeftButton" to="/about">
@@ -106,8 +140,10 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 			<GamePrompt
 				isVisible={isGame}
 				gameMode={selectedGameMode}
+				isQuotaExhausted={isFreeQuotaExhausted}
 				requestKey={workspaceResetCount}
 				isHistoryOpen={isPromptHistoryOpen}
+				onGameQuotaChange={gameQuota.applyQuota}
 				onOpenHistory={currentUser && historyGameMode ? togglePromptHistory : null}
 				onRegenerate={regenerateGamePrompt}
 				onPromptChange={handlePromptChange}
@@ -119,17 +155,40 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 				onSentenceChange={handleSentenceChange}
 			/>
 			<GameControls
-				isVisible={hasSentenceElements}
+				isVisible={isGame || hasSentenceElements}
 				gameMode={gamePromptData?.mode || selectedGameMode}
 				challengeId={gamePromptData?.challengeId}
 				difficulty={gamePromptData?.difficulty}
 				currentUser={currentUser}
+				gameQuota={gameQuota.quota}
 				prompt={gamePrompt}
 				promptStatus={gamePromptStatus}
 				answer={japaneseSentence}
+				onGameQuotaChange={gameQuota.applyQuota}
+				onLocalGameQuotaUse={gameQuota.recordLocalChallengeCheck}
 				onNext={regenerateGamePrompt}
 			/>
 			<GameHistoryDrawer {...gameHistory.drawerProps} />
+			{isFreeLimitIntroVisible && (
+				<div className="freeLimitModalOverlay" role="presentation">
+					<section
+						className="freeLimitModal"
+						role="dialog"
+						aria-labelledby="free-limit-title"
+						aria-modal="true"
+					>
+						<h2 id="free-limit-title">Free challenge checks</h2>
+						<p>Free accounts get {FREE_DAILY_CHALLENGE_LIMIT} challenge checks per day.</p>
+						<button
+							type="button"
+							className="freeLimitModalButton"
+							onClick={dismissFreeLimitIntro}
+						>
+							Okay
+						</button>
+					</section>
+				</div>
+			)}
 		</div>
 	)
 }

@@ -1,6 +1,38 @@
 [
   {
     "elementType": "verb",
+    "verbType": "godan",
+    "text": "行く",
+    "textKana": "いく",
+    "stem": "行",
+    "stemKana": "い",
+    "ending": "く",
+    "conjugation": null,
+    "particle": null,
+    "meanings": [
+      "to go",
+      "to move",
+      "to proceed"
+    ]
+  },
+  {
+    "elementType": "verb",
+    "verbType": "ichidan",
+    "text": "見る",
+    "textKana": "みる",
+    "stem": "見",
+    "stemKana": "み",
+    "ending": "る",
+    "conjugation": null,
+    "particle": null,
+    "meanings": [
+      "to see",
+      "to look",
+      "to watch"
+    ]
+  },
+  {
+    "elementType": "verb",
     "verbType": "suru",
     "text": "あっさりする",
     "textKana": "",

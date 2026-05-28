@@ -1,0 +1,57 @@
+.freeLimitModalOverlay {
+	position: fixed;
+	inset: 0;
+	z-index: 3000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 18px;
+	background: rgba(0, 0, 0, 0.34);
+	box-sizing: border-box;
+}
+
+.freeLimitModal {
+	display: flex;
+	width: min(360px, 100%);
+	flex-direction: column;
+	gap: 14px;
+	padding: 22px;
+	border: 1px solid var(--color-surface-control-active);
+	border-radius: 8px;
+	background: var(--color-surface-strong);
+	box-sizing: border-box;
+	color: var(--color-text-primary);
+}
+
+.freeLimitModal h2 {
+	margin: 0;
+	font-size: 22px;
+	font-weight: 850;
+	line-height: 1.2;
+}
+
+.freeLimitModal p {
+	margin: 0;
+	color: var(--color-text-muted);
+	font-size: 15px;
+	font-weight: 700;
+	line-height: 1.45;
+}
+
+.freeLimitModalButton {
+	min-height: 38px;
+	border: 1px solid var(--color-border-strong);
+	border-radius: 7px;
+	background: var(--color-text-primary);
+	color: var(--color-text-inverse);
+	cursor: pointer;
+	font: inherit;
+	font-size: 13px;
+	font-weight: 850;
+	line-height: 1;
+}
+
+.freeLimitModalButton:hover {
+	border-color: var(--color-surface-light);
+	background: var(--color-surface-light);
+}

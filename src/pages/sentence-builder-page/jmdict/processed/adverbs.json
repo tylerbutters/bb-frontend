@@ -13916,6 +13916,21 @@
   },
   {
     "elementType": "adverb",
+    "text": "良く",
+    "textKana": "よく",
+    "particle": null,
+    "meanings": [
+      "nicely",
+      "properly",
+      "well",
+      "skillfully",
+      "skilfully",
+      "frequently",
+      "often"
+    ]
+  },
+  {
+    "elementType": "adverb",
     "text": "よく",
     "textKana": "",
     "particle": null,

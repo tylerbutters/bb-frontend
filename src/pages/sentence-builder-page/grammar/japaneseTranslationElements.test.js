@@ -133,11 +133,15 @@ describe("japaneseTranslationToElements", () => {
 			expect.objectContaining({
 				stem: "せ",
 				ending: "る",
-				conjugationOptions: expect.arrayContaining([{ text: "られる" }]),
+				conjugationOptions: expect.arrayContaining([
+					expect.objectContaining({ text: "られる" }),
+				]),
 				conjugation: expect.objectContaining({
 					stem: "られ",
 					ending: "る",
-					conjugationOptions: expect.arrayContaining([{ text: "た" }]),
+					conjugationOptions: expect.arrayContaining([
+						expect.objectContaining({ text: "た" }),
+					]),
 					conjugation: expect.objectContaining({
 						stem: "た",
 						conjugation: {},
