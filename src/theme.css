@@ -22,7 +22,7 @@
 	--color-surface-input-hover: rgba(255, 255, 255, 0.12);
 	--color-surface-control: rgba(255, 255, 255, 0.1);
 	--color-surface-control-hover: rgba(255, 255, 255, 0.14);
-	--color-surface-control-active: rgba(255, 255, 255, 0.16);
+	--color-surface-control-active: #323232;
 	--color-surface-control-faint: rgba(255, 255, 255, 0.06);
 	--color-surface-transparent: rgba(255, 255, 255, 0);
 	--color-surface-pill: rgba(255, 255, 255, 0.28);
@@ -41,27 +41,43 @@
 	--color-shadow: rgba(0, 0, 0, 0.35);
 	--color-shadow-soft: rgba(0, 0, 0, 0.34);
 
-	--color-accent-blue: #8ab4ff;
-	--color-accent-blue-soft: rgba(138, 180, 255, 0.2);
-	--color-accent-blue-ring: rgba(138, 180, 255, 0.18);
 	--color-success: rgb(119, 224, 147);
 	--color-success-border: rgba(78, 196, 126, 0.46);
 	--color-success-border-hover: rgba(78, 196, 126, 0.72);
 	--color-success-background: rgba(78, 196, 126, 0.18);
 	--color-success-background-hover: rgba(78, 196, 126, 0.3);
 	--color-success-subtle-border: rgba(78, 196, 126, 0.44);
-	--color-warning-subtle-border: rgba(255, 201, 92, 0.44);
-	--color-danger: rgb(255, 126, 126);
-	--color-danger-soft: rgba(255, 92, 92, 0.16);
-	--color-danger-soft-hover: rgba(255, 92, 92, 0.28);
-	--color-danger-border: rgba(255, 92, 92, 0.3);
-	--color-danger-border-hover: rgba(255, 92, 92, 0.52);
-	--color-danger-menu-border: rgba(255, 92, 92, 0.28);
-	--color-danger-menu-border-hover: rgba(255, 92, 92, 0.45);
-	--color-danger-panel-border: rgba(255, 126, 126, 0.34);
-	--color-danger-button-border: rgba(255, 126, 126, 0.44);
-	--color-danger-panel-background: rgba(32, 12, 12, 0.72);
 
+	--color-warning-subtle-border: rgba(255, 201, 92, 0.44);
+
+	/* GREY */
+	--color-grey-border: #323232;
+	--color-grey-fill: #141414;
+	--color-grey-text: #ababab;
+
+	/* WHITE */
+	--color-white-border: #a2a2a2;
+	--color-white-fill: #434343;
+	--color-white-border-hover: #c3c3c3;
+	--color-white-fill-hover: #545454;
+
+	/* GOLD */
+	--color-gold-fill: #635016;
+	--color-gold-border: #c89528;
+	--color-gold-fill-hover: #927520;
+	--color-gold-border-hover: #ffbe32;
+
+	/* BLUE */
+	--color-blue-fill: #2c3e5d;
+	--color-blue-border: #8ab4ff;
+
+	/* RED */
+	--color-red-fill: #492626;
+	--color-red-border: #9c4343;
+	--color-red-fill-hover: #693737;
+	--color-red-border-hover: #bb5050;
+
+	/* ELEMENTS */
 	--color-element-noun-primary: rgba(255, 138, 138, 0.72);
 	--color-element-noun-secondary: rgba(255, 138, 138, 0.24);
 	--color-element-adjective-primary: rgba(255, 184, 112, 0.74);

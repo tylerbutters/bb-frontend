@@ -45,19 +45,15 @@
 }
 
 .clearAllButton {
-	position: fixed;
+	position: absolute;
 	left: 50%;
 	bottom: 28px;
-	z-index: 1500;
 	padding: 10px 16px;
-	border: 1px solid var(--color-danger-border);
+	border: 1px solid var(--color-red-border);
+	background: var(--color-red-fill);
+	color: white;
 	border-radius: 8px;
-	background: var(--color-danger-soft);
-	color: var(--color-text-primary);
-	font-family: inherit;
 	font-size: 14px;
-	font-weight: 700;
-	line-height: 1;
 	opacity: 0;
 	pointer-events: none;
 	transform: translateX(-50%) translateY(10px);
@@ -75,8 +71,8 @@
 }
 
 .clearAllButtonVisible:hover {
-	border-color: var(--color-danger-border-hover);
-	background: var(--color-danger-soft-hover);
+	border-color: var(--color-red-border-hover);
+	background: var(--color-red-fill-hover);
 	cursor: pointer;
 }
 

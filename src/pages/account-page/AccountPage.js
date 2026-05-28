@@ -5,8 +5,14 @@ import DisplayNameSection from "./DisplayNameSection"
 import EmailSection from "./EmailSection"
 import PasswordSection from "./PasswordSection"
 import DeleteAccountSection from "./DeleteAccountSection"
+import LogoutSection from "./LogoutSection"
 
-export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate }) {
+export default function AccountPage({
+	currentUser,
+	onAccountDelete,
+	onLogout,
+	onUserUpdate,
+}) {
 	const navigate = useNavigate()
 	const location = useLocation()
 
@@ -47,6 +53,8 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 					onUserUpdate={onUserUpdate}
 					resetMessage={resetMessage}
 				/>
+
+				<LogoutSection onLogout={onLogout} />
 
 				<DeleteAccountSection currentUser={currentUser} onAccountDelete={onAccountDelete} />
 			</main>

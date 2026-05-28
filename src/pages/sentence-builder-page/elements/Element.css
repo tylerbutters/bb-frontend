@@ -94,7 +94,7 @@
 	min-width: 44px;
 	padding: 0 8px;
 	border-color: var(--color-surface-control-hover);
-	font-family: inherit;
+
 	text-align: center;
 	outline: none;
 }

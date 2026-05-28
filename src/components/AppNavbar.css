@@ -1,0 +1,81 @@
+.appNavbar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1600;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 64px;
+	padding: 0 18px;
+	background-color: black;
+}
+.appNavbarLink {
+	padding: 10px 14px;
+	border-radius: 8px;
+	color: var(--color-grey-text);
+	font-size: 15px;
+	/* font-weight: 800; */
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.appNavbarLink:hover,
+.appNavbarLogo:hover {
+	color: white;
+}
+
+.appNavbarLink:active {
+	transform: scale(0.96);
+}
+
+.appNavbarSignupLink {
+	border: 1px solid var(--color-white-border);
+	background: var(--color-white-fill);
+	color: white;
+}
+.appNavbarSignupLink:hover {
+	border: 1px solid var(--color-white-border-hover);
+	background: var(--color-white-fill-hover);
+}
+
+.appNavbarPremiumLink {
+	background-color: var(--color-gold-fill);
+	border: 1px solid var(--color-gold-border);
+	color: white;
+}
+
+.appNavbarPremiumLink:hover {
+	background-color: var(--color-gold-fill-hover);
+	border: 1px solid var(--color-gold-border-hover);
+	color: white;
+}
+
+.appNavbarLeftActions {
+	/* position: fixed; */
+	top: 18px;
+	left: 18px;
+	z-index: 1600;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	max-width: min(460px, calc(100vw - 360px));
+}
+
+.appNavbarRightActions {
+	/* position: fixed; */
+	top: 18px;
+	right: 18px;
+	z-index: 1600;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.appNavbarLogo {
+	font-size: 26px;
+	font-weight: 700;
+	text-decoration: none;
+	color: var(--color-grey-text);
+}

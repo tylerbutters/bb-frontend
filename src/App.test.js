@@ -195,7 +195,8 @@ async function loginDefaultUser() {
 	fireEvent.click(screen.getByRole("button", { name: "Login" }))
 
 	await waitFor(() => {
-		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
+		expect(window.location.pathname).toBe("/")
 	})
 }
 
@@ -492,7 +493,7 @@ test("opens the sign up page, confirms the email code, and creates an account", 
 	fireEvent.click(screen.getByRole("button", { name: "Create account" }))
 
 	await waitFor(() => {
-		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
 	})
 	expect(window.location.pathname).toBe("/")
 
@@ -639,23 +640,24 @@ test("logs in and replaces auth links with the user name", async () => {
 	fireEvent.click(screen.getByRole("button", { name: "Login" }))
 
 	await waitFor(() => {
-		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
 	})
 	expect(window.location.pathname).toBe("/")
 	expect(screen.queryByRole("link", { name: "Login" })).not.toBeInTheDocument()
 	expect(screen.queryByRole("link", { name: "Sign up" })).not.toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Stats" })).toHaveAttribute("href", "/stats")
-	expect(screen.getByRole("link", { name: "Buy premium" })).toHaveAttribute("href", "/buy")
+	expect(screen.getByRole("link", { name: "PREMIUM" })).toHaveAttribute("href", "/buy")
 	expect(screen.queryByRole("menuitem", { name: "Stats" })).not.toBeInTheDocument()
 	expect(screen.queryByRole("menuitem", { name: "Log out" })).not.toBeInTheDocument()
 
-	fireEvent.click(screen.getByRole("button", { name: "Tyler" }))
-	expect(screen.getByRole("menuitem", { name: "Log out" })).toBeInTheDocument()
+	fireEvent.click(screen.getByRole("link", { name: "Account" }))
+	expect(screen.getByRole("heading", { name: "Account" })).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Log out" })).toBeInTheDocument()
 
-	fireEvent.click(screen.getByRole("menuitem", { name: "Log out" }))
-	expect(screen.getByRole("link", { name: "Login" })).toBeInTheDocument()
+	fireEvent.click(screen.getByRole("button", { name: "Log out" }))
+	expect(screen.getByRole("heading", { name: "Login" })).toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Sign up" })).toBeInTheDocument()
-	expect(screen.queryByRole("button", { name: "Tyler" })).not.toBeInTheDocument()
+	expect(screen.queryByRole("link", { name: "Account" })).not.toBeInTheDocument()
 	expect(window.localStorage.getItem("jsbCurrentUser")).toBeNull()
 
 	const loginRequest = global.fetch.mock.calls.find(([url]) => url === `${API_BASE_URL}/login`)
@@ -680,16 +682,16 @@ test("opens account from the user menu and updates account details", async () =>
 	fireEvent.click(screen.getByRole("button", { name: "Login" }))
 
 	await waitFor(() => {
-		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
 	})
 
-	fireEvent.click(screen.getByRole("button", { name: "Tyler" }))
-	fireEvent.click(screen.getByRole("menuitem", { name: "Account" }))
+	fireEvent.click(screen.getByRole("link", { name: "Account" }))
 
 	expect(window.location.pathname).toBe("/account")
 	expect(screen.getByRole("heading", { name: "Account" })).toBeInTheDocument()
 	expect(screen.getByLabelText("Display name")).toHaveValue("Tyler")
 	expect(screen.getByLabelText("Email")).toHaveValue("tyler@example.com")
+	expect(screen.getByRole("button", { name: "Log out" })).toBeInTheDocument()
 	expect(screen.getAllByRole("button", { name: "Save changes" })).toHaveLength(3)
 
 	const displayNameSection = screen.getByRole("form", { name: "Display name settings" })
@@ -769,7 +771,7 @@ test("opens account from the user menu and updates account details", async () =>
 	})
 
 	fireEvent.click(screen.getByRole("link", { name: "Bunsho Builder" }))
-	expect(screen.getByRole("button", { name: "Taylor" })).toBeInTheDocument()
+	expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
 })
 
 test("deletes an account from the account page", async () => {
@@ -781,11 +783,10 @@ test("deletes an account from the account page", async () => {
 	fireEvent.click(screen.getByRole("button", { name: "Login" }))
 
 	await waitFor(() => {
-		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
 	})
 
-	fireEvent.click(screen.getByRole("button", { name: "Tyler" }))
-	fireEvent.click(screen.getByRole("menuitem", { name: "Account" }))
+	fireEvent.click(screen.getByRole("link", { name: "Account" }))
 	fireEvent.click(screen.getByRole("button", { name: "Delete account" }))
 
 	expect(screen.getByRole("button", { name: "Confirm delete" })).toBeInTheDocument()
@@ -821,7 +822,7 @@ test("opens stats from the top nav", async () => {
 	fireEvent.click(screen.getByRole("button", { name: "Login" }))
 
 	await waitFor(() => {
-		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
 	})
 
 	fireEvent.click(screen.getByRole("link", { name: "Stats" }))
@@ -933,7 +934,7 @@ test("opens paginated game history from a stats panel", async () => {
 	fireEvent.click(screen.getByRole("button", { name: "Login" }))
 
 	await waitFor(() => {
-		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
 	})
 
 	fireEvent.click(screen.getByRole("link", { name: "Stats" }))
@@ -1077,7 +1078,7 @@ test("opens game history from the sentence builder prompt panel", async () => {
 	fireEvent.click(screen.getByRole("button", { name: "Login" }))
 
 	await waitFor(() => {
-		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
 	})
 	expect(screen.queryByRole("button", { name: "History" })).not.toBeInTheDocument()
 
@@ -1191,7 +1192,7 @@ test("shows zero-filled stats panels when stats have not been created yet", asyn
 	fireEvent.click(screen.getByRole("button", { name: "Login" }))
 
 	await waitFor(() => {
-		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
 	})
 
 	fireEvent.click(screen.getByRole("link", { name: "Stats" }))
@@ -1278,7 +1279,7 @@ test("shows locally recorded stats when backend stats are unavailable", async ()
 	fireEvent.click(screen.getByRole("button", { name: "Login" }))
 
 	await waitFor(() => {
-		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
 	})
 
 	fireEvent.click(screen.getByRole("tab", { name: "translate" }))

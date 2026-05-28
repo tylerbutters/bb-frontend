@@ -64,6 +64,5 @@
 }
 
 .searchInput:focus {
-	border-color: var(--color-accent-blue);
-	box-shadow: 0 0 0 2px var(--color-accent-blue-ring);
+	border-color: var(--color-blue-border);
 }

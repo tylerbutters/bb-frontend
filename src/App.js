@@ -47,7 +47,7 @@ export default function App() {
 
 	return (
 		<BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
-			<AppNavbar currentUser={currentUser} onLogout={handleLogout} />
+			<AppNavbar currentUser={currentUser} />
 			<Routes>
 				<Route
 					path="/"
@@ -63,6 +63,7 @@ export default function App() {
 						<AccountPage
 							currentUser={currentUser}
 							onAccountDelete={handleLogout}
+							onLogout={handleLogout}
 							onUserUpdate={handleUserUpdate}
 						/>
 					}

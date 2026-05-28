@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { updateUser } from "../../api/users"
 import InputBox from "../../components/InputBox"
-import "../TopRightButton.css"
 import "../AuthPage.css"
 
 export default function PasswordSection({ currentUser, onUserUpdate, resetMessage }) {

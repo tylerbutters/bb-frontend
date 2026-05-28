@@ -57,18 +57,14 @@
 .elementsMenuButton {
 	display: flex;
 	flex-direction: column;
-	justify-content: flex-start;
-	align-items: flex-start;
 	padding: 7px 10px;
 	border: 1px solid transparent;
 	border-radius: 8px;
 	background: transparent;
-	color: var(--color-text-bright);
-	font-family: inherit;
+	color: white;
 	font-size: 15px;
-	line-height: 1.2;
+	flex: 1;
 	text-align: left;
-	white-space: normal;
 	cursor: pointer;
 	transition:
 		background-color 0.15s ease,
@@ -82,13 +78,13 @@
 }
 
 .selectedElementsMenuButton {
-	border: 1px solid var(--color-accent-blue);
-	background: var(--color-accent-blue-soft);
+	border: 1px solid var(--color-blue-border);
+	background: var(--color-blue-fill);
 }
 
 .selectedElementsMenuButton:hover {
-	border: 1px solid var(--color-accent-blue);
-	background: var(--color-accent-blue-soft);
+	border: 1px solid var(--color-blue-border);
+	background: var(--color-blue-fill);
 }
 
 .elementsMenuTitle {
@@ -109,18 +105,16 @@
 }
 
 .deleteElementButton {
-	flex: 1;
 	justify-content: center;
 	align-items: center;
-	border-color: var(--color-danger-soft-hover);
-	background-color: var(--color-danger-soft);
-	color: var(--color-text-primary);
-	text-align: center;
+	border-color: var(--color-red-border);
+	background-color: var(--color-red-fill);
+	color: white;
 }
 
 .deleteElementButton:hover {
-	border-color: var(--color-danger-menu-border-hover);
-	background-color: var(--color-danger-soft-hover);
+	border-color: var(--color-red-border-hover);
+	background-color: var(--color-red-fill-hover);
 }
 
 .menuPanel {

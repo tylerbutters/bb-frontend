@@ -9,22 +9,6 @@
 	justify-content: flex-start;
 }
 
-.statsPage {
-	--stats-history-drawer-width: min(520px, 100vw);
-}
-
-.statsPage .topRightButton {
-	transition:
-		right 0.18s ease,
-		background-color 0.15s ease,
-		border-color 0.15s ease,
-		transform 0.15s ease;
-}
-
-.statsPageHistoryOpen .topRightButton {
-	right: calc(var(--stats-history-drawer-width) + 18px);
-}
-
 .loginForm,
 .signupForm {
 	display: flex;
@@ -48,171 +32,15 @@
 	color: var(--color-text-primary);
 }
 
-.statsContent {
-	width: min(980px, 100%);
-	gap: 18px;
-	transition:
-		width 0.18s ease,
-		transform 0.18s ease;
-	will-change: transform;
-}
-
-.statsPageHistoryOpen .statsContent {
-	width: min(980px, calc(100vw - var(--stats-history-drawer-width) - 54px));
-	transform: translateX(calc(var(--stats-history-drawer-width) / -2));
-}
-
-.statsUpgradeNotice {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	gap: 14px;
-	padding: 14px 16px;
-	border: 1px solid var(--color-accent-blue);
-	border-radius: 8px;
-	background: var(--color-accent-blue-soft);
-	box-sizing: border-box;
-}
-
-.statsUpgradeNotice strong {
-	display: block;
-	color: var(--color-text-primary);
-	font-size: 14px;
-	font-weight: 900;
-	line-height: 1.2;
-}
-
-.statsUpgradeNotice p {
-	margin: 4px 0 0;
-	color: var(--color-text-muted);
-	font-size: 13px;
-	font-weight: 750;
-	line-height: 1.3;
-}
-
-.statsUpgradeNotice a {
-	display: inline-flex;
-	flex: 0 0 auto;
-	align-items: center;
-	justify-content: center;
-	min-height: 36px;
-	padding: 0 12px;
-	border: 1px solid var(--color-border-strong);
-	border-radius: 6px;
-	background: var(--color-text-primary);
-	color: var(--color-text-inverse);
-	font-size: 13px;
-	font-weight: 900;
-	line-height: 1;
-	text-decoration: none;
-}
-
-.statsUpgradeNotice a:hover,
-.statsUpgradeNotice a:focus-visible {
-	outline: none;
-	transform: translateY(-1px);
-}
-
-.statsDifficultyTabs {
-	display: grid;
-	width: 100%;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
-	gap: 8px;
-	padding: 6px;
-	border: 1px solid var(--color-surface-control-active);
-	border-radius: 8px;
-	background: var(--color-surface);
-	box-sizing: border-box;
-}
-
-.statsDifficultyTab {
-	min-height: 34px;
-	border: 1px solid transparent;
-	border-radius: 6px;
-	background: transparent;
-	color: var(--color-text-muted);
-	cursor: pointer;
-	font: inherit;
-	font-size: 14px;
-	font-weight: 850;
-	line-height: 1;
-}
-
-.statsDifficultyTab:hover,
-.statsDifficultyTab:focus-visible {
-	border-color: var(--color-surface-control-active);
-	color: var(--color-text-primary);
-	outline: none;
-}
-
-.statsDifficultyTabSelected {
-	border-color: var(--color-surface-control-active);
-	background: var(--color-surface-control-active);
-	color: var(--color-text-primary);
-}
-
-.statsRangeTabs {
-	display: grid;
-	width: 100%;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
-	gap: 8px;
-	padding: 6px;
-	border: 1px solid var(--color-surface-control-active);
-	border-radius: 8px;
-	background: var(--color-surface);
-	box-sizing: border-box;
-}
-
-.statsRangeButton {
-	min-height: 34px;
-	border: 1px solid transparent;
-	border-radius: 6px;
-	background: transparent;
-	color: var(--color-text-muted);
-	cursor: pointer;
-	font: inherit;
-	font-size: 14px;
-	font-weight: 850;
-	line-height: 1;
-}
-
-.statsRangeButton:hover,
-.statsRangeButton:focus-visible {
-	border-color: var(--color-surface-control-active);
-	color: var(--color-text-primary);
-	outline: none;
-}
-
-.statsRangeButtonSelected {
-	border-color: var(--color-surface-control-active);
-	background: var(--color-surface-control-active);
-	color: var(--color-text-primary);
-}
-
 .accountSection {
 	display: flex;
-	width: 100%;
 	flex-direction: column;
 	gap: 14px;
 	padding: 18px;
-	border: 1px solid var(--color-surface-control-active);
+	border: 1px solid var(--color-grey-border);
 	border-radius: 8px;
-	background: var(--color-surface);
-	box-sizing: border-box;
-	color: var(--color-text-primary);
-}
-
-.deleteAccountPanel {
-	display: flex;
-	width: 100%;
-	flex-direction: column;
-	gap: 12px;
-	padding: 18px;
-	border: 1px solid var(--color-danger-panel-border);
-	border-radius: 8px;
-	background: var(--color-danger-panel-background);
-	box-sizing: border-box;
-	color: var(--color-text-primary);
+	background: var(--color-grey-fill);
+	color: white;
 }
 
 .accountContent > h1,
@@ -224,375 +52,16 @@
 	line-height: 1.2;
 }
 
-.accountSection h2,
-.deleteAccountPanel h2,
-.statsPanel h2 {
+.accountSection h2 {
 	margin: 0;
 	font-size: 18px;
 	font-weight: 850;
 	line-height: 1.2;
 }
 
-.statsPanel {
-	display: flex;
-	width: 100%;
-	flex-direction: column;
-	gap: 18px;
-	padding: 22px;
-	border: 1px solid var(--color-surface-control-active);
-	border-radius: 8px;
-	background: var(--color-surface);
-	box-sizing: border-box;
-	color: var(--color-text-primary);
-}
-
-.statsPanelHeader {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	gap: 12px;
-}
-
-.statsHistoryButton,
-.statsHistoryCloseButton,
-.statsHistoryLoadMoreButton {
-	border: 1px solid var(--color-border);
-	border-radius: 6px;
-	background: var(--color-surface-input);
-	color: var(--color-text-primary);
-	cursor: pointer;
-	font: inherit;
-	font-size: 13px;
-	font-weight: 850;
-	line-height: 1;
-}
-
-.statsHistoryButton {
-	min-height: 34px;
-	padding: 0 12px;
-}
-
-.statsHistoryButton:hover,
-.statsHistoryCloseButton:hover,
-.statsHistoryLoadMoreButton:hover:not(:disabled) {
-	border-color: var(--color-border-hover);
-	background: var(--color-surface-input-hover);
-}
-
-.statsGameGrid {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 18px;
-}
-
-.statsMetrics {
-	display: grid;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
-	gap: 12px;
-}
-
-.statsMetric {
-	display: flex;
-	min-height: 76px;
-	flex-direction: column;
-	justify-content: center;
-	gap: 6px;
-	padding: 12px;
-	border: 1px solid var(--color-border);
-	border-radius: 8px;
-	background: var(--color-surface-input);
-	box-sizing: border-box;
-}
-
-.statsMetric span {
-	color: var(--color-text-muted);
-	font-size: 13px;
-	font-weight: 800;
-	line-height: 1.2;
-}
-
-.statsMetric strong {
-	color: var(--color-text-primary);
-	font-size: 28px;
-	font-weight: 850;
-	line-height: 1;
-}
-
-.statsHistoryOverlay {
-	position: fixed;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	z-index: 2600;
-	width: min(520px, 100%);
-	overscroll-behavior: none;
-}
-
-.statsHistoryDrawer {
-	display: flex;
-	width: 100%;
-	height: 100%;
-	min-height: 0;
-	flex-direction: column;
-	gap: 16px;
-	padding: 24px;
-	border-left: 1px solid var(--color-border-strong);
-	background: var(--color-surface-strong);
-	box-shadow: -18px 0 40px var(--color-shadow);
-	box-sizing: border-box;
-	color: var(--color-text-primary);
-	overflow: hidden;
-	animation: statsHistoryDrawerEnter 0.18s ease-out both;
-	will-change: transform;
-}
-
-.statsHistoryDrawerClosing {
-	animation: statsHistoryDrawerExit 0.18s ease-in both;
-}
-
-.statsHistoryHeader,
-.statsHistoryItemHeader {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	gap: 14px;
-}
-
-.statsHistoryHeader h2 {
-	margin: 0;
-	font-size: 24px;
-	font-weight: 850;
-	line-height: 1.1;
-}
-
-.statsHistoryHeader p,
-.statsHistoryMessage {
-	margin: 6px 0 0;
-	color: var(--color-text-muted);
-	font-size: 14px;
-	font-weight: 750;
-	line-height: 1.3;
-}
-
-.statsHistoryCloseButton {
-	min-height: 36px;
-	padding: 0 12px;
-}
-
-.statsHistoryDifficultyTabs {
-	flex: 0 0 auto;
-}
-
-.statsHistoryScrollArea {
-	display: flex;
-	min-height: 0;
-	flex: 1 1 auto;
-	flex-direction: column;
-	gap: 12px;
-	overflow-y: auto;
-	overscroll-behavior: contain;
-	padding-right: 2px;
-}
-
-.statsHistoryList {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-}
-
-.statsHistoryItem {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-	padding: 16px;
-	border: 1px solid var(--color-border);
-	border-radius: 8px;
-	background: var(--color-surface);
-	box-sizing: border-box;
-}
-
-.statsHistoryItemHeader time {
-	color: var(--color-text-muted);
-	font-size: 13px;
-	font-weight: 800;
-	line-height: 1.3;
-}
-
-.statsHistoryResult {
-	flex: 0 0 auto;
-	padding: 6px 8px;
-	border: 1px solid var(--color-border);
-	border-radius: 999px;
-	font-size: 12px;
-	font-weight: 900;
-	line-height: 1;
-}
-
-.statsHistoryResultCorrect {
-	border-color: var(--color-success-subtle-border);
-	color: var(--color-success);
-}
-
-.statsHistoryResultFailed {
-	border-color: var(--color-warning-subtle-border);
-	color: var(--color-text-primary);
-}
-
-.statsHistoryMeta {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-}
-
-.statsHistoryMeta span {
-	padding: 5px 8px;
-	border: 1px solid var(--color-border-faint);
-	border-radius: 999px;
-	background: var(--color-surface-input);
-	color: var(--color-text-muted);
-	font-size: 12px;
-	font-weight: 850;
-	line-height: 1;
-}
-
-.statsHistoryDetails {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	margin: 0;
-}
-
-.statsHistoryDetails div {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-}
-
-.statsHistoryDetails dt {
-	color: var(--color-text-muted);
-	font-size: 12px;
-	font-weight: 850;
-	line-height: 1.2;
-}
-
-.statsHistoryDetails dd {
-	margin: 0;
-	color: var(--color-text-primary);
-	font-size: 15px;
-	font-weight: 700;
-	line-height: 1.35;
-	overflow-wrap: anywhere;
-}
-
-.statsHistoryLoadMoreButton {
-	min-height: 42px;
-	padding: 0 14px;
-}
-
-.statsHistoryLoadMoreButton:disabled {
-	cursor: not-allowed;
-	opacity: 0.6;
-}
-
-@keyframes statsHistoryDrawerEnter {
-	from {
-		transform: translateX(100%);
-	}
-
-	to {
-		transform: translateX(0);
-	}
-}
-
-@keyframes statsHistoryDrawerExit {
-	from {
-		transform: translateX(0);
-	}
-
-	to {
-		transform: translateX(100%);
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.statsHistoryDrawer,
-	.statsHistoryDrawerClosing,
-	.statsContent,
-	.statsPage .topRightButton {
-		animation-duration: 1ms;
-		transition-duration: 1ms;
-	}
-}
-
-@media (max-width: 900px) {
-	.statsPageHistoryOpen .topRightButton {
-		right: 18px;
-	}
-
-	.statsPageHistoryOpen .statsContent {
-		width: min(980px, 100%);
-		transform: none;
-	}
-}
-
-@media (max-width: 760px) {
-	.statsGameGrid {
-		grid-template-columns: 1fr;
-	}
-}
-
-@media (max-width: 540px) {
-	.statsPanelHeader,
-	.statsHistoryHeader {
-		align-items: stretch;
-		flex-direction: column;
-	}
-
-	.statsMetrics {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-
-	.statsUpgradeNotice {
-		align-items: stretch;
-		flex-direction: column;
-	}
-
-	.statsHistoryDrawer {
-		padding: 20px 16px;
-	}
-}
-
 .deleteAccountActions {
 	display: flex;
 	gap: 10px;
-}
-
-.accountField,
-.loginField,
-.signupField {
-	display: flex;
-	flex-direction: column;
-	gap: 7px;
-	color: var(--color-text-muted);
-	font-size: 13px;
-	font-weight: 800;
-}
-
-.accountField input,
-.loginField input,
-.signupField input {
-	width: 100%;
-	height: 42px;
-	padding: 0 12px;
-	border: 1px solid var(--color-border);
-	border-radius: 8px;
-	background: var(--color-surface-input);
-	box-sizing: border-box;
-	color: var(--color-text-primary);
-	font: inherit;
-	font-size: 15px;
-	font-weight: 650;
-	outline: none;
 }
 
 .resetEmailNotice {
@@ -641,6 +110,7 @@
 }
 
 .accountSubmitButton,
+.accountLogoutButton,
 .loginSubmitButton,
 .signupSubmitButton {
 	height: 44px;
@@ -683,16 +153,22 @@
 
 .cancelDeleteButton,
 .deleteAccountButton {
-	height: 40px;
-	padding: 0 12px;
-	border: 1px solid var(--color-danger-button-border);
+	padding: 10px 12px;
+	border: 1px solid var(--color-red-border);
 	border-radius: 8px;
-	background: var(--color-danger);
-	color: var(--color-text-inverse);
-	font: inherit;
+	background: var(--color-red-fill);
+	color: white;
 	font-size: 14px;
-	font-weight: 850;
 	cursor: pointer;
+	transition:
+		background-color 0.15s ease,
+		border-color 0.15s ease,
+		color 0.15s ease;
+}
+
+.deleteAccountButton:hover {
+	border: 1px solid var(--color-red-border-hover);
+	background: var(--color-red-fill-hover);
 }
 
 .cancelDeleteButton {
@@ -707,6 +183,7 @@
 }
 
 .accountSubmitButton:disabled,
+.accountLogoutButton:disabled,
 .loginSubmitButton:disabled,
 .signupSubmitButton:disabled {
 	cursor: default;

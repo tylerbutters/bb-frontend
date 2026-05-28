@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { Navigate } from "react-router-dom"
 import { deleteUser } from "../../api/users"
-import "../TopRightButton.css"
 import "../AuthPage.css"
 
 export default function DeleteAccountSection({ currentUser, onAccountDelete }) {
@@ -42,32 +41,24 @@ export default function DeleteAccountSection({ currentUser, onAccountDelete }) {
 	}
 
 	return (
-		<div className="deleteAccountPanel">
-			<h2>Delete account</h2>
+		<div className="deleteAccountActions">
+			<button
+				type="button"
+				className="deleteAccountButton"
+				disabled={deleteStatus === "submitting"}
+				onClick={deleteAccount}
+			>
+				{deleteStatus === "submitting"
+					? "Deleting..."
+					: isDeleteConfirming
+						? "Confirm delete"
+						: "Delete account"}
+			</button>
 
-			<div className="deleteAccountActions">
-				<button
-					type="button"
-					className="deleteAccountButton"
-					disabled={deleteStatus === "submitting"}
-					onClick={deleteAccount}
-				>
-					{deleteStatus === "submitting"
-						? "Deleting..."
-						: isDeleteConfirming
-							? "Confirm delete"
-							: "Delete account"}
+			{isDeleteConfirming && (
+				<button type="button" className="cancelDeleteButton" onClick={cancelDeleteAccount}>
+					Cancel
 				</button>
-
-				{isDeleteConfirming && (
-					<button type="button" className="cancelDeleteButton" onClick={cancelDeleteAccount}>
-						Cancel
-					</button>
-				)}
-			</div>
-
-			{deleteMessage && (
-				<p className={`accountMessage accountMessage${deleteStatus}`}>{deleteMessage}</p>
 			)}
 		</div>
 	)

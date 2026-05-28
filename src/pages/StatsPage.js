@@ -15,6 +15,8 @@ import {
 } from "../gameStatsStorage"
 import { GameHistoryDrawer, useGameHistoryDrawer } from "./GameHistoryDrawer"
 import "./AuthPage.css"
+import "./StatsPage.css"
+import { History } from "lucide-react"
 
 function StatPanel({ title, stats, onHistoryClick }) {
 	const normalizedStats = normalizeGameStats(stats)
@@ -23,12 +25,8 @@ function StatPanel({ title, stats, onHistoryClick }) {
 		<section className="statsPanel" aria-label={`${title} stats`}>
 			<div className="statsPanelHeader">
 				<h2>{title}</h2>
-				<button
-					type="button"
-					className="statsHistoryButton"
-					onClick={onHistoryClick}
-				>
-					History
+				<button type="button" className="statsHistoryButton" onClick={onHistoryClick}>
+					<History />
 				</button>
 			</div>
 			<div className="statsMetrics">
@@ -194,13 +192,7 @@ export default function StatsPage({ currentUser, onAuthExpired }) {
 		return () => {
 			controller.abort()
 		}
-	}, [
-		currentUser,
-		isFreeStatsLimited,
-		onAuthExpired,
-		selectedDifficulty,
-		selectedRecentLimit,
-	])
+	}, [currentUser, isFreeStatsLimited, onAuthExpired, selectedDifficulty, selectedRecentLimit])
 
 	if (!currentUser) {
 		return <Navigate to="/login" replace />
@@ -220,18 +212,20 @@ export default function StatsPage({ currentUser, onAuthExpired }) {
 							<strong>Today only</strong>
 							<p>Free accounts can see today's stats and history.</p>
 						</div>
-						<Link to="/buy">Buy premium</Link>
+						<Link className="premiumButton" to="/buy">
+							Buy premium
+						</Link>
 					</section>
 				)}
-				<div className="statsDifficultyTabs" role="tablist" aria-label="Stats difficulty">
+				<div className="filterTabsContainer" role="tablist" aria-label="Stats difficulty">
 					{GAME_STAT_FILTERS.map((difficulty) => (
 						<button
 							key={difficulty}
 							type="button"
 							role="tab"
 							aria-selected={selectedDifficulty === difficulty}
-							className={`statsDifficultyTab ${
-								selectedDifficulty === difficulty ? "statsDifficultyTabSelected" : ""
+							className={`filterTab ${
+								selectedDifficulty === difficulty ? "filterTabSelected" : ""
 							}`}
 							onClick={() => setSelectedDifficulty(difficulty)}
 						>
@@ -239,13 +233,13 @@ export default function StatsPage({ currentUser, onAuthExpired }) {
 						</button>
 					))}
 				</div>
-				<div className="statsRangeTabs" aria-label="Stats range">
+				<div className="filterTabsContainer" aria-label="Stats range">
 					{GAME_RECENT_FILTERS.map((range) => (
 						<button
 							key={range.value}
 							type="button"
-							className={`statsRangeButton ${
-								selectedRecentRange === range.value ? "statsRangeButtonSelected" : ""
+							className={`filterTab ${
+								selectedRecentRange === range.value ? "filterTabSelected" : ""
 							}`}
 							aria-pressed={selectedRecentRange === range.value}
 							onClick={() => setSelectedRecentRange(range.value)}

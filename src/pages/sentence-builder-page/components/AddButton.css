@@ -10,7 +10,7 @@
 	border-radius: 10px;
 	background: var(--color-surface-transparent);
 	color: var(--color-text-disabled);
-	font-family: inherit;
+
 	font-size: 34px;
 	line-height: 1;
 	cursor: pointer;

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { updateUser } from "../../api/users"
 import InputBox from "../../components/InputBox"
-import "../TopRightButton.css"
 import "../AuthPage.css"
 
 export default function DisplayNameSection({ currentUser, onUserUpdate }) {

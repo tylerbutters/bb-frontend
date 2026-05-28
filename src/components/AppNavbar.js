@@ -1,19 +1,45 @@
-import { Link } from "react-router-dom"
-import AccountMenu from "./AccountMenu"
-import "../pages/TopRightButton.css"
+import { Link, useLocation } from "react-router-dom"
+import "./AppNavbar.css"
 
-export default function AppNavbar({ currentUser, onLogout }) {
+export default function AppNavbar({ currentUser }) {
+	const location = useLocation()
+	const isAuthPage = location.pathname === "/login" || location.pathname === "/signup"
+
 	return (
 		<header className="appNavbar">
-			<nav className="topLeftActions" aria-label="Site">
-				<Link className="topLeftLogo" to="/">
+			<nav className="appNavbarLeftActions" aria-label="Site">
+				<Link className="appNavbarLogo" to="/">
 					Bunsho Builder
 				</Link>
-				<Link className="topRightButton topLeftButton" to="/about">
+				<Link className="appNavbarLink appNavbarAboutLink" to="/about">
 					About
 				</Link>
+				{currentUser?.plan !== "premium" && (
+					<Link className="appNavbarLink appNavbarPremiumLink" to="/buy">
+						PREMIUM
+					</Link>
+				)}
 			</nav>
-			<AccountMenu currentUser={currentUser} onLogout={onLogout} />
+			{currentUser && (
+				<nav className="appNavbarRightActions" aria-label="Account">
+					<Link className="appNavbarLink" to="/stats">
+						Stats
+					</Link>
+					<Link className="appNavbarLink" to="/account">
+						Account
+					</Link>
+				</nav>
+			)}
+			{!currentUser && !isAuthPage && (
+				<nav className="appNavbarRightActions" aria-label="Account">
+					<Link className="appNavbarLink" to="/login">
+						Login
+					</Link>
+					<Link className="appNavbarLink appNavbarSignupLink" to="/signup">
+						Sign up
+					</Link>
+				</nav>
+			)}
 		</header>
 	)
 }

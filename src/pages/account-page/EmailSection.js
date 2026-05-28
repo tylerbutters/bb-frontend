@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
 import { requestEmailChange } from "../../api/users"
 import InputBox from "../../components/InputBox"
-import "../TopRightButton.css"
 import "../AuthPage.css"
 
 export default function EmailSection({ currentUser, onUserUpdate }) {
