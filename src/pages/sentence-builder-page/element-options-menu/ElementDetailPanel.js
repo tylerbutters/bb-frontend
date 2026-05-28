@@ -1,6 +1,7 @@
 import { toRomaji } from "wanakana"
 import JapaneseText from "../components/JapaneseText"
 import { getConjugationDetail } from "../grammar/conjugationDetailsData"
+import { getParticleDetail } from "../grammar/particleDetailsData"
 import "./ElementDetailPanel.css"
 
 const VOCABULARY_TYPES = new Set([
@@ -36,6 +37,14 @@ export function getElementDetail(element) {
 	const vocabularyDetail = getVocabularyDetail(element)
 	if (vocabularyDetail) return vocabularyDetail
 
+	const particleDetail = getParticleDetail(element)
+	if (particleDetail) {
+		return {
+			kind: "particle",
+			...particleDetail,
+		}
+	}
+
 	return null
 }
 
@@ -54,6 +63,7 @@ export default function ElementDetailPanel({ element, isOpen, panelRef, style })
 		>
 			{detail.kind === "conjugation" && <ConjugationDetail detail={detail} />}
 			{detail.kind === "vocabulary" && <VocabularyDetail detail={detail} />}
+			{detail.kind === "particle" && <ParticleDetail detail={detail} />}
 		</aside>
 	)
 }
@@ -99,7 +109,9 @@ function ConjugationDetail({ detail }) {
 							</div>
 							<div className="elementDetailExamples">
 								{construction.examples.map((example) => (
-									<div key={example}>{example}</div>
+									<div key={example}>
+										<ExampleText example={example} />
+									</div>
 								))}
 							</div>
 						</div>
@@ -107,6 +119,51 @@ function ConjugationDetail({ detail }) {
 				</div>
 			</div>
 		</div>
+	)
+}
+
+function ParticleDetail({ detail }) {
+	return (
+		<div className="elementDetailContent">
+			<div className="elementDetailHeader">
+				<span className="elementDetailType">{detail.type}</span>
+				<span className="elementDetailName">{detail.text}</span>
+				<span className="elementDetailTranslation">{detail.englishTranslation}</span>
+			</div>
+
+			<div className="elementDetailSection">
+				<div className="elementDetailConstructions">
+					{detail.uses.map((use) => (
+						<div key={use.label} className="elementDetailConstruction">
+							<div className="elementDetailConstructionFormula">
+								<span className="elementDetailConstructionLabel">{use.label}:</span>{" "}
+								{use.meaning}
+							</div>
+							<div className="elementDetailExamples">
+								{use.examples.map((example) => (
+									<div key={example}>
+										<ExampleText example={example} />
+									</div>
+								))}
+							</div>
+						</div>
+					))}
+				</div>
+			</div>
+		</div>
+	)
+}
+
+function ExampleText({ example }) {
+	const [japanese, translation] = String(example).split(/\s*=>\s*/)
+
+	if (!translation) return example
+
+	return (
+		<>
+			{japanese}{" "}
+			<span className="elementDetailExampleTranslation">({translation})</span>
+		</>
 	)
 }
 

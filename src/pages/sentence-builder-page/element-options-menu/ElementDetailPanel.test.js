@@ -28,7 +28,16 @@ describe("getElementDetail", () => {
 		})
 	})
 
-	test("returns no detail for particles and unsupported options", () => {
-		expect(getElementDetail({ elementType: "particle", text: "は" })).toBeNull()
+	test("returns particle details for particle menu options", () => {
+		expect(getElementDetail({ elementType: "particle", text: "は" })).toMatchObject({
+			kind: "particle",
+			type: "Particle",
+			text: "は",
+			englishTranslation: "topic / contrast",
+		})
+	})
+
+	test("returns no detail for unsupported options", () => {
+		expect(getElementDetail({ elementType: "punctuation", text: "。" })).toBeNull()
 	})
 })

@@ -165,3 +165,7 @@
 	margin-top: 3px;
 	color: var(--color-text-subtle);
 }
+
+.elementDetailExampleTranslation {
+	font-style: italic;
+}
