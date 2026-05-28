@@ -8,7 +8,9 @@ const SHUFFLE_GAME_MODES = ["translate", "conjugations", "fix sentence", "partic
 export default function GamePrompt({
 	isVisible,
 	gameMode,
+	isHistoryOpen,
 	requestKey,
+	onOpenHistory,
 	onRegenerate,
 	onPromptChange,
 }) {
@@ -99,14 +101,28 @@ export default function GamePrompt({
 						</button>
 					))}
 				</div>
-				<button
-					type="button"
-					className="gamePromptRegenerateButton"
-					onClick={onRegenerate}
-					disabled={status === "loading"}
-				>
-					{status === "loading" ? "Generating..." : "Regenerate"}
-				</button>
+				<div className="gamePromptActions">
+					{onOpenHistory && (
+						<button
+							type="button"
+							className={`gamePromptHistoryButton ${
+								isHistoryOpen ? "gamePromptHistoryButtonSelected" : ""
+							}`}
+							aria-pressed={isHistoryOpen}
+							onClick={onOpenHistory}
+						>
+							History
+						</button>
+					)}
+					<button
+						type="button"
+						className="gamePromptRegenerateButton"
+						onClick={onRegenerate}
+						disabled={status === "loading"}
+					>
+						{status === "loading" ? "Generating..." : "Regenerate"}
+					</button>
+				</div>
 			</div>
 			<div className="gamePromptText">
 				{status === "loading" && "Loading..."}

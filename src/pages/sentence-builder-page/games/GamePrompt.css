@@ -64,6 +64,14 @@
 	margin-bottom: 8px;
 }
 
+.gamePromptActions {
+	display: flex;
+	flex: 0 0 auto;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: 8px;
+}
+
 .gamePromptLabel {
 	color: var(--color-text-tertiary);
 	font-size: 12px;
@@ -72,6 +80,7 @@
 	text-transform: uppercase;
 }
 
+.gamePromptHistoryButton,
 .gamePromptRegenerateButton {
 	flex: 0 0 auto;
 	padding: 7px 10px;
@@ -90,11 +99,20 @@
 		transform 0.15s ease;
 }
 
+.gamePromptHistoryButton:hover,
 .gamePromptRegenerateButton:hover:not(:disabled) {
 	border-color: var(--color-border-hover);
 	background: var(--color-surface-control-hover);
 }
 
+.gamePromptHistoryButtonSelected,
+.gamePromptHistoryButtonSelected:hover {
+	border-color: var(--color-surface-control-active);
+	background: var(--color-text-primary);
+	color: var(--color-text-inverse);
+}
+
+.gamePromptHistoryButton:active,
 .gamePromptRegenerateButton:active:not(:disabled) {
 	transform: scale(0.96);
 }

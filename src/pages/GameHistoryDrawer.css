@@ -1,0 +1,273 @@
+.statsHistoryOverlay {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 2600;
+	width: min(520px, 100%);
+	overscroll-behavior: none;
+}
+
+.statsHistoryDrawer {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+	flex-direction: column;
+	gap: 16px;
+	padding: 24px;
+	border-left: 1px solid var(--color-border-strong);
+	background: var(--color-surface-strong);
+	box-shadow: -18px 0 40px var(--color-shadow);
+	box-sizing: border-box;
+	color: var(--color-text-primary);
+	overflow: hidden;
+	animation: statsHistoryDrawerEnter 0.18s ease-out both;
+	will-change: transform;
+}
+
+.statsHistoryDrawerClosing {
+	animation: statsHistoryDrawerExit 0.18s ease-in both;
+}
+
+.statsHistoryHeader,
+.statsHistoryItemHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 14px;
+}
+
+.statsHistoryHeader h2 {
+	margin: 0;
+	font-size: 24px;
+	font-weight: 850;
+	line-height: 1.1;
+}
+
+.statsHistoryHeader p,
+.statsHistoryMessage {
+	margin: 6px 0 0;
+	color: var(--color-text-muted);
+	font-size: 14px;
+	font-weight: 750;
+	line-height: 1.3;
+}
+
+.statsDifficultyTabs {
+	display: grid;
+	width: 100%;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 8px;
+	padding: 6px;
+	border: 1px solid var(--color-surface-control-active);
+	border-radius: 8px;
+	background: var(--color-surface);
+	box-sizing: border-box;
+}
+
+.statsDifficultyTab {
+	min-height: 42px;
+	border: 1px solid transparent;
+	border-radius: 6px;
+	background: transparent;
+	color: var(--color-text-muted);
+	cursor: pointer;
+	font: inherit;
+	font-size: 14px;
+	font-weight: 850;
+	line-height: 1;
+}
+
+.statsDifficultyTab:hover,
+.statsDifficultyTab:focus-visible {
+	border-color: var(--color-surface-control-active);
+	color: var(--color-text-primary);
+	outline: none;
+}
+
+.statsDifficultyTabSelected {
+	border-color: var(--color-surface-control-active);
+	background: var(--color-surface-control-active);
+	color: var(--color-text-primary);
+}
+
+.statsHistoryCloseButton,
+.statsHistoryLoadMoreButton {
+	border: 1px solid var(--color-border);
+	border-radius: 6px;
+	background: var(--color-surface-input);
+	color: var(--color-text-primary);
+	cursor: pointer;
+	font: inherit;
+	font-size: 13px;
+	font-weight: 850;
+	line-height: 1;
+}
+
+.statsHistoryCloseButton {
+	min-height: 36px;
+	padding: 0 12px;
+}
+
+.statsHistoryCloseButton:hover,
+.statsHistoryLoadMoreButton:hover:not(:disabled) {
+	border-color: var(--color-border-hover);
+	background: var(--color-surface-input-hover);
+}
+
+.statsHistoryDifficultyTabs {
+	flex: 0 0 auto;
+}
+
+.statsHistoryScrollArea {
+	display: flex;
+	min-height: 0;
+	flex: 1 1 auto;
+	flex-direction: column;
+	gap: 12px;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	padding-right: 2px;
+}
+
+.statsHistoryList {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.statsHistoryItem {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 16px;
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	background: var(--color-surface);
+	box-sizing: border-box;
+}
+
+.statsHistoryItemHeader time {
+	color: var(--color-text-muted);
+	font-size: 13px;
+	font-weight: 800;
+	line-height: 1.3;
+}
+
+.statsHistoryResult {
+	flex: 0 0 auto;
+	padding: 6px 8px;
+	border: 1px solid var(--color-border);
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 900;
+	line-height: 1;
+}
+
+.statsHistoryResultCorrect {
+	border-color: var(--color-success-subtle-border);
+	color: var(--color-success);
+}
+
+.statsHistoryResultFailed {
+	border-color: var(--color-warning-subtle-border);
+	color: var(--color-text-primary);
+}
+
+.statsHistoryMeta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.statsHistoryMeta span {
+	padding: 5px 8px;
+	border: 1px solid var(--color-border-faint);
+	border-radius: 999px;
+	background: var(--color-surface-input);
+	color: var(--color-text-muted);
+	font-size: 12px;
+	font-weight: 850;
+	line-height: 1;
+}
+
+.statsHistoryDetails {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin: 0;
+}
+
+.statsHistoryDetails div {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.statsHistoryDetails dt {
+	color: var(--color-text-muted);
+	font-size: 12px;
+	font-weight: 850;
+	line-height: 1.2;
+}
+
+.statsHistoryDetails dd {
+	margin: 0;
+	color: var(--color-text-primary);
+	font-size: 15px;
+	font-weight: 700;
+	line-height: 1.35;
+	overflow-wrap: anywhere;
+}
+
+.statsHistoryLoadMoreButton {
+	min-height: 42px;
+	padding: 0 14px;
+}
+
+.statsHistoryLoadMoreButton:disabled {
+	cursor: not-allowed;
+	opacity: 0.6;
+}
+
+@keyframes statsHistoryDrawerEnter {
+	from {
+		transform: translateX(100%);
+	}
+
+	to {
+		transform: translateX(0);
+	}
+}
+
+@keyframes statsHistoryDrawerExit {
+	from {
+		transform: translateX(0);
+	}
+
+	to {
+		transform: translateX(100%);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.statsHistoryDrawer,
+	.statsHistoryDrawerClosing,
+	.statsContent,
+	.statsPage .topRightButton {
+		animation-duration: 1ms;
+		transition-duration: 1ms;
+	}
+}
+
+@media (max-width: 540px) {
+	.statsHistoryHeader {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.statsHistoryDrawer {
+		padding: 20px 16px;
+	}
+}

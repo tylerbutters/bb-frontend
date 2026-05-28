@@ -1,16 +1,23 @@
-.gameTabs {
+.gameTabsBar {
 	position: fixed;
 	top: 18px;
 	left: 50%;
 	z-index: 1500;
 	display: flex;
+	align-items: center;
+	gap: 4px;
 	max-width: calc(100vw - 24px);
 	padding: 4px;
-	overflow-x: auto;
 	border: 1px solid var(--color-surface-control-active);
 	border-radius: 8px;
 	background: var(--color-surface-overlay);
 	transform: translateX(-50%);
+}
+
+.gameTabs {
+	display: flex;
+	min-width: 0;
+	overflow-x: auto;
 }
 
 .gameTab {

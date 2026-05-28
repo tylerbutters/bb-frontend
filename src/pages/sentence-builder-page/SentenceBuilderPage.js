@@ -6,9 +6,17 @@ import GameModeSelector from "./games/GameModeSelector"
 import GamePrompt from "./games/GamePrompt"
 import SentenceBuilderWorkspace from "./components/SentenceBuilderWorkspace"
 import { japaneseTranslationToElements } from "./grammar/japaneseTranslationElements"
+import { GameHistoryDrawer, useGameHistoryDrawer } from "../GameHistoryDrawer"
 import "../TopRightButton.css"
 
 const PROMPT_ELEMENT_GAME_MODES = new Set(["conjugations", "fix sentence", "particles", "reorder"])
+const GAME_HISTORY_LABELS = {
+	translate: "Translate",
+	conjugations: "Conjugations",
+	"fix sentence": "Fix sentence",
+	particles: "Particles",
+	reorder: "Reorder",
+}
 
 export default function SentenceBuilderPage({ currentUser, onLogout }) {
 	const [selectedGameMode, setSelectedGameMode] = useState("sandbox")
@@ -18,7 +26,14 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 	const [gamePromptStatus, setGamePromptStatus] = useState("idle")
 	const [japaneseSentence, setJapaneseSentence] = useState("")
 	const [hasSentenceElements, setHasSentenceElements] = useState(false)
+	const gameHistory = useGameHistoryDrawer(currentUser)
 	const isGame = selectedGameMode && selectedGameMode !== "sandbox"
+	const historyGameMode = resolveHistoryGameMode(selectedGameMode, gamePromptData?.mode)
+	const historyGameLabel = historyGameMode
+		? GAME_HISTORY_LABELS[historyGameMode] || historyGameMode
+		: ""
+	const isPromptHistoryOpen =
+		gameHistory.isOpen && gameHistory.drawerProps.filter?.mode === historyGameMode
 	const generatedPromptElements = useMemo(() => {
 		if (!shouldPopulatePromptElements(selectedGameMode, gamePromptData)) return []
 
@@ -54,9 +69,27 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 	}
 
 	function selectGameMode(gameMode) {
+		if (gameMode !== selectedGameMode) {
+			gameHistory.closeHistory()
+		}
 		setSelectedGameMode(gameMode)
 		clearGamePrompt()
 		resetSentence()
+	}
+
+	function togglePromptHistory() {
+		if (!currentUser || !historyGameMode) return
+
+		if (isPromptHistoryOpen) {
+			gameHistory.closeHistory()
+			return
+		}
+
+		gameHistory.openHistory({
+			mode: historyGameMode,
+			label: historyGameLabel,
+			difficulty: "all",
+		})
 	}
 
 	return (
@@ -74,6 +107,8 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 				isVisible={isGame}
 				gameMode={selectedGameMode}
 				requestKey={workspaceResetCount}
+				isHistoryOpen={isPromptHistoryOpen}
+				onOpenHistory={currentUser && historyGameMode ? togglePromptHistory : null}
 				onRegenerate={regenerateGamePrompt}
 				onPromptChange={handlePromptChange}
 			/>
@@ -94,6 +129,7 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 				answer={japaneseSentence}
 				onNext={regenerateGamePrompt}
 			/>
+			<GameHistoryDrawer {...gameHistory.drawerProps} />
 		</div>
 	)
 }
@@ -105,4 +141,11 @@ function shouldPopulatePromptElements(gameMode, promptData) {
 	if (!PROMPT_ELEMENT_GAME_MODES.has(generatedGameMode)) return false
 
 	return Array.isArray(promptData?.japaneseTranslation)
+}
+
+function resolveHistoryGameMode(selectedGameMode, generatedGameMode) {
+	if (selectedGameMode === "sandbox") return null
+	if (selectedGameMode === "shuffle") return generatedGameMode || null
+
+	return selectedGameMode
 }

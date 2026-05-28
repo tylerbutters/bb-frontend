@@ -48,19 +48,23 @@ export default function GameModeSelector({
 
 	return (
 		<>
-			<div className="gameTabs" role="tablist" aria-label="Game modes">
-				{GAME_MODES.map((gameMode) => (
-					<button
-						key={gameMode.id}
-						type="button"
-						role="tab"
-						aria-selected={selectedGameMode === gameMode.id}
-						className={`gameTab ${selectedGameMode === gameMode.id ? "gameTabSelected" : ""}`}
-						onClick={() => onSelectGameMode(gameMode.id)}
-					>
-						{gameMode.id}
-					</button>
-				))}
+			<div className="gameTabsBar">
+				<div className="gameTabs" role="tablist" aria-label="Game modes">
+					{GAME_MODES.map((gameMode) => (
+						<button
+							key={gameMode.id}
+							type="button"
+							role="tab"
+							aria-selected={selectedGameMode === gameMode.id}
+							className={`gameTab ${
+								selectedGameMode === gameMode.id ? "gameTabSelected" : ""
+							}`}
+							onClick={() => onSelectGameMode(gameMode.id)}
+						>
+							{gameMode.id}
+						</button>
+					))}
+				</div>
 			</div>
 			<header className="gameModeDetails">
 				{selectedGameModeDetails.title && <h1>{selectedGameModeDetails.title}</h1>}

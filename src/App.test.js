@@ -914,6 +914,69 @@ test("opens paginated game history from a stats panel", async () => {
 	})
 })
 
+test("opens game history from the sentence builder prompt panel", async () => {
+	render(<App />)
+
+	expect(screen.queryByRole("button", { name: "History" })).not.toBeInTheDocument()
+
+	fireEvent.click(screen.getByRole("link", { name: "Login" }))
+	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
+	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
+	fireEvent.click(screen.getByRole("button", { name: "Login" }))
+
+	await waitFor(() => {
+		expect(screen.getByRole("button", { name: "Tyler" })).toBeInTheDocument()
+	})
+	expect(screen.queryByRole("button", { name: "History" })).not.toBeInTheDocument()
+
+	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	await waitFor(() => {
+		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
+	})
+
+	const historyButton = screen.getByRole("button", { name: "History" })
+	expect(historyButton).toHaveAttribute("aria-pressed", "false")
+	expect(historyButton).not.toHaveClass("gamePromptHistoryButtonSelected")
+
+	fireEvent.click(historyButton)
+
+	const drawer = await screen.findByLabelText("Translate history drawer")
+	expect(historyButton).toHaveAttribute("aria-pressed", "true")
+	expect(historyButton).toHaveClass("gamePromptHistoryButtonSelected")
+	expect(within(drawer).getByRole("heading", { name: "Translate history" })).toBeInTheDocument()
+	expect(within(drawer).getByText("all difficulty")).toBeInTheDocument()
+	expect(within(drawer).getByRole("tab", { name: "all" })).toHaveAttribute(
+		"aria-selected",
+		"true",
+	)
+	await waitFor(() => {
+		expect(within(drawer).getByText("I eat rice.")).toBeInTheDocument()
+	})
+	expect(within(drawer).getByText("ご飯を食べます。")).toBeInTheDocument()
+	expect(within(drawer).getByText("Good.")).toBeInTheDocument()
+
+	const historyRequest = global.fetch.mock.calls.find(([url]) =>
+		String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
+	)
+	const historyParams = new URL(String(historyRequest[0]), "http://localhost").searchParams
+	expect(historyParams.get("mode")).toBe("translate")
+	expect(historyParams.get("difficulty")).toBe("all")
+	expect(historyParams.get("offset")).toBe("0")
+
+	fireEvent.click(historyButton)
+	expect(historyButton).toHaveAttribute("aria-pressed", "false")
+	await waitFor(() => {
+		expect(screen.queryByLabelText("Translate history drawer")).not.toBeInTheDocument()
+	})
+
+	fireEvent.click(historyButton)
+	await screen.findByLabelText("Translate history drawer")
+	fireEvent.click(screen.getByRole("tab", { name: "conjugations" }))
+	await waitFor(() => {
+		expect(screen.queryByLabelText("Translate history drawer")).not.toBeInTheDocument()
+	})
+})
+
 test("shows zero-filled stats panels when stats have not been created yet", async () => {
 	global.fetch.mockImplementation((url, options = {}) => {
 		if (url === `${API_BASE_URL}/login`) {
