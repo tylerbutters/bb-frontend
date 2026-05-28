@@ -1,10 +1,24 @@
 .elementOptionsMenuContainer {
+	--element-options-anchor-gap: 10px;
+	--element-options-panel-gap: 8px;
+	inset: auto;
 	position: fixed;
+	position-area: top;
+	position-try: flip-block;
 	z-index: 2000;
+	margin: 0 0 var(--element-options-anchor-gap);
+	padding: 0;
+	overflow: visible;
+	border: 0;
+	background: transparent;
+	color: inherit;
 	filter: drop-shadow(0 18px 30px var(--color-shadow));
 	opacity: 1;
-	will-change: opacity;
-	transition: opacity 160ms ease;
+	will-change: opacity, transform;
+}
+
+.elementOptionsMenuContainer:popover-open {
+	display: block;
 }
 
 .elementOptionsMenuOpen {
@@ -112,7 +126,7 @@
 .elementListContainer {
 	display: flex;
 	flex-direction: column;
-	max-width: 250px;
+	width: min(250px, calc(100vw - 32px));
 	max-height: 350px;
 	overflow: hidden;
 	border: 1px solid var(--color-border-faint);
@@ -124,16 +138,24 @@
 .secondaryElementOptionsPanel {
 	position: absolute;
 	top: 0;
+}
+
+.secondaryElementOptionsPanelOpen {
 	animation: secondaryElementOptionsPanelIn 300ms ease-in-out both;
 }
 
+.secondaryElementOptionsPanelClosing {
+	pointer-events: none;
+	animation: secondaryElementOptionsPanelOut 160ms ease-in-out both;
+}
+
 .secondaryElementOptionsPanel-right {
-	left: calc(100% + 8px);
+	left: calc(100% + var(--element-options-panel-gap));
 	transform-origin: top left;
 }
 
 .secondaryElementOptionsPanel-left {
-	right: calc(100% + 8px);
+	right: calc(100% + var(--element-options-panel-gap));
 	transform-origin: top right;
 }
 
@@ -146,6 +168,18 @@
 	to {
 		transform: scale(1);
 		opacity: 1;
+	}
+}
+
+@keyframes secondaryElementOptionsPanelOut {
+	from {
+		transform: scale(1);
+		opacity: 1;
+	}
+
+	to {
+		transform: scale(0.95);
+		opacity: 0;
 	}
 }
 
