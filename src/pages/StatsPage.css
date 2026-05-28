@@ -117,7 +117,7 @@
 	padding: 22px;
 	border: 1px solid var(--color-grey-border);
 	border-radius: 8px;
-	/* background: var(--color-surface); */
+	/* background: var(--color-surface-menu); */
 	box-sizing: border-box;
 	/* color: white; */
 }

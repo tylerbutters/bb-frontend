@@ -100,7 +100,7 @@
 }
 
 .counterInput::placeholder {
-	color: var(--color-text-faint);
+	color: var(--color-grey-text);
 }
 
 .counterInput:focus {

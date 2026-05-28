@@ -1,18 +1,9 @@
 :root {
 	--color-app-background: black;
 
-	--color-text-tertiary: rgba(255, 255, 255, 0.58);
-	--color-text-faint: rgba(255, 255, 255, 0.5);
-	--color-text-disabled: rgba(255, 255, 255, 0.3);
-	--color-text-bright: #f5f5f5;
-	--color-text-menu-heading: rgba(255, 255, 255, 0.86);
-	--color-text-control: rgba(255, 255, 255, 0.82);
-
-	--color-surface: rgba(20, 20, 20, 0.92);
-	--color-surface-strong: rgba(20, 20, 20, 0.96);
-	--color-surface-overlay: rgba(20, 20, 20, 0.9);
 	--color-surface-menu: #202124;
 	--color-surface-menu-header: #2b2d31;
+
 	--color-surface-list-item: #17181a;
 	--color-surface-input: rgba(255, 255, 255, 0.08);
 	--color-surface-input-hover: rgba(255, 255, 255, 0.12);
@@ -35,7 +26,6 @@
 	--color-outline-focus: rgba(255, 255, 255, 0.62);
 
 	--color-shadow: rgba(0, 0, 0, 0.35);
-	--color-shadow-soft: rgba(0, 0, 0, 0.34);
 
 	--color-success: rgb(119, 224, 147);
 	--color-success-border: rgba(78, 196, 126, 0.46);

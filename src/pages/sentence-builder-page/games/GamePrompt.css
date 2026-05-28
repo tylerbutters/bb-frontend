@@ -49,13 +49,6 @@
 	/* margin-bottom: 8px; */
 	/* background-color: red; */
 }
-.gamePromptLabel {
-	color: var(--color-text-tertiary);
-	font-size: 12px;
-	font-weight: 800;
-	line-height: 1;
-	text-transform: uppercase;
-}
 
 .gamePromptHistoryButton,
 .gamePromptRegenerateButton {

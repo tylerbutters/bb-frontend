@@ -4,6 +4,8 @@ import { Eye, EyeOff } from "lucide-react"
 
 export default function InputBox({
 	autoComplete,
+	className,
+	fieldClassName,
 	id,
 	inputMode,
 	isPassword = false,
@@ -21,19 +23,21 @@ export default function InputBox({
 }) {
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 	const inputType = isPassword ? (isPasswordVisible ? "text" : "password") : type
-	const inputStyle = {
-		...style,
-		paddingRight: isPassword ? 40 : 0,
-	}
+	const inputStyle = isPassword ? { ...style, paddingRight: 40 } : style
+	const containerClassName = `inputBoxContainer ${fieldClassName || ""}`.trim()
+	const inputClassName = `inputContainer ${className || ""}`.trim()
+	const passwordToggleLabel = label
+		? `${isPasswordVisible ? "Hide" : "Show"} ${label.toLowerCase()}`
+		: `${isPasswordVisible ? "Hide" : "Show"} password`
 
 	return (
-		<label className={"inputBoxContainer"} htmlFor={id}>
-			<span>{label}</span>
+		<label className={containerClassName} htmlFor={id}>
+			{label && <span>{label}</span>}
 			<div className="passwordInputWrap">
 				<input
 					id={id}
 					name={name}
-					className="inputContainer"
+					className={inputClassName}
 					style={inputStyle}
 					type={inputType}
 					value={value}
@@ -50,6 +54,7 @@ export default function InputBox({
 					<button
 						type="button"
 						className="passwordToggleButton"
+						aria-label={passwordToggleLabel}
 						aria-pressed={isPasswordVisible}
 						onClick={() => setIsPasswordVisible((isVisible) => !isVisible)}
 					>

@@ -88,7 +88,7 @@
 }
 
 .elementDetailName {
-	color: var(--color-text-bright);
+	color: white;
 	font-size: 20px;
 	font-weight: 700;
 	line-height: 1.15;
@@ -117,7 +117,7 @@
 
 .elementDetailRow dt,
 .elementDetailLabel {
-	color: var(--color-text-menu-heading);
+	color: white;
 	font-size: 11px;
 	font-weight: 700;
 	line-height: 1.25;

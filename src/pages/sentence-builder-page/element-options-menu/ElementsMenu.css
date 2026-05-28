@@ -73,35 +73,33 @@
 }
 
 .elementsMenuButton:hover {
-	border-color: var(--color-border-faint);
-	background: var(--color-surface-control);
+	/* border-color: var(--color-grey-border); */
+	background: var(--color-grey-border);
 }
 
 .selectedElementsMenuButton {
-	border: 1px solid var(--color-blue-border);
-	background: var(--color-blue-fill);
+	border: 1px solid var(--color-white-border);
+	background: var(--color-white-fill);
 }
 
 .selectedElementsMenuButton:hover {
-	border: 1px solid var(--color-blue-border);
-	background: var(--color-blue-fill);
+	border: 1px solid var(--color-white-border);
+	background: var(--color-white-fill);
 }
 
 .elementsMenuTitle {
 	padding: 9px 12px;
-	border-bottom: 1px solid var(--color-surface-control);
+	border-bottom: 1px solid var(--color-grey-border);
 	background-color: var(--color-surface-menu-header);
-	color: var(--color-text-menu-heading);
-	font-size: 13px;
-	font-weight: 700;
-	line-height: 1.2;
-	text-transform: uppercase;
+	color: white;
+	font-size: 15px;
+	text-align: center;
 }
 
 .deleteElementButtonContainer {
 	display: flex;
 	padding: 8px;
-	border-top: 1px solid var(--color-surface-control);
+	border-top: 1px solid var(--color-grey-border);
 }
 
 .deleteElementButton {
