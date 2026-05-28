@@ -23,6 +23,21 @@ export async function checkGameAnswer({ gameMode, prompt, answer, signal }) {
 	}
 }
 
+export async function checkSandboxSentence({ answer, signal }) {
+	const data = await apiRequest("/games/sandbox/check-japanese", {
+		method: "POST",
+		signal,
+		body: {
+			answer,
+		},
+	})
+
+	return {
+		correct: Boolean(data.correct),
+		feedback: data.feedback || "",
+	}
+}
+
 export async function translateJapanese(text, { signal } = {}) {
 	const data = await apiRequest("/games/sandbox/translate-japanese", {
 		method: "POST",

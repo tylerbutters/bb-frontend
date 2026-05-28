@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { checkGameAnswer } from "../../../api/games"
+import { checkGameAnswer, checkSandboxSentence } from "../../../api/games"
 import "./GameControls.css"
 
 export default function GameControls({
@@ -13,8 +13,10 @@ export default function GameControls({
 	const [checkStatus, setCheckStatus] = useState("idle")
 	const [feedback, setFeedback] = useState(null)
 	const hasAnswerChecker = hasGameAnswerChecker(gameMode)
+	const isSandboxCheck = gameMode === "sandbox"
 	const isChecking = checkStatus === "checking"
-	const isCheckDisabled = !prompt || !answer || promptStatus !== "ready" || isChecking
+	const isCheckDisabled =
+		!answer || isChecking || (!isSandboxCheck && (!prompt || promptStatus !== "ready"))
 	const feedbackText =
 		feedback &&
 		`${feedback.correct ? "Correct." : "Not quite."}${
@@ -33,7 +35,9 @@ export default function GameControls({
 		setFeedback(null)
 
 		try {
-			const nextFeedback = await checkGameAnswer({ gameMode, prompt, answer })
+			const nextFeedback = isSandboxCheck
+				? await checkSandboxSentence({ answer })
+				: await checkGameAnswer({ gameMode, prompt, answer })
 			setFeedback(nextFeedback)
 			setCheckStatus("ready")
 		} catch (error) {
@@ -68,7 +72,7 @@ export default function GameControls({
 			>
 				{isChecking ? "Checking..." : "Check"}
 			</button>
-			{feedback && (
+			{feedback && !isSandboxCheck && (
 				<button
 					type="button"
 					className="gameControlButton gameControlButtonPrimary"
@@ -83,5 +87,5 @@ export default function GameControls({
 }
 
 function hasGameAnswerChecker(gameMode) {
-	return Boolean(gameMode && gameMode !== "sandbox")
+	return Boolean(gameMode)
 }

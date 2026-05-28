@@ -564,6 +564,50 @@ test("clears all sentence elements", async () => {
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
 })
 
+test("checks the sandbox sentence and shows feedback", async () => {
+	global.fetch.mockImplementation((url) => {
+		if (url === `${API_BASE_URL}/games/sandbox/check-japanese`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					correct: false,
+					feedback: "Add a subject and predicate.",
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
+
+	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
+	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
+	fireEvent.click(screen.getByRole("button", { name: "。" }))
+
+	fireEvent.click(screen.getByRole("button", { name: "Check" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("Not quite. Add a subject and predicate.")).toBeInTheDocument()
+	})
+
+	const sandboxCheckRequest = global.fetch.mock.calls.find(
+		([url]) => url === `${API_BASE_URL}/games/sandbox/check-japanese`,
+	)
+	expect(JSON.parse(sandboxCheckRequest[1].body)).toEqual({
+		answer: "。",
+	})
+	expect(
+		global.fetch.mock.calls.some(([url]) => url === `${API_BASE_URL}/games/check`),
+	).toBe(false)
+	expect(screen.queryByRole("button", { name: "Next" })).not.toBeInTheDocument()
+})
+
 test("populates conjugation game elements from Japanese translation prompt data", async () => {
 	global.fetch.mockImplementation((url, options = {}) => {
 		const requestUrl = String(url)

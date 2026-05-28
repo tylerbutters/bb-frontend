@@ -79,7 +79,7 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 				onSentenceChange={handleSentenceChange}
 			/>
 			<GameControls
-				isVisible={isGame && hasSentenceElements}
+				isVisible={hasSentenceElements}
 				gameMode={gamePromptData?.mode || selectedGameMode}
 				prompt={gamePrompt}
 				promptStatus={gamePromptStatus}
