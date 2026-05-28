@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { login } from "../api/auth"
 import InputBox from "../components/InputBox"
-import "./TopRightButton.css"
 import "./AuthPage.css"
 
 export default function LoginPage({ onLogin }) {
@@ -59,9 +58,6 @@ export default function LoginPage({ onLogin }) {
 
 	return (
 		<div className="app loginPage">
-			<Link className="topRightButton" to="/">
-				Back
-			</Link>
 			<form className="loginForm" method="post" action="/login" onSubmit={submitLogin}>
 				<h1>Login</h1>
 				<InputBox

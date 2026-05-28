@@ -1,14 +1,8 @@
-import { Link } from "react-router-dom"
-import "./TopRightButton.css"
 import "./BuyPage.css"
 
 export default function BuyPage() {
 	return (
 		<div className="app buyPage">
-			<Link className="topRightButton" to="/">
-				Back
-			</Link>
-
 			<main className="buyContent" aria-labelledby="buy-heading">
 				<h1 id="buy-heading">Buy premium</h1>
 				<section className="buyPanel" aria-label="Premium plan">

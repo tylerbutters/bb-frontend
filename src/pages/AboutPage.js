@@ -1,14 +1,8 @@
-import { Link } from "react-router-dom"
-import "./TopRightButton.css"
 import "./AboutPage.css"
 
 export default function AboutPage() {
 	return (
 		<div className="app aboutPage">
-			<Link className="topRightButton" to="/">
-				Back
-			</Link>
-
 			<main className="aboutContent" aria-labelledby="about-heading">
 				<h1 id="about-heading">About Bunsho Builder</h1>
 				<p>

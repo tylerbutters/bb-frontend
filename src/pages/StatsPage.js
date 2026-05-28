@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, Navigate } from "react-router-dom"
+import { Navigate } from "react-router-dom"
 import { getUserGameHistory, getUserStats } from "../api/users"
 import {
 	emptyGameStatsResponse,
@@ -14,7 +14,6 @@ import {
 	parseGameRecentLimit,
 } from "../gameStatsStorage"
 import { GameHistoryDrawer, useGameHistoryDrawer } from "./GameHistoryDrawer"
-import "./TopRightButton.css"
 import "./AuthPage.css"
 
 function StatPanel({ title, stats, onHistoryClick }) {
@@ -184,10 +183,6 @@ export default function StatsPage({ currentUser }) {
 
 	return (
 		<div className={statsPageClassName}>
-			<Link className="topRightButton" to="/">
-				Back
-			</Link>
-
 			<main className="accountContent statsContent" aria-labelledby="stats-heading">
 				<h1 id="stats-heading">Stats</h1>
 				<div className="statsDifficultyTabs" role="tablist" aria-label="Stats difficulty">

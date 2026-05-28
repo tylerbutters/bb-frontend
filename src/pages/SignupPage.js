@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { confirmSignup, requestSignupConfirmation } from "../api/users"
 import InputBox from "../components/InputBox"
-import "./TopRightButton.css"
 import "./AuthPage.css"
 
 const RESEND_CODE_COOLDOWN_SECONDS = 30
@@ -138,9 +137,6 @@ export default function SignupPage({ onSignup }) {
 
 	return (
 		<div className="app signupPage">
-			<Link className="topRightButton" to="/">
-				Back
-			</Link>
 			{signupStep === "details" && (
 				<form
 					className="signupForm"

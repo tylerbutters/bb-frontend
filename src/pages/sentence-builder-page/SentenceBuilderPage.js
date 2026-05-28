@@ -1,14 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { Link } from "react-router-dom"
 import { useGameQuota } from "../../useGameQuota"
-import AccountMenu from "./components/AccountMenu"
 import GameControls from "./games/GameControls"
 import GameModeSelector from "./games/GameModeSelector"
 import GamePrompt from "./games/GamePrompt"
 import SentenceBuilderWorkspace from "./components/SentenceBuilderWorkspace"
 import { japaneseTranslationToElements } from "./grammar/japaneseTranslationElements"
 import { GameHistoryDrawer, useGameHistoryDrawer } from "../GameHistoryDrawer"
-import "../TopRightButton.css"
 import "./GameQuota.css"
 
 const PROMPT_ELEMENT_GAME_MODES = new Set(["conjugations", "fix sentence", "particles", "reorder"])
@@ -22,7 +19,7 @@ const GAME_HISTORY_LABELS = {
 	reorder: "Reorder",
 }
 
-export default function SentenceBuilderPage({ currentUser, onLogout }) {
+export default function SentenceBuilderPage({ currentUser }) {
 	const [selectedGameMode, setSelectedGameMode] = useState("sandbox")
 	const [workspaceResetCount, setWorkspaceResetCount] = useState(0)
 	const [gamePrompt, setGamePrompt] = useState("")
@@ -64,6 +61,7 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 		if (
 			!currentUser ||
 			!isGame ||
+			gameQuota.status !== "ready" ||
 			gameQuota.quota?.plan !== "free" ||
 			gameQuota.quota?.remaining === 0
 		) {
@@ -75,7 +73,7 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 		if (window.localStorage.getItem(storageKey)) return
 
 		setIsFreeLimitIntroVisible(true)
-	}, [currentUser, gameQuota.quota?.plan, gameQuota.quota?.remaining, isGame])
+	}, [currentUser, gameQuota.quota?.plan, gameQuota.quota?.remaining, gameQuota.status, isGame])
 
 	function resetSentence() {
 		setWorkspaceResetCount((count) => count + 1)
@@ -128,10 +126,6 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 
 	return (
 		<div className="app">
-			<Link className="topRightButton topLeftButton" to="/about">
-				About Bunsho Builder
-			</Link>
-			<AccountMenu currentUser={currentUser} onLogout={onLogout} />
 			<GameModeSelector
 				selectedGameMode={selectedGameMode}
 				generatedGameMode={gamePromptData?.mode}

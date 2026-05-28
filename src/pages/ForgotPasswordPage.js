@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { confirmPasswordReset, requestPasswordReset } from "../api/auth"
 import InputBox from "../components/InputBox"
-import "./TopRightButton.css"
 import "./AuthPage.css"
 import { useLocation, useNavigate } from "react-router-dom"
 
@@ -170,9 +169,6 @@ export default function ForgotPasswordPage() {
 	if (currentPage === "confirmReset") {
 		return (
 			<div className="app loginPage">
-				<button className="topRightButton" onClick={() => setCurrentPage("requestReset")}>
-					Back
-				</button>
 				<form
 					className="loginForm"
 					method="post"
@@ -256,9 +252,6 @@ export default function ForgotPasswordPage() {
 
 	return (
 		<div className="app loginPage">
-			<button className="topRightButton" onClick={() => navigate(-1)}>
-				Back
-			</button>
 			<form
 				className="loginForm"
 				method="post"

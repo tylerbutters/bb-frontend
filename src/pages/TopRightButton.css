@@ -49,3 +49,49 @@
 .topRightButton:active {
 	transform: scale(0.96);
 }
+
+.topLeftActions {
+	position: fixed;
+	top: 18px;
+	left: 18px;
+	z-index: 1600;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	max-width: min(460px, calc(100vw - 360px));
+}
+
+.topLeftActions .topRightButton {
+	position: static;
+}
+
+.topLeftActions .topLeftButton {
+	flex: 0 0 auto;
+	max-width: none;
+}
+
+.topLeftLogo {
+	min-width: 0;
+	overflow: hidden;
+	color: var(--color-text-primary);
+	font-size: 26px;
+	font-weight: 900;
+	line-height: 1;
+	text-decoration: none;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.topLeftLogo:hover {
+	text-decoration: underline;
+}
+
+@media (max-width: 760px) {
+	.topLeftActions {
+		max-width: max(84px, calc(100vw - 320px));
+	}
+
+	.topLeftLogo {
+		font-size: 20px;
+	}
+}

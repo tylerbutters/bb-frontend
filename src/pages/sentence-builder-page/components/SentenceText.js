@@ -36,6 +36,7 @@ export default function SentenceText({ addedElements, showTranslation = true }) 
 
 	return (
 		<div className="sentenceTextContainer">
+			{showTranslation && <div className="sentenceTranslationText">{translation}</div>}
 			<div className="sentenceJapaneseText">
 				{sentenceParts.map((part, index) => (
 					<Fragment key={`${part.text}:${index}`}>
@@ -43,7 +44,6 @@ export default function SentenceText({ addedElements, showTranslation = true }) 
 					</Fragment>
 				))}
 			</div>
-			{showTranslation && <div className="sentenceJapaneseText">{translation}</div>}
 		</div>
 	)
 }

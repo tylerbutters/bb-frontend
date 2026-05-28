@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom"
-import "../TopRightButton.css"
+import { Navigate, useLocation, useNavigate } from "react-router-dom"
 import "../AuthPage.css"
 import DisplayNameSection from "./DisplayNameSection"
 import EmailSection from "./EmailSection"
@@ -36,10 +35,6 @@ export default function AccountPage({ currentUser, onAccountDelete, onUserUpdate
 
 	return (
 		<div className="app accountPage">
-			<Link className="topRightButton" to="/">
-				Back
-			</Link>
-
 			<main className="accountContent" aria-labelledby="account-heading">
 				<h1 id="account-heading">Account</h1>
 

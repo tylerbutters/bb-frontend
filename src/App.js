@@ -9,6 +9,7 @@ import SignupPage from "./pages/SignupPage"
 import ForgotPasswordPage from "./pages/ForgotPasswordPage"
 import ConfirmEmailChangePage from "./pages/ConfirmEmailChangePage"
 import StatsPage from "./pages/StatsPage"
+import AppNavbar from "./components/AppNavbar"
 import { logout } from "./api/auth"
 
 const CURRENT_USER_STORAGE_KEY = "jsbCurrentUser"
@@ -42,10 +43,11 @@ export default function App() {
 
 	return (
 		<BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
+			<AppNavbar currentUser={currentUser} onLogout={handleLogout} />
 			<Routes>
 				<Route
 					path="/"
-					element={<SentenceBuilderPage currentUser={currentUser} onLogout={handleLogout} />}
+					element={<SentenceBuilderPage currentUser={currentUser} />}
 				/>
 				<Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
 				<Route path="/signup" element={<SignupPage onSignup={handleLogin} />} />

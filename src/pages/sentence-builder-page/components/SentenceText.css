@@ -1,17 +1,28 @@
 .sentenceTextContainer {
 	position: absolute;
+	margin-bottom: 120px;
+	height: 80px;
 	display: flex;
-	align-items: center;
 	flex-direction: column;
-	margin-bottom: 200px;
+	z-index: 1200;
 	color: var(--color-text-primary);
-	font-size: 30px;
+	pointer-events: none;
+}
+
+.sentenceTranslationText,
+.sentenceJapaneseText {
+	text-align: center;
+}
+
+.sentenceTranslationText {
+	font-size: 18px;
+	font-weight: 700;
 }
 
 .sentenceJapaneseText {
-	min-height: 48px;
-	line-height: 1.45;
-	text-align: center;
+	bottom: 0;
+	font-size: 30px;
+	margin-top: auto;
 }
 
 .sentenceJapaneseText ruby {

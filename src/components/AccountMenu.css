@@ -4,6 +4,7 @@
 	right: 18px;
 	z-index: 1600;
 	display: flex;
+	align-items: center;
 	gap: 8px;
 }
 
@@ -12,15 +13,12 @@
 }
 
 .topRightUserMenu {
-	position: fixed;
-	top: 18px;
-	right: 18px;
-	z-index: 1600;
+	position: relative;
 }
 
 .topRightUserButton {
 	max-width: min(240px, calc(100vw - 36px));
-	padding: 0;
+	padding: 10px 0;
 	overflow: hidden;
 	border: 0;
 	background: transparent;
@@ -34,8 +32,20 @@
 	cursor: pointer;
 }
 
+.topRightPremiumButton {
+	border-color: var(--color-text-primary);
+	background: var(--color-text-primary);
+	color: var(--color-text-inverse);
+}
+
 .topRightUserButton:hover {
 	text-decoration: underline;
+}
+
+.topRightPremiumButton:hover {
+	border-color: var(--color-surface-light);
+	background: var(--color-surface-light);
+	color: var(--color-text-inverse);
 }
 
 .userDropdown {
