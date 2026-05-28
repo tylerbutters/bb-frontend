@@ -6,22 +6,56 @@ export async function generateGamePrompt({ gameMode, difficulty, signal }) {
 	return apiRequest(`/games/prompt?${params}`, { signal })
 }
 
-export async function checkGameAnswer({ gameMode, prompt, answer, challengeId, signal }) {
-	const data = await apiRequest("/games/check", {
-		method: "POST",
-		signal,
-		body: {
-			mode: gameMode,
-			prompt,
-			answer,
-			...(challengeId ? { challengeId } : {}),
-		},
-	})
+export async function checkGameAnswer({
+	gameMode,
+	difficulty,
+	prompt,
+	answer,
+	challengeId,
+	signal,
+}) {
+	const body = gameCheckBody({ gameMode, difficulty, prompt, answer, challengeId })
+	let data
+
+	try {
+		data = await apiRequest("/games/check", {
+			method: "POST",
+			signal,
+			body,
+		})
+	} catch (error) {
+		if (!difficulty || !isUnsupportedDifficultyFieldError(error)) throw error
+
+		data = await apiRequest("/games/check", {
+			method: "POST",
+			signal,
+			body: gameCheckBody({ gameMode, prompt, answer, challengeId }),
+		})
+	}
 
 	return {
 		correct: Boolean(data.correct),
 		feedback: data.feedback || "",
 	}
+}
+
+function gameCheckBody({ gameMode, difficulty, prompt, answer, challengeId }) {
+	return {
+		mode: gameMode,
+		...(difficulty ? { difficulty } : {}),
+		prompt,
+		answer,
+		...(challengeId ? { challengeId } : {}),
+	}
+}
+
+function isUnsupportedDifficultyFieldError(error) {
+	return (
+		error?.status === 400 &&
+		String(error.message || error.data?.error?.message || "").includes(
+			'"difficulty" is not allowed',
+		)
+	)
 }
 
 export async function checkSandboxSentence({ answer, signal }) {

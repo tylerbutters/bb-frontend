@@ -7,6 +7,7 @@ export default function GameControls({
 	isVisible,
 	gameMode,
 	challengeId,
+	difficulty,
 	currentUser,
 	prompt,
 	promptStatus,
@@ -29,7 +30,7 @@ export default function GameControls({
 	useEffect(() => {
 		setFeedback(null)
 		setCheckStatus("idle")
-	}, [answer, challengeId, gameMode, isVisible, prompt])
+	}, [answer, challengeId, difficulty, gameMode, isVisible, prompt])
 
 	async function checkAnswer() {
 		if (isCheckDisabled) return
@@ -40,11 +41,12 @@ export default function GameControls({
 		try {
 			const nextFeedback = isSandboxCheck
 				? await checkSandboxSentence({ answer })
-				: await checkGameAnswer({ gameMode, prompt, answer, challengeId })
+				: await checkGameAnswer({ gameMode, difficulty, prompt, answer, challengeId })
 			if (!isSandboxCheck) {
 				recordLocalGameResult(currentUser?.id, {
 					challengeId,
 					mode: gameMode,
+					difficulty,
 					prompt,
 					correct: nextFeedback.correct,
 				})

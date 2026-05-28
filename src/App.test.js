@@ -13,6 +13,171 @@ beforeAll(() => {
 	global.ResizeObserver = MockIntersectionObserver
 })
 
+const defaultStatsResponse = {
+	total: {
+		totalGames: 6,
+		won: 4,
+		failed: 2,
+		accuracy: 67,
+	},
+	games: [
+		{
+			mode: "translate",
+			label: "Translate",
+			totalGames: 3,
+			won: 2,
+			failed: 1,
+			accuracy: 67,
+		},
+		{
+			mode: "conjugations",
+			label: "Conjugations",
+			totalGames: 1,
+			won: 1,
+			failed: 0,
+			accuracy: 100,
+		},
+		{
+			mode: "fix sentence",
+			label: "Fix sentence",
+			totalGames: 0,
+			won: 0,
+			failed: 0,
+			accuracy: 0,
+		},
+		{
+			mode: "particles",
+			label: "Particles",
+			totalGames: 2,
+			won: 1,
+			failed: 1,
+			accuracy: 50,
+		},
+		{
+			mode: "reorder",
+			label: "Reorder",
+			totalGames: 0,
+			won: 0,
+			failed: 0,
+			accuracy: 0,
+		},
+	],
+	byDifficulty: {
+		all: {
+			total: {
+				totalGames: 6,
+				won: 4,
+				failed: 2,
+				accuracy: 67,
+			},
+			games: [
+				{
+					mode: "translate",
+					label: "Translate",
+					totalGames: 3,
+					won: 2,
+					failed: 1,
+					accuracy: 67,
+				},
+				{
+					mode: "conjugations",
+					label: "Conjugations",
+					totalGames: 1,
+					won: 1,
+					failed: 0,
+					accuracy: 100,
+				},
+				{
+					mode: "fix sentence",
+					label: "Fix sentence",
+					totalGames: 0,
+					won: 0,
+					failed: 0,
+					accuracy: 0,
+				},
+				{
+					mode: "particles",
+					label: "Particles",
+					totalGames: 2,
+					won: 1,
+					failed: 1,
+					accuracy: 50,
+				},
+				{
+					mode: "reorder",
+					label: "Reorder",
+					totalGames: 0,
+					won: 0,
+					failed: 0,
+					accuracy: 0,
+				},
+			],
+		},
+		easy: {
+			total: {
+				totalGames: 2,
+				won: 1,
+				failed: 1,
+				accuracy: 50,
+			},
+			games: [
+				{
+					mode: "translate",
+					label: "Translate",
+					totalGames: 2,
+					won: 1,
+					failed: 1,
+					accuracy: 50,
+				},
+			],
+		},
+		medium: {
+			total: {
+				totalGames: 3,
+				won: 3,
+				failed: 0,
+				accuracy: 100,
+			},
+			games: [
+				{
+					mode: "conjugations",
+					label: "Conjugations",
+					totalGames: 1,
+					won: 1,
+					failed: 0,
+					accuracy: 100,
+				},
+				{
+					mode: "particles",
+					label: "Particles",
+					totalGames: 2,
+					won: 2,
+					failed: 0,
+					accuracy: 100,
+				},
+			],
+		},
+		hard: {
+			total: {
+				totalGames: 1,
+				won: 0,
+				failed: 1,
+				accuracy: 0,
+			},
+			games: [
+				{
+					mode: "particles",
+					label: "Particles",
+					totalGames: 1,
+					won: 0,
+					failed: 1,
+					accuracy: 0,
+				},
+			],
+		},
+	},
+}
+
 beforeEach(() => {
 	window.history.pushState({}, "", "/")
 	window.localStorage.clear()
@@ -112,56 +277,7 @@ beforeEach(() => {
 		if (url === `${API_BASE_URL}/users/1/stats`) {
 			return Promise.resolve({
 				ok: true,
-				json: jest.fn().mockResolvedValue({
-					total: {
-						totalGames: 6,
-						won: 4,
-						failed: 2,
-						accuracy: 67,
-					},
-					games: [
-						{
-							mode: "translate",
-							label: "Translate",
-							totalGames: 3,
-							won: 2,
-							failed: 1,
-							accuracy: 67,
-						},
-						{
-							mode: "conjugations",
-							label: "Conjugations",
-							totalGames: 1,
-							won: 1,
-							failed: 0,
-							accuracy: 100,
-						},
-						{
-							mode: "fix sentence",
-							label: "Fix sentence",
-							totalGames: 0,
-							won: 0,
-							failed: 0,
-							accuracy: 0,
-						},
-						{
-							mode: "particles",
-							label: "Particles",
-							totalGames: 2,
-							won: 1,
-							failed: 1,
-							accuracy: 50,
-						},
-						{
-							mode: "reorder",
-							label: "Reorder",
-							totalGames: 0,
-							won: 0,
-							failed: 0,
-							accuracy: 0,
-						},
-					],
-				}),
+				json: jest.fn().mockResolvedValue(defaultStatsResponse),
 			})
 		}
 
@@ -606,6 +722,31 @@ test("opens stats from the account menu", async () => {
 	expect(within(allGamesPanel).getByText("67%")).toBeInTheDocument()
 	expect(screen.getByLabelText("Translate stats")).toBeInTheDocument()
 	expect(screen.getByLabelText("Fix sentence stats")).toHaveTextContent("0%")
+	expect(screen.getByRole("tab", { name: "all" })).toHaveAttribute("aria-selected", "true")
+	expect(screen.getByRole("tab", { name: "easy" })).toBeInTheDocument()
+	expect(screen.getByRole("tab", { name: "medium" })).toBeInTheDocument()
+	expect(screen.getByRole("tab", { name: "hard" })).toBeInTheDocument()
+
+	fireEvent.click(screen.getByRole("tab", { name: "easy" }))
+	expect(screen.getByRole("tab", { name: "easy" })).toHaveAttribute("aria-selected", "true")
+	expect(allGamesPanel).toHaveTextContent(/Total games\s*2/)
+	expect(allGamesPanel).toHaveTextContent(/Won\s*1/)
+	expect(allGamesPanel).toHaveTextContent(/Failed\s*1/)
+	expect(allGamesPanel).toHaveTextContent(/Accuracy\s*50%/)
+	expect(screen.getByLabelText("Translate stats")).toHaveTextContent("50%")
+	expect(screen.getByLabelText("Conjugations stats")).toHaveTextContent("0%")
+
+	fireEvent.click(screen.getByRole("tab", { name: "medium" }))
+	expect(allGamesPanel).toHaveTextContent(/Total games\s*3/)
+	expect(allGamesPanel).toHaveTextContent(/Won\s*3/)
+	expect(allGamesPanel).toHaveTextContent(/Failed\s*0/)
+	expect(allGamesPanel).toHaveTextContent(/Accuracy\s*100%/)
+
+	fireEvent.click(screen.getByRole("tab", { name: "hard" }))
+	expect(allGamesPanel).toHaveTextContent(/Total games\s*1/)
+	expect(allGamesPanel).toHaveTextContent(/Won\s*0/)
+	expect(allGamesPanel).toHaveTextContent(/Failed\s*1/)
+	expect(allGamesPanel).toHaveTextContent(/Accuracy\s*0%/)
 
 	const statsRequest = global.fetch.mock.calls.find(
 		([url]) => url === `${API_BASE_URL}/users/1/stats`,
@@ -702,6 +843,7 @@ test("shows locally recorded stats when backend stats are unavailable", async ()
 				ok: true,
 				json: jest.fn().mockResolvedValue({
 					prompt: "I eat rice.",
+					difficulty: "easy",
 					challengeId,
 				}),
 			})
@@ -766,6 +908,14 @@ test("shows locally recorded stats when backend stats are unavailable", async ()
 	expect(within(allGamesPanel).getByText("100%")).toBeInTheDocument()
 	expect(screen.getByLabelText("Translate stats")).toHaveTextContent("100%")
 	expect(screen.getByLabelText("Conjugations stats")).toHaveTextContent("0%")
+
+	fireEvent.click(screen.getByRole("tab", { name: "easy" }))
+	expect(allGamesPanel).toHaveTextContent(/Total games\s*1/)
+	expect(allGamesPanel).toHaveTextContent(/Accuracy\s*100%/)
+
+	fireEvent.click(screen.getByRole("tab", { name: "medium" }))
+	expect(allGamesPanel).toHaveTextContent(/Total games\s*0/)
+	expect(allGamesPanel).toHaveTextContent(/Accuracy\s*0%/)
 
 	await waitFor(() => {
 		const statsRequest = global.fetch.mock.calls.find(
@@ -1264,6 +1414,7 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 	const checkRequest = global.fetch.mock.calls.find(([url]) => url === `${API_BASE_URL}/games/check`)
 	expect(JSON.parse(checkRequest[1].body)).toEqual({
 		mode: "translate",
+		difficulty: "easy",
 		prompt: "I eat rice.",
 		answer: "。",
 	})
@@ -1342,12 +1493,14 @@ test("sends the same challenge ID for repeated checks on one prompt", async () =
 	expect(checkBodies).toEqual([
 		{
 			mode: "translate",
+			difficulty: "easy",
 			prompt: "I eat rice.",
 			answer: "。",
 			challengeId,
 		},
 		{
 			mode: "translate",
+			difficulty: "easy",
 			prompt: "I eat rice.",
 			answer: "。",
 			challengeId,
@@ -1415,6 +1568,7 @@ test("calls prompt and check endpoints with a random real mode for shuffle", asy
 	const checkRequest = global.fetch.mock.calls.find(([url]) => url === `${API_BASE_URL}/games/check`)
 	expect(JSON.parse(checkRequest[1].body)).toEqual({
 		mode: "particles",
+		difficulty: "easy",
 		prompt: "I eat sushi.",
 		answer: "。",
 	})

@@ -48,6 +48,7 @@ export default function GamePrompt({
 				const nextPromptDataWithMode = {
 					...nextPromptData,
 					mode: nextPromptData?.mode || promptRequestMode,
+					difficulty: nextPromptData?.difficulty || difficulty,
 				}
 				setPrompt(nextPrompt)
 				setStatus("ready")

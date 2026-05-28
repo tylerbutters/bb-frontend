@@ -87,6 +87,7 @@ export default function SentenceBuilderPage({ currentUser, onLogout }) {
 				isVisible={hasSentenceElements}
 				gameMode={gamePromptData?.mode || selectedGameMode}
 				challengeId={gamePromptData?.challengeId}
+				difficulty={gamePromptData?.difficulty}
 				currentUser={currentUser}
 				prompt={gamePrompt}
 				promptStatus={gamePromptStatus}

@@ -3,6 +3,7 @@ import { Link, Navigate } from "react-router-dom"
 import { getUserStats } from "../api/users"
 import {
 	emptyGameStatsResponse,
+	GAME_STAT_FILTERS,
 	getLocalGameStats,
 	hasRecordedStats,
 } from "../gameStatsStorage"
@@ -46,15 +47,45 @@ function StatPanel({ title, stats }) {
 	)
 }
 
-function normalizeStatsResponse(stats, fallbackStats = emptyGameStatsResponse()) {
-	const statsByMode = new Map((stats?.games || []).map((game) => [game.mode, game]))
+function normalizeStatsGroup(statsGroup, fallbackStatsGroup = emptyGameStatsResponse()) {
+	const statsByMode = new Map((statsGroup?.games || []).map((game) => [game.mode, game]))
 
 	return {
-		total: normalizeStats(stats?.total || fallbackStats.total),
-		games: fallbackStats.games.map((fallbackGameStats) => ({
+		total: normalizeStats(statsGroup?.total || fallbackStatsGroup.total),
+		games: fallbackStatsGroup.games.map((fallbackGameStats) => ({
 			...fallbackGameStats,
 			...normalizeStats(statsByMode.get(fallbackGameStats.mode) || fallbackGameStats),
 		})),
+	}
+}
+
+function normalizeStatsResponse(stats, fallbackStats = emptyGameStatsResponse()) {
+	const emptyStats = emptyGameStatsResponse()
+	const fallbackByDifficulty = fallbackStats.byDifficulty || emptyStats.byDifficulty
+	const sourceByDifficulty = stats?.byDifficulty || {}
+	const byDifficulty = Object.fromEntries(
+		GAME_STAT_FILTERS.map((difficulty) => {
+			const sourceStats =
+				difficulty === "all"
+					? sourceByDifficulty.all || {
+							total: stats?.total,
+							games: stats?.games,
+						}
+					: sourceByDifficulty[difficulty]
+
+			return [
+				difficulty,
+				normalizeStatsGroup(
+					sourceStats,
+					fallbackByDifficulty[difficulty] || emptyStats.byDifficulty[difficulty],
+				),
+			]
+		}),
+	)
+
+	return {
+		...byDifficulty.all,
+		byDifficulty,
 	}
 }
 
@@ -62,8 +93,10 @@ export default function StatsPage({ currentUser }) {
 	const [stats, setStats] = useState(() =>
 		currentUser ? getLocalGameStats(currentUser.id) : emptyGameStatsResponse(),
 	)
+	const [selectedDifficulty, setSelectedDifficulty] = useState("all")
 	const [status, setStatus] = useState("idle")
 	const [message, setMessage] = useState("")
+	const visibleStats = stats.byDifficulty?.[selectedDifficulty] || stats
 
 	useEffect(() => {
 		if (!currentUser) return
@@ -116,13 +149,29 @@ export default function StatsPage({ currentUser }) {
 
 			<main className="accountContent statsContent" aria-labelledby="stats-heading">
 				<h1 id="stats-heading">Stats</h1>
+				<div className="statsDifficultyTabs" role="tablist" aria-label="Stats difficulty">
+					{GAME_STAT_FILTERS.map((difficulty) => (
+						<button
+							key={difficulty}
+							type="button"
+							role="tab"
+							aria-selected={selectedDifficulty === difficulty}
+							className={`statsDifficultyTab ${
+								selectedDifficulty === difficulty ? "statsDifficultyTabSelected" : ""
+							}`}
+							onClick={() => setSelectedDifficulty(difficulty)}
+						>
+							{difficulty}
+						</button>
+					))}
+				</div>
 				{status === "loading" && <p className="accountMessage">Loading stats...</p>}
 				{status === "error" && (
 					<p className="accountMessage accountMessageerror">{message}</p>
 				)}
-				<StatPanel title="All games" stats={stats.total} />
+				<StatPanel title="All games" stats={visibleStats.total} />
 				<div className="statsGameGrid">
-					{stats.games.map((game) => (
+					{visibleStats.games.map((game) => (
 						<StatPanel key={game.mode} title={game.label} stats={game} />
 					))}
 				</div>

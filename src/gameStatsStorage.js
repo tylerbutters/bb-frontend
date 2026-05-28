@@ -7,16 +7,13 @@ export const TRACKED_GAME_MODES = [
 	{ mode: "particles", label: "Particles" },
 	{ mode: "reorder", label: "Reorder" },
 ]
+export const GAME_DIFFICULTIES = ["easy", "medium", "hard"]
+export const GAME_STAT_FILTERS = ["all", ...GAME_DIFFICULTIES]
 
-const EMPTY_STATS = {
-	totalGames: 0,
-	won: 0,
-	failed: 0,
-	accuracy: 0,
-}
 const trackedModeLabels = new Map(
 	TRACKED_GAME_MODES.map((gameMode) => [gameMode.mode, gameMode.label]),
 )
+const validDifficulties = new Set(GAME_DIFFICULTIES)
 
 function storageKey(userId) {
 	return `${STORAGE_KEY_PREFIX}:${userId}`
@@ -52,41 +49,32 @@ function createStats({ totalGames = 0, won = 0, failed = 0 } = {}) {
 	}
 }
 
-function challengeKey({ challengeId, mode, prompt }) {
-	return challengeId || `${mode}:${prompt}`
+function normalizeDifficulty(difficulty) {
+	return validDifficulties.has(difficulty) ? difficulty : null
 }
 
-export function emptyGameStatsResponse() {
-	return {
-		total: { ...EMPTY_STATS },
-		games: TRACKED_GAME_MODES.map((gameMode) => ({
-			...gameMode,
-			...EMPTY_STATS,
-		})),
-	}
-}
-
-export function getLocalGameStats(userId) {
-	const results = Object.values(readStoredResults(userId))
-	const statsByMode = new Map(
+function createModeAccumulator() {
+	return new Map(
 		TRACKED_GAME_MODES.map(({ mode }) => [
 			mode,
 			{ totalGames: 0, won: 0, failed: 0 },
 		]),
 	)
+}
 
-	for (const result of results) {
-		const stats = statsByMode.get(result.mode)
-		if (!stats) continue
+function addStats(statsByMode, { mode, correct }) {
+	const stats = statsByMode.get(mode)
+	if (!stats) return
 
-		stats.totalGames += 1
-		if (result.correct) {
-			stats.won += 1
-		} else {
-			stats.failed += 1
-		}
+	stats.totalGames += 1
+	if (correct) {
+		stats.won += 1
+	} else {
+		stats.failed += 1
 	}
+}
 
+function createStatsGroup(statsByMode = createModeAccumulator()) {
 	const games = TRACKED_GAME_MODES.map(({ mode, label }) => ({
 		mode,
 		label,
@@ -107,11 +95,61 @@ export function getLocalGameStats(userId) {
 	}
 }
 
-export function hasRecordedStats(stats) {
-	return Number(stats?.total?.totalGames || 0) > 0
+function challengeKey({ challengeId, mode, prompt }) {
+	return challengeId || `${mode}:${prompt}`
 }
 
-export function recordLocalGameResult(userId, { challengeId, mode, prompt, correct }) {
+export function emptyGameStatsResponse() {
+	const byDifficulty = Object.fromEntries(
+		GAME_STAT_FILTERS.map((difficulty) => [difficulty, createStatsGroup()]),
+	)
+
+	return {
+		...byDifficulty.all,
+		byDifficulty,
+	}
+}
+
+export function getLocalGameStats(userId) {
+	const results = Object.values(readStoredResults(userId))
+	const statsByFilter = new Map(
+		GAME_STAT_FILTERS.map((difficulty) => [difficulty, createModeAccumulator()]),
+	)
+
+	for (const result of results) {
+		if (!trackedModeLabels.has(result.mode)) continue
+
+		const difficulty = normalizeDifficulty(result.difficulty)
+		const rowStats = {
+			mode: result.mode,
+			correct: Boolean(result.correct),
+		}
+
+		addStats(statsByFilter.get("all"), rowStats)
+		if (difficulty) addStats(statsByFilter.get(difficulty), rowStats)
+	}
+
+	const byDifficulty = Object.fromEntries(
+		GAME_STAT_FILTERS.map((difficulty) => [
+			difficulty,
+			createStatsGroup(statsByFilter.get(difficulty)),
+		]),
+	)
+
+	return {
+		...byDifficulty.all,
+		byDifficulty,
+	}
+}
+
+export function hasRecordedStats(stats) {
+	return Number(stats?.total?.totalGames || stats?.byDifficulty?.all?.total?.totalGames || 0) > 0
+}
+
+export function recordLocalGameResult(
+	userId,
+	{ challengeId, mode, difficulty = "easy", prompt, correct },
+) {
 	if (!userId || !trackedModeLabels.has(mode)) return false
 
 	const key = challengeKey({ challengeId, mode, prompt })
@@ -122,6 +160,7 @@ export function recordLocalGameResult(userId, { challengeId, mode, prompt, corre
 
 	results[key] = {
 		mode,
+		difficulty: normalizeDifficulty(difficulty) || "easy",
 		correct: Boolean(correct),
 		recordedAt: new Date().toISOString(),
 	}
