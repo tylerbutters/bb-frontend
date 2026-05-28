@@ -20,7 +20,7 @@
 	border-radius: 8px;
 	background: var(--color-surface-strong);
 	box-sizing: border-box;
-	color: var(--color-text-primary);
+	color: white;
 }
 
 .freeLimitModal h2 {
@@ -32,7 +32,7 @@
 
 .freeLimitModal p {
 	margin: 0;
-	color: var(--color-text-muted);
+	color: var(--color-grey-text);
 	font-size: 15px;
 	font-weight: 700;
 	line-height: 1.45;
@@ -42,8 +42,8 @@
 	min-height: 38px;
 	border: 1px solid var(--color-border-strong);
 	border-radius: 7px;
-	background: var(--color-text-primary);
-	color: var(--color-text-inverse);
+	background: white;
+	color: black;
 	cursor: pointer;
 	font: inherit;
 	font-size: 13px;

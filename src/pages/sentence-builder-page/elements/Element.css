@@ -1,6 +1,6 @@
 .elementText {
 	padding: 0 2px;
-	color: var(--color-text-primary);
+	color: white;
 	font-size: 40px;
 	line-height: 1;
 }
@@ -53,7 +53,7 @@
 	border-radius: 10px;
 	box-sizing: border-box;
 	backdrop-filter: blur(2px);
-	color: var(--color-text-primary);
+	color: white;
 	font-size: 40px;
 	line-height: 1;
 	cursor: pointer;
@@ -68,12 +68,12 @@
 }
 
 .pressedElement {
-	border-color: var(--color-text-primary);
+	border-color: white;
 	transform: scale(0.95);
 }
 
 .hoverElement {
-	border-color: var(--color-text-primary);
+	border-color: white;
 }
 
 .insideElementText {
@@ -104,5 +104,5 @@
 }
 
 .counterInput:focus {
-	border-color: var(--color-text-primary);
+	border-color: white;
 }

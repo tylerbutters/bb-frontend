@@ -17,7 +17,7 @@
 	border: 1px solid var(--color-success-border);
 	border-radius: 8px;
 	background: var(--color-success-background);
-	color: var(--color-text-primary);
+	color: white;
 
 	font-size: 15px;
 	font-weight: 800;
@@ -45,8 +45,8 @@
 
 .gameControlButtonPrimary {
 	border-color: var(--color-border-strong);
-	background: var(--color-text-primary);
-	color: var(--color-text-inverse);
+	background: white;
+	color: black;
 }
 
 .gameControlButtonPrimary:hover:not(:disabled) {
@@ -60,7 +60,7 @@
 	border: 1px solid var(--color-surface-control-active);
 	border-radius: 8px;
 	background: var(--color-surface);
-	color: var(--color-text-primary);
+	color: white;
 	font-size: 14px;
 	font-weight: 700;
 	line-height: 1.35;
@@ -74,7 +74,7 @@
 	border-radius: 8px;
 	background: var(--color-surface);
 	box-sizing: border-box;
-	color: var(--color-text-primary);
+	color: white;
 	font-size: 14px;
 	font-weight: 750;
 	line-height: 1.35;
@@ -101,8 +101,8 @@
 	padding: 0 14px;
 	border: 1px solid var(--color-border-strong);
 	border-radius: 7px;
-	background: var(--color-text-primary);
-	color: var(--color-text-inverse);
+	background: white;
+	color: black;
 	font-size: 13px;
 	font-weight: 850;
 	line-height: 1;

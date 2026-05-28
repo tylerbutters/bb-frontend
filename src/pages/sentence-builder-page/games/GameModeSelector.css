@@ -1,17 +1,14 @@
 .gameTabsBar {
 	position: fixed;
 	top: 74px;
-	left: 50%;
 	z-index: 1500;
 	display: flex;
 	align-items: center;
 	gap: 4px;
-	max-width: calc(100vw - 24px);
 	padding: 4px;
-	border: 1px solid var(--color-surface-control-active);
-	border-radius: 8px;
-	background: var(--color-surface-overlay);
-	transform: translateX(-50%);
+	border: 1px solid var(--color-grey-border);
+	border-radius: 10px;
+	/* background: var(--color-surface-overlay); */
 }
 
 .gameTabs {
@@ -21,55 +18,42 @@
 }
 
 .gameTab {
-	flex: 0 0 auto;
+	/* flex: 0 0 auto; */
 	padding: 8px 11px;
 	border: 0;
-	border-radius: 6px;
+	border-radius: 8px;
 	background: transparent;
-	color: var(--color-text-tertiary);
+	color: var(--color-grey-text);
 
 	font-size: 13px;
-	font-weight: 700;
-	line-height: 1;
-	white-space: nowrap;
 	cursor: pointer;
-	transition:
-		background-color 0.15s ease,
-		color 0.15s ease;
+	transition: color 0.15s ease;
 }
 
 .gameTab:hover {
-	color: var(--color-text-primary);
+	color: white;
 }
 
 .gameTabSelected {
-	background: var(--color-surface-control-hover);
-	color: var(--color-text-primary);
+	background: var(--color-grey-fill);
+	border: 1px solid var(--color-grey-border);
+	color: white;
 }
 
 .gameModeDetails {
-	position: fixed;
+	position: absolute;
 	top: 124px;
-	left: 50%;
-	z-index: 1400;
-	width: min(680px, calc(100vw - 28px));
-	color: var(--color-text-primary);
+	color: white;
 	text-align: center;
-	transform: translateX(-50%);
-	pointer-events: none;
 }
 
 .gameModeDetails h1 {
 	margin: 0;
 	font-size: 22px;
-	font-weight: 800;
-	line-height: 1.2;
 }
 
 .gameModeDetails p {
 	margin: 6px 0 0;
-	color: var(--color-text-secondary);
+	color: var(--color-grey-text);
 	font-size: 14px;
-	font-weight: 600;
-	line-height: 1.35;
 }

@@ -68,7 +68,7 @@ export default function DisplayNameSection({ currentUser, onUserUpdate }) {
 
 			<button
 				type="submit"
-				className="accountSubmitButton"
+				className="authPrimaryButton"
 				disabled={feedback.status === "submitting"}
 			>
 				{feedback.status === "submitting" ? "Saving..." : "Save changes"}

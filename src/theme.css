@@ -1,10 +1,6 @@
 :root {
 	--color-app-background: black;
-	--color-text-primary: white;
-	--color-text-inverse: black;
-	--color-text-muted: rgba(255, 255, 255, 0.72);
-	--color-text-subtle: rgba(255, 255, 255, 0.62);
-	--color-text-secondary: rgba(255, 255, 255, 0.64);
+
 	--color-text-tertiary: rgba(255, 255, 255, 0.58);
 	--color-text-faint: rgba(255, 255, 255, 0.5);
 	--color-text-disabled: rgba(255, 255, 255, 0.3);
@@ -50,6 +46,8 @@
 
 	--color-warning-subtle-border: rgba(255, 201, 92, 0.44);
 
+	--color-green-text: rgb(119, 224, 147);
+
 	/* GREY */
 	--color-grey-border: #323232;
 	--color-grey-fill: #141414;
@@ -72,6 +70,7 @@
 	--color-blue-border: #8ab4ff;
 
 	/* RED */
+	--color-red-text: #d15959;
 	--color-red-fill: #492626;
 	--color-red-border: #9c4343;
 	--color-red-fill-hover: #693737;

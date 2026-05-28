@@ -338,7 +338,7 @@ export default function Conjugation({
 			<div
 				ref={elementRef}
 				className="baseInsideElement conjugationElement"
-				style={{ backgroundColor: color, borderColor: isModalOpen && "var(--color-text-primary)" }}
+				style={{ backgroundColor: color, borderColor: isModalOpen && "white" }}
 				onClick={openConjugationMenu}
 			>
 				<div className="insideElementText">

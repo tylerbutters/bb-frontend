@@ -101,15 +101,13 @@ export function useGameHistoryDrawer(currentUser) {
 		function applyHistory(nextHistory, source) {
 			const normalizedHistory = normalizeHistoryResponse(nextHistory)
 			setHistoryItems((currentItems) =>
-				replace
-					? normalizedHistory.items
-					: [...currentItems, ...normalizedHistory.items],
+				replace ? normalizedHistory.items : [...currentItems, ...normalizedHistory.items],
 			)
 			setHistoryHasMore(recentLimit ? false : normalizedHistory.hasMore)
 			setHistoryNextOffset(
 				recentLimit
 					? null
-					: normalizedHistory.nextOffset ?? offset + normalizedHistory.items.length,
+					: (normalizedHistory.nextOffset ?? offset + normalizedHistory.items.length),
 			)
 			setHistorySource(source)
 			setHistoryStatus("ready")
@@ -215,10 +213,7 @@ export function useGameHistoryDrawer(currentUser) {
 	useEffect(() => {
 		if (!isHistoryClosing) return
 
-		const timeoutId = window.setTimeout(
-			finishClosingHistory,
-			HISTORY_DRAWER_ANIMATION_MS,
-		)
+		const timeoutId = window.setTimeout(finishClosingHistory, HISTORY_DRAWER_ANIMATION_MS)
 
 		return () => {
 			window.clearTimeout(timeoutId)
@@ -343,25 +338,31 @@ export function GameHistoryDrawer({
 	const isError = status === "error"
 	const normalizedStats = normalizeGameStats(stats)
 
+	function preventFixedDrawerScroll(event) {
+		const scrollArea =
+			event.target instanceof Element ? event.target.closest(".statsHistoryScrollArea") : null
+
+		if (scrollArea) return
+
+		event.preventDefault()
+		event.stopPropagation()
+	}
+
 	return (
 		<div className="statsHistoryOverlay">
 			<aside
-				className={`statsHistoryDrawer ${
-					isClosing ? "statsHistoryDrawerClosing" : ""
-				}`}
+				className={`statsHistoryDrawer ${isClosing ? "statsHistoryDrawerClosing" : ""}`}
 				aria-label={`${filter.label} history drawer`}
 				onAnimationEnd={isClosing ? onCloseAnimationEnd : undefined}
+				onTouchMove={preventFixedDrawerScroll}
+				onWheel={preventFixedDrawerScroll}
 			>
 				<header className="statsHistoryHeader">
 					<div>
 						<h2>{filter.label} history</h2>
 						<p>{filter.difficulty} difficulty</p>
 					</div>
-					<button
-						type="button"
-						className="statsHistoryCloseButton"
-						onClick={onClose}
-					>
+					<button type="button" className="statsHistoryCloseButton" onClick={onClose}>
 						Close
 					</button>
 				</header>
@@ -372,24 +373,19 @@ export function GameHistoryDrawer({
 							<strong>Today only</strong>
 							<p>Free accounts can see today's stats and history.</p>
 						</div>
-						<Link to="/buy">Buy premium</Link>
+						<Link className="premiumButton" to="/buy">
+							Buy premium
+						</Link>
 					</section>
 				)}
 
-				<div
-					className="statsDifficultyTabs statsHistoryDifficultyTabs"
-					role="tablist"
-					aria-label="History difficulty"
-				>
+				<div className="filterTabsContainer">
 					{GAME_STAT_FILTERS.map((difficulty) => (
 						<button
 							key={difficulty}
 							type="button"
-							role="tab"
-							aria-selected={filter.difficulty === difficulty}
-							className={`statsDifficultyTab ${
-								filter.difficulty === difficulty ? "statsDifficultyTabSelected" : ""
-							}`}
+							className={`filterTab ${filter.difficulty === difficulty ? "filterTabSelected" : ""}`}
+							style={{ padding: 5 }}
 							onClick={() => onDifficultyChange(difficulty)}
 						>
 							{difficulty}
@@ -397,20 +393,15 @@ export function GameHistoryDrawer({
 					))}
 				</div>
 
-				<div
-					className="statsHistoryRangeTabs"
-					aria-label="History range"
-				>
+				<div className="filterTabsContainer">
 					{recentFilters.map((range) => (
 						<button
 							key={range.value}
 							type="button"
-							className={`statsHistoryRangeButton ${
-								(filter.recentLimit || "all") === range.value
-									? "statsHistoryRangeButtonSelected"
-									: ""
+							className={`filterTab ${
+								(filter.recentLimit || "all") === range.value ? "filterTabSelected" : ""
 							}`}
-							aria-pressed={(filter.recentLimit || "all") === range.value}
+							style={{ padding: 5 }}
 							onClick={() => onRecentLimitChange(range.value)}
 						>
 							{range.label}
@@ -418,29 +409,28 @@ export function GameHistoryDrawer({
 					))}
 				</div>
 
-				<section
-					className="statsHistoryStats"
-					role="group"
+				<div
+					className="statsMetrics"
 					aria-label={`${filter.label} history stats`}
 					aria-busy={statsStatus === "loading"}
 				>
-					<div className="statsHistoryStat">
+					<div className="statsMetric">
 						<span>Total games</span>
 						<strong>{normalizedStats.totalGames}</strong>
 					</div>
-					<div className="statsHistoryStat">
+					<div className="statsMetric">
 						<span>Won</span>
 						<strong>{normalizedStats.won}</strong>
 					</div>
-					<div className="statsHistoryStat">
+					<div className="statsMetric">
 						<span>Failed</span>
 						<strong>{normalizedStats.failed}</strong>
 					</div>
-					<div className="statsHistoryStat">
+					<div className="statsMetric">
 						<span>Accuracy</span>
 						<strong>{normalizedStats.accuracy}%</strong>
 					</div>
-				</section>
+				</div>
 
 				<div className="statsHistoryScrollArea">
 					{isLoading && <p className="statsHistoryMessage">Loading history...</p>}
@@ -453,14 +443,10 @@ export function GameHistoryDrawer({
 						{items.map((item) => (
 							<article className="statsHistoryItem" key={item.id || item.challengeId}>
 								<header className="statsHistoryItemHeader">
-									<time dateTime={item.createdAt}>
-										{formatHistoryDate(item.createdAt)}
-									</time>
+									<time dateTime={item.createdAt}>{formatHistoryDate(item.createdAt)}</time>
 									<span
 										className={`statsHistoryResult ${
-											item.correct
-												? "statsHistoryResultCorrect"
-												: "statsHistoryResultFailed"
+											item.correct ? "statsHistoryResultCorrect" : "statsHistoryResultFailed"
 										}`}
 									>
 										{item.correct ? "Correct" : "Failed"}
@@ -473,17 +459,11 @@ export function GameHistoryDrawer({
 								<dl className="statsHistoryDetails">
 									<div>
 										<dt>Prompt</dt>
-										<dd>
-											{item.prompt ||
-												"Prompt was not saved for this older game"}
-										</dd>
+										<dd>{item.prompt || "Prompt was not saved for this older game"}</dd>
 									</div>
 									<div>
 										<dt>Your answer</dt>
-										<dd>
-											{item.answer ||
-												"Answer was not saved for this older game"}
-										</dd>
+										<dd>{item.answer || "Answer was not saved for this older game"}</dd>
 									</div>
 									{item.feedback && (
 										<div>

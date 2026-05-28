@@ -104,7 +104,7 @@ export default function Element({
 					className="elementContainer"
 					style={{
 						backgroundColor: elementColors.primary,
-						borderColor: isModalOpen && "var(--color-text-primary)",
+						borderColor: isModalOpen && "white",
 					}}
 					onClick={openMenuFromElementContainer}
 				>

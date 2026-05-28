@@ -66,7 +66,7 @@ export default function ConfirmEmailChangePage() {
 				<p className={`loginMessage loginMessage${feedback.status}`}>{feedback.message}</p>
 
 				{feedback.status === "error" && (
-					<Link to="/account" className="loginSubmitButton">
+					<Link to="/account" className="authPrimaryButton">
 						Back to account
 					</Link>
 				)}

@@ -80,12 +80,13 @@ export default function LoginPage({ onLogin }) {
 					autoComplete="current-password"
 					isPassword
 				/>
-				<button type="submit" className="loginSubmitButton" disabled={loginStatus === "submitting"}>
-					{loginStatus === "submitting" ? "Logging in..." : "Login"}
-				</button>
 				<Link to="/forgot-password" className="authTextButton">
 					Forgot password?
 				</Link>
+				<button type="submit" className="authPrimaryButton" disabled={loginStatus === "submitting"}>
+					{loginStatus === "submitting" ? "Logging in..." : "Login"}
+				</button>
+
 				{loginMessage && (
 					<p className={`loginMessage loginMessage${loginMessageType}`}>{loginMessage}</p>
 				)}

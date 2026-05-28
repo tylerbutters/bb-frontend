@@ -10,7 +10,7 @@
 	flex-direction: column;
 	gap: 16px;
 	box-sizing: border-box;
-	color: var(--color-text-primary);
+	color: white;
 }
 
 .aboutContent h1 {
@@ -22,13 +22,13 @@
 
 .aboutContent p {
 	margin: 0;
-	color: var(--color-text-muted);
+	color: var(--color-grey-text);
 	font-size: 16px;
 	font-weight: 650;
 	line-height: 1.55;
 }
 
 .aboutContent a {
-	color: var(--color-text-primary);
+	color: white;
 	font-weight: 850;
 }

@@ -16,20 +16,20 @@
 	flex-direction: column;
 	gap: 16px;
 	padding: 28px;
-	border: 1px solid var(--color-surface-control-active);
-	border-radius: 8px;
-	background: var(--color-surface);
+	border: 1px solid var(--color-grey-border);
+	border-radius: 10px;
+	/* background: var(--color-surface); */
 	box-sizing: border-box;
-	color: var(--color-text-primary);
+	color: white;
 }
 
 .accountContent {
 	display: flex;
-	width: min(380px, 100%);
+	width: min(1000px, 100%);
 	flex-direction: column;
 	gap: 14px;
 	box-sizing: border-box;
-	color: var(--color-text-primary);
+	color: white;
 }
 
 .accountSection {
@@ -38,8 +38,8 @@
 	gap: 14px;
 	padding: 18px;
 	border: 1px solid var(--color-grey-border);
-	border-radius: 8px;
-	background: var(--color-grey-fill);
+	border-radius: 10px;
+	/* background: var(--color-grey-fill); */
 	color: white;
 }
 
@@ -48,15 +48,11 @@
 .signupForm h1 {
 	margin: 0 0 4px;
 	font-size: 26px;
-	font-weight: 850;
-	line-height: 1.2;
 }
 
 .accountSection h2 {
 	margin: 0;
 	font-size: 18px;
-	font-weight: 850;
-	line-height: 1.2;
 }
 
 .deleteAccountActions {
@@ -66,14 +62,14 @@
 
 .resetEmailNotice {
 	margin: 0;
-	color: var(--color-text-subtle);
+	color: var(--color-grey-text);
 	font-size: 13px;
 	font-weight: 700;
 	line-height: 1.35;
 }
 
 .resetEmailAddress {
-	color: var(--color-text-muted);
+	color: var(--color-grey-text);
 	font-weight: 750;
 }
 
@@ -81,7 +77,7 @@
 	padding: 0;
 	border: 0;
 	background: transparent;
-	color: var(--color-text-primary);
+	color: white;
 	font: inherit;
 	font-weight: 850;
 	cursor: pointer;
@@ -98,7 +94,7 @@
 }
 
 .resetEmailChangeButton:focus-visible {
-	outline: 2px solid var(--color-text-subtle);
+	outline: 2px solid var(--color-grey-text);
 	outline-offset: 2px;
 }
 
@@ -109,30 +105,50 @@
 	background: var(--color-border-faint);
 }
 
-.accountSubmitButton,
-.accountLogoutButton,
-.loginSubmitButton,
-.signupSubmitButton {
-	height: 44px;
+.authPrimaryButton {
+	/* display: inline-flex; */
+	align-items: center;
+	justify-content: center;
 	margin-top: 4px;
-	border: 1px solid var(--color-border-strong);
+	/* border: 1px solid var(--color-border-strong); */
 	border-radius: 8px;
-	background: var(--color-text-primary);
-	color: var(--color-text-inverse);
-	font: inherit;
+	/* background: white; */
+	color: var(--color-grey-text);
 	font-size: 15px;
-	font-weight: 850;
 	cursor: pointer;
+	text-decoration: none;
+}
+.authPrimaryButton:hover {
+	color: white;
+}
+
+.logoutButton {
+	/* display: inline-flex; */
+	align-items: center;
+	padding: 10px 12px;
+	justify-content: center;
+	margin-top: 4px;
+	border: 1px solid var(--color-white-border);
+	border-radius: 8px;
+	background: var(--color-white-fill);
+	color: white;
+	font-size: 15px;
+	cursor: pointer;
+	text-decoration: none;
+}
+.logoutButton:hover {
+	border: 1px solid var(--color-white-border-hover);
+	background: var(--color-white-fill-hover);
 }
 
 .authTextButton {
-	align-self: center;
+	/* align-self: center; */
 	border: 0;
 	background: transparent;
-	color: var(--color-text-primary);
+	color: white;
 	font: inherit;
 	font-size: 13px;
-	font-weight: 850;
+	text-decoration: none;
 	cursor: pointer;
 }
 
@@ -147,7 +163,7 @@
 }
 
 .authTextButton:focus-visible {
-	outline: 2px solid var(--color-text-subtle);
+	outline: 2px solid var(--color-grey-text);
 	outline-offset: 2px;
 }
 
@@ -174,7 +190,7 @@
 .cancelDeleteButton {
 	border-color: var(--color-border-strong);
 	background: var(--color-surface-input);
-	color: var(--color-text-primary);
+	color: white;
 }
 
 .deleteAccountButton:disabled {
@@ -182,10 +198,7 @@
 	opacity: 0.62;
 }
 
-.accountSubmitButton:disabled,
-.accountLogoutButton:disabled,
-.loginSubmitButton:disabled,
-.signupSubmitButton:disabled {
+.authPrimaryButton:disabled {
 	cursor: default;
 	opacity: 0.62;
 }
@@ -203,27 +216,24 @@
 .accountMessagesuccess,
 .loginMessagesuccess,
 .signupMessagesuccess {
-	color: var(--color-success);
+	color: var(--color-green-text);
 }
 
 .accountMessageerror,
 .loginMessageerror,
 .signupMessageerror {
-	color: var(--color-danger);
+	color: var(--color-red-text);
 }
 
 .authSwitchText {
 	margin: 2px 0 0;
-	color: var(--color-text-subtle);
+	color: var(--color-grey-text);
 	font-size: 13px;
-	font-weight: 700;
-	line-height: 1.35;
 	text-align: center;
 }
 
 .authSwitchText a {
-	color: var(--color-text-primary);
-	font-weight: 850;
+	color: white;
 	text-decoration: none;
 }
 

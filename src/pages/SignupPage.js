@@ -174,7 +174,7 @@ export default function SignupPage({ onSignup }) {
 						autoComplete="new-password"
 						isPassword
 					/>
-					<button type="submit" className="signupSubmitButton" disabled={isRequestingSignupCode}>
+					<button type="submit" className="authPrimaryButton" disabled={isRequestingSignupCode}>
 						{isRequestingSignupCode ? "Sending code..." : "Send code"}
 					</button>
 					{signupMessage && (
@@ -215,7 +215,7 @@ export default function SignupPage({ onSignup }) {
 						onChange={updateConfirmationCode}
 						autoComplete="one-time-code"
 					/>
-					<button type="submit" className="signupSubmitButton" disabled={isConfirmingSignup}>
+					<button type="submit" className="authPrimaryButton" disabled={isConfirmingSignup}>
 						{isConfirmingSignup ? "Creating account..." : "Create account"}
 					</button>
 					<button

@@ -82,23 +82,20 @@
 	padding: 6px;
 	border: 1px solid var(--color-surface-control-active);
 	border-radius: 8px;
-	/* background: var(--color-surface); */
 	box-sizing: border-box;
 }
 
 .filterTab {
-	min-height: 34px;
 	border-radius: 6px;
+	padding: 10px 0;
 	color: var(--color-grey-text);
 	cursor: pointer;
-	font: inherit;
 	font-size: 14px;
-	line-height: 1;
 }
 
 .filterTab:hover,
 .filterTab:focus-visible {
-	color: var(--color-text-primary);
+	color: white;
 }
 
 .filterTabSelected {
@@ -122,7 +119,7 @@
 	border-radius: 8px;
 	/* background: var(--color-surface); */
 	box-sizing: border-box;
-	/* color: var(--color-text-primary); */
+	/* color: white; */
 }
 
 .statsPanelHeader {
@@ -164,12 +161,12 @@
 }
 
 .statsMetric span {
-	color: var(--color-text-muted);
+	color: var(--color-grey-text);
 	font-size: 13px;
 }
 
 .statsMetric strong {
-	color: var(--color-text-primary);
+	color: white;
 	font-size: 25px;
 }
 

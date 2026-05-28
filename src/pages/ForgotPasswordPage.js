@@ -223,7 +223,7 @@ export default function ForgotPasswordPage() {
 						isPassword
 					/>
 
-					<button type="submit" className="loginSubmitButton" disabled={isConfirmingReset}>
+					<button type="submit" className="authPrimaryButton" disabled={isConfirmingReset}>
 						{isConfirmingReset ? "Resetting password..." : "Reset password"}
 					</button>
 
@@ -271,7 +271,7 @@ export default function ForgotPasswordPage() {
 					autoComplete="username"
 				/>
 
-				<button type="submit" className="loginSubmitButton" disabled={isRequestingReset}>
+				<button type="submit" className="authPrimaryButton" disabled={isRequestingReset}>
 					{isRequestingReset ? "Sending code..." : "Send code"}
 				</button>
 

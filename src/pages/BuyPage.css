@@ -10,7 +10,7 @@
 	flex-direction: column;
 	gap: 16px;
 	box-sizing: border-box;
-	color: var(--color-text-primary);
+	color: white;
 }
 
 .buyContent h1 {
@@ -40,7 +40,7 @@
 
 .buyPanel p {
 	margin: 0;
-	color: var(--color-text-muted);
+	color: var(--color-grey-text);
 	font-size: 15px;
 	font-weight: 700;
 	line-height: 1.45;
@@ -64,7 +64,7 @@
 	border: 1px solid var(--color-border);
 	border-radius: 7px;
 	background: var(--color-surface-input);
-	color: var(--color-text-muted);
+	color: var(--color-grey-text);
 	cursor: not-allowed;
 	font: inherit;
 	font-size: 14px;

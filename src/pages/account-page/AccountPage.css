@@ -1,0 +1,48 @@
+.accountPageContent {
+	width: min(1080px, 100%);
+	gap: 18px;
+}
+
+.accountGrid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 18px;
+	align-items: start;
+}
+
+.accountGridColumn {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.accountSessionSection {
+	gap: 14px;
+}
+
+.accountSessionActions {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.accountSessionActions .authPrimaryButton {
+	width: 100%;
+	margin-top: 0;
+}
+
+.accountSessionActions .deleteAccountActions {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.accountSessionActions .deleteAccountButton:only-child {
+	grid-column: 1 / -1;
+}
+
+@media (max-width: 760px) {
+	.accountGrid {
+		grid-template-columns: 1fr;
+	}
+}

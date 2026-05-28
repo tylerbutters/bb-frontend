@@ -1,59 +1,44 @@
 .gamePromptPanel {
-	position: fixed;
+	position: absolute;
 	top: 190px;
-	left: 50%;
 	z-index: 1400;
 	width: min(560px, calc(100vw - 32px));
-	padding: 14px 18px;
-	border: 1px solid var(--color-surface-control-active);
-	border-radius: 8px;
-	background: var(--color-surface-overlay);
-	box-sizing: border-box;
-	color: var(--color-text-primary);
+	padding: 10px;
+	border: 1px solid var(--color-grey-border);
+	border-radius: 10px;
+	/* background: var(--color-surface-overlay); */
+	color: white;
 	text-align: center;
-	transform: translateX(-50%);
 }
 
 .gamePromptDifficulty {
-	display: inline-flex;
+	/* display: inline-flex; */
 	gap: 4px;
-	margin-bottom: 12px;
+	/* margin-bottom: 12px; */
 	padding: 3px;
-	border: 1px solid var(--color-border-faint);
+	border: 1px solid var(--color-grey-border);
 	border-radius: 8px;
-	background: var(--color-surface-control-faint);
+	/* background: var(--color-surface-control-faint); */
 }
 
 .gamePromptDifficultyButton {
-	padding: 7px 10px;
-	border: 0;
+	padding: 5px 20px;
 	border-radius: 6px;
 	background: transparent;
-	color: var(--color-text-secondary);
-	font: inherit;
+	color: var(--color-grey-text);
 	font-size: 12px;
-	font-weight: 850;
-	line-height: 1;
 	text-transform: capitalize;
 	cursor: pointer;
-	transition:
-		background-color 0.15s ease,
-		color 0.15s ease;
 }
 
 .gamePromptDifficultyButton:hover {
-	background: var(--color-surface-control);
-	color: var(--color-text-primary);
+	color: white;
 }
 
 .gamePromptDifficultyButtonSelected {
-	background: var(--color-text-primary);
-	color: var(--color-text-inverse);
-}
-
-.gamePromptDifficultyButtonSelected:hover {
-	background: var(--color-text-primary);
-	color: var(--color-text-inverse);
+	border: 1px solid var(--color-grey-border);
+	background: var(--color-grey-fill);
+	color: white;
 }
 
 .gamePromptHeader {
@@ -61,17 +46,9 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: 12px;
-	margin-bottom: 8px;
+	/* margin-bottom: 8px; */
+	/* background-color: red; */
 }
-
-.gamePromptActions {
-	display: flex;
-	flex: 0 0 auto;
-	flex-wrap: wrap;
-	justify-content: flex-end;
-	gap: 8px;
-}
-
 .gamePromptLabel {
 	color: var(--color-text-tertiary);
 	font-size: 12px;
@@ -82,34 +59,18 @@
 
 .gamePromptHistoryButton,
 .gamePromptRegenerateButton {
-	flex: 0 0 auto;
-	padding: 7px 10px;
-	border: 1px solid var(--color-border);
-	border-radius: 7px;
-	background: var(--color-surface-input);
-	color: var(--color-text-primary);
-	font: inherit;
-	font-size: 12px;
-	font-weight: 800;
-	line-height: 1;
+	color: var(--color-grey-text);
 	cursor: pointer;
-	transition:
-		background-color 0.15s ease,
-		border-color 0.15s ease,
-		transform 0.15s ease;
 }
 
 .gamePromptHistoryButton:hover,
 .gamePromptRegenerateButton:hover:not(:disabled) {
-	border-color: var(--color-border-hover);
-	background: var(--color-surface-control-hover);
+	color: white;
 }
 
 .gamePromptHistoryButtonSelected,
 .gamePromptHistoryButtonSelected:hover {
-	border-color: var(--color-surface-control-active);
-	background: var(--color-text-primary);
-	color: var(--color-text-inverse);
+	color: white;
 }
 
 .gamePromptHistoryButton:active,
@@ -123,8 +84,6 @@
 }
 
 .gamePromptText {
-	min-height: 24px;
+	margin-top: 10px;
 	font-size: 20px;
-	font-weight: 800;
-	line-height: 1.3;
 }

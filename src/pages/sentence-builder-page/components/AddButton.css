@@ -33,7 +33,7 @@
 }
 
 .addButton:hover {
-	color: var(--color-text-primary);
+	color: white;
 }
 
 .addButton:active {
@@ -41,8 +41,8 @@
 }
 
 .addButtonOpen {
-	border-color: var(--color-text-primary);
-	color: var(--color-text-primary);
+	border-color: white;
+	color: white;
 }
 
 .addButtonDragHidden {

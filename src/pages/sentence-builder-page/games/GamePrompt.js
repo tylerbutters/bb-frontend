@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { generateGamePrompt } from "../../../api/games"
 import "./GamePrompt.css"
+import { History, RotateCcw } from "lucide-react"
 
 const PROMPT_DIFFICULTIES = ["easy", "medium", "hard"]
 const SHUFFLE_GAME_MODES = ["translate", "conjugations", "fix sentence", "particles", "reorder"]
@@ -22,8 +23,7 @@ export default function GamePrompt({
 	const [errorCode, setErrorCode] = useState("")
 	const [difficulty, setDifficulty] = useState(PROMPT_DIFFICULTIES[0])
 	const hasPromptGenerator = hasGamePromptGenerator(gameMode)
-	const isQuotaLimitError =
-		errorCode === "DAILY_GAME_LIMIT_REACHED" || Boolean(isQuotaExhausted)
+	const isQuotaLimitError = errorCode === "DAILY_GAME_LIMIT_REACHED" || Boolean(isQuotaExhausted)
 
 	useEffect(() => {
 		if (!isVisible || !hasPromptGenerator) {
@@ -132,7 +132,7 @@ export default function GamePrompt({
 						</button>
 					))}
 				</div>
-				<div className="gamePromptActions">
+				<div>
 					{onOpenHistory && (
 						<button
 							type="button"
@@ -142,16 +142,17 @@ export default function GamePrompt({
 							aria-pressed={isHistoryOpen}
 							onClick={onOpenHistory}
 						>
-							History
+							<History />
 						</button>
 					)}
 					<button
 						type="button"
-						className="gamePromptRegenerateButton"
+						className="gamePromptHistoryButton"
 						onClick={onRegenerate}
 						disabled={status === "loading"}
 					>
-						{status === "loading" ? "Generating..." : "Regenerate"}
+						<RotateCcw />
+						{/* {status === "loading" ? "Generating..." : "Regenerate"} */}
 					</button>
 				</div>
 			</div>
