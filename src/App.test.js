@@ -847,6 +847,7 @@ test("opens paginated game history from a stats panel", async () => {
 
 	const drawer = await screen.findByLabelText("Translate history drawer")
 	expect(document.body.style.overflow).toBe("")
+	expect(document.querySelector(".statsPage")).toHaveClass("statsPageHistoryOpen")
 	expect(within(drawer).getByRole("heading", { name: "Translate history" })).toBeInTheDocument()
 	expect(within(drawer).getByText("easy difficulty")).toBeInTheDocument()
 	expect(within(drawer).getByRole("tab", { name: "easy" })).toHaveAttribute(
@@ -907,6 +908,7 @@ test("opens paginated game history from a stats panel", async () => {
 	expect(screen.getByLabelText("Translate history drawer")).toBeInTheDocument()
 
 	fireEvent.click(within(drawer).getByRole("button", { name: "Close" }))
+	expect(document.querySelector(".statsPage")).not.toHaveClass("statsPageHistoryOpen")
 	await waitFor(() => {
 		expect(screen.queryByLabelText("Translate history drawer")).not.toBeInTheDocument()
 	})

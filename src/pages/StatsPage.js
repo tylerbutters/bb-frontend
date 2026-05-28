@@ -486,8 +486,12 @@ export default function StatsPage({ currentUser }) {
 		})
 	}
 
+	const statsPageClassName = `app accountPage statsPage ${
+		historyFilter && !isHistoryClosing ? "statsPageHistoryOpen" : ""
+	}`
+
 	return (
-		<div className="app accountPage statsPage">
+		<div className={statsPageClassName}>
 			<Link className="topRightButton" to="/">
 				Back
 			</Link>
