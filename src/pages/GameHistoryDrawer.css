@@ -61,9 +61,7 @@
 
 .statsHistoryCloseButton,
 .statsHistoryLoadMoreButton {
-	/* border: 1px solid var(--color-border); */
 	border-radius: 6px;
-	/* background: var(--color-surface-input); */
 	color: var(--color-grey-text);
 	cursor: pointer;
 	font-size: 15px;

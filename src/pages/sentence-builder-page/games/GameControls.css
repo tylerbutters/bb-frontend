@@ -50,8 +50,8 @@
 }
 
 .gameControlButtonPrimary:hover:not(:disabled) {
-	border-color: var(--color-surface-light);
-	background: var(--color-surface-light);
+	border-color: var(--color-white-border-hover);
+	background: var(--color-white-background-hover);
 }
 
 .gameFeedback {
@@ -59,7 +59,7 @@
 	padding: 12px 14px;
 	border: 1px solid var(--color-grey-border);
 	border-radius: 8px;
-	background: var(--color-surface);
+	background: var(--color-lightgrey1-background);
 	color: white;
 	font-size: 14px;
 	font-weight: 700;
@@ -72,12 +72,10 @@
 	padding: 12px 14px;
 	border: 1px solid var(--color-grey-border);
 	border-radius: 8px;
-	background: var(--color-grey-background);
+	/* background: var(--color-grey-background); */
 	box-sizing: border-box;
 	color: white;
 	font-size: 14px;
-	font-weight: 750;
-	line-height: 1.35;
 	text-align: center;
 }
 
@@ -86,7 +84,7 @@
 	flex-direction: column;
 	align-items: center;
 	gap: 10px;
-	border-color: var(--color-greyy-border);
+	border-color: var(--color-grey-border);
 }
 
 .gameQuotaBlocker p {
@@ -94,24 +92,22 @@
 }
 
 .gameQuotaButton {
-	display: inline-flex;
+	display: flex;
 	min-height: 36px;
 	align-items: center;
 	justify-content: center;
 	padding: 0 14px;
-	border: 1px solid var(--color-grey-border);
+	border: 1px solid var(--color-white-border);
 	border-radius: 7px;
-	background: white;
-	color: black;
+	background: var(--color-white-background);
+	color: white;
 	font-size: 13px;
-	font-weight: 850;
-	line-height: 1;
 	text-decoration: none;
 }
 
 .gameQuotaButton:hover {
-	border-color: var(--color-surface-light);
-	background: var(--color-surface-light);
+	border-color: var(--color-white-border-hover);
+	background: var(--color-white-background-hover);
 }
 
 .gameFeedbackSuccess {

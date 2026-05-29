@@ -120,9 +120,9 @@ export default function GameControls({
 		<div className="gameControls">
 			{requiresLogin && (
 				<div className="gameQuotaBlocker" role="status">
-					<p>Log in to check challenge answers.</p>
+					<p>Sign up to check challenge answers</p>
 					<Link className="gameQuotaButton" to="/login">
-						Login
+						Sign up
 					</Link>
 				</div>
 			)}

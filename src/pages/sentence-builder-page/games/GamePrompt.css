@@ -6,7 +6,6 @@
 	padding: 10px;
 	border: 1px solid var(--color-grey-border);
 	border-radius: 10px;
-	/* background: var(--color-surface-overlay); */
 	color: white;
 	text-align: center;
 }
@@ -18,7 +17,6 @@
 	padding: 3px;
 	/* border: 1px solid var(--color-grey-border); */
 	border-radius: 8px;
-	/* background: var(--color-surface-control-faint); */
 }
 
 .gamePromptDifficultyButton {

@@ -16,9 +16,9 @@
 	flex-direction: column;
 	gap: 14px;
 	padding: 22px;
-	border: 1px solid var(--color-surface-control-active);
+	border: 1px solid var(--color-grey-border);
 	border-radius: 8px;
-	background: var(--color-surface-strong);
+	background: var(--color-lightgrey1-background);
 	box-sizing: border-box;
 	color: white;
 }
@@ -52,6 +52,6 @@
 }
 
 .freeLimitModalButton:hover {
-	border-color: var(--color-surface-light);
-	background: var(--color-surface-light);
+	border-color: var(--color-white-border-hover);
+	background: var(--color-white-background-hover);
 }
