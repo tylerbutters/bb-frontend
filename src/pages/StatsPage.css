@@ -79,8 +79,8 @@
 	grid-template-columns: repeat(4, minmax(0, 1fr));
 	gap: 8px;
 	padding: 6px;
-	border: 1px solid var(--color-grey-border);
-	background-color: var(--color-lightgrey1-background);
+	/* border: 1px solid var(--color-grey-border); */
+	/* background-color: var(--color-lightgrey1-background); */
 	border-radius: 8px;
 }
 
@@ -99,7 +99,7 @@
 
 .filterTabSelected {
 	border: 1px solid var(--color-grey-border);
-	background: var(--color-lightgrey2-background);
+	background: var(--color-grey-background);
 	color: white;
 }
 
@@ -116,7 +116,7 @@
 	padding: 22px;
 	border: 1px solid var(--color-grey-border);
 	border-radius: 8px;
-	background: var(--color-lightgrey1-background);
+	/* background: var(--color-lightgrey1-background); */
 	box-sizing: border-box;
 	/* color: white; */
 }
@@ -154,9 +154,9 @@
 	justify-content: center;
 	gap: 6px;
 	padding: 12px;
-	/* border: 1px solid var(--color-grey-border); */
+	/* border: 1px solid var(--color-grey-border);
+	background-color: var(--color-grey-background); */
 	border-radius: 8px;
-	/* background: var(--color-lightgrey1-background); */
 }
 
 .statsMetric span {

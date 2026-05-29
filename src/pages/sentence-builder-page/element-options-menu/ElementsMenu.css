@@ -66,10 +66,6 @@
 	flex: 1;
 	text-align: left;
 	cursor: pointer;
-	transition:
-		background-color 0.15s ease,
-		border-color 0.15s ease,
-		color 0.15s ease;
 }
 
 .elementsMenuButton:hover {
@@ -90,7 +86,7 @@
 .elementsMenuTitle {
 	padding: 9px 12px;
 	border-bottom: 1px solid var(--color-grey-border);
-	background-color: var(--color-lightgrey1-background);
+	/* background-color: var(--color-lightgrey1-background); */
 	color: white;
 	font-size: 15px;
 	text-align: center;
@@ -124,7 +120,7 @@
 	overflow: hidden;
 	border: 1px solid var(--color-grey-border);
 	border-radius: 10px;
-	background: var(--color-lightgrey1-background);
+	background: var(--color-app-background);
 	z-index: 999;
 }
 

@@ -10,7 +10,7 @@
 	overflow-y: auto;
 	border: 1px solid var(--color-grey-border);
 	border-radius: 8px;
-	background: var(--color-lightgrey1-background);
+	background: var(--color-app-background);
 	color: white;
 	box-shadow: 0 18px 30px var(--color-shadow);
 	transform-origin: top left;
@@ -63,7 +63,7 @@
 }
 
 .elementDetailPanel::-webkit-scrollbar-thumb {
-	border: 2px solid var(--color-lightgrey1-background);
+	border: 2px solid var(--color-grey-background);
 	border-radius: 999px;
 }
 
