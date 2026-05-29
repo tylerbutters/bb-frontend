@@ -79,18 +79,18 @@
 
 .selectedElementsMenuButton {
 	border: 1px solid var(--color-white-border);
-	background: var(--color-white-fill);
+	background: var(--color-white-background);
 }
 
 .selectedElementsMenuButton:hover {
 	border: 1px solid var(--color-white-border);
-	background: var(--color-white-fill);
+	background: var(--color-white-background);
 }
 
 .elementsMenuTitle {
 	padding: 9px 12px;
 	border-bottom: 1px solid var(--color-grey-border);
-	background-color: var(--color-surface-menu-header);
+	background-color: var(--color-lightgrey1-background);
 	color: white;
 	font-size: 15px;
 	text-align: center;
@@ -100,19 +100,20 @@
 	display: flex;
 	padding: 8px;
 	border-top: 1px solid var(--color-grey-border);
+	/* background-color: var(--color-lightgrey2-background); */
 }
 
 .deleteElementButton {
 	justify-content: center;
 	align-items: center;
 	border-color: var(--color-red-border);
-	background-color: var(--color-red-fill);
+	background-color: var(--color-red-background);
 	color: white;
 }
 
 .deleteElementButton:hover {
 	border-color: var(--color-red-border-hover);
-	background-color: var(--color-red-fill-hover);
+	background-color: var(--color-red-background-hover);
 }
 
 .menuPanel {
@@ -121,9 +122,9 @@
 	width: min(250px, calc(100vw - 32px));
 	max-height: 350px;
 	overflow: hidden;
-	border: 1px solid var(--color-border-faint);
+	border: 1px solid var(--color-grey-border);
 	border-radius: 10px;
-	background: var(--color-surface-menu);
+	background: var(--color-lightgrey1-background);
 	z-index: 999;
 }
 

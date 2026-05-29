@@ -39,7 +39,7 @@
 	padding: 18px;
 	border: 1px solid var(--color-grey-border);
 	border-radius: 10px;
-	/* background: var(--color-grey-fill); */
+	/* background: var(--color-grey-background); */
 	color: white;
 }
 
@@ -101,8 +101,7 @@
 .accountField input:focus,
 .loginField input:focus,
 .signupField input:focus {
-	border-color: var(--color-border-focus);
-	background: var(--color-border-faint);
+	border-color: white;
 }
 
 .authPrimaryButton {
@@ -110,7 +109,7 @@
 	align-items: center;
 	justify-content: center;
 	margin-top: 4px;
-	/* border: 1px solid var(--color-border-strong); */
+	/* border: 1px solid var(--color-grey-border); */
 	border-radius: 8px;
 	/* background: white; */
 	color: var(--color-grey-text);
@@ -130,7 +129,7 @@
 	margin-top: 4px;
 	border: 1px solid var(--color-white-border);
 	border-radius: 8px;
-	background: var(--color-white-fill);
+	background: var(--color-white-background);
 	color: white;
 	font-size: 15px;
 	cursor: pointer;
@@ -138,7 +137,7 @@
 }
 .logoutButton:hover {
 	border: 1px solid var(--color-white-border-hover);
-	background: var(--color-white-fill-hover);
+	background: var(--color-white-background-hover);
 }
 
 .authTextButton {
@@ -172,7 +171,7 @@
 	padding: 10px 12px;
 	border: 1px solid var(--color-red-border);
 	border-radius: 8px;
-	background: var(--color-red-fill);
+	background: var(--color-red-background);
 	color: white;
 	font-size: 14px;
 	cursor: pointer;
@@ -184,11 +183,11 @@
 
 .deleteAccountButton:hover {
 	border: 1px solid var(--color-red-border-hover);
-	background: var(--color-red-fill-hover);
+	background: var(--color-red-background-hover);
 }
 
 .cancelDeleteButton {
-	border-color: var(--color-border-strong);
+	border-color: var(--color-grey-border);
 	background: var(--color-surface-input);
 	color: white;
 }

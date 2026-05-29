@@ -357,81 +357,82 @@ export function GameHistoryDrawer({
 				onTouchMove={preventFixedDrawerScroll}
 				onWheel={preventFixedDrawerScroll}
 			>
-				<header className="statsHistoryHeader">
-					<div>
-						<h2>{filter.label} history</h2>
-						<p>{filter.difficulty} difficulty</p>
-					</div>
-					<button type="button" className="statsHistoryCloseButton" onClick={onClose}>
-						Close
-					</button>
-				</header>
-
-				{isFreeStatsLimited && (
-					<section className="statsHistoryUpgradeNotice" aria-label="History limit">
+				<div className="topPanel">
+					<header className="statsHistoryHeader">
 						<div>
-							<strong>Today only</strong>
-							<p>Free accounts can see today's stats and history.</p>
+							<h2>{filter.label} history</h2>
+							<p>{filter.difficulty} difficulty</p>
 						</div>
-						<Link className="premiumButton" to="/buy">
-							Buy premium
-						</Link>
-					</section>
-				)}
-
-				<div className="filterTabsContainer">
-					{GAME_STAT_FILTERS.map((difficulty) => (
-						<button
-							key={difficulty}
-							type="button"
-							className={`filterTab ${filter.difficulty === difficulty ? "filterTabSelected" : ""}`}
-							style={{ padding: 5 }}
-							onClick={() => onDifficultyChange(difficulty)}
-						>
-							{difficulty}
+						<button type="button" className="statsHistoryCloseButton" onClick={onClose}>
+							Close
 						</button>
-					))}
-				</div>
+					</header>
 
-				<div className="filterTabsContainer">
-					{recentFilters.map((range) => (
-						<button
-							key={range.value}
-							type="button"
-							className={`filterTab ${
-								(filter.recentLimit || "all") === range.value ? "filterTabSelected" : ""
-							}`}
-							style={{ padding: 5 }}
-							onClick={() => onRecentLimitChange(range.value)}
-						>
-							{range.label}
-						</button>
-					))}
-				</div>
+					{isFreeStatsLimited && (
+						<section className="statsHistoryUpgradeNotice" aria-label="History limit">
+							<div>
+								<strong>Today only</strong>
+								<p>Free accounts can see today's stats and history.</p>
+							</div>
+							<Link className="premiumButton" to="/buy">
+								Buy premium
+							</Link>
+						</section>
+					)}
 
-				<div
-					className="statsMetrics"
-					aria-label={`${filter.label} history stats`}
-					aria-busy={statsStatus === "loading"}
-				>
-					<div className="statsMetric">
-						<span>Total games</span>
-						<strong>{normalizedStats.totalGames}</strong>
+					<div className="filterTabsContainer">
+						{GAME_STAT_FILTERS.map((difficulty) => (
+							<button
+								key={difficulty}
+								type="button"
+								className={`filterTab ${filter.difficulty === difficulty ? "filterTabSelected" : ""}`}
+								style={{ padding: 5 }}
+								onClick={() => onDifficultyChange(difficulty)}
+							>
+								{difficulty}
+							</button>
+						))}
 					</div>
-					<div className="statsMetric">
-						<span>Won</span>
-						<strong>{normalizedStats.won}</strong>
+
+					<div className="filterTabsContainer">
+						{recentFilters.map((range) => (
+							<button
+								key={range.value}
+								type="button"
+								className={`filterTab ${
+									(filter.recentLimit || "all") === range.value ? "filterTabSelected" : ""
+								}`}
+								style={{ padding: 5 }}
+								onClick={() => onRecentLimitChange(range.value)}
+							>
+								{range.label}
+							</button>
+						))}
 					</div>
-					<div className="statsMetric">
-						<span>Failed</span>
-						<strong>{normalizedStats.failed}</strong>
-					</div>
-					<div className="statsMetric">
-						<span>Accuracy</span>
-						<strong>{normalizedStats.accuracy}%</strong>
+
+					<div
+						className="statsMetrics"
+						aria-label={`${filter.label} history stats`}
+						aria-busy={statsStatus === "loading"}
+					>
+						<div className="statsMetric">
+							<span>Total games</span>
+							<strong>{normalizedStats.totalGames}</strong>
+						</div>
+						<div className="statsMetric">
+							<span>Won</span>
+							<strong>{normalizedStats.won}</strong>
+						</div>
+						<div className="statsMetric">
+							<span>Failed</span>
+							<strong>{normalizedStats.failed}</strong>
+						</div>
+						<div className="statsMetric">
+							<span>Accuracy</span>
+							<strong>{normalizedStats.accuracy}%</strong>
+						</div>
 					</div>
 				</div>
-
 				<div className="statsHistoryScrollArea">
 					{isLoading && <p className="statsHistoryMessage">Loading history...</p>}
 					{isError && <p className="statsHistoryMessage">{message}</p>}

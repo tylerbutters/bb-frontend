@@ -21,39 +21,3 @@
 .accountMenuUserButton:hover {
 	text-decoration: underline;
 }
-
-.userDropdown {
-	position: absolute;
-	top: calc(100% + 10px);
-	right: 0;
-	min-width: 120px;
-	padding: 4px;
-	border: 1px solid var(--color-surface-control-active);
-	border-radius: 8px;
-	background: var(--color-surface-strong);
-	box-shadow: 0 18px 30px var(--color-shadow);
-}
-
-.userDropdown a,
-.userDropdown button {
-	display: block;
-	width: 100%;
-	padding: 9px 10px;
-	border: 0;
-	border-radius: 6px;
-	background: transparent;
-	box-sizing: border-box;
-	color: white;
-	font: inherit;
-	font-size: 13px;
-	font-weight: 800;
-	line-height: 1;
-	text-align: left;
-	text-decoration: none;
-	cursor: pointer;
-}
-
-.userDropdown a:hover,
-.userDropdown button:hover {
-	background: var(--color-border-faint);
-}

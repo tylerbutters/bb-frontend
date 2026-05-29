@@ -36,9 +36,8 @@
 }
 
 .menuListItemContainer::-webkit-scrollbar-thumb {
-	border: 2px solid var(--color-surface-menu);
+	border: 2px solid var(--color-lightgrey1-background);
 	border-radius: 999px;
-	background: var(--color-surface-pill);
 }
 
 .searchInputContainer {
@@ -46,7 +45,7 @@
 	width: 100%;
 	padding: 8px;
 	border-bottom: 1px solid var(--color-grey-border);
-	background-color: var(--color-surface-menu-header);
+	/* background-color: var(--color-lightgrey2-background); */
 	box-sizing: border-box;
 }
 
@@ -60,7 +59,7 @@
 	padding: 8px 10px;
 	border: 1px solid var(--color-grey-border);
 	border-radius: 7px;
-	background: var(--color-grey-fill);
+	background: var(--color-lightgrey2-background);
 	color: white;
 	font-size: 15px;
 	outline: none;

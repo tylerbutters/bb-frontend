@@ -1,72 +1,52 @@
 :root {
-	--color-app-background: black;
+	/* GREEN */
+	--color-green: rgb(119, 224, 147);
+	--color-green-border: rgba(78, 196, 126, 0.46);
+	--color-green-border-hover: rgba(78, 196, 126, 0.72);
+	--color-green-background: rgba(78, 196, 126, 0.18);
+	--color-green-background-hover: rgba(78, 196, 126, 0.3);
 
-	--color-surface-menu: #202124;
-	--color-surface-menu-header: #2b2d31;
-
-	--color-surface-list-item: #17181a;
-	--color-surface-input: rgba(255, 255, 255, 0.08);
-	--color-surface-input-hover: rgba(255, 255, 255, 0.12);
-	--color-surface-control: rgba(255, 255, 255, 0.1);
-	--color-surface-control-hover: rgba(255, 255, 255, 0.14);
-	--color-surface-control-active: #323232;
-	--color-surface-control-faint: rgba(255, 255, 255, 0.06);
-	--color-surface-transparent: rgba(255, 255, 255, 0);
-	--color-surface-pill: rgba(255, 255, 255, 0.28);
-	--color-surface-light: rgb(232, 232, 232);
-
-	--color-border: rgba(255, 255, 255, 0.18);
-	--color-border-subtle: rgba(255, 255, 255, 0.16);
-	--color-border-faint: rgba(255, 255, 255, 0.12);
-	--color-border-hairline: rgba(255, 255, 255, 0.1);
-	--color-border-muted: rgba(255, 255, 255, 0.14);
-	--color-border-strong: rgba(255, 255, 255, 0.24);
-	--color-border-hover: rgba(255, 255, 255, 0.36);
-	--color-border-focus: rgba(255, 255, 255, 0.48);
-	--color-outline-focus: rgba(255, 255, 255, 0.62);
-
-	--color-shadow: rgba(0, 0, 0, 0.35);
-
-	--color-success: rgb(119, 224, 147);
-	--color-success-border: rgba(78, 196, 126, 0.46);
-	--color-success-border-hover: rgba(78, 196, 126, 0.72);
-	--color-success-background: rgba(78, 196, 126, 0.18);
-	--color-success-background-hover: rgba(78, 196, 126, 0.3);
-	--color-success-subtle-border: rgba(78, 196, 126, 0.44);
-
+	/* ORANGE */
 	--color-warning-subtle-border: rgba(255, 201, 92, 0.44);
-
-	--color-green-text: rgb(119, 224, 147);
 
 	/* GREY */
 	--color-grey-border: #323232;
-	--color-grey-fill: #141414;
+	--color-grey-border-trans: rgba(110, 110, 110, 0.8);
+	--color-grey-background: #141414;
 	--color-grey-text: #ababab;
+
+	--color-app-background: #101112;
+
+	--color-lightgrey1-background: #202124;
+	--color-lightgrey2-background: #2b2d31;
+	--color-shadow: rgba(0, 0, 0, 0.35);
 
 	/* WHITE */
 	--color-white-border: #a2a2a2;
-	--color-white-fill: #434343;
+	--color-white-background: #434343;
 	--color-white-border-hover: #c3c3c3;
-	--color-white-fill-hover: #545454;
+	--color-white-background-hover: #545454;
 
 	/* GOLD */
-	--color-gold-fill: #635016;
+	--color-gold-background: #635016;
 	--color-gold-border: #c89528;
-	--color-gold-fill-hover: #927520;
+	--color-gold-background-hover: #927520;
 	--color-gold-border-hover: #ffbe32;
 
 	/* BLUE */
-	--color-blue-fill: #2c3e5d;
+	--color-blue-background: #2c3e5d;
 	--color-blue-border: #8ab4ff;
 
 	/* RED */
 	--color-red-text: #d15959;
-	--color-red-fill: #492626;
+	--color-red-background: #492626;
 	--color-red-border: #9c4343;
-	--color-red-fill-hover: #693737;
+	--color-red-background-hover: #693737;
 	--color-red-border-hover: #bb5050;
 
 	/* ELEMENTS */
+	--color-element-border: rgba(255, 255, 255, 0.2);
+
 	--color-element-noun-primary: rgba(255, 138, 138, 0.72);
 	--color-element-noun-secondary: rgba(255, 138, 138, 0.24);
 	--color-element-adjective-primary: rgba(255, 184, 112, 0.74);

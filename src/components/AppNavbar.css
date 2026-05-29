@@ -32,22 +32,22 @@
 
 .appNavbarSignupLink {
 	border: 1px solid var(--color-white-border);
-	background: var(--color-white-fill);
+	background: var(--color-white-background);
 	color: white;
 }
 .appNavbarSignupLink:hover {
 	border: 1px solid var(--color-white-border-hover);
-	background: var(--color-white-fill-hover);
+	background: var(--color-white-background-hover);
 }
 
 .appNavbarPremiumLink {
-	background-color: var(--color-gold-fill);
+	background-color: var(--color-gold-background);
 	border: 1px solid var(--color-gold-border);
 	color: white;
 }
 
 .appNavbarPremiumLink:hover {
-	background-color: var(--color-gold-fill-hover);
+	background-color: var(--color-gold-background-hover);
 	border: 1px solid var(--color-gold-border-hover);
 	color: white;
 }

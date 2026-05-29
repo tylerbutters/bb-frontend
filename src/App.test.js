@@ -205,10 +205,7 @@ function expectLoggedOutChallengeBlocker() {
 		.getByText("Log in to check challenge answers.")
 		.closest(".gameQuotaBlocker")
 	expect(blocker).toBeInTheDocument()
-	expect(within(blocker).getByRole("link", { name: "Login" })).toHaveAttribute(
-		"href",
-		"/login",
-	)
+	expect(within(blocker).getByRole("link", { name: "Login" })).toHaveAttribute("href", "/login")
 	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
 }
 
@@ -225,8 +222,7 @@ beforeEach(() => {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
-					message:
-						"Confirmation code sent. Check your email to finish creating your account.",
+					message: "Confirmation code sent. Check your email to finish creating your account.",
 				}),
 			})
 		}
@@ -248,8 +244,7 @@ beforeEach(() => {
 			return Promise.resolve({
 				ok: true,
 				json: jest.fn().mockResolvedValue({
-					message:
-						"Confirmation code sent. Check your email to finish creating your account.",
+					message: "Confirmation code sent. Check your email to finish creating your account.",
 				}),
 			})
 		}
@@ -574,7 +569,9 @@ test("requests a reset code and resets the password from the login page", async 
 		screen.getByText("If an account exists for that email, a reset code has been sent."),
 	).toBeInTheDocument()
 	const resetRequestCalls = () =>
-		global.fetch.mock.calls.filter(([url]) => url === `${API_BASE_URL}/login/password-reset/request`)
+		global.fetch.mock.calls.filter(
+			([url]) => url === `${API_BASE_URL}/login/password-reset/request`,
+		)
 
 	let resendButton = screen.getByRole("button", { name: "Resend code in 30s" })
 	expect(resendButton).toBeDisabled()
@@ -710,9 +707,7 @@ test("opens account from the user menu and updates account details", async () =>
 
 	await waitFor(() => {
 		expect(
-			within(emailSection).getByText(
-				"A verification link has been sent to tyler@example.com",
-			),
+			within(emailSection).getByText("A verification link has been sent to tyler@example.com"),
 		).toBeInTheDocument()
 	})
 
@@ -837,9 +832,10 @@ test("opens stats from the top nav", async () => {
 	expect(
 		within(statsLimitNotice).getByText("Free accounts can see today's stats and history."),
 	).toBeInTheDocument()
-	expect(
-		within(statsLimitNotice).getByRole("link", { name: "Buy premium" }),
-	).toHaveAttribute("href", "/buy")
+	expect(within(statsLimitNotice).getByRole("link", { name: "Buy premium" })).toHaveAttribute(
+		"href",
+		"/buy",
+	)
 
 	const allGamesPanel = screen.getByLabelText("All games stats")
 	await waitFor(() => {
@@ -855,10 +851,7 @@ test("opens stats from the top nav", async () => {
 	expect(screen.getByRole("tab", { name: "easy" })).toBeInTheDocument()
 	expect(screen.getByRole("tab", { name: "medium" })).toBeInTheDocument()
 	expect(screen.getByRole("tab", { name: "hard" })).toBeInTheDocument()
-	expect(screen.getByRole("button", { name: "all" })).toHaveAttribute(
-		"aria-pressed",
-		"true",
-	)
+	expect(screen.getByRole("button", { name: "all" })).toHaveAttribute("aria-pressed", "true")
 	expect(screen.getByRole("button", { name: "past 10" })).toBeInTheDocument()
 	expect(screen.getByRole("button", { name: "past 20" })).toBeInTheDocument()
 	expect(screen.getByRole("button", { name: "past 50" })).toBeInTheDocument()
@@ -889,10 +882,7 @@ test("opens stats from the top nav", async () => {
 		expect(allGamesPanel).toHaveTextContent(/Total games\s*6/)
 	})
 	fireEvent.click(screen.getByRole("button", { name: "past 10" }))
-	expect(screen.getByRole("button", { name: "past 10" })).toHaveAttribute(
-		"aria-pressed",
-		"true",
-	)
+	expect(screen.getByRole("button", { name: "past 10" })).toHaveAttribute("aria-pressed", "true")
 	await waitFor(() => {
 		expect(allGamesPanel).toHaveTextContent(/Total games\s*1/)
 	})
@@ -905,8 +895,7 @@ test("opens stats from the top nav", async () => {
 	const recentStatsRequest = global.fetch.mock.calls
 		.filter(([url]) => String(url).startsWith(`${API_BASE_URL}/users/1/game-history`))
 		.at(-1)
-	const recentStatsParams = new URL(String(recentStatsRequest[0]), "http://localhost")
-		.searchParams
+	const recentStatsParams = new URL(String(recentStatsRequest[0]), "http://localhost").searchParams
 	expect(recentStatsParams.get("mode")).toBe("all")
 	expect(recentStatsParams.get("difficulty")).toBe("all")
 	expect(recentStatsParams.get("limit")).toBe("10")
@@ -955,14 +944,12 @@ test("opens paginated game history from a stats panel", async () => {
 	expect(
 		within(historyLimitNotice).getByText("Free accounts can see today's stats and history."),
 	).toBeInTheDocument()
-	expect(
-		within(historyLimitNotice).getByRole("link", { name: "Buy premium" }),
-	).toHaveAttribute("href", "/buy")
-	expect(within(drawer).getByText("easy difficulty")).toBeInTheDocument()
-	expect(within(drawer).getByRole("tab", { name: "easy" })).toHaveAttribute(
-		"aria-selected",
-		"true",
+	expect(within(historyLimitNotice).getByRole("link", { name: "Buy premium" })).toHaveAttribute(
+		"href",
+		"/buy",
 	)
+	expect(within(drawer).getByText("easy difficulty")).toBeInTheDocument()
+	expect(within(drawer).getByRole("tab", { name: "easy" })).toHaveAttribute("aria-selected", "true")
 	const historyStats = within(drawer).getByRole("group", {
 		name: "Translate history stats",
 	})
@@ -1049,10 +1036,8 @@ test("opens paginated game history from a stats panel", async () => {
 	const updatedHistoryRequests = global.fetch.mock.calls.filter(([url]) =>
 		String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
 	)
-	const difficultySwitchParams = new URL(
-		String(updatedHistoryRequests[4][0]),
-		"http://localhost",
-	).searchParams
+	const difficultySwitchParams = new URL(String(updatedHistoryRequests[4][0]), "http://localhost")
+		.searchParams
 	expect(difficultySwitchParams.get("mode")).toBe("translate")
 	expect(difficultySwitchParams.get("difficulty")).toBe("medium")
 	expect(difficultySwitchParams.get("offset")).toBe("0")
@@ -1098,10 +1083,7 @@ test("opens game history from the sentence builder prompt panel", async () => {
 	expect(historyButton).toHaveClass("gamePromptHistoryButtonSelected")
 	expect(within(drawer).getByRole("heading", { name: "Translate history" })).toBeInTheDocument()
 	expect(within(drawer).getByText("all difficulty")).toBeInTheDocument()
-	expect(within(drawer).getByRole("tab", { name: "all" })).toHaveAttribute(
-		"aria-selected",
-		"true",
-	)
+	expect(within(drawer).getByRole("tab", { name: "all" })).toHaveAttribute("aria-selected", "true")
 	const historyStats = within(drawer).getByRole("group", {
 		name: "Translate history stats",
 	})
@@ -1139,7 +1121,7 @@ test("opens game history from the sentence builder prompt panel", async () => {
 	})
 })
 
-test("shows zero-filled stats panels when stats have not been created yet", async () => {
+test("shows zero-backgrounded stats panels when stats have not been created yet", async () => {
 	global.fetch.mockImplementation((url, options = {}) => {
 		if (url === `${API_BASE_URL}/login`) {
 			return Promise.resolve({
@@ -1463,9 +1445,7 @@ test("shows the free challenge limit intro once without persistent quota text", 
 	fireEvent.click(within(introDialog).getByRole("button", { name: "Okay" }))
 	expect(window.localStorage.getItem("bbFreeGameLimitIntroDismissed:1")).toBe("true")
 	await waitFor(() => {
-		expect(
-			screen.queryByRole("dialog", { name: "Free challenge checks" }),
-		).not.toBeInTheDocument()
+		expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
 	})
 
 	fireEvent.click(screen.getByRole("tab", { name: "sandbox" }))
@@ -1682,9 +1662,7 @@ test("shows the buy premium blocker immediately when logged-in quota loading is 
 	})
 	expect(screen.getByText("Buy premium for unlimited practice.")).toBeInTheDocument()
 	await waitFor(() => {
-		expect(
-			screen.queryByRole("dialog", { name: "Free challenge checks" }),
-		).not.toBeInTheDocument()
+		expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
 	})
 	expect(screen.queryByText("Log in to check challenge answers.")).not.toBeInTheDocument()
 	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
@@ -1763,12 +1741,15 @@ test("shows the buy premium blocker when a logged-in challenge check is quota-ga
 	fireEvent.click(screen.getByRole("button", { name: "。" }))
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 
-	const blocker = await screen.findByText("You've used today's 3 free challenge checks.")
+	const blocker = await screen
+		.findByText("You've used today's 3 free challenge checks.")
 		.then((element) => element.closest(".gameQuotaBlocker"))
 	expect(blocker).toBeInTheDocument()
 	expect(within(blocker).getByText("Buy premium for unlimited practice.")).toBeInTheDocument()
 	expect(within(blocker).getByRole("link", { name: "Buy premium" })).toHaveAttribute("href", "/buy")
-	expect(screen.queryByText("Not quite. Log in to check challenge answers.")).not.toBeInTheDocument()
+	expect(
+		screen.queryByText("Not quite. Log in to check challenge answers."),
+	).not.toBeInTheDocument()
 	expect(screen.queryByText("Log in to check challenge answers.")).not.toBeInTheDocument()
 	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
 })
@@ -1944,9 +1925,7 @@ test("checks the sandbox sentence and shows feedback", async () => {
 	expect(JSON.parse(sandboxCheckRequest[1].body)).toEqual({
 		answer: "。",
 	})
-	expect(
-		global.fetch.mock.calls.some(([url]) => url === `${API_BASE_URL}/games/check`),
-	).toBe(false)
+	expect(global.fetch.mock.calls.some(([url]) => url === `${API_BASE_URL}/games/check`)).toBe(false)
 	expect(screen.queryByRole("button", { name: "Next" })).not.toBeInTheDocument()
 })
 
@@ -2278,8 +2257,7 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 				ok: true,
 				json: jest.fn().mockResolvedValue({
 					prompt: promptRequestCount > 1 ? "I drink tea." : "I eat rice.",
-					challengeId:
-						promptRequestCount > 1 ? secondChallengeId : firstChallengeId,
+					challengeId: promptRequestCount > 1 ? secondChallengeId : firstChallengeId,
 				}),
 			})
 		}
@@ -2320,7 +2298,9 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 	await waitFor(() => {
 		expect(screen.getByText("Not quite. Use a full Japanese sentence.")).toBeInTheDocument()
 	})
-	const checkRequest = global.fetch.mock.calls.find(([url]) => url === `${API_BASE_URL}/games/check`)
+	const checkRequest = global.fetch.mock.calls.find(
+		([url]) => url === `${API_BASE_URL}/games/check`,
+	)
 	expect(JSON.parse(checkRequest[1].body)).toEqual({
 		mode: "translate",
 		difficulty: "easy",
@@ -2522,7 +2502,9 @@ test("calls prompt and check endpoints with a random real mode for shuffle", asy
 	const promptParams = new URL(String(promptRequest[0]), "http://localhost").searchParams
 	expect(promptParams.get("mode")).toBe("particles")
 
-	const checkRequest = global.fetch.mock.calls.find(([url]) => url === `${API_BASE_URL}/games/check`)
+	const checkRequest = global.fetch.mock.calls.find(
+		([url]) => url === `${API_BASE_URL}/games/check`,
+	)
 	expect(JSON.parse(checkRequest[1].body)).toEqual({
 		mode: "particles",
 		difficulty: "easy",

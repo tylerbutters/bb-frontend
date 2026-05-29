@@ -40,7 +40,7 @@
 
 .freeLimitModalButton {
 	min-height: 38px;
-	border: 1px solid var(--color-border-strong);
+	border: 1px solid var(--color-grey-border);
 	border-radius: 7px;
 	background: white;
 	color: black;
