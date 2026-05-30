@@ -14,11 +14,13 @@ export default function AppNavbar({ currentUser }) {
 				<Link className="appNavbarLink appNavbarAboutLink" to="/about">
 					About
 				</Link>
+				{/* TODO(premium): Re-enable the premium nav link when premium is live.
 				{currentUser?.plan !== "premium" && (
 					<Link className="appNavbarLink appNavbarPremiumLink" to="/buy">
 						PREMIUM
 					</Link>
 				)}
+				*/}
 			</nav>
 			{currentUser && (
 				<nav className="appNavbarRightActions" aria-label="Account">

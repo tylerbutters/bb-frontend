@@ -2,7 +2,6 @@ import { useState } from "react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import AccountPage from "./pages/account-page/AccountPage"
 import AboutPage from "./pages/AboutPage"
-import BuyPage from "./pages/BuyPage"
 import SentenceBuilderPage from "./pages/sentence-builder-page/SentenceBuilderPage"
 import LoginPage from "./pages/LoginPage"
 import SignupPage from "./pages/SignupPage"
@@ -56,7 +55,7 @@ export default function App() {
 				<Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
 				<Route path="/signup" element={<SignupPage onSignup={handleLogin} />} />
 				<Route path="/about" element={<AboutPage />} />
-				<Route path="/buy" element={<BuyPage />} />
+				{/* TODO(premium): Re-enable when checkout launches: <Route path="/buy" element={<BuyPage />} /> */}
 				<Route
 					path="/account"
 					element={

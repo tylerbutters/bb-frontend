@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
 import { getUserGameHistory, getUserStats } from "../api/users"
 import {
 	emptyGameStatsResponse,
@@ -70,13 +69,14 @@ export function useGameHistoryDrawer(currentUser) {
 	const [stats, setStats] = useState(() =>
 		currentUser
 			? getLocalGameStats(currentUser.id, {
-					todayOnly: currentUser.plan !== "premium",
+					todayOnly: false,
 				})
 			: emptyGameStatsResponse(),
 	)
 	const [statsStatus, setStatsStatus] = useState("idle")
 	const [isHistoryClosing, setIsHistoryClosing] = useState(false)
-	const isFreeStatsLimited = currentUser?.plan !== "premium"
+	const isFreeStatsLimited = false
+	// TODO(premium): Re-enable free stats/history limits: currentUser?.plan !== "premium"
 
 	async function loadHistoryPage({
 		filter = historyFilter,
@@ -361,14 +361,13 @@ export function GameHistoryDrawer({
 					<header className="statsHistoryHeader">
 						<div>
 							<h2>{filter.label} history</h2>
-							<p>{filter.difficulty} difficulty</p>
 						</div>
 						<button type="button" className="statsHistoryCloseButton" onClick={onClose}>
 							Close
 						</button>
 					</header>
 
-					{isFreeStatsLimited && (
+					{/* TODO(premium): Re-enable this upgrade notice when history limits return.
 						<section className="statsHistoryUpgradeNotice" aria-label="History limit">
 							<div>
 								<strong>Today only</strong>
@@ -378,13 +377,15 @@ export function GameHistoryDrawer({
 								Buy premium
 							</Link>
 						</section>
-					)}
+					*/}
 
 					<div className="filterTabsContainer">
 						{GAME_STAT_FILTERS.map((difficulty) => (
 							<button
 								key={difficulty}
 								type="button"
+								role="tab"
+								aria-selected={filter.difficulty === difficulty}
 								className={`filterTab ${filter.difficulty === difficulty ? "filterTabSelected" : ""}`}
 								style={{ padding: 5 }}
 								onClick={() => onDifficultyChange(difficulty)}
@@ -399,6 +400,7 @@ export function GameHistoryDrawer({
 							<button
 								key={range.value}
 								type="button"
+								aria-pressed={(filter.recentLimit || "all") === range.value}
 								className={`filterTab ${
 									(filter.recentLimit || "all") === range.value ? "filterTabSelected" : ""
 								}`}
@@ -412,6 +414,7 @@ export function GameHistoryDrawer({
 
 					<div
 						className="statsMetrics"
+						role="group"
 						aria-label={`${filter.label} history stats`}
 						aria-busy={statsStatus === "loading"}
 					>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, Navigate } from "react-router-dom"
+import { Navigate } from "react-router-dom"
 import { getUserGameHistory, getUserStats } from "../api/users"
 import {
 	emptyGameStatsResponse,
@@ -25,7 +25,12 @@ function StatPanel({ title, stats, onHistoryClick }) {
 		<section className="statsPanel" aria-label={`${title} stats`}>
 			<div className="statsPanelHeader">
 				<h2>{title}</h2>
-				<button type="button" className="statsHistoryButton" onClick={onHistoryClick}>
+				<button
+					type="button"
+					className="statsHistoryButton"
+					aria-label="History"
+					onClick={onHistoryClick}
+				>
 					<History />
 				</button>
 			</div>
@@ -63,7 +68,7 @@ export default function StatsPage({ currentUser, onAuthExpired }) {
 	const [stats, setStats] = useState(() =>
 		currentUser
 			? getLocalGameStats(currentUser.id, {
-					todayOnly: currentUser.plan !== "premium",
+					todayOnly: false,
 				})
 			: emptyGameStatsResponse(),
 	)
@@ -75,7 +80,8 @@ export default function StatsPage({ currentUser, onAuthExpired }) {
 	const [recentStatus, setRecentStatus] = useState("idle")
 	const [recentMessage, setRecentMessage] = useState("")
 	const gameHistory = useGameHistoryDrawer(currentUser)
-	const isFreeStatsLimited = currentUser?.plan !== "premium"
+	const isFreeStatsLimited = false
+	// TODO(premium): Re-enable free stats/history limits: currentUser?.plan !== "premium"
 	const selectedRecentLimit = parseGameRecentLimit(selectedRecentRange)
 	const visibleStats = selectedRecentLimit
 		? recentStats
@@ -206,7 +212,7 @@ export default function StatsPage({ currentUser, onAuthExpired }) {
 		<div className={statsPageClassName}>
 			<main className="accountContent statsContent" aria-labelledby="stats-heading">
 				<h1 id="stats-heading">Stats</h1>
-				{isFreeStatsLimited && (
+				{/* TODO(premium): Re-enable this upgrade notice when stats limits return.
 					<section className="statsUpgradeNotice" aria-label="Stats limit">
 						<div>
 							<strong>Today only</strong>
@@ -216,7 +222,7 @@ export default function StatsPage({ currentUser, onAuthExpired }) {
 							Buy premium
 						</Link>
 					</section>
-				)}
+				*/}
 				<div className="filterTabsContainer" role="tablist" aria-label="Stats difficulty">
 					{GAME_STAT_FILTERS.map((difficulty) => (
 						<button

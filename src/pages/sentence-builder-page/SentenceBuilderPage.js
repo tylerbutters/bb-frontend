@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { useGameQuota } from "../../useGameQuota"
 import GameControls from "./games/GameControls"
 import GameModeSelector from "./games/GameModeSelector"
@@ -9,8 +9,6 @@ import { GameHistoryDrawer, useGameHistoryDrawer } from "../GameHistoryDrawer"
 import "./GameQuota.css"
 
 const PROMPT_ELEMENT_GAME_MODES = new Set(["conjugations", "fix sentence", "particles", "reorder"])
-const FREE_LIMIT_INTRO_STORAGE_PREFIX = "bbFreeGameLimitIntroDismissed"
-const FREE_DAILY_CHALLENGE_LIMIT = 3
 const GAME_HISTORY_LABELS = {
 	translate: "Translate",
 	conjugations: "Conjugations",
@@ -29,11 +27,14 @@ export default function SentenceBuilderPage({ currentUser }) {
 	const [hasSentenceElements, setHasSentenceElements] = useState(false)
 	const gameHistory = useGameHistoryDrawer(currentUser)
 	const gameQuota = useGameQuota(currentUser)
-	const [isFreeLimitIntroVisible, setIsFreeLimitIntroVisible] = useState(false)
 	const isGame = selectedGameMode && selectedGameMode !== "sandbox"
+	const isFreeQuotaExhausted = false
+	/*
+	TODO(premium): Re-enable free quota blocking when premium is live.
 	const isFreeQuotaExhausted = Boolean(
 		currentUser && gameQuota.quota?.plan !== "premium" && gameQuota.quota?.remaining === 0,
 	)
+	*/
 	const historyGameMode = resolveHistoryGameMode(selectedGameMode, gamePromptData?.mode)
 	const historyGameLabel = historyGameMode
 		? GAME_HISTORY_LABELS[historyGameMode] || historyGameMode
@@ -56,24 +57,6 @@ export default function SentenceBuilderPage({ currentUser }) {
 		setGamePromptData(promptData || null)
 		setGamePromptStatus(status)
 	}, [])
-
-	useEffect(() => {
-		if (
-			!currentUser ||
-			!isGame ||
-			gameQuota.status !== "ready" ||
-			gameQuota.quota?.plan !== "free" ||
-			gameQuota.quota?.remaining === 0
-		) {
-			setIsFreeLimitIntroVisible(false)
-			return
-		}
-
-		const storageKey = `${FREE_LIMIT_INTRO_STORAGE_PREFIX}:${currentUser.id}`
-		if (window.localStorage.getItem(storageKey)) return
-
-		setIsFreeLimitIntroVisible(true)
-	}, [currentUser, gameQuota.quota?.plan, gameQuota.quota?.remaining, gameQuota.status, isGame])
 
 	function resetSentence() {
 		setWorkspaceResetCount((count) => count + 1)
@@ -116,14 +99,6 @@ export default function SentenceBuilderPage({ currentUser }) {
 		})
 	}
 
-	function dismissFreeLimitIntro() {
-		if (currentUser) {
-			window.localStorage.setItem(`${FREE_LIMIT_INTRO_STORAGE_PREFIX}:${currentUser.id}`, "true")
-		}
-
-		setIsFreeLimitIntroVisible(false)
-	}
-
 	return (
 		<div className="app">
 			<GameModeSelector
@@ -163,7 +138,7 @@ export default function SentenceBuilderPage({ currentUser }) {
 				onNext={regenerateGamePrompt}
 			/>
 			<GameHistoryDrawer {...gameHistory.drawerProps} />
-			{isFreeLimitIntroVisible && (
+			{/* TODO(premium): Re-enable this intro modal when free quotas return.
 				<div className="freeLimitModalOverlay" role="presentation">
 					<section
 						className="freeLimitModal"
@@ -172,7 +147,7 @@ export default function SentenceBuilderPage({ currentUser }) {
 						aria-modal="true"
 					>
 						<h2 id="free-limit-title">Free challenge checks</h2>
-						<p>Free accounts get {FREE_DAILY_CHALLENGE_LIMIT} challenge checks per day.</p>
+						<p>Free accounts get 3 challenge checks per day.</p>
 						<button
 							type="button"
 							className="freeLimitModalButton"
@@ -182,7 +157,7 @@ export default function SentenceBuilderPage({ currentUser }) {
 						</button>
 					</section>
 				</div>
-			)}
+			*/}
 		</div>
 	)
 }

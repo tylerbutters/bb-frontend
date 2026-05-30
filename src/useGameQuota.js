@@ -55,7 +55,22 @@ function createChallengeQuotaKey({ challengeId, gameMode, difficulty, prompt } =
 	return `prompt:${gameMode || "unknown"}:${difficulty || "easy"}:${prompt}`
 }
 
+function createUnlimitedQuota(quota, currentUser) {
+	return {
+		plan: quota?.plan || currentUser?.plan || "free",
+		limit: null,
+		used: Number(quota?.used || 0),
+		remaining: null,
+		resetsAt: quota?.resetsAt || nextUtcReset(),
+		canPlay: true,
+	}
+}
+
 function normalizeQuota(quota, currentUser) {
+	return createUnlimitedQuota(quota, currentUser)
+
+	/*
+	TODO(premium): Re-enable finite free quota handling when premium is live.
 	const plan = quota?.plan || currentUser?.plan || "free"
 	const isPremium = plan === "premium"
 	const limit = isPremium ? null : Number(quota?.limit ?? FREE_DAILY_CHALLENGE_LIMIT)
@@ -72,6 +87,7 @@ function normalizeQuota(quota, currentUser) {
 		resetsAt: quota?.resetsAt || "",
 		canPlay: isPremium || remaining > 0,
 	}
+	*/
 }
 
 function createLocalQuota(currentUser, used) {
@@ -89,12 +105,17 @@ function createLocalQuota(currentUser, used) {
 
 function mergeQuotaWithLocalUsage(quota, currentUser) {
 	const normalizedQuota = normalizeQuota(quota, currentUser)
+	return normalizedQuota
+
+	/*
+	TODO(premium): Re-enable local usage merging for free-account quota fallback.
 	if (normalizedQuota.plan === "premium") return normalizedQuota
 
 	const localUsage = readLocalQuotaEntry(currentUser?.id)
 	const used = Math.max(Number(normalizedQuota.used || 0), Number(localUsage.used || 0))
 
 	return createLocalQuota(currentUser, used)
+	*/
 }
 
 export function useGameQuota(currentUser) {
@@ -120,6 +141,10 @@ export function useGameQuota(currentUser) {
 
 	const recordLocalChallengeCheck = useCallback(
 		(challenge) => {
+			return null
+
+			/*
+			TODO(premium): Re-enable local quota tracking for free challenge checks.
 			if (
 				!currentUser ||
 				currentUser.plan === "premium" ||
@@ -143,6 +168,7 @@ export function useGameQuota(currentUser) {
 			const nextQuota = createLocalQuota(currentUser, used)
 			setQuota(nextQuota)
 			return nextQuota
+			*/
 		},
 		[currentUser, quota?.used],
 	)
@@ -171,6 +197,8 @@ export function useGameQuota(currentUser) {
 				if (error.name === "AbortError") return null
 
 				console.log(error)
+				/*
+				TODO(premium): Re-enable quota exhaustion fallback for free accounts.
 				if (error.status === 401 && currentUser?.plan !== "premium") {
 					const exhaustedQuota = createLocalQuota(currentUser, FREE_DAILY_CHALLENGE_LIMIT)
 					setQuota(exhaustedQuota)
@@ -178,6 +206,7 @@ export function useGameQuota(currentUser) {
 					setMessage("")
 					return exhaustedQuota
 				}
+				*/
 
 				setStatus("error")
 				setMessage(error.message || "Could not load game limit.")

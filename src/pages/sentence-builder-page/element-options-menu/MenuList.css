@@ -46,7 +46,6 @@
 	width: 100%;
 	padding: 8px;
 	border-bottom: 1px solid var(--color-grey-border);
-	/* background-color: var(--color-lightgrey2-background); */
 	box-sizing: border-box;
 }
 

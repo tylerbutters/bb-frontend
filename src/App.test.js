@@ -430,14 +430,15 @@ test("opens the about page", () => {
 	expect(screen.getByRole("link", { name: "Bunsho Builder" })).toHaveAttribute("href", "/")
 })
 
-test("opens the buy premium page", () => {
+test("redirects away from the disabled buy premium page", async () => {
 	window.history.pushState({}, "", "/buy")
 
 	render(<App />)
 
-	expect(screen.getByRole("heading", { name: "Buy premium" })).toBeInTheDocument()
-	expect(screen.getByText("Checkout is coming soon.")).toBeInTheDocument()
-	expect(screen.getByRole("button", { name: "Buy premium" })).toBeDisabled()
+	await waitFor(() => {
+		expect(window.location.pathname).toBe("/")
+	})
+	expect(screen.queryByRole("heading", { name: "Buy premium" })).not.toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Bunsho Builder" })).toHaveAttribute("href", "/")
 })
 
@@ -643,7 +644,7 @@ test("logs in and replaces auth links with the user name", async () => {
 	expect(screen.queryByRole("link", { name: "Login" })).not.toBeInTheDocument()
 	expect(screen.queryByRole("link", { name: "Sign up" })).not.toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Stats" })).toHaveAttribute("href", "/stats")
-	expect(screen.getByRole("link", { name: "PREMIUM" })).toHaveAttribute("href", "/buy")
+	expect(screen.queryByRole("link", { name: "PREMIUM" })).not.toBeInTheDocument()
 	expect(screen.queryByRole("menuitem", { name: "Stats" })).not.toBeInTheDocument()
 	expect(screen.queryByRole("menuitem", { name: "Log out" })).not.toBeInTheDocument()
 
@@ -827,15 +828,7 @@ test("opens stats from the top nav", async () => {
 	})
 	expect(window.location.pathname).toBe("/stats")
 
-	const statsLimitNotice = screen.getByLabelText("Stats limit")
-	expect(within(statsLimitNotice).getByText("Today only")).toBeInTheDocument()
-	expect(
-		within(statsLimitNotice).getByText("Free accounts can see today's stats and history."),
-	).toBeInTheDocument()
-	expect(within(statsLimitNotice).getByRole("link", { name: "Buy premium" })).toHaveAttribute(
-		"href",
-		"/buy",
-	)
+	expect(screen.queryByLabelText("Stats limit")).not.toBeInTheDocument()
 
 	const allGamesPanel = screen.getByLabelText("All games stats")
 	await waitFor(() => {
@@ -939,16 +932,7 @@ test("opens paginated game history from a stats panel", async () => {
 	expect(document.body.style.overflow).toBe("")
 	expect(document.querySelector(".statsPage")).toHaveClass("statsPageHistoryOpen")
 	expect(within(drawer).getByRole("heading", { name: "Translate history" })).toBeInTheDocument()
-	const historyLimitNotice = within(drawer).getByLabelText("History limit")
-	expect(within(historyLimitNotice).getByText("Today only")).toBeInTheDocument()
-	expect(
-		within(historyLimitNotice).getByText("Free accounts can see today's stats and history."),
-	).toBeInTheDocument()
-	expect(within(historyLimitNotice).getByRole("link", { name: "Buy premium" })).toHaveAttribute(
-		"href",
-		"/buy",
-	)
-	expect(within(drawer).getByText("easy difficulty")).toBeInTheDocument()
+	expect(within(drawer).queryByLabelText("History limit")).not.toBeInTheDocument()
 	expect(within(drawer).getByRole("tab", { name: "easy" })).toHaveAttribute("aria-selected", "true")
 	const historyStats = within(drawer).getByRole("group", {
 		name: "Translate history stats",
@@ -1030,7 +1014,6 @@ test("opens paginated game history from a stats panel", async () => {
 		"aria-selected",
 		"true",
 	)
-	expect(within(drawer).getByText("medium difficulty")).toBeInTheDocument()
 	expect(within(drawer).getByText("Nice.")).toBeInTheDocument()
 
 	const updatedHistoryRequests = global.fetch.mock.calls.filter(([url]) =>
@@ -1082,7 +1065,6 @@ test("opens game history from the sentence builder prompt panel", async () => {
 	expect(historyButton).toHaveAttribute("aria-pressed", "true")
 	expect(historyButton).toHaveClass("gamePromptHistoryButtonSelected")
 	expect(within(drawer).getByRole("heading", { name: "Translate history" })).toBeInTheDocument()
-	expect(within(drawer).getByText("all difficulty")).toBeInTheDocument()
 	expect(within(drawer).getByRole("tab", { name: "all" })).toHaveAttribute("aria-selected", "true")
 	const historyStats = within(drawer).getByRole("group", {
 		name: "Translate history stats",
@@ -1175,6 +1157,7 @@ test("shows zero-backgrounded stats panels when stats have not been created yet"
 
 	await waitFor(() => {
 		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
+		expect(screen.getByRole("tab", { name: "translate" })).toBeInTheDocument()
 	})
 
 	fireEvent.click(screen.getByRole("link", { name: "Stats" }))
@@ -1426,7 +1409,7 @@ test("switches game tabs and clears the sentence", async () => {
 	expect(screen.getByText("Translate the English sentence into Japanese.")).toBeInTheDocument()
 })
 
-test("shows the free challenge limit intro once without persistent quota text", async () => {
+test("does not show the free challenge limit intro while premium is disabled", async () => {
 	render(<App />)
 
 	await loginDefaultUser()
@@ -1436,17 +1419,8 @@ test("shows the free challenge limit intro once without persistent quota text", 
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
 
-	const introDialog = await screen.findByRole("dialog", {
-		name: "Free challenge checks",
-	})
-	expect(introDialog).toHaveTextContent("Free accounts get 3 challenge checks per day.")
+	expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
 	expect(screen.queryByText(/free checks left today/)).not.toBeInTheDocument()
-
-	fireEvent.click(within(introDialog).getByRole("button", { name: "Okay" }))
-	expect(window.localStorage.getItem("bbFreeGameLimitIntroDismissed:1")).toBe("true")
-	await waitFor(() => {
-		expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
-	})
 
 	fireEvent.click(screen.getByRole("tab", { name: "sandbox" }))
 	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
@@ -1456,7 +1430,7 @@ test("shows the free challenge limit intro once without persistent quota text", 
 	expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
 })
 
-test("shows a persistent buy premium blocker when free quota is exhausted", async () => {
+test("does not block practice when the old free quota is exhausted", async () => {
 	global.fetch.mockImplementation((url) => {
 		if (url === `${API_BASE_URL}/login`) {
 			return Promise.resolve({
@@ -1514,30 +1488,19 @@ test("shows a persistent buy premium blocker when free quota is exhausted", asyn
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
 	expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
-	expect(screen.getByText("You've used today's 3 free challenge checks.")).toBeInTheDocument()
-	expect(screen.getByText("Buy premium for unlimited practice.")).toBeInTheDocument()
-	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
-
-	let quotaBlocker = screen
-		.getByText("You've used today's 3 free challenge checks.")
-		.closest(".gameQuotaBlocker")
-	const buyLink = within(quotaBlocker).getByRole("link", { name: "Buy premium" })
-	expect(buyLink).toHaveAttribute("href", "/buy")
+	expect(screen.queryByText("You've used today's 3 free challenge checks.")).not.toBeInTheDocument()
+	expect(screen.queryByText("Buy premium for unlimited practice.")).not.toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument()
 
 	fireEvent.click(screen.getByRole("tab", { name: "particles" }))
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
-	expect(screen.getByText("You've used today's 3 free challenge checks.")).toBeInTheDocument()
-
-	quotaBlocker = screen
-		.getByText("You've used today's 3 free challenge checks.")
-		.closest(".gameQuotaBlocker")
-	fireEvent.click(within(quotaBlocker).getByRole("link", { name: "Buy premium" }))
-	expect(window.location.pathname).toBe("/buy")
+	expect(screen.queryByText("You've used today's 3 free challenge checks.")).not.toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument()
 })
 
-test("shows the buy premium blocker instead of a prompt error when prompt loading is quota-blocked", async () => {
+test("shows a prompt error instead of premium upsell when old quota loading is rejected", async () => {
 	global.fetch.mockImplementation((url) => {
 		if (url === `${API_BASE_URL}/login`) {
 			return Promise.resolve({
@@ -1604,13 +1567,13 @@ test("shows the buy premium blocker instead of a prompt error when prompt loadin
 	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
 
 	await waitFor(() => {
-		expect(screen.getByText("You've used today's 3 free challenge checks.")).toBeInTheDocument()
+		expect(screen.getByText("Could not load a prompt.")).toBeInTheDocument()
 	})
-	expect(screen.getByText("Buy premium for unlimited practice.")).toBeInTheDocument()
-	expect(screen.queryByText("Could not load a prompt.")).not.toBeInTheDocument()
+	expect(screen.queryByText("You've used today's 3 free challenge checks.")).not.toBeInTheDocument()
+	expect(screen.queryByText("Buy premium for unlimited practice.")).not.toBeInTheDocument()
 })
 
-test("shows the buy premium blocker immediately when logged-in quota loading is rejected", async () => {
+test("does not show a premium blocker when quota loading is rejected", async () => {
 	window.localStorage.setItem(
 		"jsbCurrentUser",
 		JSON.stringify({
@@ -1658,17 +1621,18 @@ test("shows the buy premium blocker immediately when logged-in quota loading is 
 	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
 
 	await waitFor(() => {
-		expect(screen.getByText("You've used today's 3 free challenge checks.")).toBeInTheDocument()
+		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
-	expect(screen.getByText("Buy premium for unlimited practice.")).toBeInTheDocument()
+	expect(screen.queryByText("You've used today's 3 free challenge checks.")).not.toBeInTheDocument()
+	expect(screen.queryByText("Buy premium for unlimited practice.")).not.toBeInTheDocument()
 	await waitFor(() => {
 		expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
 	})
 	expect(screen.queryByText("Log in to check challenge answers.")).not.toBeInTheDocument()
-	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument()
 })
 
-test("shows the buy premium blocker when a logged-in challenge check is quota-gated", async () => {
+test("does not turn a logged-in challenge check error into a premium blocker", async () => {
 	window.localStorage.setItem(
 		"jsbCurrentUser",
 		JSON.stringify({
@@ -1731,30 +1695,28 @@ test("shows the buy premium blocker when a logged-in challenge check is quota-ga
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
-	const introDialog = await screen.findByRole("dialog", {
-		name: "Free challenge checks",
-	})
-	fireEvent.click(within(introDialog).getByRole("button", { name: "Okay" }))
+	expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
 
 	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
 	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
 	fireEvent.click(screen.getByRole("button", { name: "。" }))
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 
-	const blocker = await screen
-		.findByText("You've used today's 3 free challenge checks.")
-		.then((element) => element.closest(".gameQuotaBlocker"))
-	expect(blocker).toBeInTheDocument()
-	expect(within(blocker).getByText("Buy premium for unlimited practice.")).toBeInTheDocument()
-	expect(within(blocker).getByRole("link", { name: "Buy premium" })).toHaveAttribute("href", "/buy")
+	await waitFor(() => {
+		expect(
+			screen.getByText("Not quite. Could not check the sentence right now. Try again in a moment."),
+		).toBeInTheDocument()
+	})
+	expect(screen.queryByText("You've used today's 3 free challenge checks.")).not.toBeInTheDocument()
+	expect(screen.queryByText("Buy premium for unlimited practice.")).not.toBeInTheDocument()
 	expect(
 		screen.queryByText("Not quite. Log in to check challenge answers."),
 	).not.toBeInTheDocument()
 	expect(screen.queryByText("Log in to check challenge answers.")).not.toBeInTheDocument()
-	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument()
 })
 
-test("blocks after three local fallback challenge checks with stale backend quota", async () => {
+test("does not apply the old local fallback challenge check limit", async () => {
 	let promptIndex = 0
 
 	global.fetch.mockImplementation((url) => {
@@ -1832,10 +1794,7 @@ test("blocks after three local fallback challenge checks with stale backend quot
 	await waitFor(() => {
 		expect(screen.getByText("Prompt 1.")).toBeInTheDocument()
 	})
-	const introDialog = await screen.findByRole("dialog", {
-		name: "Free challenge checks",
-	})
-	fireEvent.click(within(introDialog).getByRole("button", { name: "Okay" }))
+	expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
 
 	for (let promptNumber = 1; promptNumber <= 3; promptNumber += 1) {
 		await waitFor(() => {
@@ -1855,9 +1814,9 @@ test("blocks after three local fallback challenge checks with stale backend quot
 		}
 	}
 
-	expect(screen.getByText("You've used today's 3 free challenge checks.")).toBeInTheDocument()
-	expect(screen.getByText("Buy premium for unlimited practice.")).toBeInTheDocument()
-	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
+	expect(screen.queryByText("You've used today's 3 free challenge checks.")).not.toBeInTheDocument()
+	expect(screen.queryByText("Buy premium for unlimited practice.")).not.toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument()
 })
 
 test("clears all sentence elements", async () => {

@@ -75,7 +75,7 @@ export default function MenuList({
 		<>
 			{hasSearch && (
 				<div className="searchInputContainer">
-					<InputBox
+					<input
 						type="text"
 						className="searchInput"
 						value={searchText}
@@ -105,9 +105,7 @@ export default function MenuList({
 						</div>
 
 						{element?.meanings?.length > 0 && (
-							<span className="elementsMenuButtonMeanings">
-								{getVisibleMeaningsText(element)}
-							</span>
+							<span className="elementsMenuButtonMeanings">{getVisibleMeaningsText(element)}</span>
 						)}
 					</button>
 				))}

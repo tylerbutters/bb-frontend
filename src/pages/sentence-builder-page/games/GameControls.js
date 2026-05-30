@@ -4,15 +4,6 @@ import { checkGameAnswer, checkSandboxSentence } from "../../../api/games"
 import { recordLocalGameResult } from "../../../gameStatsStorage"
 import "./GameControls.css"
 
-const FREE_DAILY_CHALLENGE_LIMIT = 3
-const EXHAUSTED_FREE_QUOTA = {
-	plan: "free",
-	limit: FREE_DAILY_CHALLENGE_LIMIT,
-	used: FREE_DAILY_CHALLENGE_LIMIT,
-	remaining: 0,
-	canPlay: false,
-}
-
 export default function GameControls({
 	isVisible,
 	gameMode,
@@ -34,9 +25,13 @@ export default function GameControls({
 	const isChecking = checkStatus === "checking"
 	const isChallengeCheck = hasAnswerChecker && !isSandboxCheck
 	const requiresLogin = isChallengeCheck && !currentUser
+	const isQuotaExhausted = false
+	/*
+	TODO(premium): Re-enable free quota blocking when premium is live.
 	const isFreeQuota =
 		isChallengeCheck && !requiresLogin && currentUser && gameQuota?.plan !== "premium"
 	const isQuotaExhausted = Boolean(!requiresLogin && isFreeQuota && gameQuota?.remaining === 0)
+	*/
 	const isCheckDisabled =
 		!answer ||
 		isChecking ||
@@ -89,10 +84,19 @@ export default function GameControls({
 			setCheckStatus("ready")
 		} catch (error) {
 			console.log(error)
-			const errorCode = error.data?.error?.code
 			const quota = error.data?.error?.details?.quota
 			if (quota) onGameQuotaChange?.(quota)
 
+			/*
+			TODO(premium): Re-enable quota exhaustion response handling when premium is live.
+			const errorCode = error.data?.error?.code
+			const EXHAUSTED_FREE_QUOTA = {
+				plan: "free",
+				limit: 3,
+				used: 3,
+				remaining: 0,
+				canPlay: false,
+			}
 			if (errorCode === "LOGIN_REQUIRED_FOR_CHALLENGE_CHECKS") {
 				if (currentUser) {
 					onGameQuotaChange?.(EXHAUSTED_FREE_QUOTA)
@@ -101,11 +105,16 @@ export default function GameControls({
 				setCheckStatus("idle")
 				return
 			}
+			*/
 
+			const errorFeedback = "Could not check the sentence right now. Try again in a moment."
+			/*
+			TODO(premium): Re-enable premium-specific quota feedback.
 			const errorFeedback =
 				errorCode === "DAILY_GAME_LIMIT_REACHED"
-					? `You've used today's ${FREE_DAILY_CHALLENGE_LIMIT} free challenge checks.`
+					? "You've used today's 3 free challenge checks."
 					: "Could not check the sentence right now. Try again in a moment."
+			*/
 			setFeedback({
 				correct: false,
 				feedback: errorFeedback,
@@ -120,21 +129,21 @@ export default function GameControls({
 		<div className="gameControls">
 			{requiresLogin && (
 				<div className="gameQuotaBlocker" role="status">
-					<p>Sign up to check challenge answers</p>
+					<p>Log in to check challenge answers.</p>
 					<Link className="gameQuotaButton" to="/login">
-						Sign up
+						Login
 					</Link>
 				</div>
 			)}
-			{isQuotaExhausted && (
+			{/* TODO(premium): Re-enable this blocker when free quotas return.
 				<div className="gameQuotaBlocker" role="status">
-					<p>You've used today's {FREE_DAILY_CHALLENGE_LIMIT} free challenge checks.</p>
+					<p>You've used today's 3 free challenge checks.</p>
 					<p>Buy premium for unlimited practice.</p>
 					<Link className="gameQuotaButton" to="/buy">
 						Buy premium
 					</Link>
 				</div>
-			)}
+			*/}
 			{feedback && (
 				<div
 					className={`gameFeedback ${
