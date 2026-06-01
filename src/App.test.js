@@ -952,7 +952,7 @@ test("opens paginated game history from a stats panel", async () => {
 	expect(within(drawer).getByText("I eat rice.")).toBeInTheDocument()
 	expect(within(drawer).getByText("ご飯を食べます。")).toBeInTheDocument()
 	expect(within(drawer).getByText("Correct")).toBeInTheDocument()
-	expect(within(drawer).getByText("Good.")).toBeInTheDocument()
+	expect(within(drawer).queryByText("Good.")).not.toBeInTheDocument()
 
 	const firstHistoryRequest = global.fetch.mock.calls.find(([url]) =>
 		String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
@@ -1000,6 +1000,7 @@ test("opens paginated game history from a stats panel", async () => {
 		expect(within(drawer).getByText("I drink tea.")).toBeInTheDocument()
 	})
 	expect(within(drawer).getAllByText("Failed").length).toBeGreaterThan(0)
+	expect(within(drawer).getByText("Use お茶.")).toBeInTheDocument()
 
 	const historyRequests = global.fetch.mock.calls.filter(([url]) =>
 		String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
@@ -1016,7 +1017,7 @@ test("opens paginated game history from a stats panel", async () => {
 		"aria-selected",
 		"true",
 	)
-	expect(within(drawer).getByText("Nice.")).toBeInTheDocument()
+	expect(within(drawer).queryByText("Nice.")).not.toBeInTheDocument()
 
 	const updatedHistoryRequests = global.fetch.mock.calls.filter(([url]) =>
 		String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
@@ -1081,7 +1082,7 @@ test("opens game history from the sentence builder prompt panel", async () => {
 		expect(within(drawer).getByText("I eat rice.")).toBeInTheDocument()
 	})
 	expect(within(drawer).getByText("ご飯を食べます。")).toBeInTheDocument()
-	expect(within(drawer).getByText("Good.")).toBeInTheDocument()
+	expect(within(drawer).queryByText("Good.")).not.toBeInTheDocument()
 
 	const historyRequest = global.fetch.mock.calls.find(([url]) =>
 		String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
@@ -1259,8 +1260,8 @@ test("shows locally recorded stats when backend stats are unavailable", async ()
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 	await waitFor(() => {
 		expect(screen.getByText("Correct.")).toBeInTheDocument()
-		expect(screen.getByText("Good.")).toBeInTheDocument()
 	})
+	expect(screen.queryByText("Good.")).not.toBeInTheDocument()
 	fireEvent.click(screen.getByRole("button", { name: "Check again" }))
 	await waitFor(() => {
 		const checkRequests = global.fetch.mock.calls.filter(
@@ -1299,7 +1300,7 @@ test("shows locally recorded stats when backend stats are unavailable", async ()
 	expect(historyStats).toHaveTextContent(/Accuracy\s*100%/)
 	expect(within(drawer).getByText("I eat rice.")).toBeInTheDocument()
 	expect(within(drawer).getByText("。")).toBeInTheDocument()
-	expect(within(drawer).getByText("Good.")).toBeInTheDocument()
+	expect(within(drawer).queryByText("Good.")).not.toBeInTheDocument()
 	expect(within(drawer).getAllByText("I eat rice.")).toHaveLength(1)
 
 	await waitFor(() => {
@@ -1811,8 +1812,8 @@ test("does not apply the old local fallback challenge check limit", async () => 
 
 		await waitFor(() => {
 			expect(screen.getByText("Correct.")).toBeInTheDocument()
-			expect(screen.getByText("Good.")).toBeInTheDocument()
 		})
+		expect(screen.queryByText("Good.")).not.toBeInTheDocument()
 
 		if (promptNumber < 3) {
 			fireEvent.click(screen.getByRole("button", { name: "Next" }))
@@ -2404,8 +2405,8 @@ test("sends the same challenge ID for repeated checks on one prompt", async () =
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 	await waitFor(() => {
 		expect(screen.getByText("Correct.")).toBeInTheDocument()
-		expect(screen.getByText("Good.")).toBeInTheDocument()
 	})
+	expect(screen.queryByText("Good.")).not.toBeInTheDocument()
 
 	fireEvent.click(screen.getByRole("button", { name: "Check again" }))
 	await waitFor(() => {
@@ -2509,8 +2510,8 @@ test("calls prompt and check endpoints with a random real mode for shuffle", asy
 
 	await waitFor(() => {
 		expect(screen.getByText("Correct.")).toBeInTheDocument()
-		expect(screen.getByText("Good.")).toBeInTheDocument()
 	})
+	expect(screen.queryByText("Good.")).not.toBeInTheDocument()
 
 	const promptRequest = global.fetch.mock.calls.find(([url]) =>
 		String(url).startsWith(`${API_BASE_URL}/games/prompt`),

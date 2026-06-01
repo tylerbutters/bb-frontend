@@ -129,6 +129,7 @@ export default function GameControls({
 
 	const showAnswerButtons = !requiresLogin && !isQuotaExhausted
 	const showClearButton = Boolean(onClearSentence && canClearSentence)
+	const showFeedbackDetails = Boolean(feedback && !feedback.correct && feedback.feedback)
 
 	return (
 		<div className="gameControls">
@@ -159,14 +160,11 @@ export default function GameControls({
 					>
 						{feedback.correct ? "Correct." : "Not quite."}
 					</div>
-					<div
-						className={`gameFeedback ${
-							feedback.correct ? "gameFeedbackSuccess" : "gameFeedbackWarning"
-						}`}
-						role="status"
-					>
-						{feedback.feedback}
-					</div>
+					{showFeedbackDetails && (
+						<div className="gameFeedback gameFeedbackWarning" role="status">
+							{feedback.feedback}
+						</div>
+					)}
 				</>
 			)}
 			{showAnswerButtons && (

@@ -469,7 +469,7 @@ export function GameHistoryDrawer({
 										<dt>Your answer</dt>
 										<dd>{item.answer || "Answer was not saved for this older game"}</dd>
 									</div>
-									{item.feedback && (
+									{item.feedback && !item.correct && (
 										<div>
 											<dt>Feedback</dt>
 											<dd>{item.feedback}</dd>
