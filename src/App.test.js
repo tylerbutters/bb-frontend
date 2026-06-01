@@ -277,6 +277,15 @@ beforeEach(() => {
 			})
 		}
 
+		if (url === `${API_BASE_URL}/suggestions`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					message: "Thanks for the suggestion.",
+				}),
+			})
+		}
+
 		if (url === `${API_BASE_URL}/users/1` && options.method === "PATCH") {
 			const accountChanges = JSON.parse(options.body)
 			delete accountChanges.currentPassword
@@ -412,6 +421,10 @@ test("renders the initial add button", () => {
 	expect(screen.getByRole("button", { name: "+ word" })).toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Bunsho Builder" })).toHaveAttribute("href", "/")
 	expect(screen.getByRole("link", { name: "About" })).toHaveAttribute("href", "/about")
+	expect(screen.getByRole("link", { name: "Suggestions" })).toHaveAttribute(
+		"href",
+		"/suggestions",
+	)
 	expect(screen.getByRole("link", { name: "Login" })).toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Sign up" })).toBeInTheDocument()
 })
@@ -429,6 +442,34 @@ test("opens the about page", () => {
 		"mailto:support@bunshobuilder.com",
 	)
 	expect(screen.getByRole("link", { name: "Bunsho Builder" })).toHaveAttribute("href", "/")
+})
+
+test("sends an anonymous suggestion", async () => {
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("link", { name: "Suggestions" }))
+
+	expect(window.location.pathname).toBe("/suggestions")
+	expect(screen.getByRole("heading", { name: "Suggestions" })).toBeInTheDocument()
+	expect(screen.queryByLabelText("Name")).not.toBeInTheDocument()
+	expect(screen.queryByLabelText("Email")).not.toBeInTheDocument()
+
+	fireEvent.change(screen.getByLabelText("Suggestion"), {
+		target: { value: "Please add custom practice lists." },
+	})
+	fireEvent.click(screen.getByRole("button", { name: "Send suggestion" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("Thanks for the suggestion.")).toBeInTheDocument()
+	})
+
+	const suggestionRequest = global.fetch.mock.calls.find(
+		([url]) => url === `${API_BASE_URL}/suggestions`,
+	)
+	expect(JSON.parse(suggestionRequest[1].body)).toEqual({
+		suggestion: "Please add custom practice lists.",
+	})
+	expect(screen.getByLabelText("Suggestion")).toHaveValue("")
 })
 
 test("redirects away from the disabled buy premium page", async () => {

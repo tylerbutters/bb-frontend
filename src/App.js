@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage"
 import SignupPage from "./pages/SignupPage"
 import ForgotPasswordPage from "./pages/ForgotPasswordPage"
 import ConfirmEmailChangePage from "./pages/ConfirmEmailChangePage"
+import SuggestionsPage from "./pages/SuggestionsPage"
 import StatsPage from "./pages/StatsPage"
 import AdminPage from "./pages/AdminPage"
 import AppNavbar from "./components/AppNavbar"
@@ -56,6 +57,7 @@ export default function App() {
 				<Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
 				<Route path="/signup" element={<SignupPage onSignup={handleLogin} />} />
 				<Route path="/about" element={<AboutPage />} />
+				<Route path="/suggestions" element={<SuggestionsPage />} />
 				{/* TODO(premium): Re-enable when checkout launches: <Route path="/buy" element={<BuyPage />} /> */}
 				<Route
 					path="/account"

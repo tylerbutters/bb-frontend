@@ -1,0 +1,56 @@
+.suggestionsContent {
+	width: min(560px, 100%);
+	gap: 18px;
+}
+
+.suggestionForm {
+	gap: 16px;
+	background: var(--color-grey-background);
+	box-shadow: 0 14px 36px var(--color-shadow);
+}
+
+.suggestionField {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	gap: 8px;
+	box-sizing: border-box;
+	color: var(--color-grey-text);
+	font-size: 13px;
+}
+
+.suggestionTextarea {
+	width: 100%;
+	min-height: 180px;
+	padding: 12px;
+	border: 1px solid var(--color-grey-border);
+	border-radius: 8px;
+	background: var(--color-app-background);
+	box-sizing: border-box;
+	color: white;
+	font-size: 15px;
+	line-height: 1.45;
+	outline: none;
+	resize: vertical;
+}
+
+.suggestionTextarea:focus {
+	border-color: var(--color-white-border-hover);
+	box-shadow: 0 0 0 3px var(--color-white-background);
+}
+
+.suggestionTextarea:disabled {
+	cursor: default;
+	opacity: 0.62;
+}
+
+.suggestionForm .authPrimaryButton {
+	align-self: flex-start;
+	color: white;
+}
+
+@media (max-width: 420px) {
+	.suggestionForm .authPrimaryButton {
+		width: 100%;
+	}
+}

@@ -14,6 +14,9 @@ export default function AppNavbar({ currentUser }) {
 				<Link className="appNavbarLink appNavbarAboutLink" to="/about">
 					About
 				</Link>
+				<Link className="appNavbarLink" to="/suggestions">
+					Suggestions
+				</Link>
 				{/* TODO(premium): Re-enable the premium nav link when premium is live.
 				{currentUser?.plan !== "premium" && (
 					<Link className="appNavbarLink appNavbarPremiumLink" to="/buy">
