@@ -334,6 +334,24 @@ export function recordLocalGameResult(
 	return true
 }
 
+export function updateLocalGameResultFeedback(userId, { challengeId, mode, prompt, feedback }) {
+	if (!userId) return false
+
+	const key = challengeKey({ challengeId, mode, prompt })
+	if (!key) return false
+
+	const results = readStoredResults(userId)
+	if (!results[key]) return false
+
+	results[key] = {
+		...results[key],
+		feedback: feedback || "",
+	}
+	writeStoredResults(userId, results)
+
+	return true
+}
+
 export function getLocalGameHistory(
 	userId,
 	{ mode = "all", difficulty = "all", limit = HISTORY_PAGE_SIZE, offset = 0 } = {},

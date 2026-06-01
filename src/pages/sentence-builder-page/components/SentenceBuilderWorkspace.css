@@ -36,6 +36,10 @@
 	transition: none;
 }
 
+.sentenceElementsDropping .mainElementDragItem:not(.mainElementDragging) {
+	transition: none;
+}
+
 .mainElementDragging .elementContainer {
 	cursor: grabbing;
 	box-shadow: 0 18px 34px var(--color-shadow);

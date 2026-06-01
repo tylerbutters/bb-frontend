@@ -91,6 +91,7 @@ export default function useSentenceDragDrop({ elements, setElements, containerRe
 	const getDragPreviewTransform = useCallback(
 		(elementId, index) => {
 			if (!dragState || dragState.elementId === elementId) return undefined
+			if (dragState.isDropping) return undefined
 
 			const { originalIndex, insertIndex, width } = dragState
 			const unscaledWidth = width / scale

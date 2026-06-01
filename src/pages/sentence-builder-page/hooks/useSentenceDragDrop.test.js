@@ -140,6 +140,57 @@ describe("useSentenceDragDrop", () => {
 		expect(screen.getByTestId("dragging")).toHaveTextContent("")
 	})
 
+	test("clears displaced item transforms during the drop phase", () => {
+		render(
+			<DragDropHarness
+				initialElements={[
+					{ sentenceElementId: 1, text: "A" },
+					{ sentenceElementId: 2, text: "B" },
+					{ sentenceElementId: 3, text: "C" },
+				]}
+			/>,
+		)
+
+		act(() => {
+			screen.getByTestId("item-3").dispatchEvent(
+				pointerEvent("pointerdown", {
+					bubbles: true,
+					clientX: 210,
+					clientY: 10,
+					pointerId: 1,
+				}),
+			)
+		})
+
+		act(() => {
+			window.dispatchEvent(
+				pointerEvent("pointermove", {
+					bubbles: true,
+					clientX: 10,
+					clientY: 10,
+					pointerId: 1,
+				}),
+			)
+		})
+
+		expect(screen.getByTestId("item-1").style.transform).toBe("translateX(80px)")
+
+		act(() => {
+			window.dispatchEvent(
+				pointerEvent("pointerup", {
+					bubbles: true,
+					clientX: 10,
+					clientY: 10,
+					pointerId: 1,
+				}),
+			)
+		})
+
+		expect(screen.getByTestId("order")).toHaveTextContent("C,A,B")
+		expect(screen.getByTestId("item-1").style.transform).toBe("")
+		expect(screen.getByTestId("item-2").style.transform).toBe("")
+	})
+
 	test("dispatches a menu close event when dragging starts", () => {
 		const handleMenuClose = jest.fn()
 		window.addEventListener(MENU_CLOSE_EVENT, handleMenuClose)

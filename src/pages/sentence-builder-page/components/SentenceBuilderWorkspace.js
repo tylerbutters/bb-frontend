@@ -164,7 +164,9 @@ export default function SentenceBuilderWorkspace({
 			<SentenceText addedElements={addedElements} showTranslation={showTranslation} />
 			<div
 				ref={sentenceElementsContainerRef}
-				className={`sentenceElementsContainer ${dragState ? "sentenceElementsDragging" : ""}`}
+				className={`sentenceElementsContainer ${dragState ? "sentenceElementsDragging" : ""} ${
+					dragState?.isDropping ? "sentenceElementsDropping" : ""
+				}`}
 				style={{ transform: `scale(${sentenceElementsScale})` }}
 			>
 				{addedElements.map((element, index) => {

@@ -36,6 +36,41 @@ export async function checkGameAnswer({
 	return {
 		correct: Boolean(data.correct),
 		feedback: data.feedback || "",
+		feedbackPending: Boolean(data.feedbackPending),
+		quota: data.quota || null,
+	}
+}
+
+export async function getGameAnswerFeedback({
+	gameMode,
+	difficulty,
+	prompt,
+	answer,
+	challengeId,
+	signal,
+}) {
+	const body = gameCheckBody({ gameMode, difficulty, prompt, answer, challengeId })
+	let data
+
+	try {
+		data = await apiRequest("/games/feedback", {
+			method: "POST",
+			signal,
+			body,
+		})
+	} catch (error) {
+		if (!difficulty || !isUnsupportedDifficultyFieldError(error)) throw error
+
+		data = await apiRequest("/games/feedback", {
+			method: "POST",
+			signal,
+			body: gameCheckBody({ gameMode, prompt, answer, challengeId }),
+		})
+	}
+
+	return {
+		correct: Boolean(data.correct),
+		feedback: data.feedback || "",
 		quota: data.quota || null,
 	}
 }

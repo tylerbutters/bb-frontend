@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "./client"
-import { checkGameAnswer } from "./games"
+import { checkGameAnswer, getGameAnswerFeedback } from "./games"
 
 beforeEach(() => {
 	global.fetch = jest.fn()
@@ -29,6 +29,7 @@ test("checkGameAnswer sends difficulty with challenge checks", async () => {
 	).resolves.toEqual({
 		correct: true,
 		feedback: "Good.",
+		feedbackPending: false,
 		quota: null,
 	})
 
@@ -78,6 +79,7 @@ test("checkGameAnswer retries without difficulty against stale backends", async 
 	).resolves.toEqual({
 		correct: false,
 		feedback: "Try again.",
+		feedbackPending: false,
 		quota: null,
 	})
 
@@ -94,5 +96,44 @@ test("checkGameAnswer retries without difficulty against stale backends", async 
 		prompt: "I eat rice.",
 		answer: "。",
 		challengeId: "1e5eb8e7-f91a-4c61-8f37-62b1a27ddf95",
+	})
+})
+
+test("getGameAnswerFeedback calls the separate feedback endpoint", async () => {
+	global.fetch.mockResolvedValue({
+		ok: true,
+		json: jest.fn().mockResolvedValue({
+			correct: false,
+			feedback: "Use 食べた for the past tense.",
+		}),
+	})
+
+	await expect(
+		getGameAnswerFeedback({
+			gameMode: "conjugations",
+			difficulty: "easy",
+			prompt: "I ate sushi.",
+			answer: "私は寿司を食べる",
+			challengeId: "1e5eb8e7-f91a-4c61-8f37-62b1a27ddf95",
+		}),
+	).resolves.toEqual({
+		correct: false,
+		feedback: "Use 食べた for the past tense.",
+		quota: null,
+	})
+
+	expect(global.fetch).toHaveBeenCalledWith(`${API_BASE_URL}/games/feedback`, {
+		method: "POST",
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			mode: "conjugations",
+			difficulty: "easy",
+			prompt: "I ate sushi.",
+			answer: "私は寿司を食べる",
+			challengeId: "1e5eb8e7-f91a-4c61-8f37-62b1a27ddf95",
+		}),
 	})
 })

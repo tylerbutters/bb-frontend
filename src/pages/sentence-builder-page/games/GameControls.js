@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Link } from "react-router-dom"
-import { checkGameAnswer, checkSandboxSentence } from "../../../api/games"
-import { recordLocalGameResult } from "../../../gameStatsStorage"
+import { checkGameAnswer, checkSandboxSentence, getGameAnswerFeedback } from "../../../api/games"
+import { recordLocalGameResult, updateLocalGameResultFeedback } from "../../../gameStatsStorage"
 import "./GameControls.css"
 
 const SHOW_FEEDBACK_BY_DEFAULT_STORAGE_KEY = "bbShowFeedbackByDefault"
@@ -37,12 +37,15 @@ export default function GameControls({
 	onNext,
 }) {
 	const [checkStatus, setCheckStatus] = useState("idle")
+	const [feedbackStatus, setFeedbackStatus] = useState("idle")
 	const [feedback, setFeedback] = useState(null)
 	const [showFeedbackByDefault, setShowFeedbackByDefault] = useState(readShowFeedbackByDefault)
 	const [isFeedbackExpanded, setIsFeedbackExpanded] = useState(showFeedbackByDefault)
+	const feedbackRequestId = useRef(0)
 	const hasAnswerChecker = hasGameAnswerChecker(gameMode)
 	const isSandboxCheck = gameMode === "sandbox"
 	const isChecking = checkStatus === "checking"
+	const isFeedbackLoading = feedbackStatus === "loading"
 	const isChallengeCheck = hasAnswerChecker && !isSandboxCheck
 	const requiresLogin = isChallengeCheck && !currentUser
 	const isQuotaExhausted = false
@@ -65,7 +68,9 @@ export default function GameControls({
 	// 	}`
 
 	useEffect(() => {
+		feedbackRequestId.current += 1
 		setFeedback(null)
+		setFeedbackStatus("idle")
 		setIsFeedbackExpanded(showFeedbackByDefault)
 		setCheckStatus("idle")
 	}, [answer, challengeId, difficulty, gameMode, isVisible, prompt])
@@ -81,14 +86,18 @@ export default function GameControls({
 	async function checkAnswer() {
 		if (isCheckDisabled) return
 
+		feedbackRequestId.current += 1
 		setCheckStatus("checking")
+		setFeedbackStatus("idle")
 		setFeedback(null)
 		setIsFeedbackExpanded(showFeedbackByDefault)
+
+		const checkPayload = { gameMode, difficulty, prompt, answer, challengeId }
 
 		try {
 			const nextFeedback = isSandboxCheck
 				? await checkSandboxSentence({ answer })
-				: await checkGameAnswer({ gameMode, difficulty, prompt, answer, challengeId })
+				: await checkGameAnswer(checkPayload)
 			if (nextFeedback.quota) onGameQuotaChange?.(nextFeedback.quota)
 			if (!isSandboxCheck) {
 				onLocalGameQuotaUse?.({
@@ -113,6 +122,13 @@ export default function GameControls({
 			setFeedback(nextFeedback)
 			setIsFeedbackExpanded(showFeedbackByDefault)
 			setCheckStatus("ready")
+
+			if (shouldLoadFeedbackSeparately({ isSandboxCheck, feedback: nextFeedback })) {
+				loadFeedbackDetails(checkPayload)
+				return
+			}
+
+			setFeedbackStatus("ready")
 		} catch (error) {
 			console.log(error)
 			const quota = error.data?.error?.details?.quota
@@ -151,7 +167,53 @@ export default function GameControls({
 				feedback: errorFeedback,
 			})
 			setIsFeedbackExpanded(showFeedbackByDefault)
+			setFeedbackStatus("ready")
 			setCheckStatus("error")
+		}
+	}
+
+	async function loadFeedbackDetails(checkPayload) {
+		const requestId = feedbackRequestId.current + 1
+		feedbackRequestId.current = requestId
+		setFeedbackStatus("loading")
+
+		try {
+			const nextFeedback = await getGameAnswerFeedback(checkPayload)
+			if (feedbackRequestId.current !== requestId) return
+
+			if (nextFeedback.quota) onGameQuotaChange?.(nextFeedback.quota)
+			updateLocalGameResultFeedback(currentUser?.id, {
+				challengeId,
+				mode: gameMode,
+				prompt,
+				feedback: nextFeedback.feedback,
+			})
+			setFeedback((currentFeedback) =>
+				currentFeedback
+					? {
+							...currentFeedback,
+							feedback: nextFeedback.feedback,
+							feedbackPending: false,
+						}
+					: currentFeedback,
+			)
+			setFeedbackStatus("ready")
+		} catch (error) {
+			console.log(error)
+			if (feedbackRequestId.current !== requestId) return
+
+			setFeedback((currentFeedback) =>
+				currentFeedback
+					? {
+							...currentFeedback,
+							feedback:
+								currentFeedback.feedback ||
+								"Could not load feedback right now. Try again in a moment.",
+							feedbackPending: false,
+						}
+					: currentFeedback,
+			)
+			setFeedbackStatus("error")
 		}
 	}
 
@@ -159,8 +221,9 @@ export default function GameControls({
 
 	const showAnswerButtons = !requiresLogin && !isQuotaExhausted
 	const showClearButton = Boolean(onClearSentence && canClearSentence)
+	const hasFeedbackDetails = Boolean(feedback && !feedback.correct && feedback.feedback)
 	const canToggleFeedback = Boolean(
-		!isSandboxCheck && feedback && !feedback.correct && feedback.feedback,
+		!isSandboxCheck && feedback && !feedback.correct && (hasFeedbackDetails || isFeedbackLoading),
 	)
 	const showFeedbackDetails = canToggleFeedback && isFeedbackExpanded
 
@@ -201,8 +264,13 @@ export default function GameControls({
 								className="gameFeedback gameFeedbackWarning"
 								id="game-feedback-details"
 								role="status"
+								aria-label={isFeedbackLoading ? "Loading feedback" : undefined}
 							>
-								{feedback.feedback}
+								{isFeedbackLoading ? (
+									<span className="gameCheckingSpinner" aria-hidden="true" />
+								) : (
+									feedback.feedback
+								)}
 							</div>
 						)}
 						{canToggleFeedback && (
@@ -278,4 +346,8 @@ export default function GameControls({
 
 function hasGameAnswerChecker(gameMode) {
 	return Boolean(gameMode)
+}
+
+function shouldLoadFeedbackSeparately({ isSandboxCheck, feedback }) {
+	return Boolean(!isSandboxCheck && feedback?.feedbackPending && !feedback.correct)
 }

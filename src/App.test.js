@@ -3060,6 +3060,114 @@ test("sends the same challenge ID for repeated checks on one prompt", async () =
 	])
 })
 
+test("shows challenge result immediately while detailed feedback loads separately", async () => {
+	let resolveFeedback
+	const feedbackResponse = new Promise((resolve) => {
+		resolveFeedback = resolve
+	})
+
+	global.fetch.mockImplementation((url) => {
+		if (url === `${API_BASE_URL}/login`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					user: {
+						id: 1,
+						email: "tyler@example.com",
+						displayName: "Tyler",
+					},
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/users/1/game-quota`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue(defaultQuotaResponse),
+			})
+		}
+
+		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					prompt: "I ate sushi.",
+					challengeId: firstChallengeId,
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/games/check`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					correct: false,
+					feedback: "",
+					feedbackPending: true,
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/games/feedback`) {
+			return feedbackResponse
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	await loginDefaultUser()
+
+	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("I ate sushi.")).toBeInTheDocument()
+	})
+
+	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
+	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
+	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	fireEvent.click(screen.getByRole("button", { name: "Check" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("Not quite.")).toBeInTheDocument()
+	})
+	expect(screen.getByRole("status", { name: "Loading feedback" })).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Check again" })).toBeEnabled()
+	expect(screen.queryByText("Use 食べた for the past tense.")).not.toBeInTheDocument()
+
+	await act(async () => {
+		resolveFeedback({
+			ok: true,
+			json: jest.fn().mockResolvedValue({
+				correct: false,
+				feedback: "Use 食べた for the past tense.",
+				quota: defaultQuotaResponse,
+			}),
+		})
+	})
+
+	await waitFor(() => {
+		expect(screen.queryByRole("status", { name: "Loading feedback" })).not.toBeInTheDocument()
+		expect(screen.getByText("Use 食べた for the past tense.")).toBeInTheDocument()
+	})
+
+	const feedbackRequest = global.fetch.mock.calls.find(
+		([url]) => url === `${API_BASE_URL}/games/feedback`,
+	)
+	expect(JSON.parse(feedbackRequest[1].body)).toEqual({
+		mode: "translate",
+		difficulty: "easy",
+		prompt: "I ate sushi.",
+		answer: "。",
+		challengeId: firstChallengeId,
+	})
+})
+
 test("calls prompt and check endpoints with a random real mode for shuffle", async () => {
 	jest.spyOn(Math, "random").mockReturnValue(0.6)
 
