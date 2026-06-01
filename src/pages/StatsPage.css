@@ -15,7 +15,7 @@
 }
 
 .statsContent {
-	width: min(980px, 100%);
+	width: min(1120px, 100%);
 	gap: 18px;
 	transition:
 		width 0.18s ease,
@@ -24,7 +24,7 @@
 }
 
 .statsPageHistoryOpen .statsContent {
-	width: min(980px, calc(100vw - var(--stats-history-drawer-width) - 54px));
+	width: min(1120px, calc(100vw - var(--stats-history-drawer-width) - 54px));
 	transform: translateX(calc(var(--stats-history-drawer-width) / -2));
 }
 
@@ -80,14 +80,22 @@
 	gap: 8px;
 	padding: 6px;
 	border: 1px solid var(--color-grey-border);
-	/* background-color: var(--color-lightgrey1-background); */
 	border-radius: 8px;
+	background: var(--color-grey-background);
+	box-shadow: 0 14px 36px var(--color-shadow);
+	box-sizing: border-box;
+}
+
+.statsFilters {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 18px;
 }
 
 .filterTab {
+	min-height: 42px;
 	border-radius: 6px;
-	padding: 10px 0;
-	color: var(--color-grey-text);
+	color: white;
 	cursor: pointer;
 	font-size: 14px;
 }
@@ -95,11 +103,12 @@
 .filterTab:hover,
 .filterTab:focus-visible {
 	color: white;
+	outline: none;
 }
 
 .filterTabSelected {
-	border: 1px solid var(--color-grey-border);
-	background: var(--color-grey-background);
+	border: 1px solid var(--color-white-border);
+	background: var(--color-white-background);
 	color: white;
 }
 
@@ -113,12 +122,12 @@
 	width: 100%;
 	flex-direction: column;
 	gap: 18px;
-	padding: 22px;
+	padding: 18px;
 	border: 1px solid var(--color-grey-border);
 	border-radius: 8px;
-	/* background: var(--color-lightgrey1-background); */
+	background: var(--color-grey-background);
+	box-shadow: 0 14px 36px var(--color-shadow);
 	box-sizing: border-box;
-	/* color: white; */
 }
 
 .statsPanelHeader {
@@ -128,12 +137,44 @@
 	gap: 12px;
 }
 
-.statsHistoryButton {
+.statsPanelTitle {
+	display: flex;
+	min-width: 0;
+	align-items: center;
+	gap: 10px;
+}
+
+.statsPanelIcon {
+	display: inline-flex;
+	width: 36px;
+	height: 36px;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
+	border-radius: 8px;
+	box-sizing: border-box;
 	color: var(--color-grey-text);
 }
 
-.statsHistoryButton:hover {
+.statsHistoryButton {
+	display: inline-flex;
+	width: 42px;
+	height: 42px;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid var(--color-white-border);
+	border-radius: 8px;
+	background: var(--color-white-background);
 	color: white;
+}
+
+.statsHistoryButton:hover,
+.statsHistoryButton:focus-visible {
+	border-color: var(--color-white-border-hover);
+	background: var(--color-white-background-hover);
+	color: white;
+	outline: none;
 }
 
 .statsGameGrid {
@@ -152,21 +193,34 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	gap: 6px;
-	padding: 12px;
-	border: 1px solid var(--color-grey-border);
-	/* background-color: var(--color-grey-background); */
+	gap: 10px;
+	min-height: 96px;
+	padding: 14px;
+	border: 1px solid var(--color-grey-border-trans);
 	border-radius: 8px;
+	background: var(--color-app-background);
+	box-sizing: border-box;
 }
 
-.statsMetric span {
+.statsMetricLabel {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
 	color: var(--color-grey-text);
 	font-size: 13px;
+	line-height: 1.2;
+}
+
+.statsMetricIcon {
+	width: 16px;
+	height: 16px;
+	flex: 0 0 auto;
 }
 
 .statsMetric strong {
 	color: white;
 	font-size: 25px;
+	line-height: 1.1;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -182,12 +236,13 @@
 	}
 
 	.statsPageHistoryOpen .statsContent {
-		width: min(980px, 100%);
+		width: min(1120px, 100%);
 		transform: none;
 	}
 }
 
 @media (max-width: 760px) {
+	.statsFilters,
 	.statsGameGrid {
 		grid-template-columns: 1fr;
 	}

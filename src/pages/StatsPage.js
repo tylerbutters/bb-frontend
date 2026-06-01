@@ -16,7 +16,19 @@ import {
 import { GameHistoryDrawer, useGameHistoryDrawer } from "./GameHistoryDrawer"
 import "./AuthPage.css"
 import "./StatsPage.css"
-import { History } from "lucide-react"
+import { BarChart3, CheckCircle2, History, Percent, Trophy, XCircle } from "lucide-react"
+
+function StatMetric({ icon: Icon, label, value }) {
+	return (
+		<div className="statsMetric">
+			<span className="statsMetricLabel">
+				<Icon className="statsMetricIcon" size={16} aria-hidden="true" />
+				{label}
+			</span>
+			<strong>{value}</strong>
+		</div>
+	)
+}
 
 function StatPanel({ title, stats, onHistoryClick }) {
 	const normalizedStats = normalizeGameStats(stats)
@@ -24,33 +36,26 @@ function StatPanel({ title, stats, onHistoryClick }) {
 	return (
 		<section className="statsPanel" aria-label={`${title} stats`}>
 			<div className="statsPanelHeader">
-				<h2>{title}</h2>
+				<div className="statsPanelTitle">
+					<span className="statsPanelIcon" aria-hidden="true">
+						<BarChart3 size={18} strokeWidth={2.4} />
+					</span>
+					<h2>{title}</h2>
+				</div>
 				<button
 					type="button"
 					className="statsHistoryButton"
 					aria-label="History"
 					onClick={onHistoryClick}
 				>
-					<History />
+					<History size={18} aria-hidden="true" />
 				</button>
 			</div>
 			<div className="statsMetrics">
-				<div className="statsMetric">
-					<span>Total games</span>
-					<strong>{normalizedStats.totalGames}</strong>
-				</div>
-				<div className="statsMetric">
-					<span>Correct</span>
-					<strong>{normalizedStats.correct}</strong>
-				</div>
-				<div className="statsMetric">
-					<span>Incorrect</span>
-					<strong>{normalizedStats.incorrect}</strong>
-				</div>
-				<div className="statsMetric">
-					<span>Accuracy</span>
-					<strong>{normalizedStats.accuracy}%</strong>
-				</div>
+				<StatMetric icon={Trophy} label="Total games" value={normalizedStats.totalGames} />
+				<StatMetric icon={CheckCircle2} label="Correct" value={normalizedStats.correct} />
+				<StatMetric icon={XCircle} label="Incorrect" value={normalizedStats.incorrect} />
+				<StatMetric icon={Percent} label="Accuracy" value={`${normalizedStats.accuracy}%`} />
 			</div>
 		</section>
 	)
@@ -223,36 +228,38 @@ export default function StatsPage({ currentUser, onAuthExpired }) {
 						</Link>
 					</section>
 				*/}
-				<div className="filterTabsContainer" role="tablist" aria-label="Stats difficulty">
-					{GAME_STAT_FILTERS.map((difficulty) => (
-						<button
-							key={difficulty}
-							type="button"
-							role="tab"
-							aria-selected={selectedDifficulty === difficulty}
-							className={`filterTab ${
-								selectedDifficulty === difficulty ? "filterTabSelected" : ""
-							}`}
-							onClick={() => setSelectedDifficulty(difficulty)}
-						>
-							{difficulty}
-						</button>
-					))}
-				</div>
-				<div className="filterTabsContainer" aria-label="Stats range">
-					{GAME_RECENT_FILTERS.map((range) => (
-						<button
-							key={range.value}
-							type="button"
-							className={`filterTab ${
-								selectedRecentRange === range.value ? "filterTabSelected" : ""
-							}`}
-							aria-pressed={selectedRecentRange === range.value}
-							onClick={() => setSelectedRecentRange(range.value)}
-						>
-							{range.label}
-						</button>
-					))}
+				<div className="statsFilters">
+					<div className="filterTabsContainer" role="tablist" aria-label="Stats difficulty">
+						{GAME_STAT_FILTERS.map((difficulty) => (
+							<button
+								key={difficulty}
+								type="button"
+								role="tab"
+								aria-selected={selectedDifficulty === difficulty}
+								className={`filterTab ${
+									selectedDifficulty === difficulty ? "filterTabSelected" : ""
+								}`}
+								onClick={() => setSelectedDifficulty(difficulty)}
+							>
+								{difficulty}
+							</button>
+						))}
+					</div>
+					<div className="filterTabsContainer" aria-label="Stats range">
+						{GAME_RECENT_FILTERS.map((range) => (
+							<button
+								key={range.value}
+								type="button"
+								className={`filterTab ${
+									selectedRecentRange === range.value ? "filterTabSelected" : ""
+								}`}
+								aria-pressed={selectedRecentRange === range.value}
+								onClick={() => setSelectedRecentRange(range.value)}
+							>
+								{range.label}
+							</button>
+						))}
+					</div>
 				</div>
 				{status === "loading" && !selectedRecentLimit && (
 					<p className="accountMessage">Loading stats...</p>
