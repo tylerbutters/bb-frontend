@@ -40,12 +40,12 @@ function StatPanel({ title, stats, onHistoryClick }) {
 					<strong>{normalizedStats.totalGames}</strong>
 				</div>
 				<div className="statsMetric">
-					<span>Won</span>
-					<strong>{normalizedStats.won}</strong>
+					<span>Correct</span>
+					<strong>{normalizedStats.correct}</strong>
 				</div>
 				<div className="statsMetric">
-					<span>Failed</span>
-					<strong>{normalizedStats.failed}</strong>
+					<span>Incorrect</span>
+					<strong>{normalizedStats.incorrect}</strong>
 				</div>
 				<div className="statsMetric">
 					<span>Accuracy</span>

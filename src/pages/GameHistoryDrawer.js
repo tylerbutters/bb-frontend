@@ -470,12 +470,12 @@ export function GameHistoryDrawer({
 							<strong>{normalizedStats.totalGames}</strong>
 						</div>
 						<div className="statsMetric">
-							<span>Won</span>
-							<strong>{normalizedStats.won}</strong>
+							<span>Correct</span>
+							<strong>{normalizedStats.correct}</strong>
 						</div>
 						<div className="statsMetric">
-							<span>Failed</span>
-							<strong>{normalizedStats.failed}</strong>
+							<span>Incorrect</span>
+							<strong>{normalizedStats.incorrect}</strong>
 						</div>
 						<div className="statsMetric">
 							<span>Accuracy</span>
@@ -506,10 +506,10 @@ export function GameHistoryDrawer({
 										<time dateTime={item.createdAt}>{formatHistoryDate(item.createdAt)}</time>
 										<span
 											className={`statsHistoryResult ${
-												item.correct ? "statsHistoryResultCorrect" : "statsHistoryResultFailed"
+												item.correct ? "statsHistoryResultCorrect" : "statsHistoryResultIncorrect"
 											}`}
 										>
-											{item.correct ? "Correct" : "Failed"}
+											{item.correct ? "Correct" : "Incorrect"}
 										</span>
 									</header>
 									<div className="statsHistoryMeta">

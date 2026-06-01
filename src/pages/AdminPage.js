@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link, Navigate } from "react-router-dom"
 import { Search } from "lucide-react"
-import {
-	getAdminUser,
-	getAdminUserGameHistory,
-	getAdminUsers,
-} from "../api/admin"
+import { getAdminUser, getAdminUserGameHistory, getAdminUsers } from "../api/admin"
 import {
 	emptyGameStatsResponse,
 	GAME_RECENT_FILTERS,
@@ -84,8 +80,8 @@ function StatsSummary({ stats }) {
 	return (
 		<div className="statsMetrics">
 			<StatMetric label="Total games" value={normalizedStats.totalGames} />
-			<StatMetric label="Won" value={normalizedStats.won} />
-			<StatMetric label="Failed" value={normalizedStats.failed} />
+			<StatMetric label="Correct" value={normalizedStats.correct} />
+			<StatMetric label="Incorrect" value={normalizedStats.incorrect} />
 			<StatMetric label="Accuracy" value={`${normalizedStats.accuracy}%`} />
 		</div>
 	)
@@ -175,9 +171,7 @@ export default function AdminPage({ currentUser, onAuthExpired }) {
 
 			const normalizedHistory = normalizeHistoryResponse(result)
 			setHistoryItems((currentItems) =>
-				replace
-					? normalizedHistory.items
-					: [...currentItems, ...normalizedHistory.items],
+				replace ? normalizedHistory.items : [...currentItems, ...normalizedHistory.items],
 			)
 			setHistoryHasMore(recentLimit ? false : normalizedHistory.hasMore)
 			setHistoryNextOffset(
@@ -230,12 +224,7 @@ export default function AdminPage({ currentUser, onAuthExpired }) {
 				setProfileStatus("ready")
 			} catch (error) {
 				setStats(emptyGameStatsResponse())
-				handleApiError(
-					error,
-					setProfileStatus,
-					setProfileMessage,
-					"Could not load user profile.",
-				)
+				handleApiError(error, setProfileStatus, setProfileMessage, "Could not load user profile.")
 			}
 		}
 
@@ -312,8 +301,7 @@ export default function AdminPage({ currentUser, onAuthExpired }) {
 	}
 
 	const recentLimit = parseGameRecentLimit(statsRecentRange)
-	const profileStats =
-		stats.byDifficulty?.[statsDifficulty] || stats.byDifficulty?.all || stats
+	const profileStats = stats.byDifficulty?.[statsDifficulty] || stats.byDifficulty?.all || stats
 	const selectedStats =
 		recentLimit && selectedUserId
 			? getGameStatsFromHistoryItems(historyItems)
@@ -470,7 +458,11 @@ export default function AdminPage({ currentUser, onAuthExpired }) {
 									</label>
 								</div>
 							</div>
-							<div className="filterTabsContainer" role="tablist" aria-label="Admin stats difficulty">
+							<div
+								className="filterTabsContainer"
+								role="tablist"
+								aria-label="Admin stats difficulty"
+							>
 								{GAME_STAT_FILTERS.map((difficulty) => (
 									<button
 										key={difficulty}
@@ -535,12 +527,10 @@ export default function AdminPage({ currentUser, onAuthExpired }) {
 												<time dateTime={item.createdAt}>{formatDate(item.createdAt)}</time>
 												<span
 													className={`statsHistoryResult ${
-														item.correct
-															? "statsHistoryResultCorrect"
-															: "statsHistoryResultFailed"
+														item.correct ? "statsHistoryResultCorrect" : "statsHistoryResultIncorrect"
 													}`}
 												>
-													{item.correct ? "Correct" : "Failed"}
+													{item.correct ? "Correct" : "Incorrect"}
 												</span>
 											</header>
 											<div className="statsHistoryMeta">

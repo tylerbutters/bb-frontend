@@ -16,8 +16,8 @@ beforeAll(() => {
 const defaultStatsResponse = {
 	total: {
 		totalGames: 6,
-		won: 4,
-		failed: 2,
+		correct: 4,
+		incorrect: 2,
 		accuracy: 67,
 	},
 	games: [
@@ -25,40 +25,40 @@ const defaultStatsResponse = {
 			mode: "translate",
 			label: "Translate",
 			totalGames: 3,
-			won: 2,
-			failed: 1,
+			correct: 2,
+			incorrect: 1,
 			accuracy: 67,
 		},
 		{
 			mode: "conjugations",
 			label: "Conjugations",
 			totalGames: 1,
-			won: 1,
-			failed: 0,
+			correct: 1,
+			incorrect: 0,
 			accuracy: 100,
 		},
 		{
 			mode: "fix sentence",
 			label: "Fix sentence",
 			totalGames: 0,
-			won: 0,
-			failed: 0,
+			correct: 0,
+			incorrect: 0,
 			accuracy: 0,
 		},
 		{
 			mode: "particles",
 			label: "Particles",
 			totalGames: 2,
-			won: 1,
-			failed: 1,
+			correct: 1,
+			incorrect: 1,
 			accuracy: 50,
 		},
 		{
 			mode: "reorder",
 			label: "Reorder",
 			totalGames: 0,
-			won: 0,
-			failed: 0,
+			correct: 0,
+			incorrect: 0,
 			accuracy: 0,
 		},
 	],
@@ -66,8 +66,8 @@ const defaultStatsResponse = {
 		all: {
 			total: {
 				totalGames: 6,
-				won: 4,
-				failed: 2,
+				correct: 4,
+				incorrect: 2,
 				accuracy: 67,
 			},
 			games: [
@@ -75,40 +75,40 @@ const defaultStatsResponse = {
 					mode: "translate",
 					label: "Translate",
 					totalGames: 3,
-					won: 2,
-					failed: 1,
+					correct: 2,
+					incorrect: 1,
 					accuracy: 67,
 				},
 				{
 					mode: "conjugations",
 					label: "Conjugations",
 					totalGames: 1,
-					won: 1,
-					failed: 0,
+					correct: 1,
+					incorrect: 0,
 					accuracy: 100,
 				},
 				{
 					mode: "fix sentence",
 					label: "Fix sentence",
 					totalGames: 0,
-					won: 0,
-					failed: 0,
+					correct: 0,
+					incorrect: 0,
 					accuracy: 0,
 				},
 				{
 					mode: "particles",
 					label: "Particles",
 					totalGames: 2,
-					won: 1,
-					failed: 1,
+					correct: 1,
+					incorrect: 1,
 					accuracy: 50,
 				},
 				{
 					mode: "reorder",
 					label: "Reorder",
 					totalGames: 0,
-					won: 0,
-					failed: 0,
+					correct: 0,
+					incorrect: 0,
 					accuracy: 0,
 				},
 			],
@@ -116,8 +116,8 @@ const defaultStatsResponse = {
 		easy: {
 			total: {
 				totalGames: 2,
-				won: 1,
-				failed: 1,
+				correct: 1,
+				incorrect: 1,
 				accuracy: 50,
 			},
 			games: [
@@ -125,8 +125,8 @@ const defaultStatsResponse = {
 					mode: "translate",
 					label: "Translate",
 					totalGames: 2,
-					won: 1,
-					failed: 1,
+					correct: 1,
+					incorrect: 1,
 					accuracy: 50,
 				},
 			],
@@ -134,8 +134,8 @@ const defaultStatsResponse = {
 		medium: {
 			total: {
 				totalGames: 3,
-				won: 3,
-				failed: 0,
+				correct: 3,
+				incorrect: 0,
 				accuracy: 100,
 			},
 			games: [
@@ -143,16 +143,16 @@ const defaultStatsResponse = {
 					mode: "conjugations",
 					label: "Conjugations",
 					totalGames: 1,
-					won: 1,
-					failed: 0,
+					correct: 1,
+					incorrect: 0,
 					accuracy: 100,
 				},
 				{
 					mode: "particles",
 					label: "Particles",
 					totalGames: 2,
-					won: 2,
-					failed: 0,
+					correct: 2,
+					incorrect: 0,
 					accuracy: 100,
 				},
 			],
@@ -160,8 +160,8 @@ const defaultStatsResponse = {
 		hard: {
 			total: {
 				totalGames: 1,
-				won: 0,
-				failed: 1,
+				correct: 0,
+				incorrect: 1,
 				accuracy: 0,
 			},
 			games: [
@@ -169,8 +169,8 @@ const defaultStatsResponse = {
 					mode: "particles",
 					label: "Particles",
 					totalGames: 1,
-					won: 0,
-					failed: 1,
+					correct: 0,
+					incorrect: 1,
 					accuracy: 0,
 				},
 			],
@@ -854,22 +854,22 @@ test("opens stats from the top nav", async () => {
 	fireEvent.click(screen.getByRole("tab", { name: "easy" }))
 	expect(screen.getByRole("tab", { name: "easy" })).toHaveAttribute("aria-selected", "true")
 	expect(allGamesPanel).toHaveTextContent(/Total games\s*2/)
-	expect(allGamesPanel).toHaveTextContent(/Won\s*1/)
-	expect(allGamesPanel).toHaveTextContent(/Failed\s*1/)
+	expect(allGamesPanel).toHaveTextContent(/Correct\s*1/)
+	expect(allGamesPanel).toHaveTextContent(/Incorrect\s*1/)
 	expect(allGamesPanel).toHaveTextContent(/Accuracy\s*50%/)
 	expect(screen.getByLabelText("Translate stats")).toHaveTextContent("50%")
 	expect(screen.getByLabelText("Conjugations stats")).toHaveTextContent("0%")
 
 	fireEvent.click(screen.getByRole("tab", { name: "medium" }))
 	expect(allGamesPanel).toHaveTextContent(/Total games\s*3/)
-	expect(allGamesPanel).toHaveTextContent(/Won\s*3/)
-	expect(allGamesPanel).toHaveTextContent(/Failed\s*0/)
+	expect(allGamesPanel).toHaveTextContent(/Correct\s*3/)
+	expect(allGamesPanel).toHaveTextContent(/Incorrect\s*0/)
 	expect(allGamesPanel).toHaveTextContent(/Accuracy\s*100%/)
 
 	fireEvent.click(screen.getByRole("tab", { name: "hard" }))
 	expect(allGamesPanel).toHaveTextContent(/Total games\s*1/)
-	expect(allGamesPanel).toHaveTextContent(/Won\s*0/)
-	expect(allGamesPanel).toHaveTextContent(/Failed\s*1/)
+	expect(allGamesPanel).toHaveTextContent(/Correct\s*0/)
+	expect(allGamesPanel).toHaveTextContent(/Incorrect\s*1/)
 	expect(allGamesPanel).toHaveTextContent(/Accuracy\s*0%/)
 
 	fireEvent.click(screen.getByRole("tab", { name: "all" }))
@@ -881,8 +881,8 @@ test("opens stats from the top nav", async () => {
 	await waitFor(() => {
 		expect(allGamesPanel).toHaveTextContent(/Total games\s*1/)
 	})
-	expect(allGamesPanel).toHaveTextContent(/Won\s*1/)
-	expect(allGamesPanel).toHaveTextContent(/Failed\s*0/)
+	expect(allGamesPanel).toHaveTextContent(/Correct\s*1/)
+	expect(allGamesPanel).toHaveTextContent(/Incorrect\s*0/)
 	expect(allGamesPanel).toHaveTextContent(/Accuracy\s*100%/)
 	expect(screen.getByLabelText("Translate stats")).toHaveTextContent("100%")
 	expect(screen.getByLabelText("Particles stats")).toHaveTextContent("0%")
@@ -942,8 +942,8 @@ test("opens paginated game history from a stats panel", async () => {
 	await waitFor(() => {
 		expect(historyStats).toHaveTextContent(/Total games\s*2/)
 	})
-	expect(historyStats).toHaveTextContent(/Won\s*1/)
-	expect(historyStats).toHaveTextContent(/Failed\s*1/)
+	expect(historyStats).toHaveTextContent(/Correct\s*1/)
+	expect(historyStats).toHaveTextContent(/Incorrect\s*1/)
 	expect(historyStats).toHaveTextContent(/Accuracy\s*50%/)
 	expect(within(drawer).getByRole("button", { name: "all" })).toHaveAttribute(
 		"aria-pressed",
@@ -951,7 +951,7 @@ test("opens paginated game history from a stats panel", async () => {
 	)
 	expect(within(drawer).getByText("I eat rice.")).toBeInTheDocument()
 	expect(within(drawer).getByText("ご飯を食べます。")).toBeInTheDocument()
-	expect(within(drawer).getByText("Correct")).toBeInTheDocument()
+	expect(within(drawer).getAllByText("Correct").length).toBeGreaterThan(0)
 	expect(within(drawer).queryByText("Good.")).not.toBeInTheDocument()
 
 	const firstHistoryRequest = global.fetch.mock.calls.find(([url]) =>
@@ -972,8 +972,8 @@ test("opens paginated game history from a stats panel", async () => {
 	await waitFor(() => {
 		expect(historyStats).toHaveTextContent(/Total games\s*1/)
 	})
-	expect(historyStats).toHaveTextContent(/Won\s*1/)
-	expect(historyStats).toHaveTextContent(/Failed\s*0/)
+	expect(historyStats).toHaveTextContent(/Correct\s*1/)
+	expect(historyStats).toHaveTextContent(/Incorrect\s*0/)
 	expect(historyStats).toHaveTextContent(/Accuracy\s*100%/)
 	expect(within(drawer).queryByRole("button", { name: "Load more" })).not.toBeInTheDocument()
 
@@ -999,7 +999,7 @@ test("opens paginated game history from a stats panel", async () => {
 	await waitFor(() => {
 		expect(within(drawer).getByText("I drink tea.")).toBeInTheDocument()
 	})
-	expect(within(drawer).getAllByText("Failed").length).toBeGreaterThan(0)
+	expect(within(drawer).getAllByText("Incorrect").length).toBeGreaterThan(0)
 	expect(within(drawer).getByText("Use お茶.")).toBeInTheDocument()
 
 	const historyRequests = global.fetch.mock.calls.filter(([url]) =>
@@ -1113,8 +1113,8 @@ test("opens game history with empty metrics and a loading spinner", async () => 
 	})
 	expect(historyStats).toHaveAttribute("aria-busy", "true")
 	expect(historyStats).toHaveTextContent(/Total games\s*0/)
-	expect(historyStats).toHaveTextContent(/Won\s*0/)
-	expect(historyStats).toHaveTextContent(/Failed\s*0/)
+	expect(historyStats).toHaveTextContent(/Correct\s*0/)
+	expect(historyStats).toHaveTextContent(/Incorrect\s*0/)
 	expect(historyStats).toHaveTextContent(/Accuracy\s*0%/)
 	expect(within(drawer).getByRole("status", { name: "Loading history" })).toBeInTheDocument()
 	expect(within(drawer).queryByText("I write a letter.")).not.toBeInTheDocument()
@@ -1350,8 +1350,8 @@ test("opens game history from the sentence builder prompt panel", async () => {
 	await waitFor(() => {
 		expect(historyStats).toHaveTextContent(/Total games\s*3/)
 	})
-	expect(historyStats).toHaveTextContent(/Won\s*2/)
-	expect(historyStats).toHaveTextContent(/Failed\s*1/)
+	expect(historyStats).toHaveTextContent(/Correct\s*2/)
+	expect(historyStats).toHaveTextContent(/Incorrect\s*1/)
 	expect(historyStats).toHaveTextContent(/Accuracy\s*67%/)
 	await waitFor(() => {
 		expect(within(drawer).getByText("I eat rice.")).toBeInTheDocument()
@@ -1713,8 +1713,8 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 					stats: {
 						total: {
 							totalGames: 2,
-							won: 1,
-							failed: 1,
+							correct: 1,
+							incorrect: 1,
 							accuracy: 50,
 						},
 						games: [
@@ -1722,16 +1722,16 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 								mode: "translate",
 								label: "Translate",
 								totalGames: 1,
-								won: 1,
-								failed: 0,
+								correct: 1,
+								incorrect: 0,
 								accuracy: 100,
 							},
 							{
 								mode: "conjugations",
 								label: "Conjugations",
 								totalGames: 1,
-								won: 0,
-								failed: 1,
+								correct: 0,
+								incorrect: 1,
 								accuracy: 0,
 							},
 						],
@@ -1739,8 +1739,8 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 							all: {
 								total: {
 									totalGames: 2,
-									won: 1,
-									failed: 1,
+									correct: 1,
+									incorrect: 1,
 									accuracy: 50,
 								},
 								games: [
@@ -1748,16 +1748,16 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 										mode: "translate",
 										label: "Translate",
 										totalGames: 1,
-										won: 1,
-										failed: 0,
+										correct: 1,
+										incorrect: 0,
 										accuracy: 100,
 									},
 									{
 										mode: "conjugations",
 										label: "Conjugations",
 										totalGames: 1,
-										won: 0,
-										failed: 1,
+										correct: 0,
+										incorrect: 1,
 										accuracy: 0,
 									},
 								],
@@ -1765,8 +1765,8 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 							hard: {
 								total: {
 									totalGames: 1,
-									won: 1,
-									failed: 0,
+									correct: 1,
+									incorrect: 0,
 									accuracy: 100,
 								},
 								games: [
@@ -1774,8 +1774,8 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 										mode: "conjugations",
 										label: "Conjugations",
 										totalGames: 1,
-										won: 1,
-										failed: 0,
+										correct: 1,
+										incorrect: 0,
 										accuracy: 100,
 									},
 								],
@@ -1850,9 +1850,9 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 
 	expect(statsModeSelect).toHaveValue("conjugations")
 	expect(within(stats).queryByText("2")).not.toBeInTheDocument()
-	const failedMetric = within(stats).getByText("Failed").closest(".statsMetric")
+	const failedMetric = within(stats).getByText("Incorrect").closest(".statsMetric")
 	expect(within(failedMetric).getByText("1")).toBeInTheDocument()
-	const wonMetric = within(stats).getByText("Won").closest(".statsMetric")
+	const wonMetric = within(stats).getByText("Correct").closest(".statsMetric")
 	expect(within(wonMetric).getByText("0")).toBeInTheDocument()
 
 	const history = screen.getByLabelText("Selected user game history")

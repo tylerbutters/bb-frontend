@@ -184,9 +184,9 @@
 	background-color: var(--color-green-background);
 }
 
-.statsHistoryResultFailed {
-	border-color: var(--color-white-border);
-	background-color: var(--color-white-background);
+.statsHistoryResultIncorrect {
+	border-color: var(--color-red-border);
+	background-color: var(--color-red-background);
 }
 
 .statsHistoryMeta {

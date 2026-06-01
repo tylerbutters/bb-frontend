@@ -65,35 +65,35 @@ function filterTodayResults(results, { todayOnly = false, now = new Date() } = {
 	return results.filter((result) => isFromCurrentUtcDay(result.recordedAt, now))
 }
 
-function calculateAccuracy(won, totalGames) {
+function calculateAccuracy(correct, totalGames) {
 	if (!totalGames) return 0
-	return Math.round((won / totalGames) * 100)
+	return Math.round((correct / totalGames) * 100)
 }
 
-function createStats({ totalGames = 0, won = 0, failed = 0 } = {}) {
+function createStats({ totalGames = 0, correct = 0, incorrect = 0 } = {}) {
 	return {
 		totalGames,
-		won,
-		failed,
-		accuracy: calculateAccuracy(won, totalGames),
+		correct,
+		incorrect,
+		accuracy: calculateAccuracy(correct, totalGames),
 	}
 }
 
 export function normalizeGameStats(stats) {
 	return {
 		totalGames: Number(stats?.totalGames || 0),
-		won: Number(stats?.won || 0),
-		failed: Number(stats?.failed || 0),
+		correct: Number(stats?.correct || 0),
+		incorrect: Number(stats?.incorrect || 0),
 		accuracy: Number(stats?.accuracy || 0),
 	}
 }
 
 export function getGameStatsFromHistoryItems(items = []) {
 	const totalGames = items.length
-	const won = items.filter((item) => item.correct).length
-	const failed = totalGames - won
+	const correct = items.filter((item) => item.correct).length
+	const incorrect = totalGames - correct
 
-	return createStats({ totalGames, won, failed })
+	return createStats({ totalGames, correct, incorrect })
 }
 
 export function getGameStatsGroupFromHistoryItems(items = []) {
@@ -124,7 +124,7 @@ function createModeAccumulator() {
 	return new Map(
 		TRACKED_GAME_MODES.map(({ mode }) => [
 			mode,
-			{ totalGames: 0, won: 0, failed: 0 },
+			{ totalGames: 0, correct: 0, incorrect: 0 },
 		]),
 	)
 }
@@ -135,9 +135,9 @@ function addStats(statsByMode, { mode, correct }) {
 
 	stats.totalGames += 1
 	if (correct) {
-		stats.won += 1
+		stats.correct += 1
 	} else {
-		stats.failed += 1
+		stats.incorrect += 1
 	}
 }
 
@@ -150,10 +150,10 @@ function createStatsGroup(statsByMode = createModeAccumulator()) {
 	const total = games.reduce(
 		(summary, game) => ({
 			totalGames: summary.totalGames + game.totalGames,
-			won: summary.won + game.won,
-			failed: summary.failed + game.failed,
+			correct: summary.correct + game.correct,
+			incorrect: summary.incorrect + game.incorrect,
 		}),
-		{ totalGames: 0, won: 0, failed: 0 },
+		{ totalGames: 0, correct: 0, incorrect: 0 },
 	)
 
 	return {
@@ -182,7 +182,6 @@ export function normalizeGameStatsGroup(statsGroup, fallbackStatsGroup = createS
 			const sourceGameStats = statsByMode.get(mode) || fallbackGameStats
 
 			return {
-				...fallbackGameStats,
 				mode,
 				label,
 				...normalizeGameStats(sourceGameStats),
