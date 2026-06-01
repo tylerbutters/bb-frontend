@@ -193,6 +193,48 @@
 	justify-content: center;
 }
 
+.statsHistorySignupPrompt {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	padding: 18px;
+	border: 1px solid var(--color-grey-border);
+	border-radius: 8px;
+	background: var(--color-grey-background);
+	box-shadow: 0 14px 36px var(--color-shadow);
+	box-sizing: border-box;
+}
+
+.statsHistorySignupPrompt p {
+	margin: 0;
+	color: var(--color-grey-text);
+	font-size: 15px;
+	line-height: 1.4;
+}
+
+.statsHistorySignupButton {
+	display: inline-flex;
+	min-height: 42px;
+	align-items: center;
+	justify-content: center;
+	align-self: flex-start;
+	padding: 0 14px;
+	border: 1px solid var(--color-green-border);
+	border-radius: 8px;
+	background: var(--color-green-background);
+	box-sizing: border-box;
+	color: white;
+	font-size: 14px;
+	text-decoration: none;
+}
+
+.statsHistorySignupButton:hover,
+.statsHistorySignupButton:focus-visible {
+	border-color: var(--color-green-border-hover);
+	background: var(--color-green-background-hover);
+	outline: none;
+}
+
 .statsHistorySpinner {
 	width: 32px;
 	height: 32px;

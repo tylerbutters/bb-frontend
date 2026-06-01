@@ -32,13 +32,13 @@
 }
 
 .appNavbarSignupLink {
-	border: 1px solid var(--color-white-border);
-	background: var(--color-white-background);
+	border: 1px solid var(--color-green-border);
+	background: var(--color-green-background);
 	color: white;
 }
 .appNavbarSignupLink:hover {
-	border: 1px solid var(--color-white-border-hover);
-	background: var(--color-white-background-hover);
+	border: 1px solid var(--color-green-border-hover);
+	background: var(--color-green-background-hover);
 }
 
 .appNavbarPremiumLink {

@@ -198,7 +198,7 @@
 	padding: 12px 14px;
 	border: 1px solid var(--color-grey-border);
 	border-radius: 8px;
-	/* background: var(--color-grey-background); */
+	background: var(--color-grey-background);
 	box-sizing: border-box;
 	color: white;
 	font-size: 14px;
@@ -223,17 +223,17 @@
 	align-items: center;
 	justify-content: center;
 	padding: 0 14px;
-	border: 1px solid var(--color-white-border);
+	border: 1px solid var(--color-green-border);
 	border-radius: 7px;
-	background: var(--color-white-background);
+	background: var(--color-green-background);
 	color: white;
 	font-size: 13px;
 	text-decoration: none;
 }
 
 .gameQuotaButton:hover {
-	border-color: var(--color-white-border-hover);
-	background: var(--color-white-background-hover);
+	border-color: var(--color-green-border-hover);
+	background: var(--color-green-background-hover);
 }
 /* 
 .gameFeedbackSuccess {

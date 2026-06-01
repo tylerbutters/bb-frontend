@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 import { getUserGameHistory, getUserStats } from "../api/users"
 import {
 	emptyGameStatsResponse,
@@ -262,8 +263,6 @@ export function useGameHistoryDrawer(currentUser) {
 	}, [isHistoryClosing])
 
 	function openHistory({ mode = "all", label, difficulty = "all", recentLimit = "all" }) {
-		if (!currentUser) return
-
 		const nextFilter = {
 			mode,
 			label,
@@ -275,6 +274,18 @@ export function useGameHistoryDrawer(currentUser) {
 		setIsHistoryClosing(false)
 		setHistoryFilter(nextFilter)
 		setHistoryMessage("")
+
+		if (!currentUser) {
+			setStats(emptyGameStatsResponse())
+			setStatsStatus("ready")
+			setHistoryItems([])
+			setHistoryStatus("ready")
+			setHistoryHasMore(false)
+			setHistoryNextOffset(0)
+			setHistorySource("backend")
+			setHistoryDataKey(null)
+			return
+		}
 
 		if (hasCurrentData) {
 			setStatsStatus("refreshing")
@@ -362,6 +373,7 @@ export function useGameHistoryDrawer(currentUser) {
 			message: historyMessage,
 			hasMore: historyHasMore,
 			isClosing: isHistoryClosing,
+			requiresLogin: Boolean(historyFilter && !currentUser),
 			onClose: closeHistory,
 			onCloseAnimationEnd: finishClosingHistory,
 			onDifficultyChange: selectHistoryDifficulty,
@@ -384,6 +396,7 @@ export function GameHistoryDrawer({
 	message,
 	hasMore,
 	isClosing,
+	requiresLogin = false,
 	onClose,
 	onCloseAnimationEnd,
 	onDifficultyChange,
@@ -440,75 +453,87 @@ export function GameHistoryDrawer({
 						</section>
 					*/}
 
-					<div className="filterTabsContainer">
-						{GAME_STAT_FILTERS.map((difficulty) => (
-							<button
-								key={difficulty}
-								type="button"
-								role="tab"
-								aria-selected={filter.difficulty === difficulty}
-								className={`filterTab ${
-									filter.difficulty === difficulty ? "filterTabSelected" : ""
-								}`}
-								onClick={() => onDifficultyChange(difficulty)}
-							>
-								{difficulty}
-							</button>
-						))}
-					</div>
+					{!requiresLogin && (
+						<>
+							<div className="filterTabsContainer">
+								{GAME_STAT_FILTERS.map((difficulty) => (
+									<button
+										key={difficulty}
+										type="button"
+										role="tab"
+										aria-selected={filter.difficulty === difficulty}
+										className={`filterTab ${
+											filter.difficulty === difficulty ? "filterTabSelected" : ""
+										}`}
+										onClick={() => onDifficultyChange(difficulty)}
+									>
+										{difficulty}
+									</button>
+								))}
+							</div>
 
-					<div className="filterTabsContainer">
-						{recentFilters.map((range) => (
-							<button
-								key={range.value}
-								type="button"
-								aria-pressed={(filter.recentLimit || "all") === range.value}
-								className={`filterTab ${
-									(filter.recentLimit || "all") === range.value ? "filterTabSelected" : ""
-								}`}
-								onClick={() => onRecentLimitChange(range.value)}
-							>
-								{range.label}
-							</button>
-						))}
-					</div>
+							<div className="filterTabsContainer">
+								{recentFilters.map((range) => (
+									<button
+										key={range.value}
+										type="button"
+										aria-pressed={(filter.recentLimit || "all") === range.value}
+										className={`filterTab ${
+											(filter.recentLimit || "all") === range.value ? "filterTabSelected" : ""
+										}`}
+										onClick={() => onRecentLimitChange(range.value)}
+									>
+										{range.label}
+									</button>
+								))}
+							</div>
 
-					<div
-						className="statsMetrics statsHistoryStats"
-						role="group"
-						aria-label={`${filter.label} history stats`}
-						aria-busy={statsStatus === "loading" || statsStatus === "refreshing"}
-					>
-						<HistoryStatMetric
-							icon={Trophy}
-							label="Total games"
-							value={normalizedStats.totalGames}
-						/>
-						<HistoryStatMetric
-							icon={CheckCircle2}
-							label="Correct"
-							value={normalizedStats.correct}
-						/>
-						<HistoryStatMetric icon={XCircle} label="Incorrect" value={normalizedStats.incorrect} />
-						<HistoryStatMetric
-							icon={Percent}
-							label="Accuracy"
-							value={`${normalizedStats.accuracy}%`}
-						/>
-					</div>
+							<div
+								className="statsMetrics statsHistoryStats"
+								role="group"
+								aria-label={`${filter.label} history stats`}
+								aria-busy={statsStatus === "loading" || statsStatus === "refreshing"}
+							>
+								<HistoryStatMetric
+									icon={Trophy}
+									label="Total games"
+									value={normalizedStats.totalGames}
+								/>
+								<HistoryStatMetric
+									icon={CheckCircle2}
+									label="Correct"
+									value={normalizedStats.correct}
+								/>
+								<HistoryStatMetric icon={XCircle} label="Incorrect" value={normalizedStats.incorrect} />
+								<HistoryStatMetric
+									icon={Percent}
+									label="Accuracy"
+									value={`${normalizedStats.accuracy}%`}
+								/>
+							</div>
+						</>
+					)}
 				</div>
 				<div className="statsHistoryScrollArea">
+					{requiresLogin && (
+						<div className="statsHistorySignupPrompt">
+							<p>Sign up to see game history.</p>
+							<Link className="statsHistorySignupButton" to="/signup">
+								Sign up
+							</Link>
+						</div>
+					)}
 					{isLoading && (
 						<div className="statsHistoryLoading" role="status" aria-label="Loading history">
 							<span className="statsHistorySpinner" aria-hidden="true" />
 						</div>
 					)}
-					{isError && <p className="statsHistoryMessage">{message}</p>}
-					{!isLoading && !isError && items.length === 0 && (
+					{!requiresLogin && isError && <p className="statsHistoryMessage">{message}</p>}
+					{!requiresLogin && !isLoading && !isError && items.length === 0 && (
 						<p className="statsHistoryMessage">No history for this selection yet.</p>
 					)}
 
-					{!isLoading && (
+					{!requiresLogin && !isLoading && (
 						<div className="statsHistoryList">
 							{items.map((item) => (
 								<article className="statsHistoryItem" key={item.id || item.challengeId}>
@@ -556,7 +581,7 @@ export function GameHistoryDrawer({
 						</div>
 					)}
 
-					{hasMore && !isLoading && !isError && (
+					{!requiresLogin && hasMore && !isLoading && !isError && (
 						<button
 							type="button"
 							className="statsHistoryLoadMoreButton"

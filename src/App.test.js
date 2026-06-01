@@ -31,7 +31,7 @@ const defaultStatsResponse = {
 		},
 		{
 			mode: "conjugations",
-			label: "Conjugations",
+			label: "Conjugate",
 			totalGames: 1,
 			correct: 1,
 			incorrect: 0,
@@ -39,7 +39,7 @@ const defaultStatsResponse = {
 		},
 		{
 			mode: "fix sentence",
-			label: "Fix sentence",
+			label: "Fix mistakes",
 			totalGames: 0,
 			correct: 0,
 			incorrect: 0,
@@ -55,7 +55,7 @@ const defaultStatsResponse = {
 		},
 		{
 			mode: "reorder",
-			label: "Reorder",
+			label: "Word order",
 			totalGames: 0,
 			correct: 0,
 			incorrect: 0,
@@ -81,7 +81,7 @@ const defaultStatsResponse = {
 				},
 				{
 					mode: "conjugations",
-					label: "Conjugations",
+					label: "Conjugate",
 					totalGames: 1,
 					correct: 1,
 					incorrect: 0,
@@ -89,7 +89,7 @@ const defaultStatsResponse = {
 				},
 				{
 					mode: "fix sentence",
-					label: "Fix sentence",
+					label: "Fix mistakes",
 					totalGames: 0,
 					correct: 0,
 					incorrect: 0,
@@ -105,7 +105,7 @@ const defaultStatsResponse = {
 				},
 				{
 					mode: "reorder",
-					label: "Reorder",
+					label: "Word order",
 					totalGames: 0,
 					correct: 0,
 					incorrect: 0,
@@ -141,7 +141,7 @@ const defaultStatsResponse = {
 			games: [
 				{
 					mode: "conjugations",
-					label: "Conjugations",
+					label: "Conjugate",
 					totalGames: 1,
 					correct: 1,
 					incorrect: 0,
@@ -197,16 +197,19 @@ async function loginDefaultUser() {
 	await waitFor(() => {
 		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
 		expect(window.location.pathname).toBe("/")
-		expect(screen.getByRole("tab", { name: "sandbox" })).toBeInTheDocument()
+		expect(screen.getByRole("tab", { name: "Build" })).toBeInTheDocument()
 	})
 }
 
 function expectLoggedOutChallengeBlocker() {
 	const blocker = screen
-		.getByText("Log in to check challenge answers.")
+		.getByText("Sign up to check challenge answers.")
 		.closest(".gameQuotaBlocker")
 	expect(blocker).toBeInTheDocument()
-	expect(within(blocker).getByRole("link", { name: "Login" })).toHaveAttribute("href", "/login")
+	expect(within(blocker).getByRole("link", { name: "Sign up" })).toHaveAttribute(
+		"href",
+		"/signup",
+	)
 	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
 }
 
@@ -682,7 +685,7 @@ test("logs in and replaces auth links with the user name", async () => {
 	await waitFor(() => {
 		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
 		expect(window.location.pathname).toBe("/")
-		expect(screen.getByRole("tab", { name: "sandbox" })).toBeInTheDocument()
+		expect(screen.getByRole("tab", { name: "Build" })).toBeInTheDocument()
 	})
 	expect(screen.queryByRole("link", { name: "Login" })).not.toBeInTheDocument()
 	expect(screen.queryByRole("link", { name: "Sign up" })).not.toBeInTheDocument()
@@ -882,7 +885,7 @@ test("opens stats from the top nav", async () => {
 	expect(within(allGamesPanel).getByText("2")).toBeInTheDocument()
 	expect(within(allGamesPanel).getByText("67%")).toBeInTheDocument()
 	expect(screen.getByLabelText("Translate stats")).toBeInTheDocument()
-	expect(screen.getByLabelText("Fix sentence stats")).toHaveTextContent("0%")
+	expect(screen.getByLabelText("Fix mistakes stats")).toHaveTextContent("0%")
 	expect(screen.getByRole("tab", { name: "all" })).toHaveAttribute("aria-selected", "true")
 	expect(screen.getByRole("tab", { name: "easy" })).toBeInTheDocument()
 	expect(screen.getByRole("tab", { name: "medium" })).toBeInTheDocument()
@@ -899,7 +902,7 @@ test("opens stats from the top nav", async () => {
 	expect(allGamesPanel).toHaveTextContent(/Incorrect\s*1/)
 	expect(allGamesPanel).toHaveTextContent(/Accuracy\s*50%/)
 	expect(screen.getByLabelText("Translate stats")).toHaveTextContent("50%")
-	expect(screen.getByLabelText("Conjugations stats")).toHaveTextContent("0%")
+	expect(screen.getByLabelText("Conjugate stats")).toHaveTextContent("0%")
 
 	fireEvent.click(screen.getByRole("tab", { name: "medium" }))
 	expect(allGamesPanel).toHaveTextContent(/Total games\s*3/)
@@ -1139,18 +1142,18 @@ test("opens game history with empty metrics and a loading spinner", async () => 
 	fireEvent.click(screen.getByRole("link", { name: "Stats" }))
 
 	await waitFor(() => {
-		expect(screen.getByLabelText("Conjugations stats")).toHaveTextContent("100%")
+		expect(screen.getByLabelText("Conjugate stats")).toHaveTextContent("100%")
 	})
 
 	fireEvent.click(
-		within(screen.getByLabelText("Conjugations stats")).getByRole("button", {
+		within(screen.getByLabelText("Conjugate stats")).getByRole("button", {
 			name: "History",
 		}),
 	)
 
-	const drawer = await screen.findByLabelText("Conjugations history drawer")
+	const drawer = await screen.findByLabelText("Conjugate history drawer")
 	const historyStats = within(drawer).getByRole("group", {
-		name: "Conjugations history stats",
+		name: "Conjugate history stats",
 	})
 	expect(historyStats).toHaveAttribute("aria-busy", "true")
 	expect(historyStats).toHaveTextContent(/Total games\s*0/)
@@ -1173,7 +1176,7 @@ test("opens game history with empty metrics and a loading spinner", async () => 
 						id: 9,
 						challengeId: "9e5eb8e7-f91a-4c61-8f37-62b1a27ddf95",
 						mode: "conjugations",
-						label: "Conjugations",
+						label: "Conjugate",
 						difficulty: "easy",
 						prompt: "I want to eat sushi.",
 						answer: "寿司を食べたいです。",
@@ -1253,7 +1256,7 @@ test("reopens populated game history while refreshing it in the background", asy
 								id: 9,
 								challengeId: "9e5eb8e7-f91a-4c61-8f37-62b1a27ddf95",
 								mode: "conjugations",
-								label: "Conjugations",
+								label: "Conjugate",
 								difficulty: "easy",
 								prompt: "I want to eat sushi.",
 								answer: "寿司を食べたいです。",
@@ -1283,31 +1286,31 @@ test("reopens populated game history while refreshing it in the background", asy
 	fireEvent.click(screen.getByRole("link", { name: "Stats" }))
 
 	await waitFor(() => {
-		expect(screen.getByLabelText("Conjugations stats")).toHaveTextContent("100%")
+		expect(screen.getByLabelText("Conjugate stats")).toHaveTextContent("100%")
 	})
 
-	const openConjugationsHistory = () =>
+	const openConjugateHistory = () =>
 		fireEvent.click(
-			within(screen.getByLabelText("Conjugations stats")).getByRole("button", {
+			within(screen.getByLabelText("Conjugate stats")).getByRole("button", {
 				name: "History",
 			}),
 		)
 
-	openConjugationsHistory()
-	let drawer = await screen.findByLabelText("Conjugations history drawer")
+	openConjugateHistory()
+	let drawer = await screen.findByLabelText("Conjugate history drawer")
 	await waitFor(() => {
 		expect(within(drawer).getByText("I want to eat sushi.")).toBeInTheDocument()
 	})
 
 	fireEvent.click(within(drawer).getByRole("button", { name: "Close" }))
 	await waitFor(() => {
-		expect(screen.queryByLabelText("Conjugations history drawer")).not.toBeInTheDocument()
+		expect(screen.queryByLabelText("Conjugate history drawer")).not.toBeInTheDocument()
 	})
 
-	openConjugationsHistory()
-	drawer = await screen.findByLabelText("Conjugations history drawer")
+	openConjugateHistory()
+	drawer = await screen.findByLabelText("Conjugate history drawer")
 	const historyStats = within(drawer).getByRole("group", {
-		name: "Conjugations history stats",
+		name: "Conjugate history stats",
 	})
 
 	expect(historyStats).toHaveAttribute("aria-busy", "true")
@@ -1332,7 +1335,7 @@ test("reopens populated game history while refreshing it in the background", asy
 						id: 10,
 						challengeId: "10e5eb8e7-f91a-4c61-8f37-62b1a27ddf95",
 						mode: "conjugations",
-						label: "Conjugations",
+						label: "Conjugate",
 						difficulty: "easy",
 						prompt: "I want to drink tea.",
 						answer: "お茶を飲みたいです。",
@@ -1354,6 +1357,38 @@ test("reopens populated game history while refreshing it in the background", asy
 	})
 })
 
+test("opens a sign-up prompt in game history from the sentence builder when logged out", async () => {
+	render(<App />)
+
+	expect(screen.queryByRole("button", { name: "History" })).not.toBeInTheDocument()
+
+	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
+	await waitFor(() => {
+		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
+	})
+
+	const historyButton = screen.getByRole("button", { name: "History" })
+	expect(historyButton).toHaveAttribute("aria-pressed", "false")
+
+	fireEvent.click(historyButton)
+
+	const drawer = await screen.findByLabelText("Translate history drawer")
+	expect(historyButton).toHaveAttribute("aria-pressed", "true")
+	expect(within(drawer).getByRole("heading", { name: "Translate history" })).toBeInTheDocument()
+	expect(within(drawer).getByText("Sign up to see game history.")).toBeInTheDocument()
+	expect(within(drawer).getByRole("link", { name: "Sign up" })).toHaveAttribute(
+		"href",
+		"/signup",
+	)
+	expect(within(drawer).queryByRole("group", { name: "Translate history stats" })).not.toBeInTheDocument()
+	expect(within(drawer).queryByRole("tab", { name: "all" })).not.toBeInTheDocument()
+	expect(
+		global.fetch.mock.calls.some(([url]) =>
+			String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
+		),
+	).toBe(false)
+})
+
 test("opens game history from the sentence builder prompt panel", async () => {
 	render(<App />)
 
@@ -1369,7 +1404,7 @@ test("opens game history from the sentence builder prompt panel", async () => {
 	})
 	expect(screen.queryByRole("button", { name: "History" })).not.toBeInTheDocument()
 
-	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
@@ -1416,7 +1451,7 @@ test("opens game history from the sentence builder prompt panel", async () => {
 
 	fireEvent.click(historyButton)
 	await screen.findByLabelText("Translate history drawer")
-	fireEvent.click(screen.getByRole("tab", { name: "conjugations" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Conjugate" }))
 	await waitFor(() => {
 		expect(screen.queryByLabelText("Translate history drawer")).not.toBeInTheDocument()
 	})
@@ -1476,7 +1511,7 @@ test("shows zero-backgrounded stats panels when stats have not been created yet"
 
 	await waitFor(() => {
 		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
-		expect(screen.getByRole("tab", { name: "translate" })).toBeInTheDocument()
+		expect(screen.getByRole("tab", { name: "Translate" })).toBeInTheDocument()
 	})
 
 	fireEvent.click(screen.getByRole("link", { name: "Stats" }))
@@ -1485,10 +1520,10 @@ test("shows zero-backgrounded stats panels when stats have not been created yet"
 	expect(within(allGamesPanel).getAllByText("0")).toHaveLength(3)
 	expect(within(allGamesPanel).getByText("0%")).toBeInTheDocument()
 	expect(screen.getByLabelText("Translate stats")).toHaveTextContent("0%")
-	expect(screen.getByLabelText("Conjugations stats")).toHaveTextContent("0%")
-	expect(screen.getByLabelText("Fix sentence stats")).toHaveTextContent("0%")
+	expect(screen.getByLabelText("Conjugate stats")).toHaveTextContent("0%")
+	expect(screen.getByLabelText("Fix mistakes stats")).toHaveTextContent("0%")
 	expect(screen.getByLabelText("Particles stats")).toHaveTextContent("0%")
-	expect(screen.getByLabelText("Reorder stats")).toHaveTextContent("0%")
+	expect(screen.getByLabelText("Word order stats")).toHaveTextContent("0%")
 
 	await waitFor(() => {
 		const statsRequest = global.fetch.mock.calls.find(
@@ -1566,7 +1601,7 @@ test("shows locally recorded stats when backend stats are unavailable", async ()
 		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
 	})
 
-	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
@@ -1592,7 +1627,7 @@ test("shows locally recorded stats when backend stats are unavailable", async ()
 	expect(within(allGamesPanel).getAllByText("1")).toHaveLength(2)
 	expect(within(allGamesPanel).getByText("100%")).toBeInTheDocument()
 	expect(screen.getByLabelText("Translate stats")).toHaveTextContent("100%")
-	expect(screen.getByLabelText("Conjugations stats")).toHaveTextContent("0%")
+	expect(screen.getByLabelText("Conjugate stats")).toHaveTextContent("0%")
 
 	fireEvent.click(screen.getByRole("tab", { name: "easy" }))
 	expect(allGamesPanel).toHaveTextContent(/Total games\s*1/)
@@ -1769,7 +1804,7 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 							},
 							{
 								mode: "conjugations",
-								label: "Conjugations",
+								label: "Conjugate",
 								totalGames: 1,
 								correct: 0,
 								incorrect: 1,
@@ -1795,7 +1830,7 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 									},
 									{
 										mode: "conjugations",
-										label: "Conjugations",
+										label: "Conjugate",
 										totalGames: 1,
 										correct: 0,
 										incorrect: 1,
@@ -1813,7 +1848,7 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 								games: [
 									{
 										mode: "conjugations",
-										label: "Conjugations",
+										label: "Conjugate",
 										totalGames: 1,
 										correct: 1,
 										incorrect: 0,
@@ -1836,7 +1871,7 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 							id: 9,
 							challengeId: "1e5eb8e7-f91a-4c61-8f37-62b1a27ddf95",
 							mode: "conjugations",
-							label: "Conjugations",
+							label: "Conjugate",
 							difficulty: "hard",
 							prompt: "Conjugate 食べる.",
 							answer: "食べます",
@@ -1977,19 +2012,17 @@ test("switches game tabs and clears the sentence", async () => {
 	render(<App />)
 
 	const gameTabs = [
-		"sandbox",
-		"shuffle",
-		"translate",
-		"conjugations",
-		"fix sentence",
-		"particles",
-		"reorder",
+		"Build",
+		"Translate",
+		"Conjugate",
+		"Fix mistakes",
+		"Particles",
+		"Word order",
+		"Random",
 	]
-	gameTabs.forEach((gameTab) => {
-		expect(screen.getByRole("tab", { name: gameTab })).toBeInTheDocument()
-	})
-	expect(screen.getByRole("tab", { name: "sandbox" })).toHaveAttribute("aria-selected", "true")
-	expect(screen.getByRole("heading", { name: "Sandbox" })).toBeInTheDocument()
+	expect(screen.getAllByRole("tab").map((tab) => tab.textContent)).toEqual(gameTabs)
+	expect(screen.getByRole("tab", { name: "Build" })).toHaveAttribute("aria-selected", "true")
+	expect(screen.getByRole("heading", { name: "Build" })).toBeInTheDocument()
 	expect(screen.getByText("Create any sentence you want.")).toBeInTheDocument()
 
 	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
@@ -2000,15 +2033,15 @@ test("switches game tabs and clears the sentence", async () => {
 		expect(screen.getByText(".")).toBeInTheDocument()
 	})
 
-	fireEvent.click(screen.getByRole("tab", { name: "shuffle" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Random" }))
 
-	expect(screen.getByRole("tab", { name: "sandbox" })).toHaveAttribute("aria-selected", "false")
-	expect(screen.getByRole("tab", { name: "shuffle" })).toHaveAttribute("aria-selected", "true")
+	expect(screen.getByRole("tab", { name: "Build" })).toHaveAttribute("aria-selected", "false")
+	expect(screen.getByRole("tab", { name: "Random" })).toHaveAttribute("aria-selected", "true")
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
-	expect(screen.getByRole("heading", { name: "Translate sentence practice" })).toBeInTheDocument()
+	expect(screen.getByRole("heading", { name: "Translate" })).toBeInTheDocument()
 	expect(screen.getByText("Translate the English sentence into Japanese.")).toBeInTheDocument()
 })
 
@@ -2017,7 +2050,7 @@ test("does not show the free challenge limit intro while premium is disabled", a
 
 	await loginDefaultUser()
 
-	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
@@ -2025,8 +2058,8 @@ test("does not show the free challenge limit intro while premium is disabled", a
 	expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
 	expect(screen.queryByText(/free checks left today/)).not.toBeInTheDocument()
 
-	fireEvent.click(screen.getByRole("tab", { name: "sandbox" }))
-	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Build" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
@@ -2086,7 +2119,7 @@ test("does not block practice when the old free quota is exhausted", async () =>
 
 	await loginDefaultUser()
 
-	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
@@ -2095,7 +2128,7 @@ test("does not block practice when the old free quota is exhausted", async () =>
 	expect(screen.queryByText("Buy premium for unlimited practice.")).not.toBeInTheDocument()
 	expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument()
 
-	fireEvent.click(screen.getByRole("tab", { name: "particles" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Particles" }))
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
@@ -2167,7 +2200,7 @@ test("shows a prompt error instead of premium upsell when old quota loading is r
 	await loginDefaultUser()
 	window.localStorage.setItem("bbFreeGameLimitIntroDismissed:1", "true")
 
-	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
 
 	await waitFor(() => {
 		expect(screen.getByText("Could not load a prompt.")).toBeInTheDocument()
@@ -2221,7 +2254,7 @@ test("does not show a premium blocker when quota loading is rejected", async () 
 
 	render(<App />)
 
-	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
 
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
@@ -2231,7 +2264,7 @@ test("does not show a premium blocker when quota loading is rejected", async () 
 	await waitFor(() => {
 		expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
 	})
-	expect(screen.queryByText("Log in to check challenge answers.")).not.toBeInTheDocument()
+	expect(screen.queryByText("Sign up to check challenge answers.")).not.toBeInTheDocument()
 	expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument()
 })
 
@@ -2294,7 +2327,7 @@ test("does not turn a logged-in challenge check error into a premium blocker", a
 
 	render(<App />)
 
-	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
@@ -2394,7 +2427,7 @@ test("does not apply the old local fallback challenge check limit", async () => 
 
 	await loginDefaultUser()
 
-	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
 	await waitFor(() => {
 		expect(screen.getByText("Prompt 1.")).toBeInTheDocument()
 	})
@@ -2449,8 +2482,40 @@ test("clears all sentence elements", async () => {
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
 })
 
+test("does not show sandbox sentence checking while logged out", async () => {
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
+	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
+	fireEvent.click(screen.getByRole("button", { name: "。" }))
+
+	await waitFor(() => {
+		expect(screen.getByText(".")).toBeInTheDocument()
+	})
+	expect(screen.getByRole("button", { name: "Clear all" })).toBeInTheDocument()
+	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
+	expect(screen.queryByText("Log in to check challenge answers.")).not.toBeInTheDocument()
+})
+
 test("checks the sandbox sentence and shows feedback", async () => {
+	window.localStorage.setItem(
+		"jsbCurrentUser",
+		JSON.stringify({
+			id: 1,
+			email: "tyler@example.com",
+			displayName: "Tyler",
+			plan: "free",
+		}),
+	)
+
 	global.fetch.mockImplementation((url) => {
+		if (url === `${API_BASE_URL}/users/1/game-quota`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue(defaultQuotaResponse),
+			})
+		}
+
 		if (url === `${API_BASE_URL}/games/sandbox/check-japanese`) {
 			return Promise.resolve({
 				ok: true,
@@ -2511,12 +2576,29 @@ test("checks the sandbox sentence and shows feedback", async () => {
 })
 
 test("shows a loading spinner while checking a sandbox sentence", async () => {
+	window.localStorage.setItem(
+		"jsbCurrentUser",
+		JSON.stringify({
+			id: 1,
+			email: "tyler@example.com",
+			displayName: "Tyler",
+			plan: "free",
+		}),
+	)
+
 	let resolveCheck
 	const checkResponse = new Promise((resolve) => {
 		resolveCheck = resolve
 	})
 
 	global.fetch.mockImplementation((url) => {
+		if (url === `${API_BASE_URL}/users/1/game-quota`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue(defaultQuotaResponse),
+			})
+		}
+
 		if (url === `${API_BASE_URL}/games/sandbox/check-japanese`) {
 			return checkResponse
 		}
@@ -2585,7 +2667,7 @@ test("populates conjugation game elements from Japanese translation prompt data"
 
 	render(<App />)
 
-	fireEvent.click(screen.getByRole("tab", { name: "conjugations" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Conjugate" }))
 
 	await waitFor(() => {
 		expect(screen.getByText("I want to eat sushi.")).toBeInTheDocument()
@@ -2641,7 +2723,7 @@ test("does not restore generated elements when switching to translate or sandbox
 
 	render(<App />)
 
-	fireEvent.click(screen.getByRole("tab", { name: "conjugations" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Conjugate" }))
 
 	await waitFor(() => {
 		expect(screen.getByText("I want to eat sushi.")).toBeInTheDocument()
@@ -2650,7 +2732,7 @@ test("does not restore generated elements when switching to translate or sandbox
 		expect(screen.getAllByText("私").length).toBeGreaterThan(0)
 	})
 
-	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
 
 	await waitFor(() => {
 		expect(screen.getByText("Translate this sentence.")).toBeInTheDocument()
@@ -2658,7 +2740,7 @@ test("does not restore generated elements when switching to translate or sandbox
 	expect(screen.queryAllByText("私")).toHaveLength(0)
 	expect(screen.queryAllByText("寿司")).toHaveLength(0)
 
-	fireEvent.click(screen.getByRole("tab", { name: "conjugations" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Conjugate" }))
 
 	await waitFor(() => {
 		expect(screen.getByText("I want to eat sushi.")).toBeInTheDocument()
@@ -2667,10 +2749,10 @@ test("does not restore generated elements when switching to translate or sandbox
 		expect(screen.getAllByText("私").length).toBeGreaterThan(0)
 	})
 
-	fireEvent.click(screen.getByRole("tab", { name: "sandbox" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Build" }))
 
 	await waitFor(() => {
-		expect(screen.getByRole("heading", { name: "Sandbox" })).toBeInTheDocument()
+		expect(screen.getByRole("heading", { name: "Build" })).toBeInTheDocument()
 	})
 	expect(screen.queryAllByText("私")).toHaveLength(0)
 	expect(screen.queryAllByText("寿司")).toHaveLength(0)
@@ -2703,7 +2785,7 @@ test("populates particle game elements without preselected particles", async () 
 
 	render(<App />)
 
-	fireEvent.click(screen.getByRole("tab", { name: "particles" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Particles" }))
 
 	await waitFor(() => {
 		expect(screen.getByText("I eat sushi.")).toBeInTheDocument()
@@ -2746,7 +2828,7 @@ test("locks generated prompt elements from word replacement and deletion", async
 
 	render(<App />)
 
-	fireEvent.click(screen.getByRole("tab", { name: "particles" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Particles" }))
 
 	await waitFor(() => {
 		expect(screen.getByText("I eat sushi.")).toBeInTheDocument()
@@ -2795,7 +2877,7 @@ test("populates reorder game elements in the generated scrambled order", async (
 
 	render(<App />)
 
-	fireEvent.click(screen.getByRole("tab", { name: "reorder" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Word order" }))
 
 	await waitFor(() => {
 		expect(screen.getByText("She reads a book.")).toBeInTheDocument()
@@ -2838,7 +2920,7 @@ test("populates fix sentence game elements with one mistake", async () => {
 
 	render(<App />)
 
-	fireEvent.click(screen.getByRole("tab", { name: "fix sentence" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Fix mistakes" }))
 
 	await waitFor(() => {
 		expect(screen.getByText("I eat sushi.")).toBeInTheDocument()
@@ -2876,7 +2958,7 @@ test("changing translate difficulty regenerates the prompt and clears sentence e
 
 	render(<App />)
 
-	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
 
 	await waitFor(() => {
 		expect(screen.getByText("easy prompt.")).toBeInTheDocument()
@@ -2961,7 +3043,7 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 
 	await loginDefaultUser()
 
-	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
 
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
@@ -3056,7 +3138,7 @@ test("sends the same challenge ID for repeated checks on one prompt", async () =
 
 	await loginDefaultUser()
 
-	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
 
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
@@ -3163,7 +3245,7 @@ test("shows challenge result immediately while detailed feedback loads separatel
 
 	await loginDefaultUser()
 
-	fireEvent.click(screen.getByRole("tab", { name: "translate" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
 
 	await waitFor(() => {
 		expect(screen.getByText("I ate sushi.")).toBeInTheDocument()
@@ -3266,12 +3348,12 @@ test("calls prompt and check endpoints with a random real mode for shuffle", asy
 
 	await loginDefaultUser()
 
-	fireEvent.click(screen.getByRole("tab", { name: "shuffle" }))
+	fireEvent.click(screen.getByRole("tab", { name: "Random" }))
 
 	await waitFor(() => {
 		expect(screen.getByText("I eat sushi.")).toBeInTheDocument()
 	})
-	expect(screen.getByRole("heading", { name: "Particle practice" })).toBeInTheDocument()
+	expect(screen.getByRole("heading", { name: "Particles" })).toBeInTheDocument()
 	expect(screen.getByText("Choose the particle that fits the sentence.")).toBeInTheDocument()
 
 	fireEvent.click(screen.getByRole("button", { name: "+ word" }))

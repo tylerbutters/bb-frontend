@@ -1,6 +1,6 @@
 .gamePromptPanel {
 	position: fixed;
-	top: 190px;
+	top: 170px;
 	z-index: 1400;
 	width: min(560px, calc(100vw - 32px));
 	padding: 10px;

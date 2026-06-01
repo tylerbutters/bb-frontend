@@ -19,7 +19,7 @@
 
 .gameTab {
 	/* flex: 0 0 auto; */
-	padding: 8px 11px;
+	padding: 5px 20px;
 	border: 1px solid transparent;
 	border-radius: 8px;
 	background: transparent;
@@ -42,7 +42,7 @@
 
 .gameModeDetails {
 	position: fixed;
-	top: 124px;
+	top: 100px;
 	color: white;
 	text-align: center;
 }

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import { Plus } from "lucide-react"
 import ElementsMenu from "../element-options-menu/ElementsMenu"
 import "./AddButton.css"
 
@@ -61,11 +62,13 @@ export default function AddButton({
 				disabled={disabled}
 				style={{
 					width: isVisible ? 60 : 0,
-					opacity: isVisible ? 1 : 0,
+					opacity: isModalOpen ? 1 : isVisible ? "" : 0,
 					borderWidth: isVisible ? 1 : 0,
 				}}
+				aria-label={`+ ${buttonText}`}
 			>
-				+<div className="addButtonText">{buttonText}</div>
+				<Plus className="addButtonIcon" size={30} aria-hidden="true" />
+				<div className="addButtonText">{buttonText}</div>
 			</button>
 		</div>
 	)

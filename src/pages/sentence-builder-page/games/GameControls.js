@@ -49,6 +49,7 @@ export default function GameControls({
 	const isFeedbackLoading = feedbackStatus === "loading"
 	const isChallengeCheck = hasAnswerChecker && !isSandboxCheck
 	const requiresLogin = isChallengeCheck && !currentUser
+	const isLoggedOutSandboxCheck = isSandboxCheck && !currentUser
 	const isQuotaExhausted = false
 	/*
 	TODO(premium): Re-enable free quota blocking when premium is live.
@@ -61,6 +62,7 @@ export default function GameControls({
 		isChecking ||
 		(!isSandboxCheck && (!prompt || promptStatus !== "ready")) ||
 		requiresLogin ||
+		isLoggedOutSandboxCheck ||
 		isQuotaExhausted
 	// const feedbackText =
 	// 	feedback &&
@@ -240,7 +242,7 @@ export default function GameControls({
 
 	if (!isVisible || !hasAnswerChecker) return null
 
-	const showAnswerButtons = !requiresLogin && !isQuotaExhausted
+	const showAnswerButtons = !requiresLogin && !isLoggedOutSandboxCheck && !isQuotaExhausted
 	const showClearButton = Boolean(onClearSentence && canClearSentence)
 	const hasFeedbackDetails = Boolean(feedback && !feedback.correct && feedback.feedback)
 	const canToggleFeedback = Boolean(
@@ -252,9 +254,9 @@ export default function GameControls({
 		<div className="gameControls">
 			{requiresLogin && (
 				<div className="gameQuotaBlocker" role="status">
-					<p>Log in to check challenge answers.</p>
-					<Link className="gameQuotaButton" to="/login">
-						Login
+					<p>Sign up to check challenge answers.</p>
+					<Link className="gameQuotaButton" to="/signup">
+						Sign up
 					</Link>
 				</div>
 			)}

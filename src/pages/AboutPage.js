@@ -3,7 +3,7 @@ import "./AboutPage.css"
 
 const practiceModes = [
 	{
-		name: "Sandbox",
+		name: "Build",
 		description: "Build any Japanese sentence and check it for feedback.",
 	},
 	{
@@ -11,11 +11,11 @@ const practiceModes = [
 		description: "Read an English prompt and build the Japanese sentence.",
 	},
 	{
-		name: "Conjugations",
+		name: "Conjugate",
 		description: "Choose the verb, adjective, or desu form that fits the sentence.",
 	},
 	{
-		name: "Fix sentence",
+		name: "Fix mistakes",
 		description: "Start with a Japanese sentence that has one mistake and correct it.",
 	},
 	{
@@ -23,11 +23,11 @@ const practiceModes = [
 		description: "Choose the particle that shows each word's role in the sentence.",
 	},
 	{
-		name: "Reorder",
+		name: "Word order",
 		description: "Put the provided sentence elements into the correct order.",
 	},
 	{
-		name: "Shuffle",
+		name: "Random",
 		description: "Get a random practice mode when you want mixed review.",
 	},
 ]
@@ -69,7 +69,7 @@ export default function AboutPage() {
 							elements keep the exercise focused on the target skill.
 						</li>
 						<li>
-							Read the sentence preview above the workspace. In sandbox mode, the app
+							Read the sentence preview above the workspace. In Build mode, the app
 							also shows an English translation when one is available.
 						</li>
 					</ol>
@@ -91,7 +91,7 @@ export default function AboutPage() {
 					<h2 id="about-feedback-heading">Checking answers</h2>
 					<ul className="aboutList">
 						<li>Use Check to submit the sentence you built.</li>
-						<li>Sandbox checks give feedback without requiring an account.</li>
+						<li>Build checks give feedback without requiring an account.</li>
 						<li>Practice checks require login so results can be saved to your account.</li>
 						<li>
 							If an answer is not quite right, feedback can explain what needs to change.

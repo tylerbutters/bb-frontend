@@ -3,36 +3,45 @@ import "./GameModeSelector.css"
 const GAME_MODES = [
 	{
 		id: "sandbox",
-		title: "Sandbox",
+		label: "Build",
+		title: "Build",
 		description: "Create any sentence you want.",
 	},
 	{
-		id: "shuffle",
-	},
-	{
 		id: "translate",
-		title: "Translate sentence practice",
+		label: "Translate",
+		title: "Translate",
 		description: "Translate the English sentence into Japanese.",
 	},
 	{
 		id: "conjugations",
-		title: "Conjugation practice",
+		label: "Conjugate",
+		title: "Conjugate",
 		description: "Choose the right conjugation for the sentence.",
 	},
 	{
 		id: "fix sentence",
-		title: "Fix sentence practice",
+		label: "Fix mistakes",
+		title: "Fix mistakes",
 		description: "Find and fix the mistake in the Japanese sentence.",
 	},
 	{
 		id: "particles",
-		title: "Particle practice",
+		label: "Particles",
+		title: "Particles",
 		description: "Choose the particle that fits the sentence.",
 	},
 	{
 		id: "reorder",
-		title: "Reorder practice",
+		label: "Word order",
+		title: "Word order",
 		description: "Put the sentence elements in the correct order.",
+	},
+	{
+		id: "shuffle",
+		label: "Random",
+		title: "Random",
+		description: "Get a random practice mode when you want mixed review.",
 	},
 ]
 
@@ -56,12 +65,10 @@ export default function GameModeSelector({
 							type="button"
 							role="tab"
 							aria-selected={selectedGameMode === gameMode.id}
-							className={`gameTab ${
-								selectedGameMode === gameMode.id ? "gameTabSelected" : ""
-							}`}
+							className={`gameTab ${selectedGameMode === gameMode.id ? "gameTabSelected" : ""}`}
 							onClick={() => onSelectGameMode(gameMode.id)}
 						>
-							{gameMode.id}
+							{gameMode.label}
 						</button>
 					))}
 				</div>

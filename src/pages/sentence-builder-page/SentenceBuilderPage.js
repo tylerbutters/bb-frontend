@@ -11,10 +11,10 @@ import "./GameQuota.css"
 const PROMPT_ELEMENT_GAME_MODES = new Set(["conjugations", "fix sentence", "particles", "reorder"])
 const GAME_HISTORY_LABELS = {
 	translate: "Translate",
-	conjugations: "Conjugations",
-	"fix sentence": "Fix sentence",
+	conjugations: "Conjugate",
+	"fix sentence": "Fix mistakes",
 	particles: "Particles",
-	reorder: "Reorder",
+	reorder: "Word order",
 }
 
 export default function SentenceBuilderPage({ currentUser }) {
@@ -94,7 +94,7 @@ export default function SentenceBuilderPage({ currentUser }) {
 	}
 
 	function togglePromptHistory() {
-		if (!currentUser || !historyGameMode) return
+		if (!historyGameMode) return
 
 		if (isPromptHistoryOpen) {
 			gameHistory.closeHistory()
@@ -122,7 +122,7 @@ export default function SentenceBuilderPage({ currentUser }) {
 				requestKey={workspaceResetCount}
 				isHistoryOpen={isPromptHistoryOpen}
 				onGameQuotaChange={gameQuota.applyQuota}
-				onOpenHistory={currentUser && historyGameMode ? togglePromptHistory : null}
+				onOpenHistory={historyGameMode ? togglePromptHistory : null}
 				onRegenerate={regenerateGamePrompt}
 				onPromptChange={handlePromptChange}
 			/>

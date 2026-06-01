@@ -140,19 +140,17 @@ export default function GamePrompt({
 					))}
 				</div>
 				<div style={{ position: "absolute", right: 100 }}>
-					{onOpenHistory && (
-						<button
-							type="button"
-							className={`gamePromptHistoryButton ${
-								isHistoryOpen ? "gamePromptHistoryButtonSelected" : ""
-							}`}
-							aria-label="History"
-							aria-pressed={isHistoryOpen}
-							onClick={onOpenHistory}
-						>
-							<History size={20} />
-						</button>
-					)}
+					<button
+						type="button"
+						className={`gamePromptHistoryButton ${
+							isHistoryOpen ? "gamePromptHistoryButtonSelected" : ""
+						}`}
+						aria-label="History"
+						aria-pressed={isHistoryOpen}
+						onClick={onOpenHistory}
+					>
+						<History size={20} />
+					</button>
 					<button
 						type="button"
 						className="gamePromptHistoryButton"

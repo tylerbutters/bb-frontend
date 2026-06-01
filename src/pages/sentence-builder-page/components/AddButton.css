@@ -1,4 +1,5 @@
 .addButton {
+	position: relative;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -6,12 +7,11 @@
 	height: 90px;
 	padding: 0;
 	overflow: hidden;
-	border: 1px solid var(--color-element-border);
+	border: 1px solid white;
 	border-radius: 10px;
-	color: var(--color-element-border);
-
+	opacity: 0.4;
+	color: white;
 	font-size: 34px;
-	line-height: 1;
 	cursor: pointer;
 	transition:
 		width 0.25s ease-in-out,
@@ -32,7 +32,7 @@
 }
 
 .addButton:hover:not(:disabled) {
-	color: white;
+	opacity: 1;
 }
 
 .addButton:active:not(:disabled) {
@@ -44,16 +44,22 @@
 	color: white;
 }
 
+.addButtonIcon {
+	flex-shrink: 0;
+}
+
 .addButtonDragHidden {
 	transition: none;
 	pointer-events: none;
 }
 
 .addButtonText {
-	max-width: calc(100% - 8px);
-	margin-top: 3px;
+	position: absolute;
+	/* right: 4px; */
+	bottom: 15px;
+	/* left: 4px; */
 	overflow: hidden;
-	font-size: 11px;
+	font-size: 12px;
 	line-height: 1.1;
 	text-overflow: ellipsis;
 	white-space: nowrap;
