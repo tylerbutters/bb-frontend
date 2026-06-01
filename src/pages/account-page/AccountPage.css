@@ -58,7 +58,7 @@
 .accountPageContent .accountField {
 	gap: 8px;
 }
-
+/* 
 .accountPageContent .accountField input {
 	height: 44px;
 	border-color: var(--color-grey-border-trans);
@@ -72,7 +72,7 @@
 .accountPageContent .accountField input:focus {
 	border-color: var(--color-white-border-hover);
 	box-shadow: 0 0 0 3px var(--color-grey-border-trans);
-}
+} */
 
 .accountPageContent .authPrimaryButton,
 .accountPageContent .logoutButton,
@@ -165,7 +165,7 @@
 	grid-column: 1 / -1;
 }
 
-.accountPageContent .cancelDeleteButton {
+/* .accountPageContent .cancelDeleteButton {
 	border-color: var(--color-grey-border-trans);
 	background: var(--color-grey-background);
 }
@@ -175,7 +175,7 @@
 	border-color: var(--color-white-border);
 	background: var(--color-grey-background);
 	outline: none;
-}
+} */
 
 @media (max-width: 860px) {
 	.accountGrid {
