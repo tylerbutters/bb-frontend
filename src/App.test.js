@@ -197,6 +197,7 @@ async function loginDefaultUser() {
 	await waitFor(() => {
 		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
 		expect(window.location.pathname).toBe("/")
+		expect(screen.getByRole("tab", { name: "sandbox" })).toBeInTheDocument()
 	})
 }
 
@@ -639,8 +640,9 @@ test("logs in and replaces auth links with the user name", async () => {
 
 	await waitFor(() => {
 		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
+		expect(window.location.pathname).toBe("/")
+		expect(screen.getByRole("tab", { name: "sandbox" })).toBeInTheDocument()
 	})
-	expect(window.location.pathname).toBe("/")
 	expect(screen.queryByRole("link", { name: "Login" })).not.toBeInTheDocument()
 	expect(screen.queryByRole("link", { name: "Sign up" })).not.toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Stats" })).toHaveAttribute("href", "/stats")
@@ -1256,9 +1258,10 @@ test("shows locally recorded stats when backend stats are unavailable", async ()
 	fireEvent.click(screen.getByRole("button", { name: "。" }))
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 	await waitFor(() => {
-		expect(screen.getByText("Correct. Good.")).toBeInTheDocument()
+		expect(screen.getByText("Correct.")).toBeInTheDocument()
+		expect(screen.getByText("Good.")).toBeInTheDocument()
 	})
-	fireEvent.click(screen.getByRole("button", { name: "Check" }))
+	fireEvent.click(screen.getByRole("button", { name: "Check again" }))
 	await waitFor(() => {
 		const checkRequests = global.fetch.mock.calls.filter(
 			([url]) => url === `${API_BASE_URL}/games/check`,
@@ -1703,8 +1706,9 @@ test("does not turn a logged-in challenge check error into a premium blocker", a
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 
 	await waitFor(() => {
+		expect(screen.getByText("Not quite.")).toBeInTheDocument()
 		expect(
-			screen.getByText("Not quite. Could not check the sentence right now. Try again in a moment."),
+			screen.getByText("Could not check the sentence right now. Try again in a moment."),
 		).toBeInTheDocument()
 	})
 	expect(screen.queryByText("You've used today's 3 free challenge checks.")).not.toBeInTheDocument()
@@ -1713,7 +1717,7 @@ test("does not turn a logged-in challenge check error into a premium blocker", a
 		screen.queryByText("Not quite. Log in to check challenge answers."),
 	).not.toBeInTheDocument()
 	expect(screen.queryByText("Log in to check challenge answers.")).not.toBeInTheDocument()
-	expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Check again" })).toBeInTheDocument()
 })
 
 test("does not apply the old local fallback challenge check limit", async () => {
@@ -1806,7 +1810,8 @@ test("does not apply the old local fallback challenge check limit", async () => 
 		fireEvent.click(screen.getByRole("button", { name: "Check" }))
 
 		await waitFor(() => {
-			expect(screen.getByText("Correct. Good.")).toBeInTheDocument()
+			expect(screen.getByText("Correct.")).toBeInTheDocument()
+			expect(screen.getByText("Good.")).toBeInTheDocument()
 		})
 
 		if (promptNumber < 3) {
@@ -1816,7 +1821,7 @@ test("does not apply the old local fallback challenge check limit", async () => 
 
 	expect(screen.queryByText("You've used today's 3 free challenge checks.")).not.toBeInTheDocument()
 	expect(screen.queryByText("Buy premium for unlimited practice.")).not.toBeInTheDocument()
-	expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Check again" })).toBeInTheDocument()
 })
 
 test("clears all sentence elements", async () => {
@@ -1873,7 +1878,8 @@ test("checks the sandbox sentence and shows feedback", async () => {
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 
 	await waitFor(() => {
-		expect(screen.getByText("Not quite. Add a subject and predicate.")).toBeInTheDocument()
+		expect(screen.getByText("Not quite.")).toBeInTheDocument()
+		expect(screen.getByText("Add a subject and predicate.")).toBeInTheDocument()
 	})
 
 	const sandboxCheckRequest = global.fetch.mock.calls.find(
@@ -2044,7 +2050,57 @@ test("populates particle game elements without preselected particles", async () 
 	expect(screen.getAllByText("食べ").length).toBeGreaterThan(0)
 	expect(screen.queryByText("は")).not.toBeInTheDocument()
 	expect(screen.queryByText("を")).not.toBeInTheDocument()
+	expect(screen.queryByRole("button", { name: "Clear all" })).not.toBeInTheDocument()
 	expectLoggedOutChallengeBlocker()
+})
+
+test("locks generated prompt elements from word replacement and deletion", async () => {
+	global.fetch.mockImplementation((url, options = {}) => {
+		const requestUrl = String(url)
+		if (requestUrl.startsWith(`${API_BASE_URL}/games/prompt`)) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					mode: "particles",
+					difficulty: "easy",
+					prompt: "I eat sushi.",
+					japaneseTranslation: [
+						{ kanji: "私", kana: "わたし" },
+						{ kanji: "寿司", kana: "すし" },
+						{ kanji: "食べる", kana: "たべる" },
+					],
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("tab", { name: "particles" }))
+
+	await waitFor(() => {
+		expect(screen.getByText("I eat sushi.")).toBeInTheDocument()
+	})
+	await waitFor(() => {
+		expect(screen.getAllByText("私").length).toBeGreaterThan(0)
+	})
+
+	const generatedElementContainer = screen
+		.getAllByText("私")
+		.map((node) => node.closest(".elementContainer"))
+		.find(Boolean)
+
+	expect(generatedElementContainer).toBeTruthy()
+	fireEvent.click(generatedElementContainer)
+
+	expect(screen.queryByText("Word")).not.toBeInTheDocument()
+	expect(screen.queryByRole("button", { name: "Delete" })).not.toBeInTheDocument()
+	expect(screen.queryByRole("button", { name: "Clear all" })).not.toBeInTheDocument()
 })
 
 test("populates reorder game elements in the generated scrambled order", async () => {
@@ -2253,7 +2309,8 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 	await waitFor(() => {
-		expect(screen.getByText("Not quite. Use a full Japanese sentence.")).toBeInTheDocument()
+		expect(screen.getByText("Not quite.")).toBeInTheDocument()
+		expect(screen.getByText("Use a full Japanese sentence.")).toBeInTheDocument()
 	})
 	const checkRequest = global.fetch.mock.calls.find(
 		([url]) => url === `${API_BASE_URL}/games/check`,
@@ -2346,10 +2403,11 @@ test("sends the same challenge ID for repeated checks on one prompt", async () =
 
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 	await waitFor(() => {
-		expect(screen.getByText("Correct. Good.")).toBeInTheDocument()
+		expect(screen.getByText("Correct.")).toBeInTheDocument()
+		expect(screen.getByText("Good.")).toBeInTheDocument()
 	})
 
-	fireEvent.click(screen.getByRole("button", { name: "Check" }))
+	fireEvent.click(screen.getByRole("button", { name: "Check again" }))
 	await waitFor(() => {
 		const checkRequests = global.fetch.mock.calls.filter(
 			([url]) => url === `${API_BASE_URL}/games/check`,
@@ -2450,7 +2508,8 @@ test("calls prompt and check endpoints with a random real mode for shuffle", asy
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 
 	await waitFor(() => {
-		expect(screen.getByText("Correct. Good.")).toBeInTheDocument()
+		expect(screen.getByText("Correct.")).toBeInTheDocument()
+		expect(screen.getByText("Good.")).toBeInTheDocument()
 	})
 
 	const promptRequest = global.fetch.mock.calls.find(([url]) =>

@@ -9,6 +9,7 @@ export default function Verb({
 	mouse,
 	allColors,
 	addButtonsDisabled,
+	conjugationDisabled = addButtonsDisabled,
 }) {
 	const hasConjugation = element.conjugation && Object.keys(element.conjugation).length > 0
 	const shouldRenderStem = !element.conjugation?.replacesParent
@@ -29,6 +30,7 @@ export default function Verb({
 					deleteElement={deleteElement}
 					mouse={mouse}
 					addButtonsDisabled={addButtonsDisabled}
+					disabled={conjugationDisabled}
 				/>
 			)}
 		</div>

@@ -9,6 +9,8 @@ export default function Desu({
 	mouse,
 	allColors,
 	addButtonsDisabled,
+	conjugationDisabled = addButtonsDisabled,
+	affixesDisabled = addButtonsDisabled,
 }) {
 	function addNoDesu(newElement) {
 		updateElement({
@@ -26,7 +28,7 @@ export default function Desu({
 					deleteElement={() => updateElement({ ...element, noDesu: null })}
 					mouse={mouse}
 					color={allColors.desu.secondary}
-					disabled={addButtonsDisabled}
+					disabled={affixesDisabled}
 				/>
 				{element.conjugation && (
 					<Conjugation
@@ -38,6 +40,7 @@ export default function Desu({
 						allColors={allColors}
 						hasDelete={true}
 						addButtonsDisabled={addButtonsDisabled}
+						disabled={conjugationDisabled}
 					/>
 				)}
 			</div>

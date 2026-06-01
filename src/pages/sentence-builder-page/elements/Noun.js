@@ -3,7 +3,14 @@ import Suffix from "../element-attachments/Suffix"
 import Prefix from "../element-attachments/Prefix"
 import JapaneseText from "../components/JapaneseText"
 
-export default function Noun({ mouse, element, updateElement, allColors, addButtonsDisabled }) {
+export default function Noun({
+	mouse,
+	element,
+	updateElement,
+	allColors,
+	addButtonsDisabled,
+	affixesDisabled = addButtonsDisabled,
+}) {
 	function addElement(selectedElement) {
 		switch (selectedElement?.elementType) {
 			case "prefix":
@@ -25,7 +32,7 @@ export default function Noun({ mouse, element, updateElement, allColors, addButt
 				deleteElement={() => updateElement({ ...element, prefix: null })}
 				mouse={mouse}
 				color={allColors.noun.secondary}
-				disabled={addButtonsDisabled}
+				disabled={affixesDisabled}
 			/>
 			<div className="elementText">
 				<JapaneseText text={element?.text} reading={element?.textKana} />
@@ -36,7 +43,7 @@ export default function Noun({ mouse, element, updateElement, allColors, addButt
 				deleteElement={() => updateElement({ ...element, suffix: null })}
 				mouse={mouse}
 				color={allColors.noun.secondary}
-				disabled={addButtonsDisabled}
+				disabled={affixesDisabled}
 			/>
 		</div>
 	)

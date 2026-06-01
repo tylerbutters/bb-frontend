@@ -13,12 +13,24 @@ export default function Element({
 	deleteElement,
 	defaultElements,
 	addButtonsDisabled = false,
+	generatedElementMode,
 }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [isClosing, setIsClosing] = useState(false)
 	const elementContainerRef = useRef(null)
 	const ElementComponent = getElementTypeComponent(element?.elementType)
 	const elementColors = getElementTypeColors(element?.elementType)
+	const isGeneratedPromptElement = Boolean(element?.isGeneratedPromptElement)
+	const canEditBaseElement =
+		!isGeneratedPromptElement || generatedElementMode === "fix sentence"
+	const canEditParticle =
+		!isGeneratedPromptElement ||
+		generatedElementMode === "particles" ||
+		generatedElementMode === "fix sentence"
+	const canEditConjugation =
+		!isGeneratedPromptElement || generatedElementMode === "conjugations"
+	const canEditAffixes = !isGeneratedPromptElement
+	const canEditCounter = !isGeneratedPromptElement
 	const particleOptions = useMemo(() => {
 		const availableParticles = particles.filter((particle) =>
 			particle.attachesTo.includes(element.elementType),
@@ -50,14 +62,18 @@ export default function Element({
 	}
 
 	function updateBaseElement(newElement) {
-		updateElement(
+		const nextElement =
 			newElement.sentenceElementId === element.sentenceElementId
 				? newElement
 				: {
 						...newElement,
 						sentenceElementId: element.sentenceElementId,
-					},
-		)
+					}
+
+		updateElement({
+			...nextElement,
+			...(isGeneratedPromptElement ? { isGeneratedPromptElement: true } : {}),
+		})
 	}
 
 	function addParticle(selectedElement) {
@@ -75,12 +91,16 @@ export default function Element({
 			elementOptions: defaultElements,
 			allColors: ELEMENT_TYPE_COLORS,
 			addButtonsDisabled,
+			affixesDisabled: addButtonsDisabled || !canEditAffixes,
+			conjugationDisabled: addButtonsDisabled || !canEditConjugation,
+			counterDisabled: addButtonsDisabled || !canEditCounter,
 		}
 
 		return <ElementComponent {...props} />
 	}
 
 	function openMenuFromElementContainer(e) {
+		if (!canEditBaseElement) return
 		//doesn't open if child elements are clicked
 		if (e.target.closest(".baseInsideElement, .addButton, input, button")) return
 		setIsModalOpen(true)
@@ -88,20 +108,24 @@ export default function Element({
 
 	return (
 		<div className="modalContainer">
-			<ElementsMenu
-				anchorRef={elementContainerRef}
-				isModalOpen={isModalOpen}
-				setIsModalOpen={setIsModalOpen}
-				elementOptions={defaultElements}
-				onSelect={updateElement}
-				deleteElement={() => setIsClosing(true)}
-				hasDelete={true}
-				menuTitle="Word"
-			/>
+			{canEditBaseElement && (
+				<ElementsMenu
+					anchorRef={elementContainerRef}
+					isModalOpen={isModalOpen}
+					setIsModalOpen={setIsModalOpen}
+					elementOptions={defaultElements}
+					onSelect={updateBaseElement}
+					deleteElement={() => setIsClosing(true)}
+					hasDelete={!isGeneratedPromptElement}
+					menuTitle="Word"
+				/>
+			)}
 			<AnimatedWidth measureKey={element} isClosing={isClosing} onCloseComplete={deleteElement}>
 				<div
 					ref={elementContainerRef}
-					className="elementContainer"
+					className={`elementContainer ${
+						canEditBaseElement ? "" : "elementContainerLocked"
+					}`}
 					style={{
 						backgroundColor: elementColors.primary,
 						borderColor: isModalOpen && "white",
@@ -121,7 +145,7 @@ export default function Element({
 								})
 							}
 							mouse={mouse}
-							disabled={addButtonsDisabled}
+							disabled={addButtonsDisabled || !canEditParticle}
 						/>
 					)}
 				</div>

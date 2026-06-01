@@ -31,11 +31,11 @@
 	transition: none;
 }
 
-.addButton:hover {
+.addButton:hover:not(:disabled) {
 	color: white;
 }
 
-.addButton:active {
+.addButton:active:not(:disabled) {
 	transform: scale(0.95);
 }
 

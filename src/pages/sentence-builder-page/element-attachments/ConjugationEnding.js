@@ -19,30 +19,37 @@ export function getConjugationEndingOptions(conjugations, conjugation) {
 	)
 }
 
-export default function ConjugationEnding({ conjugation, updateConjugation, color }) {
+export default function ConjugationEnding({ conjugation, updateConjugation, color, disabled }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const elementRef = useRef(null)
 	const conjugationOptions = getConjugationEndingOptions(conjugations, conjugation)
 
 	function onSelect(selectedConjugation) {
+		if (disabled) return
 		updateConjugation(getConjugationEndingUpdate(conjugations, selectedConjugation))
 	}
 
 	return (
 		<div className="modalContainer">
-			<ElementsMenu
-				anchorRef={elementRef}
-				isModalOpen={isModalOpen}
-				setIsModalOpen={setIsModalOpen}
-				elementOptions={conjugationOptions}
-				onSelect={onSelect}
-				menuTitle="Conjugation"
-			/>
+			{!disabled && (
+				<ElementsMenu
+					anchorRef={elementRef}
+					isModalOpen={isModalOpen}
+					setIsModalOpen={setIsModalOpen}
+					elementOptions={conjugationOptions}
+					onSelect={onSelect}
+					menuTitle="Conjugation"
+				/>
+			)}
 			<div
 				ref={elementRef}
-				className="baseInsideElement conjugationElement"
+				className={`baseInsideElement conjugationElement ${
+					disabled ? "baseInsideElementLocked" : ""
+				}`}
 				style={{ backgroundColor: color }}
-				onClick={() => setIsModalOpen(true)}
+				onClick={() => {
+					if (!disabled) setIsModalOpen(true)
+				}}
 			>
 				{conjugation.ending}
 			</div>

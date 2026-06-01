@@ -12,22 +12,26 @@ export default function Prefix({ element, updateElement, deleteElement, mouse, c
 
 	return (
 		<div className="modalContainer">
-			<ElementsMenu
-				anchorRef={elementRef}
-				isModalOpen={isModalOpen}
-				setIsModalOpen={setIsModalOpen}
-				elementOptions={prefixOptions}
-				onSelect={updateElement}
-				deleteElement={deleteElement}
-				hasDelete={true}
-				menuTitle="Prefix"
-			/>
+			{!disabled && (
+				<ElementsMenu
+					anchorRef={elementRef}
+					isModalOpen={isModalOpen}
+					setIsModalOpen={setIsModalOpen}
+					elementOptions={prefixOptions}
+					onSelect={updateElement}
+					deleteElement={deleteElement}
+					hasDelete={true}
+					menuTitle="Prefix"
+				/>
+			)}
 			{element ? (
 				<div
 					ref={elementRef}
-					className="baseInsideElement"
+					className={`baseInsideElement ${disabled ? "baseInsideElementLocked" : ""}`}
 					style={{ backgroundColor: color }}
-					onClick={() => setIsModalOpen(true)}
+					onClick={() => {
+						if (!disabled) setIsModalOpen(true)
+					}}
 				>
 					<JapaneseText text={element.text} reading={element.textKana} />
 				</div>

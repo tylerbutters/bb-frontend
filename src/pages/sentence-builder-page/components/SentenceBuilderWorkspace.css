@@ -27,6 +27,11 @@
 	cursor: grabbing;
 }
 
+.mainElementDragDisabled .elementContainer,
+.mainElementDragDisabled:active .elementContainer {
+	cursor: default;
+}
+
 .mainElementDragging {
 	transition: none;
 }

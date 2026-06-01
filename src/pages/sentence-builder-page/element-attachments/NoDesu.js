@@ -10,22 +10,26 @@ export default function NoDesu({ element, updateElement, deleteElement, mouse, c
 
 	return (
 		<div className="modalContainer">
-			<ElementsMenu
-				anchorRef={elementRef}
-				isModalOpen={isModalOpen}
-				setIsModalOpen={setIsModalOpen}
-				elementOptions={noDesu}
-				onSelect={updateElement}
-				deleteElement={deleteElement}
-				hasDelete={true}
-				menuTitle="No"
-			/>
+			{!disabled && (
+				<ElementsMenu
+					anchorRef={elementRef}
+					isModalOpen={isModalOpen}
+					setIsModalOpen={setIsModalOpen}
+					elementOptions={noDesu}
+					onSelect={updateElement}
+					deleteElement={deleteElement}
+					hasDelete={true}
+					menuTitle="No"
+				/>
+			)}
 			{element ? (
 				<div
 					ref={elementRef}
-					className="baseInsideElement"
+					className={`baseInsideElement ${disabled ? "baseInsideElementLocked" : ""}`}
 					style={{ backgroundColor: color }}
-					onClick={() => setIsModalOpen(true)}
+					onClick={() => {
+						if (!disabled) setIsModalOpen(true)
+					}}
 				>
 					<div className="insideElementText">{element?.text || "nothing"}</div>
 				</div>

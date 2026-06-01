@@ -12,22 +12,28 @@ export default function Suffix({ element, updateElement, deleteElement, mouse, c
 
 	return (
 		<div className="modalContainer">
-			<ElementsMenu
-				anchorRef={elementRef}
-				isModalOpen={isModalOpen}
-				setIsModalOpen={setIsModalOpen}
-				elementOptions={suffixOptions}
-				onSelect={updateElement}
-				deleteElement={deleteElement}
-				hasDelete={true}
-				menuTitle="Suffix"
-			/>
+			{!disabled && (
+				<ElementsMenu
+					anchorRef={elementRef}
+					isModalOpen={isModalOpen}
+					setIsModalOpen={setIsModalOpen}
+					elementOptions={suffixOptions}
+					onSelect={updateElement}
+					deleteElement={deleteElement}
+					hasDelete={true}
+					menuTitle="Suffix"
+				/>
+			)}
 			{element ? (
 				<div
 					ref={elementRef}
-					className="baseInsideElement suffixPrefixElement"
+					className={`baseInsideElement suffixPrefixElement ${
+						disabled ? "baseInsideElementLocked" : ""
+					}`}
 					style={{ backgroundColor: color }}
-					onClick={() => setIsModalOpen(true)}
+					onClick={() => {
+						if (!disabled) setIsModalOpen(true)
+					}}
 				>
 					<JapaneseText text={element.text} reading={element.textKana} />
 				</div>

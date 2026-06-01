@@ -42,11 +42,13 @@ export default function SentenceBuilderPage({ currentUser }) {
 		: ""
 	const isPromptHistoryOpen =
 		gameHistory.isOpen && gameHistory.drawerProps.filter?.mode === historyGameMode
+	const generatedElementMode = gamePromptData?.mode || null
 	const generatedPromptElements = useMemo(() => {
 		if (!shouldPopulatePromptElements(selectedGameMode, gamePromptData)) return []
 
 		return japaneseTranslationToElements(gamePromptData.japaneseTranslation)
 	}, [gamePromptData, selectedGameMode])
+	const hasGeneratedPromptElements = generatedPromptElements.length > 0
 
 	const handleSentenceChange = useCallback(({ sentence, hasElements }) => {
 		setJapaneseSentence(sentence)
@@ -129,6 +131,9 @@ export default function SentenceBuilderPage({ currentUser }) {
 				resetKey={workspaceResetCount}
 				clearKey={sentenceClearRequestCount}
 				generatedElements={generatedPromptElements}
+				generatedElementMode={generatedElementMode}
+				canAddElements={!hasGeneratedPromptElements}
+				canDragGeneratedElements={generatedElementMode === "reorder"}
 				onSentenceChange={handleSentenceChange}
 			/>
 			<GameControls
@@ -141,7 +146,7 @@ export default function SentenceBuilderPage({ currentUser }) {
 				prompt={gamePrompt}
 				promptStatus={gamePromptStatus}
 				answer={japaneseSentence}
-				canClearSentence={hasSentenceElements}
+				canClearSentence={hasSentenceElements && !hasGeneratedPromptElements}
 				onGameQuotaChange={gameQuota.applyQuota}
 				onLocalGameQuotaUse={gameQuota.recordLocalChallengeCheck}
 				onClearSentence={clearSentence}

@@ -9,6 +9,7 @@ export default function Adjective({
 	deleteElement,
 	allColors,
 	addButtonsDisabled,
+	conjugationDisabled = addButtonsDisabled,
 }) {
 	return (
 		<div className="modalContainer">
@@ -26,6 +27,7 @@ export default function Adjective({
 							color={allColors.adjective.secondary}
 							allColors={allColors}
 							addButtonsDisabled={addButtonsDisabled}
+							disabled={conjugationDisabled}
 						/>
 					</>
 				) : (

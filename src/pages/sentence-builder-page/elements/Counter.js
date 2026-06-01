@@ -3,7 +3,7 @@ import InputBox from "../../../components/InputBox"
 import "./Element.css"
 import JapaneseText from "../components/JapaneseText"
 
-export default function Counter({ mouse, element, updateElement, allColors }) {
+export default function Counter({ mouse, element, updateElement, allColors, counterDisabled = false }) {
 	const [number, setNumber] = useState(element.number ?? "0")
 
 	useEffect(() => {
@@ -28,19 +28,31 @@ export default function Counter({ mouse, element, updateElement, allColors }) {
 
 	return (
 		<div className="baseElement">
-			<InputBox
-				type="text"
-				className="baseInsideElement counterInput"
-				style={{
-					backgroundColor: allColors.counter.secondary,
-					width: `${Math.max(number.length + 1, 2)}ch`,
-				}}
-				value={number}
-				onChange={handleNumberChange}
-				onKeyDown={handleKeyDown}
-				onFocus={(e) => e.target.select()}
-				placeholder="0"
-			/>
+			{counterDisabled ? (
+				<div
+					className="baseInsideElement counterInput counterInputLocked"
+					style={{
+						backgroundColor: allColors.counter.secondary,
+						width: `${Math.max(number.length + 1, 2)}ch`,
+					}}
+				>
+					{number}
+				</div>
+			) : (
+				<InputBox
+					type="text"
+					className="baseInsideElement counterInput"
+					style={{
+						backgroundColor: allColors.counter.secondary,
+						width: `${Math.max(number.length + 1, 2)}ch`,
+					}}
+					value={number}
+					onChange={handleNumberChange}
+					onKeyDown={handleKeyDown}
+					onFocus={(e) => e.target.select()}
+					placeholder="0"
+				/>
+			)}
 			<div className="elementText">
 				<JapaneseText text={element?.text} reading={element?.textKana} />
 			</div>

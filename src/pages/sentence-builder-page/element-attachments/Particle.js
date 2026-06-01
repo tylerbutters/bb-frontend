@@ -16,21 +16,27 @@ export default function Particle({
 
 	return (
 		<div className="modalContainer">
-			<ElementsMenu
-				anchorRef={elementRef}
-				isModalOpen={isModalOpen}
-				setIsModalOpen={setIsModalOpen}
-				elementOptions={elementOptions}
-				onSelect={updateElement}
-				deleteElement={deleteElement}
-				hasDelete={true}
-				menuTitle="Particle"
-			/>
+			{!disabled && (
+				<ElementsMenu
+					anchorRef={elementRef}
+					isModalOpen={isModalOpen}
+					setIsModalOpen={setIsModalOpen}
+					elementOptions={elementOptions}
+					onSelect={updateElement}
+					deleteElement={deleteElement}
+					hasDelete={true}
+					menuTitle="Particle"
+				/>
+			)}
 			{element ? (
 				<div
 					ref={elementRef}
-					className="baseInsideElement particleElement"
-					onClick={() => setIsModalOpen(true)}
+					className={`baseInsideElement particleElement ${
+						disabled ? "baseInsideElementLocked" : ""
+					}`}
+					onClick={() => {
+						if (!disabled) setIsModalOpen(true)
+					}}
 				>
 					{element.text}
 				</div>

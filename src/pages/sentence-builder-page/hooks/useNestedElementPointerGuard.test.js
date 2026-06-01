@@ -9,6 +9,8 @@ function TestNestedElementPointerGuard() {
 			<div data-testid="element" className="elementContainer">
 				<button type="button">Nested button</button>
 			</div>
+			<div data-testid="locked-element" className="elementContainer elementContainerLocked" />
+			<div data-testid="locked-inside" className="baseInsideElement baseInsideElementLocked" />
 			<div data-testid="menu" className="elementsMenuContainer">
 				<div data-testid="menu-child" className="elementContainer" />
 			</div>
@@ -56,4 +58,22 @@ test("does not hover parent-style element nodes inside option menus", () => {
 	fireEvent.pointerOver(menuChild)
 
 	expect(menuChild).not.toHaveClass("hoverElement")
+})
+
+test("does not add feedback classes to locked elements", () => {
+	render(<TestNestedElementPointerGuard />)
+	const lockedElement = screen.getByTestId("locked-element")
+	const lockedInsideElement = screen.getByTestId("locked-inside")
+
+	fireEvent.pointerOver(lockedElement)
+	fireEvent.pointerDown(lockedElement)
+
+	expect(lockedElement).not.toHaveClass("hoverElement")
+	expect(lockedElement).not.toHaveClass("pressedElement")
+
+	fireEvent.pointerOver(lockedInsideElement)
+	fireEvent.pointerDown(lockedInsideElement)
+
+	expect(lockedInsideElement).not.toHaveClass("hoverElement")
+	expect(lockedInsideElement).not.toHaveClass("pressedElement")
 })

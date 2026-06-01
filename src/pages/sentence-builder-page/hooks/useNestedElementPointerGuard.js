@@ -3,6 +3,8 @@ import { useEffect } from "react"
 const ELEMENT_POINTER_SELECTOR = ".baseInsideElement,.elementContainer,.addButton"
 const ELEMENT_MENU_SELECTOR = ".elementsMenuContainer"
 const NESTED_CONTROL_SELECTOR = "input, button"
+const LOCKED_ELEMENT_SELECTOR =
+	".baseInsideElementLocked,.elementContainerLocked,.addButton:disabled"
 
 export default function useNestedElementPointerGuard() {
 	useEffect(() => {
@@ -25,6 +27,10 @@ export default function useNestedElementPointerGuard() {
 			if (e.target.closest(NESTED_CONTROL_SELECTOR)) return
 
 			pressedElement = e.target.closest(ELEMENT_POINTER_SELECTOR)
+			if (pressedElement?.matches(LOCKED_ELEMENT_SELECTOR)) {
+				pressedElement = null
+				return
+			}
 			pressedElement?.classList.add("pressedElement")
 		}
 
@@ -32,6 +38,10 @@ export default function useNestedElementPointerGuard() {
 			if (e.target.closest(ELEMENT_MENU_SELECTOR)) return
 
 			const element = e.target.closest(ELEMENT_POINTER_SELECTOR)
+			if (element?.matches(LOCKED_ELEMENT_SELECTOR)) {
+				clearHoveredElement()
+				return
+			}
 			if (element === hoveredElement) return
 
 			clearHoveredElement()

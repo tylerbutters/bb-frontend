@@ -55,7 +55,10 @@ export default function AddButton({
 				type="button"
 				ref={ref}
 				className={`addButton ${isModalOpen ? "addButtonOpen" : ""}`}
-				onClick={() => setIsModalOpen((prev) => !prev)}
+				onClick={() => {
+					if (!disabled) setIsModalOpen((prev) => !prev)
+				}}
+				disabled={disabled}
 				style={{
 					width: isVisible ? 60 : 0,
 					opacity: isVisible ? 1 : 0,

@@ -37,6 +37,10 @@
 		transform 0.15s ease-in-out;
 }
 
+.elementContainerLocked {
+	cursor: default;
+}
+
 .baseElement {
 	display: flex;
 	align-items: center;
@@ -63,6 +67,10 @@
 		transform 0.15s ease-in-out;
 }
 
+.baseInsideElementLocked {
+	cursor: default;
+}
+
 .conjugationElement {
 	padding-right: 0;
 }
@@ -74,6 +82,14 @@
 
 .hoverElement {
 	border-color: white;
+}
+
+.elementContainerLocked.pressedElement,
+.elementContainerLocked.hoverElement,
+.baseInsideElementLocked.pressedElement,
+.baseInsideElementLocked.hoverElement {
+	border-color: var(--color-element-border);
+	transform: none;
 }
 
 .insideElementText {
@@ -105,4 +121,8 @@
 
 .counterInput:focus {
 	border-color: white;
+}
+
+.counterInputLocked {
+	cursor: default;
 }

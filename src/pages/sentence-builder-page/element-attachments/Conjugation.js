@@ -72,6 +72,7 @@ export default function Conjugation({
 	color,
 	allColors,
 	addButtonsDisabled,
+	disabled = false,
 }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const elementRef = useRef(null)
@@ -83,10 +84,12 @@ export default function Conjugation({
 	)
 
 	function addParticle(selectedElement) {
+		if (disabled) return
 		updateCurrentConjugation({ middleParticle: selectedElement })
 	}
 
 	function updateCurrentConjugation(updates) {
+		if (disabled) return
 		updateConjugation({
 			...parentConjugation,
 			conjugation: {
@@ -97,6 +100,7 @@ export default function Conjugation({
 	}
 
 	function clearCurrentConjugation() {
+		if (disabled) return
 		updateConjugation({
 			...parentConjugation,
 			conjugation: {},
@@ -104,6 +108,7 @@ export default function Conjugation({
 	}
 
 	function openConjugationMenu(e) {
+		if (disabled) return
 		if (e.target.closest(".addButton, input, button")) return
 
 		const clickedInsideChildElement = e.target.closest(".baseInsideElement")
@@ -113,6 +118,8 @@ export default function Conjugation({
 	}
 
 	function getConjugationUpdate(selectedConjugation) {
+		if (disabled) return
+
 		//changing element
 		if (currentConjugation.elementType && selectedConjugation.elementType) {
 			updateCurrentConjugation(initializeNestedElement(selectedConjugation))
@@ -212,6 +219,7 @@ export default function Conjugation({
 					parentConjugation={currentConjugation}
 					updateConjugation={(updatedChild) => updateCurrentConjugation(updatedChild)}
 					addButtonsDisabled={addButtonsDisabled}
+					disabled={disabled}
 				/>
 			)
 		}
@@ -224,7 +232,7 @@ export default function Conjugation({
 					hasSearch={true}
 					addElement={getConjugationUpdate}
 					text="auxiliary"
-					disabled={addButtonsDisabled}
+					disabled={addButtonsDisabled || disabled}
 				/>
 			)
 		}
@@ -237,7 +245,7 @@ export default function Conjugation({
 					hasSearch={true}
 					addElement={getConjugationUpdate}
 					text="verb"
-					disabled={addButtonsDisabled}
+					disabled={addButtonsDisabled || disabled}
 				/>
 			)
 		}
@@ -252,6 +260,7 @@ export default function Conjugation({
 							conjugation: nextConjugation,
 						})
 					}}
+					disabled={disabled}
 				/>
 			)
 		}
@@ -263,20 +272,24 @@ export default function Conjugation({
 		// alert(JSON.stringify(currentConjugation))
 		return (
 			<div className="modalContainer">
-				<ElementsMenu
-					anchorRef={elementRef}
-					isModalOpen={isModalOpen}
-					setIsModalOpen={setIsModalOpen}
-					elementOptions={parentConjugation.conjugationType === "aux" ? auxiliaries : verbs}
-					onSelect={getConjugationUpdate}
-					deleteElement={clearCurrentConjugation}
-					hasDelete={true}
-					hasSearch={true}
-					menuTitle={parentConjugation.conjugationType === "aux" ? "Auxiliary" : "Verb"}
-				/>
+				{!disabled && (
+					<ElementsMenu
+						anchorRef={elementRef}
+						isModalOpen={isModalOpen}
+						setIsModalOpen={setIsModalOpen}
+						elementOptions={parentConjugation.conjugationType === "aux" ? auxiliaries : verbs}
+						onSelect={getConjugationUpdate}
+						deleteElement={clearCurrentConjugation}
+						hasDelete={true}
+						hasSearch={true}
+						menuTitle={parentConjugation.conjugationType === "aux" ? "Auxiliary" : "Verb"}
+					/>
+				)}
 				<div
 					ref={elementRef}
-					className="baseInsideElement conjugationElement"
+					className={`baseInsideElement conjugationElement ${
+						disabled ? "baseInsideElementLocked" : ""
+					}`}
 					style={{ backgroundColor: allColors.verb.primary }}
 					onClick={openConjugationMenu}
 				>
@@ -287,6 +300,7 @@ export default function Conjugation({
 						deleteElement={clearCurrentConjugation}
 						mouse={mouse}
 						addButtonsDisabled={addButtonsDisabled}
+						conjugationDisabled={disabled}
 					/>
 				</div>
 			</div>
@@ -294,20 +308,24 @@ export default function Conjugation({
 	} else if (currentConjugation?.elementType === "adjective") {
 		return (
 			<div className="modalContainer">
-				<ElementsMenu
-					anchorRef={elementRef}
-					isModalOpen={isModalOpen}
-					setIsModalOpen={setIsModalOpen}
-					elementOptions={auxiliaries}
-					onSelect={getConjugationUpdate}
-					deleteElement={clearCurrentConjugation}
-					hasDelete={true}
-					hasSearch={true}
-					menuTitle="Auxiliary"
-				/>
+				{!disabled && (
+					<ElementsMenu
+						anchorRef={elementRef}
+						isModalOpen={isModalOpen}
+						setIsModalOpen={setIsModalOpen}
+						elementOptions={auxiliaries}
+						onSelect={getConjugationUpdate}
+						deleteElement={clearCurrentConjugation}
+						hasDelete={true}
+						hasSearch={true}
+						menuTitle="Auxiliary"
+					/>
+				)}
 				<div
 					ref={elementRef}
-					className="baseInsideElement conjugationElement"
+					className={`baseInsideElement conjugationElement ${
+						disabled ? "baseInsideElementLocked" : ""
+					}`}
 					style={{ backgroundColor: allColors.adjective.primary }}
 					onClick={openConjugationMenu}
 				>
@@ -318,6 +336,7 @@ export default function Conjugation({
 						deleteElement={clearCurrentConjugation}
 						mouse={mouse}
 						addButtonsDisabled={addButtonsDisabled}
+						conjugationDisabled={disabled}
 					/>
 				</div>
 			</div>
@@ -326,18 +345,22 @@ export default function Conjugation({
 
 	return (
 		<div className="modalContainer">
-			<ElementsMenu
-				anchorRef={elementRef}
-				isModalOpen={isModalOpen}
-				setIsModalOpen={setIsModalOpen}
-				elementOptions={conjugationOptions || []}
-				onSelect={getConjugationUpdate}
-				menuTitle="Conjugation"
-				secondHasSearch={false}
-			/>
+			{!disabled && (
+				<ElementsMenu
+					anchorRef={elementRef}
+					isModalOpen={isModalOpen}
+					setIsModalOpen={setIsModalOpen}
+					elementOptions={conjugationOptions || []}
+					onSelect={getConjugationUpdate}
+					menuTitle="Conjugation"
+					secondHasSearch={false}
+				/>
+			)}
 			<div
 				ref={elementRef}
-				className="baseInsideElement conjugationElement"
+				className={`baseInsideElement conjugationElement ${
+					disabled ? "baseInsideElementLocked" : ""
+				}`}
 				style={{ backgroundColor: color, borderColor: isModalOpen && "white" }}
 				onClick={openConjugationMenu}
 			>
@@ -362,7 +385,7 @@ export default function Conjugation({
 							})
 						}
 						mouse={mouse}
-						disabled={addButtonsDisabled}
+						disabled={addButtonsDisabled || disabled}
 					/>
 				)}
 				{renderNextConjugation()}

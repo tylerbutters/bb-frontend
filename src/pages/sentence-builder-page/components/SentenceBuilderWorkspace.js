@@ -15,6 +15,9 @@ export default function SentenceBuilderWorkspace({
 	showTranslation,
 	resetKey,
 	clearKey,
+	generatedElementMode,
+	canAddElements = true,
+	canDragGeneratedElements = false,
 	onSentenceChange,
 }) {
 	const nextElementId = useRef(0)
@@ -58,7 +61,14 @@ export default function SentenceBuilderWorkspace({
 	useEffect(() => {
 		if (!generatedElements.length) return
 
-		setAddedElements(generatedElements.map(createSentenceElement))
+		setAddedElements(
+			generatedElements.map((element) =>
+				createSentenceElement({
+					...element,
+					isGeneratedPromptElement: true,
+				}),
+			),
+		)
 	}, [generatedElements])
 
 	useEffect(() => {
@@ -162,6 +172,8 @@ export default function SentenceBuilderWorkspace({
 					const isDroppingThis = isDraggingThis && dragState?.isDropping
 					const unscaledDragWidth = dragState?.width / sentenceElementsScale
 					const unscaledDragHeight = dragState?.height / sentenceElementsScale
+					const canDragElement =
+						!element.isGeneratedPromptElement || canDragGeneratedElements
 
 					return (
 						<Fragment key={element.sentenceElementId}>
@@ -170,7 +182,7 @@ export default function SentenceBuilderWorkspace({
 								elementOptions={defaultElements}
 								addElement={(selectedElement) => addElement(index, selectedElement)}
 								text="word"
-								disabled={Boolean(dragState)}
+								disabled={Boolean(dragState) || !canAddElements}
 							/>
 							<div
 								ref={(node) => {
@@ -178,7 +190,9 @@ export default function SentenceBuilderWorkspace({
 								}}
 								className={`mainElementDragItem ${
 									isDraggingThis ? "mainElementDragging" : ""
-								} ${isDroppingThis ? "mainElementDropping" : ""}`}
+								} ${isDroppingThis ? "mainElementDropping" : ""} ${
+									canDragElement ? "" : "mainElementDragDisabled"
+								}`}
 								style={
 									isDraggingThis
 										? {
@@ -189,7 +203,11 @@ export default function SentenceBuilderWorkspace({
 												transform: getDragPreviewTransform(element.sentenceElementId, index),
 											}
 								}
-								onPointerDown={(e) => startElementPointerDrag(e, element.sentenceElementId)}
+								onPointerDown={
+									canDragElement
+										? (e) => startElementPointerDrag(e, element.sentenceElementId)
+										: undefined
+								}
 								onClickCapture={(e) => {
 									if (!shouldSuppressElementClick()) return
 									e.preventDefault()
@@ -222,6 +240,7 @@ export default function SentenceBuilderWorkspace({
 										}
 										deleteElement={() => deleteElement(element.sentenceElementId)}
 										defaultElements={defaultElements}
+										generatedElementMode={generatedElementMode}
 									/>
 								</div>
 							</div>
@@ -231,7 +250,7 @@ export default function SentenceBuilderWorkspace({
 									elementOptions={defaultElements}
 									addElement={(element) => addElement(index + 1, element)}
 									text="word"
-									disabled={Boolean(dragState)}
+									disabled={Boolean(dragState) || !canAddElements}
 								/>
 							)}
 						</Fragment>
@@ -244,7 +263,7 @@ export default function SentenceBuilderWorkspace({
 						elementOptions={defaultElements}
 						addElement={(element) => addElement(0, element)}
 						text="word"
-						disabled={Boolean(dragState)}
+						disabled={Boolean(dragState) || !canAddElements}
 					/>
 				)}
 			</div>

@@ -169,20 +169,18 @@ export default function GameControls({
 					</div>
 				</>
 			)}
-			{(showAnswerButtons || showClearButton) && (
+			{showAnswerButtons && (
 				<div className="buttonsContainer">
-					{showAnswerButtons && (
-						<button
-							type="button"
-							className="checkButton"
-							onClick={checkAnswer}
-							disabled={isCheckDisabled}
-						>
-							{isChecking ? "Checking..." : feedback ? "Check again" : "Check"}
-						</button>
-					)}
+					<button
+						type="button"
+						className="checkButton"
+						onClick={checkAnswer}
+						disabled={isCheckDisabled}
+					>
+						{isChecking ? "Checking..." : feedback ? "Check again" : "Check"}
+					</button>
 
-					{showAnswerButtons && feedback && !isSandboxCheck && (
+					{feedback && !isSandboxCheck && (
 						<button
 							type="button"
 							className="nextButton"
@@ -194,6 +192,7 @@ export default function GameControls({
 					)}
 				</div>
 			)}
+
 			{showClearButton && (
 				<button type="button" className="clearAllButton" onClick={onClearSentence}>
 					Clear all
