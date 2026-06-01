@@ -53,6 +53,55 @@ describe("filterElementOptions", () => {
 		])
 	})
 
+	test("ranks exact romaji matches before longer starts-with matches", () => {
+		const rankedOptions = [
+			{ text: "枯れる", textKana: "かれる", meanings: ["to wither"] },
+			{ text: "彼等", textKana: "かれら", meanings: ["they"] },
+			{ text: "彼", textKana: "かれ", meanings: ["he", "him"] },
+		]
+
+		expect(filterElementOptions(rankedOptions, "kare")).toEqual([
+			rankedOptions[2],
+			rankedOptions[1],
+			rankedOptions[0],
+		])
+	})
+
+	test("ranks exact kana matches before longer starts-with matches", () => {
+		const rankedOptions = [
+			{ text: "枯れる", textKana: "かれる", meanings: ["to wither"] },
+			{ text: "彼", textKana: "かれ", meanings: ["he", "him"] },
+		]
+
+		expect(filterElementOptions(rankedOptions, "かれ")).toEqual([
+			rankedOptions[1],
+			rankedOptions[0],
+		])
+	})
+
+	test("ranks parenthetical base meanings before related English phrases", () => {
+		const rankedOptions = [
+			{ text: "井戸", textKana: "いど", meanings: ["water well"] },
+			{ text: "水", textKana: "みず", meanings: ["water (esp. cool or cold)"] },
+			{ text: "飲料水", textKana: "いんりょうすい", meanings: ["drinking water"] },
+		]
+
+		expect(filterElementOptions(rankedOptions, "water")).toEqual([
+			rankedOptions[1],
+			rankedOptions[0],
+			rankedOptions[2],
+		])
+	})
+
+	test("keeps plain exact meanings tied by original order", () => {
+		const rankedOptions = [
+			{ text: "水", textKana: "みず", meanings: ["water (esp. cool or cold)"] },
+			{ text: "水分", textKana: "すいぶん", meanings: ["water", "liquid"] },
+		]
+
+		expect(filterElementOptions(rankedOptions, "water")).toEqual(rankedOptions)
+	})
+
 	test("preserves original order for equal-rank matches", () => {
 		const sameRankOptions = [
 			{ text: "猫", textKana: "ねこ", meanings: ["cat"] },
