@@ -2434,41 +2434,30 @@ test("checks the sandbox sentence and shows feedback", async () => {
 	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
 	fireEvent.click(screen.getByRole("button", { name: "。" }))
 
-	const defaultFeedbackToggle = screen.getByRole("switch", {
-		name: "Show feedback by default",
-	})
-	expect(defaultFeedbackToggle).toHaveAttribute("aria-checked", "true")
-	fireEvent.click(defaultFeedbackToggle)
-	expect(defaultFeedbackToggle).toHaveAttribute("aria-checked", "false")
-	expect(window.localStorage.getItem("bbShowFeedbackByDefault")).toBe("false")
-
+	expect(
+		screen.queryByRole("switch", {
+			name: "Show feedback by default",
+		}),
+	).not.toBeInTheDocument()
+	expect(
+		screen.queryByRole("button", {
+			name: "Show feedback",
+		}),
+	).not.toBeInTheDocument()
+	expect(
+		screen.queryByRole("button", {
+			name: "Hide feedback",
+		}),
+	).not.toBeInTheDocument()
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 
 	await waitFor(() => {
-		expect(screen.getByText("Not quite.")).toBeInTheDocument()
-		expect(screen.queryByText("Add a subject and predicate.")).not.toBeInTheDocument()
+		expect(screen.getByText("Add a subject and predicate.")).toBeInTheDocument()
 	})
-	const feedbackToggle = screen.getByRole("button", { name: "Show feedback" })
-	expect(feedbackToggle).toHaveAttribute("aria-expanded", "false")
-
-	fireEvent.click(feedbackToggle)
-
-	expect(screen.getByText("Add a subject and predicate.")).toBeInTheDocument()
-	expect(screen.getByRole("button", { name: "Hide feedback" })).toHaveAttribute(
-		"aria-expanded",
-		"true",
-	)
-	fireEvent.click(defaultFeedbackToggle)
-	expect(defaultFeedbackToggle).toHaveAttribute("aria-checked", "true")
-	expect(screen.getByText("Add a subject and predicate.")).toBeInTheDocument()
-	expect(screen.getByRole("button", { name: "Hide feedback" })).toHaveAttribute(
-		"aria-expanded",
-		"true",
-	)
-
-	fireEvent.click(screen.getByRole("button", { name: "Hide feedback" }))
-
-	expect(screen.queryByText("Add a subject and predicate.")).not.toBeInTheDocument()
+	expect(screen.queryByText("Not quite.")).not.toBeInTheDocument()
+	expect(screen.queryByText("Correct.")).not.toBeInTheDocument()
+	expect(screen.queryByRole("button", { name: "Show feedback" })).not.toBeInTheDocument()
+	expect(screen.queryByRole("button", { name: "Hide feedback" })).not.toBeInTheDocument()
 
 	const sandboxCheckRequest = global.fetch.mock.calls.find(
 		([url]) => url === `${API_BASE_URL}/games/sandbox/check-japanese`,
@@ -2521,8 +2510,9 @@ test("shows a loading spinner while checking a sandbox sentence", async () => {
 
 	await waitFor(() => {
 		expect(screen.queryByRole("status", { name: "Checking answer" })).not.toBeInTheDocument()
-		expect(screen.getByText("Not quite.")).toBeInTheDocument()
 		expect(screen.getByText("Add a subject and predicate.")).toBeInTheDocument()
+		expect(screen.queryByText("Not quite.")).not.toBeInTheDocument()
+		expect(screen.queryByRole("button", { name: "Hide feedback" })).not.toBeInTheDocument()
 	})
 })
 

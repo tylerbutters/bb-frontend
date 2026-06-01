@@ -159,7 +159,7 @@ export default function GameControls({
 
 	const showAnswerButtons = !requiresLogin && !isQuotaExhausted
 	const showClearButton = Boolean(onClearSentence && canClearSentence)
-	const canToggleFeedback = Boolean(feedback && !feedback.correct && feedback.feedback)
+	const canToggleFeedback = Boolean(!isSandboxCheck && feedback && !feedback.correct && feedback.feedback)
 	const showFeedbackDetails = canToggleFeedback && isFeedbackExpanded
 
 	return (
@@ -186,34 +186,40 @@ export default function GameControls({
 					<span className="gameCheckingSpinner" aria-hidden="true" />
 				</div>
 			)}
-			{feedback && !isChecking && (
-				<>
-					{showFeedbackDetails && (
-						<div className="gameFeedback gameFeedbackWarning" id="game-feedback-details" role="status">
-							{feedback.feedback}
-						</div>
-					)}
-					{canToggleFeedback && (
-						<button
-							type="button"
-							className="gameFeedbackToggle"
-							aria-controls="game-feedback-details"
-							aria-expanded={isFeedbackExpanded}
-							onClick={() => setIsFeedbackExpanded((isExpanded) => !isExpanded)}
-						>
-							{isFeedbackExpanded ? "Hide feedback" : "Show feedback"}
-						</button>
-					)}
-					<div
-						className="statusText"
-						style={{
-							color: feedback.correct ? "var(--color-green-text)" : "var(--color-red-text)",
-						}}
-					>
-						{feedback.correct ? "Correct." : "Not quite."}
+			{feedback &&
+				!isChecking &&
+				(isSandboxCheck ? (
+					<div className="gameFeedback gameFeedbackWarning" role="status">
+						{feedback.feedback}
 					</div>
-				</>
-			)}
+				) : (
+					<div className="gameFeedbackResult">
+						<div
+							className="statusText"
+							style={{
+								color: feedback.correct ? "var(--color-green-text)" : "var(--color-red-text)",
+							}}
+						>
+							{feedback.correct ? "Correct." : "Not quite."}
+						</div>
+						{canToggleFeedback && (
+							<button
+								type="button"
+								className="gameFeedbackToggle"
+								aria-controls="game-feedback-details"
+								aria-expanded={isFeedbackExpanded}
+								onClick={() => setIsFeedbackExpanded((isExpanded) => !isExpanded)}
+							>
+								{isFeedbackExpanded ? "Hide feedback" : "Show feedback"}
+							</button>
+						)}
+						{showFeedbackDetails && (
+							<div className="gameFeedback gameFeedbackWarning" id="game-feedback-details" role="status">
+								{feedback.feedback}
+							</div>
+						)}
+					</div>
+				))}
 			{showAnswerButtons && (
 				<div className="buttonsContainer">
 					<button
@@ -237,7 +243,7 @@ export default function GameControls({
 					)}
 				</div>
 			)}
-			{showAnswerButtons && (
+			{showAnswerButtons && !isSandboxCheck && (
 				<div className="gameFeedbackDefaultSetting">
 					<span>Show feedback by default</span>
 					<button
