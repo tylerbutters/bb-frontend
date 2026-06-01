@@ -150,7 +150,12 @@ export default function GameControls({
 					</Link>
 				</div>
 			*/}
-			{feedback && (
+			{isChecking && (
+				<div className="gameCheckingFeedback" role="status" aria-label="Checking answer">
+					<span className="gameCheckingSpinner" aria-hidden="true" />
+				</div>
+			)}
+			{feedback && !isChecking && (
 				<>
 					<div
 						className="statusText"

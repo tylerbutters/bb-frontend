@@ -141,6 +141,22 @@
 	gap: 12px;
 }
 
+.statsHistoryLoading {
+	display: flex;
+	min-height: 180px;
+	align-items: center;
+	justify-content: center;
+}
+
+.statsHistorySpinner {
+	width: 32px;
+	height: 32px;
+	border: 3px solid var(--color-white-border);
+	border-top-color: white;
+	border-radius: 50%;
+	animation: statsHistorySpin 0.8s linear infinite;
+}
+
 .statsHistoryItem {
 	display: flex;
 	flex-direction: column;
@@ -243,11 +259,18 @@
 	}
 }
 
+@keyframes statsHistorySpin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.statsHistoryDrawer,
 	.statsHistoryDrawerClosing,
 	.statsContent,
-	.statsPage .appNavbarRightActions {
+	.statsPage .appNavbarRightActions,
+	.statsHistorySpinner {
 		animation-duration: 1ms;
 		transition-duration: 1ms;
 	}

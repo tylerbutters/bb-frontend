@@ -1038,6 +1038,281 @@ test("opens paginated game history from a stats panel", async () => {
 	})
 })
 
+test("opens game history with empty metrics and a loading spinner", async () => {
+	let resolveHistory
+	let resolveDrawerStats
+	let statsRequestCount = 0
+	const pendingHistory = new Promise((resolve) => {
+		resolveHistory = resolve
+	})
+	const pendingDrawerStats = new Promise((resolve) => {
+		resolveDrawerStats = resolve
+	})
+
+	global.fetch.mockImplementation((url) => {
+		if (url === `${API_BASE_URL}/login`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					user: {
+						id: 1,
+						email: "tyler@example.com",
+						displayName: "Tyler",
+					},
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/users/1/game-quota`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue(defaultQuotaResponse),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/users/1/stats`) {
+			statsRequestCount += 1
+			if (statsRequestCount === 1) {
+				return Promise.resolve({
+					ok: true,
+					json: jest.fn().mockResolvedValue(defaultStatsResponse),
+				})
+			}
+
+			return pendingDrawerStats
+		}
+
+		if (String(url).startsWith(`${API_BASE_URL}/users/1/game-history`)) {
+			return pendingHistory
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	await loginDefaultUser()
+	fireEvent.click(screen.getByRole("link", { name: "Stats" }))
+
+	await waitFor(() => {
+		expect(screen.getByLabelText("Conjugations stats")).toHaveTextContent("100%")
+	})
+
+	fireEvent.click(
+		within(screen.getByLabelText("Conjugations stats")).getByRole("button", {
+			name: "History",
+		}),
+	)
+
+	const drawer = await screen.findByLabelText("Conjugations history drawer")
+	const historyStats = within(drawer).getByRole("group", {
+		name: "Conjugations history stats",
+	})
+	expect(historyStats).toHaveAttribute("aria-busy", "true")
+	expect(historyStats).toHaveTextContent(/Total games\s*0/)
+	expect(historyStats).toHaveTextContent(/Won\s*0/)
+	expect(historyStats).toHaveTextContent(/Failed\s*0/)
+	expect(historyStats).toHaveTextContent(/Accuracy\s*0%/)
+	expect(within(drawer).getByRole("status", { name: "Loading history" })).toBeInTheDocument()
+	expect(within(drawer).queryByText("I write a letter.")).not.toBeInTheDocument()
+
+	await act(async () => {
+		resolveDrawerStats({
+			ok: true,
+			json: jest.fn().mockResolvedValue(defaultStatsResponse),
+		})
+		resolveHistory({
+			ok: true,
+			json: jest.fn().mockResolvedValue({
+				items: [
+					{
+						id: 9,
+						challengeId: "9e5eb8e7-f91a-4c61-8f37-62b1a27ddf95",
+						mode: "conjugations",
+						label: "Conjugations",
+						difficulty: "easy",
+						prompt: "I want to eat sushi.",
+						answer: "寿司を食べたいです。",
+						correct: true,
+						feedback: "Good.",
+						createdAt: "2026-05-28T10:00:00.000Z",
+					},
+				],
+				hasMore: false,
+				nextOffset: null,
+			}),
+		})
+	})
+
+	await waitFor(() => {
+		expect(
+			within(drawer).queryByRole("status", { name: "Loading history" }),
+		).not.toBeInTheDocument()
+		expect(within(drawer).getByText("I want to eat sushi.")).toBeInTheDocument()
+		expect(historyStats).toHaveTextContent(/Total games\s*1/)
+	})
+})
+
+test("reopens populated game history while refreshing it in the background", async () => {
+	let resolveRefreshHistory
+	let resolveRefreshStats
+	let statsRequestCount = 0
+	let historyRequestCount = 0
+	const refreshHistory = new Promise((resolve) => {
+		resolveRefreshHistory = resolve
+	})
+	const refreshStats = new Promise((resolve) => {
+		resolveRefreshStats = resolve
+	})
+
+	global.fetch.mockImplementation((url) => {
+		if (url === `${API_BASE_URL}/login`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					user: {
+						id: 1,
+						email: "tyler@example.com",
+						displayName: "Tyler",
+					},
+				}),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/users/1/game-quota`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue(defaultQuotaResponse),
+			})
+		}
+
+		if (url === `${API_BASE_URL}/users/1/stats`) {
+			statsRequestCount += 1
+			if (statsRequestCount <= 2) {
+				return Promise.resolve({
+					ok: true,
+					json: jest.fn().mockResolvedValue(defaultStatsResponse),
+				})
+			}
+
+			return refreshStats
+		}
+
+		if (String(url).startsWith(`${API_BASE_URL}/users/1/game-history`)) {
+			historyRequestCount += 1
+			if (historyRequestCount === 1) {
+				return Promise.resolve({
+					ok: true,
+					json: jest.fn().mockResolvedValue({
+						items: [
+							{
+								id: 9,
+								challengeId: "9e5eb8e7-f91a-4c61-8f37-62b1a27ddf95",
+								mode: "conjugations",
+								label: "Conjugations",
+								difficulty: "easy",
+								prompt: "I want to eat sushi.",
+								answer: "寿司を食べたいです。",
+								correct: true,
+								feedback: "Good.",
+								createdAt: "2026-05-28T10:00:00.000Z",
+							},
+						],
+						hasMore: false,
+						nextOffset: null,
+					}),
+				})
+			}
+
+			return refreshHistory
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	await loginDefaultUser()
+	fireEvent.click(screen.getByRole("link", { name: "Stats" }))
+
+	await waitFor(() => {
+		expect(screen.getByLabelText("Conjugations stats")).toHaveTextContent("100%")
+	})
+
+	const openConjugationsHistory = () =>
+		fireEvent.click(
+			within(screen.getByLabelText("Conjugations stats")).getByRole("button", {
+				name: "History",
+			}),
+		)
+
+	openConjugationsHistory()
+	let drawer = await screen.findByLabelText("Conjugations history drawer")
+	await waitFor(() => {
+		expect(within(drawer).getByText("I want to eat sushi.")).toBeInTheDocument()
+	})
+
+	fireEvent.click(within(drawer).getByRole("button", { name: "Close" }))
+	await waitFor(() => {
+		expect(screen.queryByLabelText("Conjugations history drawer")).not.toBeInTheDocument()
+	})
+
+	openConjugationsHistory()
+	drawer = await screen.findByLabelText("Conjugations history drawer")
+	const historyStats = within(drawer).getByRole("group", {
+		name: "Conjugations history stats",
+	})
+
+	expect(historyStats).toHaveAttribute("aria-busy", "true")
+	expect(historyStats).toHaveTextContent(/Total games\s*1/)
+	expect(within(drawer).queryByRole("status", { name: "Loading history" })).not.toBeInTheDocument()
+	expect(within(drawer).getByText("I want to eat sushi.")).toBeInTheDocument()
+	await waitFor(() => {
+		expect(historyRequestCount).toBe(2)
+		expect(statsRequestCount).toBe(3)
+	})
+
+	await act(async () => {
+		resolveRefreshStats({
+			ok: true,
+			json: jest.fn().mockResolvedValue(defaultStatsResponse),
+		})
+		resolveRefreshHistory({
+			ok: true,
+			json: jest.fn().mockResolvedValue({
+				items: [
+					{
+						id: 10,
+						challengeId: "10e5eb8e7-f91a-4c61-8f37-62b1a27ddf95",
+						mode: "conjugations",
+						label: "Conjugations",
+						difficulty: "easy",
+						prompt: "I want to drink tea.",
+						answer: "お茶を飲みたいです。",
+						correct: true,
+						feedback: "Good.",
+						createdAt: "2026-05-29T10:00:00.000Z",
+					},
+				],
+				hasMore: false,
+				nextOffset: null,
+			}),
+		})
+	})
+
+	await waitFor(() => {
+		expect(within(drawer).getByText("I want to drink tea.")).toBeInTheDocument()
+		expect(within(drawer).queryByText("I want to eat sushi.")).not.toBeInTheDocument()
+		expect(historyStats).toHaveAttribute("aria-busy", "false")
+	})
+})
+
 test("opens game history from the sentence builder prompt panel", async () => {
 	render(<App />)
 
@@ -1891,6 +2166,52 @@ test("checks the sandbox sentence and shows feedback", async () => {
 	})
 	expect(global.fetch.mock.calls.some(([url]) => url === `${API_BASE_URL}/games/check`)).toBe(false)
 	expect(screen.queryByRole("button", { name: "Next" })).not.toBeInTheDocument()
+})
+
+test("shows a loading spinner while checking a sandbox sentence", async () => {
+	let resolveCheck
+	const checkResponse = new Promise((resolve) => {
+		resolveCheck = resolve
+	})
+
+	global.fetch.mockImplementation((url) => {
+		if (url === `${API_BASE_URL}/games/sandbox/check-japanese`) {
+			return checkResponse
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
+	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
+	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	fireEvent.click(screen.getByRole("button", { name: "Check" }))
+
+	expect(screen.getByRole("status", { name: "Checking answer" })).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Checking..." })).toBeDisabled()
+	expect(screen.queryByText("Not quite.")).not.toBeInTheDocument()
+	expect(screen.queryByText("Add a subject and predicate.")).not.toBeInTheDocument()
+
+	await act(async () => {
+		resolveCheck({
+			ok: true,
+			json: jest.fn().mockResolvedValue({
+				correct: false,
+				feedback: "Add a subject and predicate.",
+			}),
+		})
+	})
+
+	await waitFor(() => {
+		expect(screen.queryByRole("status", { name: "Checking answer" })).not.toBeInTheDocument()
+		expect(screen.getByText("Not quite.")).toBeInTheDocument()
+		expect(screen.getByText("Add a subject and predicate.")).toBeInTheDocument()
+	})
 })
 
 test("populates conjugation game elements from Japanese translation prompt data", async () => {

@@ -45,6 +45,14 @@ function hasHistory(history) {
 	return Array.isArray(history?.items) && history.items.length > 0
 }
 
+function getHistoryFilterKey({ mode = "all", difficulty = "all", recentLimit = "all" } = {}) {
+	return [mode, difficulty, recentLimit || "all"].join(":")
+}
+
+function emptyHistoryStats() {
+	return normalizeGameStats()
+}
+
 function formatHistoryDate(value) {
 	const date = new Date(value)
 	if (Number.isNaN(date.getTime())) return "Unknown date"
@@ -66,6 +74,7 @@ export function useGameHistoryDrawer(currentUser) {
 	const [historyHasMore, setHistoryHasMore] = useState(false)
 	const [historyNextOffset, setHistoryNextOffset] = useState(0)
 	const [historySource, setHistorySource] = useState("backend")
+	const [historyDataKey, setHistoryDataKey] = useState(null)
 	const [stats, setStats] = useState(() =>
 		currentUser
 			? getLocalGameStats(currentUser.id, {
@@ -84,9 +93,11 @@ export function useGameHistoryDrawer(currentUser) {
 		replace = false,
 		signal,
 		forceLocal = historySource === "local",
+		background = false,
 	} = {}) {
 		if (!currentUser || !filter) return
 
+		const filterKey = getHistoryFilterKey(filter)
 		const recentLimit = parseGameRecentLimit(filter.recentLimit || "all")
 		const query = {
 			mode: filter.mode,
@@ -100,9 +111,10 @@ export function useGameHistoryDrawer(currentUser) {
 
 		function applyHistory(nextHistory, source) {
 			const normalizedHistory = normalizeHistoryResponse(nextHistory)
-			setHistoryItems((currentItems) =>
-				replace ? normalizedHistory.items : [...currentItems, ...normalizedHistory.items],
-			)
+			const nextItems = replace
+				? normalizedHistory.items
+				: [...historyItems, ...normalizedHistory.items]
+			setHistoryItems(nextItems)
 			setHistoryHasMore(recentLimit ? false : normalizedHistory.hasMore)
 			setHistoryNextOffset(
 				recentLimit
@@ -110,11 +122,12 @@ export function useGameHistoryDrawer(currentUser) {
 					: (normalizedHistory.nextOffset ?? offset + normalizedHistory.items.length),
 			)
 			setHistorySource(source)
+			setHistoryDataKey(filterKey)
 			setHistoryStatus("ready")
 			setHistoryMessage("")
 		}
 
-		setHistoryStatus(replace ? "loading" : "loadingMore")
+		setHistoryStatus(background ? "refreshing" : replace ? "loading" : "loadingMore")
 		setHistoryMessage("")
 
 		if (forceLocal) {
@@ -139,6 +152,11 @@ export function useGameHistoryDrawer(currentUser) {
 		} catch (error) {
 			if (error.name === "AbortError") return
 
+			if (background) {
+				setHistoryStatus("ready")
+				return
+			}
+
 			if (hasHistory(localHistory)) {
 				applyHistory(localHistory, "local")
 				return
@@ -157,12 +175,14 @@ export function useGameHistoryDrawer(currentUser) {
 		if (isHistoryClosing) return
 
 		const controller = new AbortController()
+		const isBackgroundRefresh = historyStatus === "refreshing"
 		loadHistoryPage({
 			filter: historyFilter,
 			offset: 0,
 			replace: true,
 			signal: controller.signal,
 			forceLocal: false,
+			background: isBackgroundRefresh,
 		})
 
 		return () => {
@@ -175,13 +195,16 @@ export function useGameHistoryDrawer(currentUser) {
 		if (isHistoryClosing) return
 
 		const controller = new AbortController()
+		const isBackgroundRefresh = statsStatus === "refreshing"
 		const localStats = getLocalGameStats(currentUser.id, {
 			todayOnly: isFreeStatsLimited,
 		})
-		setStats(localStats)
+		if (!isBackgroundRefresh) {
+			setStats(localStats)
+		}
 
 		async function loadStats() {
-			setStatsStatus("loading")
+			setStatsStatus(isBackgroundRefresh ? "refreshing" : "loading")
 
 			try {
 				const nextStats = await getUserStats(currentUser.id, {
@@ -194,6 +217,11 @@ export function useGameHistoryDrawer(currentUser) {
 				setStatsStatus("ready")
 			} catch (error) {
 				if (error.name === "AbortError") return
+
+				if (isBackgroundRefresh) {
+					setStatsStatus("ready")
+					return
+				}
 
 				if (error.status !== 404) {
 					console.log(error)
@@ -223,17 +251,31 @@ export function useGameHistoryDrawer(currentUser) {
 	function openHistory({ mode = "all", label, difficulty = "all", recentLimit = "all" }) {
 		if (!currentUser) return
 
-		setIsHistoryClosing(false)
-		setHistoryFilter({
+		const nextFilter = {
 			mode,
 			label,
 			difficulty,
 			recentLimit,
-		})
-		setHistoryItems([])
-		setHistoryHasMore(false)
-		setHistoryNextOffset(0)
-		setHistorySource("backend")
+		}
+		const hasCurrentData = historyDataKey === getHistoryFilterKey(nextFilter)
+
+		setIsHistoryClosing(false)
+		setHistoryFilter(nextFilter)
+		setHistoryMessage("")
+
+		if (hasCurrentData) {
+			setStatsStatus("refreshing")
+			setHistoryStatus("refreshing")
+		} else {
+			setStats(emptyGameStatsResponse())
+			setStatsStatus("loading")
+			setHistoryItems([])
+			setHistoryStatus("loading")
+			setHistoryHasMore(false)
+			setHistoryNextOffset(0)
+			setHistorySource("backend")
+			setHistoryDataKey(null)
+		}
 	}
 
 	function closeHistory() {
@@ -244,23 +286,22 @@ export function useGameHistoryDrawer(currentUser) {
 
 	function finishClosingHistory() {
 		setHistoryFilter(null)
-		setHistoryItems([])
-		setHistoryStatus("idle")
 		setHistoryMessage("")
-		setHistoryHasMore(false)
-		setHistoryNextOffset(0)
-		setHistorySource("backend")
-		setStatsStatus("idle")
 		setIsHistoryClosing(false)
 	}
 
 	function selectHistoryDifficulty(difficulty) {
 		if (!historyFilter || isHistoryClosing || historyFilter.difficulty === difficulty) return
 
+		setStats(emptyGameStatsResponse())
+		setStatsStatus("loading")
 		setHistoryItems([])
+		setHistoryStatus("loading")
+		setHistoryMessage("")
 		setHistoryHasMore(false)
 		setHistoryNextOffset(0)
 		setHistorySource("backend")
+		setHistoryDataKey(null)
 		setHistoryFilter((currentFilter) =>
 			currentFilter ? { ...currentFilter, difficulty } : currentFilter,
 		)
@@ -269,10 +310,15 @@ export function useGameHistoryDrawer(currentUser) {
 	function selectRecentLimit(recentLimit) {
 		if (!historyFilter || isHistoryClosing || historyFilter.recentLimit === recentLimit) return
 
+		setStats(emptyGameStatsResponse())
+		setStatsStatus("loading")
 		setHistoryItems([])
+		setHistoryStatus("loading")
+		setHistoryMessage("")
 		setHistoryHasMore(false)
 		setHistoryNextOffset(0)
 		setHistorySource("backend")
+		setHistoryDataKey(null)
 		setHistoryFilter((currentFilter) =>
 			currentFilter ? { ...currentFilter, recentLimit } : currentFilter,
 		)
@@ -336,7 +382,8 @@ export function GameHistoryDrawer({
 	const isLoading = status === "loading"
 	const isLoadingMore = status === "loadingMore"
 	const isError = status === "error"
-	const normalizedStats = normalizeGameStats(stats)
+	const normalizedStats =
+		isLoading || statsStatus === "loading" ? emptyHistoryStats() : normalizeGameStats(stats)
 
 	function preventFixedDrawerScroll(event) {
 		const scrollArea =
@@ -416,7 +463,7 @@ export function GameHistoryDrawer({
 						className="statsMetrics"
 						role="group"
 						aria-label={`${filter.label} history stats`}
-						aria-busy={statsStatus === "loading"}
+						aria-busy={statsStatus === "loading" || statsStatus === "refreshing"}
 					>
 						<div className="statsMetric">
 							<span>Total games</span>
@@ -437,48 +484,58 @@ export function GameHistoryDrawer({
 					</div>
 				</div>
 				<div className="statsHistoryScrollArea">
-					{isLoading && <p className="statsHistoryMessage">Loading history...</p>}
+					{isLoading && (
+						<div
+							className="statsHistoryLoading"
+							role="status"
+							aria-label="Loading history"
+						>
+							<span className="statsHistorySpinner" aria-hidden="true" />
+						</div>
+					)}
 					{isError && <p className="statsHistoryMessage">{message}</p>}
 					{!isLoading && !isError && items.length === 0 && (
 						<p className="statsHistoryMessage">No history for this selection yet.</p>
 					)}
 
-					<div className="statsHistoryList">
-						{items.map((item) => (
-							<article className="statsHistoryItem" key={item.id || item.challengeId}>
-								<header className="statsHistoryItemHeader">
-									<time dateTime={item.createdAt}>{formatHistoryDate(item.createdAt)}</time>
-									<span
-										className={`statsHistoryResult ${
-											item.correct ? "statsHistoryResultCorrect" : "statsHistoryResultFailed"
-										}`}
-									>
-										{item.correct ? "Correct" : "Failed"}
-									</span>
-								</header>
-								<div className="statsHistoryMeta">
-									<span>{item.label}</span>
-									<span>{item.difficulty || "Unknown difficulty"}</span>
-								</div>
-								<dl className="statsHistoryDetails">
-									<div>
-										<dt>Prompt</dt>
-										<dd>{item.prompt || "Prompt was not saved for this older game"}</dd>
+					{!isLoading && (
+						<div className="statsHistoryList">
+							{items.map((item) => (
+								<article className="statsHistoryItem" key={item.id || item.challengeId}>
+									<header className="statsHistoryItemHeader">
+										<time dateTime={item.createdAt}>{formatHistoryDate(item.createdAt)}</time>
+										<span
+											className={`statsHistoryResult ${
+												item.correct ? "statsHistoryResultCorrect" : "statsHistoryResultFailed"
+											}`}
+										>
+											{item.correct ? "Correct" : "Failed"}
+										</span>
+									</header>
+									<div className="statsHistoryMeta">
+										<span>{item.label}</span>
+										<span>{item.difficulty || "Unknown difficulty"}</span>
 									</div>
-									<div>
-										<dt>Your answer</dt>
-										<dd>{item.answer || "Answer was not saved for this older game"}</dd>
-									</div>
-									{item.feedback && !item.correct && (
+									<dl className="statsHistoryDetails">
 										<div>
-											<dt>Feedback</dt>
-											<dd>{item.feedback}</dd>
+											<dt>Prompt</dt>
+											<dd>{item.prompt || "Prompt was not saved for this older game"}</dd>
 										</div>
-									)}
-								</dl>
-							</article>
-						))}
-					</div>
+										<div>
+											<dt>Your answer</dt>
+											<dd>{item.answer || "Answer was not saved for this older game"}</dd>
+										</div>
+										{item.feedback && !item.correct && (
+											<div>
+												<dt>Feedback</dt>
+												<dd>{item.feedback}</dd>
+											</div>
+										)}
+									</dl>
+								</article>
+							))}
+						</div>
+					)}
 
 					{hasMore && !isLoading && !isError && (
 						<button
