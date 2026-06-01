@@ -5,19 +5,23 @@
 	box-sizing: border-box;
 }
 
-.accountPage {
+.accountPage,
+.loginPage,
+.signupPage {
 	justify-content: flex-start;
 }
 
 .loginForm,
 .signupForm {
 	display: flex;
-	width: min(380px, 100%);
+	width: min(420px, 100%);
 	flex-direction: column;
 	gap: 16px;
-	padding: 28px;
+	padding: 22px;
 	border: 1px solid var(--color-grey-border);
-	border-radius: 10px;
+	border-radius: 8px;
+	background: var(--color-grey-background);
+	box-shadow: 0 14px 36px var(--color-shadow);
 	box-sizing: border-box;
 	color: white;
 }
@@ -37,7 +41,7 @@
 	gap: 14px;
 	padding: 18px;
 	border: 1px solid var(--color-grey-border);
-	border-radius: 10px;
+	border-radius: 8px;
 	color: white;
 }
 
@@ -62,13 +66,11 @@
 	margin: 0;
 	color: var(--color-grey-text);
 	font-size: 13px;
-	font-weight: 700;
 	line-height: 1.35;
 }
 
 .resetEmailAddress {
 	color: var(--color-grey-text);
-	font-weight: 750;
 }
 
 .resetEmailChangeButton {
@@ -77,7 +79,6 @@
 	background: transparent;
 	color: white;
 	font: inherit;
-	font-weight: 850;
 	cursor: pointer;
 }
 
@@ -96,50 +97,62 @@
 	outline-offset: 2px;
 }
 
-.accountField input:focus,
-.loginField input:focus,
-.signupField input:focus {
-	border-color: white;
+.loginForm .loginField,
+.signupForm .signupField {
+	gap: 8px;
 }
 
 .authPrimaryButton {
-	/* display: inline-flex; */
+	display: inline-flex;
+	min-height: 42px;
 	align-items: center;
 	justify-content: center;
+	gap: 8px;
+	padding: 0 14px;
 	margin-top: 4px;
-	/* border: 1px solid var(--color-grey-border); */
+	border: 1px solid var(--color-green-border);
 	border-radius: 8px;
-	/* background: white; */
-	color: var(--color-grey-text);
+	background: var(--color-green-background);
+	box-sizing: border-box;
+	color: white;
 	font-size: 15px;
 	cursor: pointer;
 	text-decoration: none;
 }
-.authPrimaryButton:hover {
+.authPrimaryButton:hover,
+.authPrimaryButton:focus-visible {
+	border-color: var(--color-green-border-hover);
+	background: var(--color-green-background-hover);
 	color: white;
+	outline: none;
 }
 
 .logoutButton {
-	/* display: inline-flex; */
+	display: inline-flex;
+	min-height: 42px;
 	align-items: center;
-	padding: 10px 12px;
 	justify-content: center;
+	gap: 8px;
+	padding: 0 14px;
 	margin-top: 4px;
 	border: 1px solid var(--color-white-border);
 	border-radius: 8px;
 	background: var(--color-white-background);
+	box-sizing: border-box;
 	color: white;
 	font-size: 15px;
 	cursor: pointer;
 	text-decoration: none;
 }
-.logoutButton:hover {
-	border: 1px solid var(--color-white-border-hover);
+.logoutButton:hover,
+.logoutButton:focus-visible {
+	border-color: var(--color-white-border-hover);
 	background: var(--color-white-background-hover);
+	outline: none;
 }
 
 .authTextButton {
-	/* align-self: center; */
+	align-self: flex-start;
 	border: 0;
 	background: transparent;
 	color: white;
@@ -166,10 +179,12 @@
 
 .cancelDeleteButton,
 .deleteAccountButton {
-	padding: 10px 12px;
+	min-height: 42px;
+	padding: 0 14px;
 	border: 1px solid var(--color-red-border);
 	border-radius: 8px;
 	background: var(--color-red-background);
+	box-sizing: border-box;
 	color: white;
 	font-size: 14px;
 	cursor: pointer;
@@ -206,14 +221,13 @@
 	min-height: 20px;
 	margin: 0;
 	font-size: 13px;
-	font-weight: 750;
 	line-height: 1.35;
 }
 
 .accountMessagesuccess,
 .loginMessagesuccess,
 .signupMessagesuccess {
-	color: var(--color-green);
+	color: var(--color-green-text);
 }
 
 .accountMessageerror,
