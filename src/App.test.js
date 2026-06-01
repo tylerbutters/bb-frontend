@@ -2266,16 +2266,16 @@ test("does not turn a logged-in challenge check error into a premium blocker", a
 
 	await waitFor(() => {
 		expect(screen.getByText("Not quite.")).toBeInTheDocument()
-		expect(
-			screen.getByText("Could not check the sentence right now. Try again in a moment."),
-		).toBeInTheDocument()
+		expect(screen.getByText("Log in to check challenge answers.")).toBeInTheDocument()
 	})
+	expect(
+		screen.queryByText("Could not check the sentence right now. Try again in a moment."),
+	).not.toBeInTheDocument()
 	expect(screen.queryByText("You've used today's 3 free challenge checks.")).not.toBeInTheDocument()
 	expect(screen.queryByText("Buy premium for unlimited practice.")).not.toBeInTheDocument()
 	expect(
 		screen.queryByText("Not quite. Log in to check challenge answers."),
 	).not.toBeInTheDocument()
-	expect(screen.queryByText("Log in to check challenge answers.")).not.toBeInTheDocument()
 	expect(screen.getByRole("button", { name: "Check again" })).toBeInTheDocument()
 })
 

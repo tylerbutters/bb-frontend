@@ -42,6 +42,7 @@ export default function GameControls({
 	const [showFeedbackByDefault, setShowFeedbackByDefault] = useState(readShowFeedbackByDefault)
 	const [isFeedbackExpanded, setIsFeedbackExpanded] = useState(showFeedbackByDefault)
 	const feedbackRequestId = useRef(0)
+	const feedbackAbortControllerRef = useRef(null)
 	const hasAnswerChecker = hasGameAnswerChecker(gameMode)
 	const isSandboxCheck = gameMode === "sandbox"
 	const isChecking = checkStatus === "checking"
@@ -69,10 +70,16 @@ export default function GameControls({
 
 	useEffect(() => {
 		feedbackRequestId.current += 1
+		abortFeedbackRequest(feedbackAbortControllerRef)
 		setFeedback(null)
 		setFeedbackStatus("idle")
 		setIsFeedbackExpanded(showFeedbackByDefault)
 		setCheckStatus("idle")
+
+		return () => {
+			feedbackRequestId.current += 1
+			abortFeedbackRequest(feedbackAbortControllerRef)
+		}
 	}, [answer, challengeId, difficulty, gameMode, isVisible, prompt])
 
 	function toggleShowFeedbackByDefault() {
@@ -87,6 +94,7 @@ export default function GameControls({
 		if (isCheckDisabled) return
 
 		feedbackRequestId.current += 1
+		abortFeedbackRequest(feedbackAbortControllerRef)
 		setCheckStatus("checking")
 		setFeedbackStatus("idle")
 		setFeedback(null)
@@ -154,7 +162,7 @@ export default function GameControls({
 			}
 			*/
 
-			const errorFeedback = "Could not check the sentence right now. Try again in a moment."
+			const errorFeedback = gameCheckErrorFeedback(error)
 			/*
 			TODO(premium): Re-enable premium-specific quota feedback.
 			const errorFeedback =
@@ -174,13 +182,22 @@ export default function GameControls({
 
 	async function loadFeedbackDetails(checkPayload) {
 		const requestId = feedbackRequestId.current + 1
+		const abortController = new AbortController()
 		feedbackRequestId.current = requestId
+		abortFeedbackRequest(feedbackAbortControllerRef)
+		feedbackAbortControllerRef.current = abortController
 		setFeedbackStatus("loading")
 
 		try {
-			const nextFeedback = await getGameAnswerFeedback(checkPayload)
+			const nextFeedback = await getGameAnswerFeedback({
+				...checkPayload,
+				signal: abortController.signal,
+			})
 			if (feedbackRequestId.current !== requestId) return
 
+			if (feedbackAbortControllerRef.current === abortController) {
+				feedbackAbortControllerRef.current = null
+			}
 			if (nextFeedback.quota) onGameQuotaChange?.(nextFeedback.quota)
 			updateLocalGameResultFeedback(currentUser?.id, {
 				challengeId,
@@ -199,16 +216,20 @@ export default function GameControls({
 			)
 			setFeedbackStatus("ready")
 		} catch (error) {
+			if (isAbortError(error)) return
 			console.log(error)
 			if (feedbackRequestId.current !== requestId) return
 
+			if (feedbackAbortControllerRef.current === abortController) {
+				feedbackAbortControllerRef.current = null
+			}
 			setFeedback((currentFeedback) =>
 				currentFeedback
 					? {
 							...currentFeedback,
 							feedback:
 								currentFeedback.feedback ||
-								"Could not load feedback right now. Try again in a moment.",
+								feedbackLoadErrorFeedback(error),
 							feedbackPending: false,
 						}
 					: currentFeedback,
@@ -350,4 +371,69 @@ function hasGameAnswerChecker(gameMode) {
 
 function shouldLoadFeedbackSeparately({ isSandboxCheck, feedback }) {
 	return Boolean(!isSandboxCheck && feedback?.feedbackPending && !feedback.correct)
+}
+
+function abortFeedbackRequest(feedbackAbortControllerRef) {
+	feedbackAbortControllerRef.current?.abort()
+	feedbackAbortControllerRef.current = null
+}
+
+function isAbortError(error) {
+	return error?.name === "AbortError"
+}
+
+function gameCheckErrorFeedback(error) {
+	const errorCode = error?.data?.error?.code
+
+	if (
+		errorCode === "LOGIN_REQUIRED_FOR_CHALLENGE_CHECKS" ||
+		errorCode === "AUTHENTICATION_REQUIRED" ||
+		error?.status === 401
+	) {
+		return "Log in to check challenge answers."
+	}
+
+	if (errorCode === "DAILY_GAME_LIMIT_REACHED") {
+		return error?.message || "You've used today's free challenge checks."
+	}
+
+	if (errorCode === "AI_SERVICE_ERROR" || errorCode === "AI_SERVICE_NOT_CONFIGURED") {
+		return "The AI checker is unavailable right now. Try again in a moment."
+	}
+
+	if (error?.status >= 500) {
+		return "The checker is unavailable right now. Try again in a moment."
+	}
+
+	return "Could not check the sentence right now. Try again in a moment."
+}
+
+function feedbackLoadErrorFeedback(error) {
+	const errorCode = error?.data?.error?.code
+
+	if (
+		errorCode === "LOGIN_REQUIRED_FOR_CHALLENGE_CHECKS" ||
+		errorCode === "AUTHENTICATION_REQUIRED" ||
+		error?.status === 401
+	) {
+		return "Log in to load AI feedback for this answer."
+	}
+
+	if (errorCode === "DAILY_GAME_LIMIT_REACHED") {
+		return error?.message || "You've used today's free challenge checks."
+	}
+
+	if (errorCode === "CHALLENGE_FEEDBACK_NOT_AVAILABLE" || error?.status === 404) {
+		return "Feedback is no longer available for this prompt. Try the next sentence."
+	}
+
+	if (errorCode === "AI_SERVICE_ERROR" || errorCode === "AI_SERVICE_NOT_CONFIGURED") {
+		return "AI feedback is unavailable right now. Your answer was still checked."
+	}
+
+	if (error?.status >= 500) {
+		return "Feedback is unavailable right now. Your answer was still checked."
+	}
+
+	return "Could not load feedback right now. Your answer was still checked."
 }
