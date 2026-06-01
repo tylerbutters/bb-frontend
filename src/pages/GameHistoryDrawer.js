@@ -13,6 +13,7 @@ import {
 	normalizeGameStatsResponse,
 	parseGameRecentLimit,
 } from "../gameStatsStorage"
+import { CheckCircle2, Percent, Trophy, X, XCircle } from "lucide-react"
 import "./GameHistoryDrawer.css"
 
 const HISTORY_PAGE_SIZE = 50
@@ -64,6 +65,18 @@ function formatHistoryDate(value) {
 		hour: "numeric",
 		minute: "2-digit",
 	}).format(date)
+}
+
+function HistoryStatMetric({ icon: Icon, label, value }) {
+	return (
+		<div className="statsMetric">
+			<span className="statsMetricLabel">
+				<Icon className="statsMetricIcon" size={16} aria-hidden="true" />
+				{label}
+			</span>
+			<strong>{value}</strong>
+		</div>
+	)
 }
 
 export function useGameHistoryDrawer(currentUser) {
@@ -410,7 +423,8 @@ export function GameHistoryDrawer({
 							<h2>{filter.label} history</h2>
 						</div>
 						<button type="button" className="statsHistoryCloseButton" onClick={onClose}>
-							Close
+							<X className="statsHistoryButtonIcon" size={16} aria-hidden="true" />
+							<span>Close</span>
 						</button>
 					</header>
 
@@ -433,8 +447,9 @@ export function GameHistoryDrawer({
 								type="button"
 								role="tab"
 								aria-selected={filter.difficulty === difficulty}
-								className={`filterTab ${filter.difficulty === difficulty ? "filterTabSelected" : ""}`}
-								style={{ padding: 5 }}
+								className={`filterTab ${
+									filter.difficulty === difficulty ? "filterTabSelected" : ""
+								}`}
 								onClick={() => onDifficultyChange(difficulty)}
 							>
 								{difficulty}
@@ -451,7 +466,6 @@ export function GameHistoryDrawer({
 								className={`filterTab ${
 									(filter.recentLimit || "all") === range.value ? "filterTabSelected" : ""
 								}`}
-								style={{ padding: 5 }}
 								onClick={() => onRecentLimitChange(range.value)}
 							>
 								{range.label}
@@ -460,36 +474,32 @@ export function GameHistoryDrawer({
 					</div>
 
 					<div
-						className="statsMetrics"
+						className="statsMetrics statsHistoryStats"
 						role="group"
 						aria-label={`${filter.label} history stats`}
 						aria-busy={statsStatus === "loading" || statsStatus === "refreshing"}
 					>
-						<div className="statsMetric">
-							<span>Total games</span>
-							<strong>{normalizedStats.totalGames}</strong>
-						</div>
-						<div className="statsMetric">
-							<span>Correct</span>
-							<strong>{normalizedStats.correct}</strong>
-						</div>
-						<div className="statsMetric">
-							<span>Incorrect</span>
-							<strong>{normalizedStats.incorrect}</strong>
-						</div>
-						<div className="statsMetric">
-							<span>Accuracy</span>
-							<strong>{normalizedStats.accuracy}%</strong>
-						</div>
+						<HistoryStatMetric
+							icon={Trophy}
+							label="Total games"
+							value={normalizedStats.totalGames}
+						/>
+						<HistoryStatMetric
+							icon={CheckCircle2}
+							label="Correct"
+							value={normalizedStats.correct}
+						/>
+						<HistoryStatMetric icon={XCircle} label="Incorrect" value={normalizedStats.incorrect} />
+						<HistoryStatMetric
+							icon={Percent}
+							label="Accuracy"
+							value={`${normalizedStats.accuracy}%`}
+						/>
 					</div>
 				</div>
 				<div className="statsHistoryScrollArea">
 					{isLoading && (
-						<div
-							className="statsHistoryLoading"
-							role="status"
-							aria-label="Loading history"
-						>
+						<div className="statsHistoryLoading" role="status" aria-label="Loading history">
 							<span className="statsHistorySpinner" aria-hidden="true" />
 						</div>
 					)}
@@ -503,7 +513,19 @@ export function GameHistoryDrawer({
 							{items.map((item) => (
 								<article className="statsHistoryItem" key={item.id || item.challengeId}>
 									<header className="statsHistoryItemHeader">
-										<time dateTime={item.createdAt}>{formatHistoryDate(item.createdAt)}</time>
+										<div
+											style={{
+												display: "flex",
+												flexDirection: "column",
+												gap: 10,
+											}}
+										>
+											<time dateTime={item.createdAt}>{formatHistoryDate(item.createdAt)}</time>
+											<div className="statsHistoryMeta">
+												<span>{item.label}</span>
+												<span>{item.difficulty || "Unknown difficulty"}</span>
+											</div>
+										</div>
 										<span
 											className={`statsHistoryResult ${
 												item.correct ? "statsHistoryResultCorrect" : "statsHistoryResultIncorrect"
@@ -512,10 +534,7 @@ export function GameHistoryDrawer({
 											{item.correct ? "Correct" : "Incorrect"}
 										</span>
 									</header>
-									<div className="statsHistoryMeta">
-										<span>{item.label}</span>
-										<span>{item.difficulty || "Unknown difficulty"}</span>
-									</div>
+
 									<dl className="statsHistoryDetails">
 										<div>
 											<dt>Prompt</dt>

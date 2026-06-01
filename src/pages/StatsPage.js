@@ -48,7 +48,7 @@ function StatPanel({ title, stats, onHistoryClick }) {
 					aria-label="History"
 					onClick={onHistoryClick}
 				>
-					<History size={18} aria-hidden="true" />
+					<History size={20} aria-hidden="true" />
 				</button>
 			</div>
 			<div className="statsMetrics">

@@ -22,10 +22,10 @@
 	--color-shadow: rgba(0, 0, 0, 0.35);
 
 	/* WHITE */
-	--color-white-border: #a2a2a2;
-	--color-white-background: #434343;
-	--color-white-border-hover: #c3c3c3;
-	--color-white-background-hover: #545454;
+	--color-white-border: #525252;
+	--color-white-background: #2a2a2a;
+	--color-white-border-hover: #6c6c6c;
+	--color-white-background-hover: #414141;
 
 	/* GOLD */
 	--color-gold-background: #635016;
