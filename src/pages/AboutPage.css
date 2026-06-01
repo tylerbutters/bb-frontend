@@ -6,29 +6,151 @@
 
 .aboutContent {
 	display: flex;
-	width: min(560px, 100%);
+	width: min(980px, 100%);
 	flex-direction: column;
-	gap: 16px;
+	gap: 18px;
 	box-sizing: border-box;
 	color: white;
 }
 
 .aboutContent h1 {
 	margin: 0 0 4px;
-	font-size: 30px;
-	font-weight: 850;
+	font-size: 26px;
 	line-height: 1.2;
 }
 
-.aboutContent p {
+.aboutIntro {
+	display: flex;
+	width: min(720px, 100%);
+	flex-direction: column;
+	gap: 10px;
+}
+
+.aboutIntro p,
+.aboutSection p,
+.aboutList,
+.aboutSteps {
 	margin: 0;
 	color: var(--color-grey-text);
-	font-size: 16px;
-	font-weight: 650;
-	line-height: 1.55;
+	font-size: 15px;
+	line-height: 1.5;
 }
 
 .aboutContent a {
 	color: white;
-	font-weight: 850;
+}
+
+.aboutSection {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	padding: 18px;
+	border: 1px solid var(--color-grey-border);
+	border-radius: 8px;
+	background: var(--color-grey-background);
+	box-shadow: 0 14px 36px var(--color-shadow);
+	box-sizing: border-box;
+}
+
+.aboutSection h2 {
+	margin: 0;
+	font-size: 18px;
+	line-height: 1.2;
+}
+
+.aboutSteps,
+.aboutList {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding-left: 22px;
+}
+
+.aboutModeList {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.aboutModeItem {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+	padding: 12px;
+	border: 1px solid var(--color-grey-border);
+	border-radius: 8px;
+	background: var(--color-app-background);
+	box-sizing: border-box;
+}
+
+.aboutModeItem h3 {
+	margin: 0;
+	font-size: 15px;
+	line-height: 1.2;
+}
+
+.aboutModeItem p {
+	font-size: 13px;
+	line-height: 1.4;
+}
+
+.aboutActions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.aboutActionLink,
+.aboutSupportLink {
+	display: inline-flex;
+	min-height: 42px;
+	align-items: center;
+	justify-content: center;
+	padding: 0 14px;
+	border-radius: 8px;
+	box-sizing: border-box;
+	font-size: 14px;
+	text-decoration: none;
+}
+
+.aboutActionLink {
+	border: 1px solid var(--color-green-border);
+	background: var(--color-green-background);
+}
+
+.aboutActionLink:hover,
+.aboutActionLink:focus-visible {
+	border-color: var(--color-green-border-hover);
+	background: var(--color-green-background-hover);
+	outline: none;
+}
+
+.aboutSupportLink {
+	border: 1px solid var(--color-white-border);
+	background: var(--color-white-background);
+}
+
+.aboutSupportLink:hover,
+.aboutSupportLink:focus-visible {
+	border-color: var(--color-white-border-hover);
+	background: var(--color-white-background-hover);
+	outline: none;
+}
+
+@media (max-width: 700px) {
+	.aboutModeList {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 420px) {
+	.aboutActions {
+		flex-direction: column;
+	}
+
+	.aboutActionLink,
+	.aboutSupportLink {
+		width: 100%;
+	}
 }
