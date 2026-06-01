@@ -1,7 +1,6 @@
-.elementsMenuButtonText,
-.elementsMenuButtonMeanings {
-	/* display: block; */
+.elementsMenuButtonText {
 	width: 100%;
+	min-width: 0;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -12,10 +11,16 @@
 }
 
 .elementsMenuButtonMeanings {
+	display: block;
+	width: 100%;
+	min-width: 0;
 	margin-top: 3px;
 	color: var(--color-grey-text);
 	font-size: 12px;
 	line-height: 1.25;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .menuListItemContainer {
@@ -23,6 +28,9 @@
 	/* background-color: red; */
 	flex-direction: column;
 	gap: 3px;
+	width: 100%;
+	min-width: 0;
+	box-sizing: border-box;
 	padding: 8px;
 	overflow-x: hidden;
 	overflow-y: auto;

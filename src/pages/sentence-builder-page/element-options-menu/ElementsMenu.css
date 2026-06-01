@@ -56,14 +56,17 @@
 
 .elementsMenuButton {
 	display: flex;
+	flex: 0 0 auto;
 	flex-direction: column;
+	width: 100%;
+	min-width: 0;
+	box-sizing: border-box;
 	padding: 7px 10px;
 	border: 1px solid transparent;
 	border-radius: 8px;
 	background: transparent;
 	color: white;
 	font-size: 15px;
-	flex: 1;
 	text-align: left;
 	cursor: pointer;
 }

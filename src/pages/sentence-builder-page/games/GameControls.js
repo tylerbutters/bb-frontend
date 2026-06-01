@@ -159,7 +159,9 @@ export default function GameControls({
 
 	const showAnswerButtons = !requiresLogin && !isQuotaExhausted
 	const showClearButton = Boolean(onClearSentence && canClearSentence)
-	const canToggleFeedback = Boolean(!isSandboxCheck && feedback && !feedback.correct && feedback.feedback)
+	const canToggleFeedback = Boolean(
+		!isSandboxCheck && feedback && !feedback.correct && feedback.feedback,
+	)
 	const showFeedbackDetails = canToggleFeedback && isFeedbackExpanded
 
 	return (
@@ -194,14 +196,15 @@ export default function GameControls({
 					</div>
 				) : (
 					<div className="gameFeedbackResult">
-						<div
-							className="statusText"
-							style={{
-								color: feedback.correct ? "var(--color-green-text)" : "var(--color-red-text)",
-							}}
-						>
-							{feedback.correct ? "Correct." : "Not quite."}
-						</div>
+						{showFeedbackDetails && (
+							<div
+								className="gameFeedback gameFeedbackWarning"
+								id="game-feedback-details"
+								role="status"
+							>
+								{feedback.feedback}
+							</div>
+						)}
 						{canToggleFeedback && (
 							<button
 								type="button"
@@ -213,15 +216,24 @@ export default function GameControls({
 								{isFeedbackExpanded ? "Hide feedback" : "Show feedback"}
 							</button>
 						)}
-						{showFeedbackDetails && (
-							<div className="gameFeedback gameFeedbackWarning" id="game-feedback-details" role="status">
-								{feedback.feedback}
-							</div>
-						)}
+						<div
+							className="statusText"
+							style={{
+								color: feedback.correct ? "var(--color-green-text)" : "var(--color-red-text)",
+							}}
+						>
+							{feedback.correct ? "Correct." : "Not quite."}
+						</div>
 					</div>
 				))}
-			{showAnswerButtons && (
-				<div className="buttonsContainer">
+
+			<div className="buttonsContainer">
+				{showClearButton && (
+					<button type="button" className="clearAllButton" onClick={onClearSentence}>
+						Clear all
+					</button>
+				)}
+				{showAnswerButtons && (
 					<button
 						type="button"
 						className="checkButton"
@@ -230,19 +242,19 @@ export default function GameControls({
 					>
 						{isChecking ? "Checking..." : feedback ? "Check again" : "Check"}
 					</button>
+				)}
+				{feedback && !isSandboxCheck && (
+					<button
+						type="button"
+						className="nextButton"
+						onClick={onNext}
+						disabled={promptStatus === "loading"}
+					>
+						Next
+					</button>
+				)}
+			</div>
 
-					{feedback && !isSandboxCheck && (
-						<button
-							type="button"
-							className="nextButton"
-							onClick={onNext}
-							disabled={promptStatus === "loading"}
-						>
-							Next
-						</button>
-					)}
-				</div>
-			)}
 			{showAnswerButtons && !isSandboxCheck && (
 				<div className="gameFeedbackDefaultSetting">
 					<span>Show feedback by default</span>
@@ -259,12 +271,6 @@ export default function GameControls({
 						<span aria-hidden="true" />
 					</button>
 				</div>
-			)}
-
-			{showClearButton && (
-				<button type="button" className="clearAllButton" onClick={onClearSentence}>
-					Clear all
-				</button>
 			)}
 		</div>
 	)
