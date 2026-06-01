@@ -1,0 +1,229 @@
+.adminContent {
+	width: min(1180px, 100%);
+	gap: 18px;
+}
+
+.adminLayout {
+	display: grid;
+	grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+	gap: 18px;
+	align-items: start;
+}
+
+.adminMainColumn {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.adminPanel {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: 14px;
+	padding: 18px;
+	border: 1px solid var(--color-grey-border);
+	border-radius: 8px;
+	box-sizing: border-box;
+	color: white;
+}
+
+.adminPanelHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.adminPanel h2 {
+	margin: 0;
+	font-size: 18px;
+}
+
+.adminAccessPanel {
+	width: min(460px, 100%);
+}
+
+.adminAccessPanel p {
+	margin: 0;
+	color: var(--color-red-text);
+	font-size: 13px;
+	font-weight: 800;
+}
+
+.adminSearchForm {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.adminSearchForm label,
+.adminStatsFilters label {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	color: var(--color-grey-text);
+	font-size: 12px;
+	font-weight: 800;
+}
+
+.adminSearchRow {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 40px;
+	gap: 8px;
+}
+
+.adminSearchRow input,
+.adminStatsFilters select {
+	min-width: 0;
+	padding: 10px 12px;
+	border: 1px solid var(--color-grey-border);
+	border-radius: 8px;
+	background: transparent;
+	color: white;
+	font: inherit;
+	font-size: 14px;
+	box-sizing: border-box;
+}
+
+.adminSearchRow input:focus,
+.adminStatsFilters select:focus {
+	border-color: white;
+	outline: none;
+}
+
+.adminIconButton {
+	display: inline-flex;
+	width: 40px;
+	height: 40px;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid var(--color-grey-border);
+	border-radius: 8px;
+	color: var(--color-grey-text);
+	cursor: pointer;
+}
+
+.adminIconButton:hover,
+.adminIconButton:focus-visible {
+	color: white;
+}
+
+.adminIconButton svg {
+	width: 18px;
+	height: 18px;
+}
+
+.adminLoading {
+	display: flex;
+	min-height: 58px;
+	align-items: center;
+	justify-content: center;
+}
+
+.adminUserList {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.adminUserRow {
+	display: grid;
+	width: 100%;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 4px;
+	padding: 12px;
+	border: 1px solid var(--color-grey-border);
+	border-radius: 8px;
+	color: white;
+	text-align: left;
+	cursor: pointer;
+	box-sizing: border-box;
+}
+
+.adminUserRow:hover,
+.adminUserRow:focus-visible,
+.adminUserRowSelected {
+	border-color: white;
+}
+
+.adminUserName {
+	overflow: hidden;
+	font-size: 14px;
+	font-weight: 850;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.adminUserEmail,
+.adminUserMeta {
+	overflow: hidden;
+	color: var(--color-grey-text);
+	font-size: 12px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.adminProfileGrid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.adminProfileField {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: 6px;
+	padding: 12px;
+	border: 1px solid var(--color-grey-border);
+	border-radius: 8px;
+	box-sizing: border-box;
+}
+
+.adminProfileField span {
+	color: var(--color-grey-text);
+	font-size: 12px;
+}
+
+.adminProfileField strong {
+	overflow-wrap: anywhere;
+	font-size: 14px;
+}
+
+.adminStatsHeader {
+	align-items: flex-start;
+}
+
+.adminStatsFilters {
+	width: min(180px, 100%);
+}
+
+.adminStatsFilters select:disabled {
+	opacity: 0.62;
+}
+
+.adminHistoryList {
+	max-height: 620px;
+	overflow: auto;
+	padding-right: 4px;
+}
+
+@media (max-width: 920px) {
+	.adminLayout {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 680px) {
+	.adminPanelHeader,
+	.adminStatsHeader {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.adminProfileGrid {
+		grid-template-columns: 1fr;
+	}
+}

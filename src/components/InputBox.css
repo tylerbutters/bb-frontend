@@ -6,7 +6,7 @@
 }
 
 .passwordToggleButton {
-	position: fixed;
+	position: absolute;
 	right: 6px;
 	color: var(--color-grey-text);
 }

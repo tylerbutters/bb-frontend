@@ -8,6 +8,7 @@ import SignupPage from "./pages/SignupPage"
 import ForgotPasswordPage from "./pages/ForgotPasswordPage"
 import ConfirmEmailChangePage from "./pages/ConfirmEmailChangePage"
 import StatsPage from "./pages/StatsPage"
+import AdminPage from "./pages/AdminPage"
 import AppNavbar from "./components/AppNavbar"
 import { logout } from "./api/auth"
 
@@ -73,6 +74,15 @@ export default function App() {
 					path="/stats"
 					element={
 						<StatsPage
+							currentUser={currentUser}
+							onAuthExpired={clearCurrentUser}
+						/>
+					}
+				/>
+				<Route
+					path="/admin"
+					element={
+						<AdminPage
 							currentUser={currentUser}
 							onAuthExpired={clearCurrentUser}
 						/>

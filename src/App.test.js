@@ -1637,6 +1637,289 @@ test("clears stale login state when stats auth has expired", async () => {
 	expect(screen.queryByText("Login is required.")).not.toBeInTheDocument()
 })
 
+test("redirects logged-out users away from admin", async () => {
+	window.history.pushState({}, "", "/admin")
+
+	render(<App />)
+
+	await waitFor(() => {
+		expect(window.location.pathname).toBe("/login")
+	})
+	expect(screen.getByRole("heading", { name: "Login" })).toBeInTheDocument()
+})
+
+test("shows a contained admin access message for non-admin users", () => {
+	window.history.pushState({}, "", "/admin")
+	window.localStorage.setItem(
+		"jsbCurrentUser",
+		JSON.stringify({
+			id: 1,
+			email: "tyler@example.com",
+			displayName: "Tyler",
+			role: "user",
+		}),
+	)
+
+	render(<App />)
+
+	expect(screen.getByRole("heading", { name: "Admin" })).toBeInTheDocument()
+	expect(screen.getByText("Admin access required")).toBeInTheDocument()
+	expect(screen.getByText("403")).toBeInTheDocument()
+	expect(
+		global.fetch.mock.calls.some(([url]) => String(url).includes("/admin")),
+	).toBe(false)
+})
+
+test("opens the direct admin page, searches users, and shows profile stats and history", async () => {
+	window.history.pushState({}, "", "/admin")
+	window.localStorage.setItem(
+		"jsbCurrentUser",
+		JSON.stringify({
+			id: 1,
+			email: "admin@example.com",
+			displayName: "Admin",
+			role: "admin",
+		}),
+	)
+	const listedUser = {
+		id: 2,
+		email: "tyler@example.com",
+		displayName: "Tyler",
+		plan: "free",
+		role: "user",
+		createdAt: "2026-01-01T00:00:00.000Z",
+		updatedAt: "2026-01-02T00:00:00.000Z",
+	}
+
+	global.fetch.mockImplementation((url) => {
+		const requestUrl = String(url)
+
+		if (requestUrl.startsWith(`${API_BASE_URL}/admin/users?`)) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					items: [listedUser],
+					hasMore: false,
+					nextOffset: null,
+				}),
+			})
+		}
+
+		if (requestUrl === `${API_BASE_URL}/admin/users/2`) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					user: listedUser,
+					stats: {
+						total: {
+							totalGames: 2,
+							won: 1,
+							failed: 1,
+							accuracy: 50,
+						},
+						games: [
+							{
+								mode: "translate",
+								label: "Translate",
+								totalGames: 1,
+								won: 1,
+								failed: 0,
+								accuracy: 100,
+							},
+							{
+								mode: "conjugations",
+								label: "Conjugations",
+								totalGames: 1,
+								won: 0,
+								failed: 1,
+								accuracy: 0,
+							},
+						],
+						byDifficulty: {
+							all: {
+								total: {
+									totalGames: 2,
+									won: 1,
+									failed: 1,
+									accuracy: 50,
+								},
+								games: [
+									{
+										mode: "translate",
+										label: "Translate",
+										totalGames: 1,
+										won: 1,
+										failed: 0,
+										accuracy: 100,
+									},
+									{
+										mode: "conjugations",
+										label: "Conjugations",
+										totalGames: 1,
+										won: 0,
+										failed: 1,
+										accuracy: 0,
+									},
+								],
+							},
+							hard: {
+								total: {
+									totalGames: 1,
+									won: 1,
+									failed: 0,
+									accuracy: 100,
+								},
+								games: [
+									{
+										mode: "conjugations",
+										label: "Conjugations",
+										totalGames: 1,
+										won: 1,
+										failed: 0,
+										accuracy: 100,
+									},
+								],
+							},
+						},
+					},
+				}),
+			})
+		}
+
+		if (requestUrl.startsWith(`${API_BASE_URL}/admin/users/2/game-history`)) {
+			return Promise.resolve({
+				ok: true,
+				json: jest.fn().mockResolvedValue({
+					items: [
+						{
+							id: 9,
+							challengeId: "1e5eb8e7-f91a-4c61-8f37-62b1a27ddf95",
+							mode: "conjugations",
+							label: "Conjugations",
+							difficulty: "hard",
+							prompt: "Conjugate 食べる.",
+							answer: "食べます",
+							correct: true,
+							feedback: "Hidden for correct answers.",
+							createdAt: "2026-05-28T10:00:00.000Z",
+						},
+					],
+					hasMore: false,
+					nextOffset: null,
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({}),
+		})
+	})
+
+	render(<App />)
+
+	expect(screen.getByRole("heading", { name: "Admin" })).toBeInTheDocument()
+	expect(screen.queryByRole("link", { name: "Admin" })).not.toBeInTheDocument()
+
+	fireEvent.change(screen.getByLabelText("Search users"), {
+		target: { value: "tyler" },
+	})
+	fireEvent.click(screen.getByRole("button", { name: "Search" }))
+
+	const userButton = await screen.findByRole("button", {
+		name: /Tyler tyler@example\.com free \/ user/,
+	})
+	fireEvent.click(userButton)
+
+	const profile = screen.getByLabelText("Selected user profile")
+	await waitFor(() => {
+		expect(within(profile).getByText("tyler@example.com")).toBeInTheDocument()
+	})
+	expect(within(profile).getByText("Display name")).toBeInTheDocument()
+	expect(within(profile).getAllByText("Tyler").length).toBeGreaterThan(0)
+
+	const stats = screen.getByLabelText("Selected user stats")
+	await waitFor(() => {
+		expect(within(stats).getByText("Total games")).toBeInTheDocument()
+		expect(within(stats).getByText("2")).toBeInTheDocument()
+	})
+	const statsModeSelect = within(stats).getByLabelText("Stats mode")
+	expect(statsModeSelect).toHaveValue("all")
+
+	fireEvent.change(statsModeSelect, { target: { value: "conjugations" } })
+
+	expect(statsModeSelect).toHaveValue("conjugations")
+	expect(within(stats).queryByText("2")).not.toBeInTheDocument()
+	const failedMetric = within(stats).getByText("Failed").closest(".statsMetric")
+	expect(within(failedMetric).getByText("1")).toBeInTheDocument()
+	const wonMetric = within(stats).getByText("Won").closest(".statsMetric")
+	expect(within(wonMetric).getByText("0")).toBeInTheDocument()
+
+	const history = screen.getByLabelText("Selected user game history")
+	expect(within(history).queryByLabelText("History mode")).not.toBeInTheDocument()
+	expect(within(history).queryByLabelText("Difficulty")).not.toBeInTheDocument()
+
+	fireEvent.click(within(stats).getByRole("tab", { name: "hard" }))
+	fireEvent.click(within(stats).getByRole("button", { name: "past 10" }))
+
+	await waitFor(() => {
+		expect(
+			global.fetch.mock.calls.some(([url]) =>
+				String(url).includes(
+					`${API_BASE_URL}/admin/users/2/game-history?mode=conjugations&difficulty=hard&limit=10&offset=0`,
+				),
+			),
+		).toBe(true)
+	})
+
+	await waitFor(() => {
+		expect(within(history).getByText("Conjugate 食べる.")).toBeInTheDocument()
+	})
+	expect(within(history).getByText("Correct")).toBeInTheDocument()
+	expect(screen.queryByText("Hidden for correct answers.")).not.toBeInTheDocument()
+
+	const searchRequest = global.fetch.mock.calls.find(([url]) =>
+		String(url).includes(`${API_BASE_URL}/admin/users?query=tyler`),
+	)
+	expect(searchRequest).toBeTruthy()
+})
+
+test("shows admin API errors without crashing", async () => {
+	window.history.pushState({}, "", "/admin")
+	window.localStorage.setItem(
+		"jsbCurrentUser",
+		JSON.stringify({
+			id: 1,
+			email: "admin@example.com",
+			displayName: "Admin",
+			role: "admin",
+		}),
+	)
+	global.fetch.mockImplementation((url) => {
+		if (String(url).startsWith(`${API_BASE_URL}/admin/users?`)) {
+			return Promise.resolve({
+				ok: false,
+				status: 500,
+				json: jest.fn().mockResolvedValue({
+					error: {
+						message: "Could not load admin users.",
+					},
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({}),
+		})
+	})
+
+	render(<App />)
+
+	expect(await screen.findByText("Could not load admin users.")).toBeInTheDocument()
+	expect(screen.getByLabelText("Search users")).toBeInTheDocument()
+})
+
 test("renders the login page at the login route", () => {
 	window.history.pushState({}, "", "/login")
 
