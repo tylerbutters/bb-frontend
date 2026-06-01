@@ -7,9 +7,10 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	height: 64px;
+	height: 50px;
 	padding: 0 18px;
 	background-color: var(--color-app-background);
+	/* background-color: red; */
 }
 .appNavbarLink {
 	padding: 10px 14px;

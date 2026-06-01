@@ -1,5 +1,5 @@
 .sentenceTextContainer {
-	position: absolute;
+	position: fixed;
 	margin-bottom: 120px;
 	height: 80px;
 	display: flex;

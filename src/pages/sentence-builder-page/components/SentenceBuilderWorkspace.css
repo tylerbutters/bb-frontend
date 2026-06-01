@@ -43,39 +43,3 @@
 		width 0.18s ease-in-out,
 		transform 0.18s ease-in-out;
 }
-
-.clearAllButton {
-	position: absolute;
-	left: 50%;
-	bottom: 28px;
-	padding: 10px 16px;
-	border: 1px solid var(--color-red-border);
-	background: var(--color-red-background);
-	color: white;
-	border-radius: 8px;
-	font-size: 14px;
-	opacity: 0;
-	pointer-events: none;
-	transform: translateX(-50%) translateY(10px);
-	transition:
-		opacity 0.18s ease,
-		transform 0.18s ease,
-		border-color 0.15s ease,
-		background-color 0.15s ease;
-}
-
-.clearAllButtonVisible {
-	opacity: 1;
-	pointer-events: auto;
-	transform: translateX(-50%) translateY(0);
-}
-
-.clearAllButtonVisible:hover {
-	border-color: var(--color-red-border-hover);
-	background: var(--color-red-background-hover);
-	cursor: pointer;
-}
-
-.clearAllButtonVisible:active {
-	transform: translateX(-50%) translateY(0) scale(0.96);
-}

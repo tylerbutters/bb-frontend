@@ -1822,9 +1822,7 @@ test("does not apply the old local fallback challenge check limit", async () => 
 test("clears all sentence elements", async () => {
 	render(<App />)
 
-	const clearAllButton = screen.getByText("Clear all")
-	expect(clearAllButton).toBeDisabled()
-	expect(clearAllButton).not.toHaveClass("clearAllButtonVisible")
+	expect(screen.queryByRole("button", { name: "Clear all" })).not.toBeInTheDocument()
 
 	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
 	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
@@ -1833,16 +1831,16 @@ test("clears all sentence elements", async () => {
 	await waitFor(() => {
 		expect(screen.getByText(".")).toBeInTheDocument()
 	})
-	await waitFor(() => {
-		expect(clearAllButton).toHaveClass("clearAllButtonVisible")
-	})
+	const clearAllButton = screen.getByRole("button", { name: "Clear all" })
+	expect(clearAllButton.closest(".gameControls")).not.toBeNull()
 	expect(clearAllButton).toBeEnabled()
 	expect(screen.getAllByText("。").length).toBeGreaterThan(0)
 
 	fireEvent.click(clearAllButton)
 
-	expect(clearAllButton).toBeDisabled()
-	expect(clearAllButton).not.toHaveClass("clearAllButtonVisible")
+	await waitFor(() => {
+		expect(screen.queryByRole("button", { name: "Clear all" })).not.toBeInTheDocument()
+	})
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
 })
 

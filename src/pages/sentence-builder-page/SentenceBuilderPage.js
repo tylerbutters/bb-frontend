@@ -20,6 +20,7 @@ const GAME_HISTORY_LABELS = {
 export default function SentenceBuilderPage({ currentUser }) {
 	const [selectedGameMode, setSelectedGameMode] = useState("sandbox")
 	const [workspaceResetCount, setWorkspaceResetCount] = useState(0)
+	const [sentenceClearRequestCount, setSentenceClearRequestCount] = useState(0)
 	const [gamePrompt, setGamePrompt] = useState("")
 	const [gamePromptData, setGamePromptData] = useState(null)
 	const [gamePromptStatus, setGamePromptStatus] = useState("idle")
@@ -60,6 +61,12 @@ export default function SentenceBuilderPage({ currentUser }) {
 
 	function resetSentence() {
 		setWorkspaceResetCount((count) => count + 1)
+		setJapaneseSentence("")
+		setHasSentenceElements(false)
+	}
+
+	function clearSentence() {
+		setSentenceClearRequestCount((count) => count + 1)
 		setJapaneseSentence("")
 		setHasSentenceElements(false)
 	}
@@ -120,6 +127,7 @@ export default function SentenceBuilderPage({ currentUser }) {
 			<SentenceBuilderWorkspace
 				showTranslation={!isGame}
 				resetKey={workspaceResetCount}
+				clearKey={sentenceClearRequestCount}
 				generatedElements={generatedPromptElements}
 				onSentenceChange={handleSentenceChange}
 			/>
@@ -133,8 +141,10 @@ export default function SentenceBuilderPage({ currentUser }) {
 				prompt={gamePrompt}
 				promptStatus={gamePromptStatus}
 				answer={japaneseSentence}
+				canClearSentence={hasSentenceElements}
 				onGameQuotaChange={gameQuota.applyQuota}
 				onLocalGameQuotaUse={gameQuota.recordLocalChallengeCheck}
+				onClearSentence={clearSentence}
 				onNext={regenerateGamePrompt}
 			/>
 			<GameHistoryDrawer {...gameHistory.drawerProps} />

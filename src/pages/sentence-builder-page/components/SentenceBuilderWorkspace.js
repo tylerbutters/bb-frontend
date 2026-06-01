@@ -14,6 +14,7 @@ export default function SentenceBuilderWorkspace({
 	generatedElements = [],
 	showTranslation,
 	resetKey,
+	clearKey,
 	onSentenceChange,
 }) {
 	const nextElementId = useRef(0)
@@ -22,6 +23,7 @@ export default function SentenceBuilderWorkspace({
 	const scaleFrameRef = useRef(null)
 	const scaleTimeoutRef = useRef(null)
 	const resetKeyRef = useRef(resetKey)
+	const clearKeyRef = useRef(clearKey)
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const [addedElements, setAddedElements] = useState([])
 	const [sentenceElementsScale, setSentenceElementsScale] = useState(1)
@@ -46,6 +48,12 @@ export default function SentenceBuilderWorkspace({
 		resetKeyRef.current = resetKey
 		setAddedElements([])
 	}, [resetKey])
+
+	useEffect(() => {
+		if (clearKeyRef.current === clearKey) return
+		clearKeyRef.current = clearKey
+		setAddedElements([])
+	}, [clearKey])
 
 	useEffect(() => {
 		if (!generatedElements.length) return
@@ -139,10 +147,6 @@ export default function SentenceBuilderWorkspace({
 
 	function deleteElement(elementId) {
 		setAddedElements((prev) => prev.filter((element) => element.sentenceElementId !== elementId))
-	}
-
-	function clearAllElements() {
-		setAddedElements([])
 	}
 
 	return (
@@ -244,15 +248,6 @@ export default function SentenceBuilderWorkspace({
 					/>
 				)}
 			</div>
-			<button
-				type="button"
-				className={`clearAllButton ${addedElements.length ? "clearAllButtonVisible" : ""}`}
-				onClick={clearAllElements}
-				disabled={!addedElements.length}
-				aria-hidden={!addedElements.length}
-			>
-				Clear all
-			</button>
 		</>
 	)
 }

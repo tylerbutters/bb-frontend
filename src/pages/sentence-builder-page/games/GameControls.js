@@ -14,8 +14,10 @@ export default function GameControls({
 	prompt,
 	promptStatus,
 	answer,
+	canClearSentence,
 	onGameQuotaChange,
 	onLocalGameQuotaUse,
+	onClearSentence,
 	onNext,
 }) {
 	const [checkStatus, setCheckStatus] = useState("idle")
@@ -38,11 +40,11 @@ export default function GameControls({
 		(!isSandboxCheck && (!prompt || promptStatus !== "ready")) ||
 		requiresLogin ||
 		isQuotaExhausted
-	const feedbackText =
-		feedback &&
-		`${feedback.correct ? "Correct." : "Not quite."}${
-			feedback.feedback ? ` ${feedback.feedback}` : ""
-		}`
+	// const feedbackText =
+	// 	feedback &&
+	// 	`${feedback.correct ? "Correct." : "Not quite."}${
+	// 		feedback.feedback ? ` ${feedback.feedback}` : ""
+	// 	}`
 
 	useEffect(() => {
 		setFeedback(null)
@@ -125,6 +127,9 @@ export default function GameControls({
 
 	if (!isVisible || !hasAnswerChecker) return null
 
+	const showAnswerButtons = !requiresLogin && !isQuotaExhausted
+	const showClearButton = Boolean(onClearSentence && canClearSentence)
+
 	return (
 		<div className="gameControls">
 			{requiresLogin && (
@@ -145,33 +150,53 @@ export default function GameControls({
 				</div>
 			*/}
 			{feedback && (
-				<div
-					className={`gameFeedback ${
-						feedback.correct ? "gameFeedbackSuccess" : "gameFeedbackWarning"
-					}`}
-					role="status"
-				>
-					{feedbackText}
+				<>
+					<div
+						className="statusText"
+						style={{
+							color: feedback.correct ? "var(--color-green-text)" : "var(--color-red-text)",
+						}}
+					>
+						{feedback.correct ? "Correct." : "Not quite."}
+					</div>
+					<div
+						className={`gameFeedback ${
+							feedback.correct ? "gameFeedbackSuccess" : "gameFeedbackWarning"
+						}`}
+						role="status"
+					>
+						{feedback.feedback}
+					</div>
+				</>
+			)}
+			{(showAnswerButtons || showClearButton) && (
+				<div className="buttonsContainer">
+					{showAnswerButtons && (
+						<button
+							type="button"
+							className="checkButton"
+							onClick={checkAnswer}
+							disabled={isCheckDisabled}
+						>
+							{isChecking ? "Checking..." : feedback ? "Check again" : "Check"}
+						</button>
+					)}
+
+					{showAnswerButtons && feedback && !isSandboxCheck && (
+						<button
+							type="button"
+							className="nextButton"
+							onClick={onNext}
+							disabled={promptStatus === "loading"}
+						>
+							Next
+						</button>
+					)}
 				</div>
 			)}
-			{!requiresLogin && !isQuotaExhausted && (
-				<button
-					type="button"
-					className="gameControlButton"
-					onClick={checkAnswer}
-					disabled={isCheckDisabled}
-				>
-					{isChecking ? "Checking..." : "Check"}
-				</button>
-			)}
-			{feedback && !isSandboxCheck && (
-				<button
-					type="button"
-					className="gameControlButton gameControlButtonPrimary"
-					onClick={onNext}
-					disabled={promptStatus === "loading"}
-				>
-					Next
+			{showClearButton && (
+				<button type="button" className="clearAllButton" onClick={onClearSentence}>
+					Clear all
 				</button>
 			)}
 		</div>

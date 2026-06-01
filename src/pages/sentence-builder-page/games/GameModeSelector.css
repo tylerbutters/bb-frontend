@@ -1,6 +1,6 @@
 .gameTabsBar {
 	position: fixed;
-	top: 74px;
+	top: 50px;
 	z-index: 1500;
 	display: flex;
 	align-items: center;
@@ -19,7 +19,7 @@
 .gameTab {
 	/* flex: 0 0 auto; */
 	padding: 8px 11px;
-	border: 0;
+	border: 1px solid transparent;
 	border-radius: 8px;
 	background: transparent;
 	color: var(--color-grey-text);
@@ -35,12 +35,12 @@
 
 .gameTabSelected {
 	background: var(--color-grey-background);
-	border: 1px solid var(--color-grey-border);
+	border-color: var(--color-grey-border);
 	color: white;
 }
 
 .gameModeDetails {
-	position: absolute;
+	position: fixed;
 	top: 124px;
 	color: white;
 	text-align: center;

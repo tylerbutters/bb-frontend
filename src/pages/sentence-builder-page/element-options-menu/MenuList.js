@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import InputBox from "../../../components/InputBox"
 import JapaneseText from "../components/JapaneseText"
 import { filterElementOptions } from "./elementOptionsSearch"
 import "./MenuList.css"
@@ -79,7 +78,7 @@ export default function MenuList({
 						type="text"
 						className="searchInput"
 						value={searchText}
-						onChange={setSearchText}
+						onChange={(e) => setSearchText(e.target.value)}
 						placeholder="Search..."
 					/>
 				</div>

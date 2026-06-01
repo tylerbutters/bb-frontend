@@ -1,6 +1,6 @@
 :root {
 	/* GREEN */
-	--color-green: rgb(119, 224, 147);
+	--color-green-text: rgb(119, 224, 147);
 	--color-green-border: rgba(78, 196, 126, 0.46);
 	--color-green-border-hover: rgba(78, 196, 126, 0.72);
 	--color-green-background: rgba(78, 196, 126, 0.18);
