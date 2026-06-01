@@ -2434,12 +2434,41 @@ test("checks the sandbox sentence and shows feedback", async () => {
 	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
 	fireEvent.click(screen.getByRole("button", { name: "。" }))
 
+	const defaultFeedbackToggle = screen.getByRole("switch", {
+		name: "Show feedback by default",
+	})
+	expect(defaultFeedbackToggle).toHaveAttribute("aria-checked", "true")
+	fireEvent.click(defaultFeedbackToggle)
+	expect(defaultFeedbackToggle).toHaveAttribute("aria-checked", "false")
+	expect(window.localStorage.getItem("bbShowFeedbackByDefault")).toBe("false")
+
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 
 	await waitFor(() => {
 		expect(screen.getByText("Not quite.")).toBeInTheDocument()
-		expect(screen.getByText("Add a subject and predicate.")).toBeInTheDocument()
+		expect(screen.queryByText("Add a subject and predicate.")).not.toBeInTheDocument()
 	})
+	const feedbackToggle = screen.getByRole("button", { name: "Show feedback" })
+	expect(feedbackToggle).toHaveAttribute("aria-expanded", "false")
+
+	fireEvent.click(feedbackToggle)
+
+	expect(screen.getByText("Add a subject and predicate.")).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Hide feedback" })).toHaveAttribute(
+		"aria-expanded",
+		"true",
+	)
+	fireEvent.click(defaultFeedbackToggle)
+	expect(defaultFeedbackToggle).toHaveAttribute("aria-checked", "true")
+	expect(screen.getByText("Add a subject and predicate.")).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Hide feedback" })).toHaveAttribute(
+		"aria-expanded",
+		"true",
+	)
+
+	fireEvent.click(screen.getByRole("button", { name: "Hide feedback" }))
+
+	expect(screen.queryByText("Add a subject and predicate.")).not.toBeInTheDocument()
 
 	const sandboxCheckRequest = global.fetch.mock.calls.find(
 		([url]) => url === `${API_BASE_URL}/games/sandbox/check-japanese`,

@@ -4,6 +4,22 @@ import { checkGameAnswer, checkSandboxSentence } from "../../../api/games"
 import { recordLocalGameResult } from "../../../gameStatsStorage"
 import "./GameControls.css"
 
+const SHOW_FEEDBACK_BY_DEFAULT_STORAGE_KEY = "bbShowFeedbackByDefault"
+
+function readShowFeedbackByDefault() {
+	try {
+		return window.localStorage.getItem(SHOW_FEEDBACK_BY_DEFAULT_STORAGE_KEY) !== "false"
+	} catch {
+		return true
+	}
+}
+
+function writeShowFeedbackByDefault(value) {
+	try {
+		window.localStorage.setItem(SHOW_FEEDBACK_BY_DEFAULT_STORAGE_KEY, String(value))
+	} catch {}
+}
+
 export default function GameControls({
 	isVisible,
 	gameMode,
@@ -22,6 +38,8 @@ export default function GameControls({
 }) {
 	const [checkStatus, setCheckStatus] = useState("idle")
 	const [feedback, setFeedback] = useState(null)
+	const [showFeedbackByDefault, setShowFeedbackByDefault] = useState(readShowFeedbackByDefault)
+	const [isFeedbackExpanded, setIsFeedbackExpanded] = useState(showFeedbackByDefault)
 	const hasAnswerChecker = hasGameAnswerChecker(gameMode)
 	const isSandboxCheck = gameMode === "sandbox"
 	const isChecking = checkStatus === "checking"
@@ -48,14 +66,24 @@ export default function GameControls({
 
 	useEffect(() => {
 		setFeedback(null)
+		setIsFeedbackExpanded(showFeedbackByDefault)
 		setCheckStatus("idle")
 	}, [answer, challengeId, difficulty, gameMode, isVisible, prompt])
+
+	function toggleShowFeedbackByDefault() {
+		setShowFeedbackByDefault((currentValue) => {
+			const nextValue = !currentValue
+			writeShowFeedbackByDefault(nextValue)
+			return nextValue
+		})
+	}
 
 	async function checkAnswer() {
 		if (isCheckDisabled) return
 
 		setCheckStatus("checking")
 		setFeedback(null)
+		setIsFeedbackExpanded(showFeedbackByDefault)
 
 		try {
 			const nextFeedback = isSandboxCheck
@@ -83,6 +111,7 @@ export default function GameControls({
 				})
 			}
 			setFeedback(nextFeedback)
+			setIsFeedbackExpanded(showFeedbackByDefault)
 			setCheckStatus("ready")
 		} catch (error) {
 			console.log(error)
@@ -121,6 +150,7 @@ export default function GameControls({
 				correct: false,
 				feedback: errorFeedback,
 			})
+			setIsFeedbackExpanded(showFeedbackByDefault)
 			setCheckStatus("error")
 		}
 	}
@@ -129,7 +159,8 @@ export default function GameControls({
 
 	const showAnswerButtons = !requiresLogin && !isQuotaExhausted
 	const showClearButton = Boolean(onClearSentence && canClearSentence)
-	const showFeedbackDetails = Boolean(feedback && !feedback.correct && feedback.feedback)
+	const canToggleFeedback = Boolean(feedback && !feedback.correct && feedback.feedback)
+	const showFeedbackDetails = canToggleFeedback && isFeedbackExpanded
 
 	return (
 		<div className="gameControls">
@@ -157,6 +188,22 @@ export default function GameControls({
 			)}
 			{feedback && !isChecking && (
 				<>
+					{showFeedbackDetails && (
+						<div className="gameFeedback gameFeedbackWarning" id="game-feedback-details" role="status">
+							{feedback.feedback}
+						</div>
+					)}
+					{canToggleFeedback && (
+						<button
+							type="button"
+							className="gameFeedbackToggle"
+							aria-controls="game-feedback-details"
+							aria-expanded={isFeedbackExpanded}
+							onClick={() => setIsFeedbackExpanded((isExpanded) => !isExpanded)}
+						>
+							{isFeedbackExpanded ? "Hide feedback" : "Show feedback"}
+						</button>
+					)}
 					<div
 						className="statusText"
 						style={{
@@ -165,11 +212,6 @@ export default function GameControls({
 					>
 						{feedback.correct ? "Correct." : "Not quite."}
 					</div>
-					{showFeedbackDetails && (
-						<div className="gameFeedback gameFeedbackWarning" role="status">
-							{feedback.feedback}
-						</div>
-					)}
 				</>
 			)}
 			{showAnswerButtons && (
@@ -193,6 +235,23 @@ export default function GameControls({
 							Next
 						</button>
 					)}
+				</div>
+			)}
+			{showAnswerButtons && (
+				<div className="gameFeedbackDefaultSetting">
+					<span>Show feedback by default</span>
+					<button
+						type="button"
+						className={`gameFeedbackDefaultToggle ${
+							showFeedbackByDefault ? "gameFeedbackDefaultToggleOn" : ""
+						}`}
+						role="switch"
+						aria-label="Show feedback by default"
+						aria-checked={showFeedbackByDefault}
+						onClick={toggleShowFeedbackByDefault}
+					>
+						<span aria-hidden="true" />
+					</button>
 				</div>
 			)}
 
