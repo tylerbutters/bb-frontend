@@ -1,11 +1,11 @@
 .accountPageContent {
-	width: min(1080px, 100%);
+	width: min(1120px, 100%);
 	gap: 18px;
 }
 
 .accountGrid {
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: minmax(0, 1fr) minmax(340px, 0.9fr);
 	gap: 18px;
 	align-items: start;
 }
@@ -17,8 +17,110 @@
 	gap: 18px;
 }
 
+.accountPageContent .accountSection {
+	gap: 16px;
+	padding: 18px;
+	border-radius: 8px;
+	background: var(--color-grey-background);
+	box-shadow: 0 14px 36px var(--color-shadow);
+}
+
+.accountSectionHeader {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.accountSectionIcon {
+	display: inline-flex;
+	width: 36px;
+	height: 36px;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
+	border-radius: 8px;
+	box-sizing: border-box;
+	color: var(--color-grey-text);
+}
+
+.accountSectionHeader h2 {
+	margin: 0;
+	font-size: 17px;
+	line-height: 1.2;
+}
+
+.accountSectionHeader p {
+	margin: 5px 0 0;
+	font-size: 13px;
+	line-height: 1.4;
+}
+
+.accountPageContent .accountField {
+	gap: 8px;
+}
+
+.accountPageContent .accountField input {
+	height: 44px;
+	border-color: var(--color-grey-border-trans);
+	background: var(--color-app-background);
+}
+
+.accountPageContent .accountField input:hover {
+	border-color: var(--color-white-border);
+}
+
+.accountPageContent .accountField input:focus {
+	border-color: var(--color-white-border-hover);
+	box-shadow: 0 0 0 3px var(--color-grey-border-trans);
+}
+
+.accountPageContent .authPrimaryButton,
+.accountPageContent .logoutButton,
+.accountPageContent .deleteAccountButton,
+.accountPageContent .cancelDeleteButton {
+	display: inline-flex;
+	min-height: 42px;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 0 14px;
+	margin-top: 0;
+	border-radius: 8px;
+	box-sizing: border-box;
+	color: white;
+}
+
+.accountPageContent .authPrimaryButton {
+	border: 1px solid var(--color-green-border);
+	background: var(--color-green-background);
+}
+
+.accountPageContent .authPrimaryButton:hover,
+.accountPageContent .authPrimaryButton:focus-visible {
+	border-color: var(--color-green-border-hover);
+	background: var(--color-green-background-hover);
+	outline: none;
+}
+
+.accountPageContent .authTextButton {
+	align-self: flex-start;
+	color: white;
+}
+
+.accountPageContent .authTextButton:hover,
+.accountPageContent .authTextButton:focus-visible {
+	color: white;
+	outline: none;
+}
+
+.accountButtonIcon {
+	width: 16px;
+	height: 16px;
+	flex: 0 0 auto;
+}
+
 .accountSessionSection {
-	gap: 14px;
+	gap: 16px;
 }
 
 .accountSessionActions {
@@ -27,22 +129,80 @@
 	gap: 10px;
 }
 
-.accountSessionActions .authPrimaryButton {
+.accountSessionActions .logoutButton {
 	width: 100%;
-	margin-top: 0;
+	border-color: var(--color-white-border);
+	background: var(--color-white-background);
+	color: white;
 }
 
-.accountSessionActions .deleteAccountActions {
+.accountSessionActions .logoutButton:hover,
+.accountSessionActions .logoutButton:focus-visible {
+	border-color: var(--color-white-border-hover);
+	background: var(--color-white-background-hover);
+	outline: none;
+}
+
+.accountDangerSection {
+	border-color: var(--color-red-border);
+	background: var(--color-red-background);
+}
+
+.accountDangerNotice {
+	margin: 0;
+	color: var(--color-red-text);
+	font-size: 13px;
+	line-height: 1.35;
+}
+
+.deleteAccountActions {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
 }
 
-.accountSessionActions .deleteAccountButton:only-child {
+.deleteAccountButton:only-child {
 	grid-column: 1 / -1;
 }
 
-@media (max-width: 760px) {
+.accountPageContent .cancelDeleteButton {
+	border-color: var(--color-grey-border-trans);
+	background: var(--color-grey-background);
+}
+
+.accountPageContent .cancelDeleteButton:hover,
+.accountPageContent .cancelDeleteButton:focus-visible {
+	border-color: var(--color-white-border);
+	background: var(--color-grey-background);
+	outline: none;
+}
+
+@media (max-width: 860px) {
 	.accountGrid {
 		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 620px) {
+	.accountPage {
+		padding-right: 12px;
+		padding-left: 12px;
+	}
+
+	.deleteAccountActions {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 420px) {
+	.accountSectionHeader {
+		flex-direction: column;
+	}
+
+	.accountPageContent .authPrimaryButton,
+	.accountPageContent .logoutButton,
+	.accountPageContent .deleteAccountButton,
+	.accountPageContent .cancelDeleteButton {
+		width: 100%;
 	}
 }

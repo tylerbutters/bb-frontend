@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import { Lock, Save } from "lucide-react"
 import { updateUser } from "../../api/users"
 import InputBox from "../../components/InputBox"
 import "../AuthPage.css"
+import AccountSectionHeader from "./AccountSectionHeader"
 
 export default function PasswordSection({ currentUser, onUserUpdate, resetMessage }) {
 	const [passwordForm, setPasswordForm] = useState({
@@ -81,7 +83,11 @@ export default function PasswordSection({ currentUser, onUserUpdate, resetMessag
 
 	return (
 		<form className="accountSection" aria-label="Password settings" onSubmit={submitPassword}>
-			<h2>Password</h2>
+			<AccountSectionHeader
+				headingId="password-settings-heading"
+				icon={Lock}
+				title="Password"
+			/>
 
 			<InputBox
 				id="account-current-password"
@@ -125,7 +131,8 @@ export default function PasswordSection({ currentUser, onUserUpdate, resetMessag
 				className="authPrimaryButton"
 				disabled={feedback.status === "submitting"}
 			>
-				{feedback.status === "submitting" ? "Saving..." : "Save changes"}
+				<Save className="accountButtonIcon" size={16} aria-hidden="true" />
+				<span>{feedback.status === "submitting" ? "Saving..." : "Save changes"}</span>
 			</button>
 
 			{feedback.message && (

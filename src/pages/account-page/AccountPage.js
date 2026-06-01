@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react"
 import { Navigate, useLocation, useNavigate } from "react-router-dom"
+import { LogOut } from "lucide-react"
 import "../AuthPage.css"
 import "./AccountPage.css"
 import DisplayNameSection from "./DisplayNameSection"
 import EmailSection from "./EmailSection"
 import PasswordSection from "./PasswordSection"
 import DeleteAccountSection from "./DeleteAccountSection"
+import AccountSectionHeader from "./AccountSectionHeader"
 
 export default function AccountPage({ currentUser, onAccountDelete, onLogout, onUserUpdate }) {
 	const navigate = useNavigate()
@@ -53,9 +55,22 @@ export default function AccountPage({ currentUser, onAccountDelete, onLogout, on
 							resetMessage={resetMessage}
 						/>
 
-						<button type="button" className="logoutButton" onClick={onLogout}>
-							Log out
-						</button>
+						<section
+							className="accountSection accountSessionSection"
+							aria-labelledby="account-session-heading"
+						>
+							<AccountSectionHeader
+								headingId="account-session-heading"
+								icon={LogOut}
+								title="Session"
+							/>
+							<div className="accountSessionActions">
+								<button type="button" className="logoutButton" onClick={onLogout}>
+									<LogOut className="accountButtonIcon" size={16} aria-hidden="true" />
+									<span>Log out</span>
+								</button>
+							</div>
+						</section>
 					</div>
 				</div>
 			</main>

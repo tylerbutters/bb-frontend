@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react"
+import { Save, User } from "lucide-react"
 import { updateUser } from "../../api/users"
 import InputBox from "../../components/InputBox"
 import "../AuthPage.css"
+import AccountSectionHeader from "./AccountSectionHeader"
 
 export default function DisplayNameSection({ currentUser, onUserUpdate }) {
 	const [displayName, setDisplayName] = useState(currentUser?.displayName || "")
@@ -55,7 +57,11 @@ export default function DisplayNameSection({ currentUser, onUserUpdate }) {
 			aria-label="Display name settings"
 			onSubmit={submitDisplayName}
 		>
-			<h2>Display name</h2>
+			<AccountSectionHeader
+				headingId="display-name-settings-heading"
+				icon={User}
+				title="Display name"
+			/>
 
 			<InputBox
 				id="account-display-name"
@@ -71,7 +77,8 @@ export default function DisplayNameSection({ currentUser, onUserUpdate }) {
 				className="authPrimaryButton"
 				disabled={feedback.status === "submitting"}
 			>
-				{feedback.status === "submitting" ? "Saving..." : "Save changes"}
+				<Save className="accountButtonIcon" size={16} aria-hidden="true" />
+				<span>{feedback.status === "submitting" ? "Saving..." : "Save changes"}</span>
 			</button>
 
 			{feedback.message && (

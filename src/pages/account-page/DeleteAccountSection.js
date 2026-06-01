@@ -1,7 +1,9 @@
 import { useState } from "react"
 import { Navigate } from "react-router-dom"
+import { Trash2, X } from "lucide-react"
 import { deleteUser } from "../../api/users"
 import "../AuthPage.css"
+import AccountSectionHeader from "./AccountSectionHeader"
 
 export default function DeleteAccountSection({ currentUser, onAccountDelete }) {
 	const [isDeleteConfirming, setIsDeleteConfirming] = useState(false)
@@ -41,25 +43,48 @@ export default function DeleteAccountSection({ currentUser, onAccountDelete }) {
 	}
 
 	return (
-		<div className="deleteAccountActions">
-			<button
-				type="button"
-				className="deleteAccountButton"
-				disabled={deleteStatus === "submitting"}
-				onClick={deleteAccount}
-			>
-				{deleteStatus === "submitting"
-					? "Deleting..."
-					: isDeleteConfirming
-						? "Confirm delete"
-						: "Delete account"}
-			</button>
+		<section
+			className="accountSection accountDangerSection"
+			aria-labelledby="delete-account-settings-heading"
+		>
+			<AccountSectionHeader
+				headingId="delete-account-settings-heading"
+				icon={Trash2}
+				title="Delete account"
+			/>
 
 			{isDeleteConfirming && (
-				<button type="button" className="cancelDeleteButton" onClick={cancelDeleteAccount}>
-					Cancel
-				</button>
+				<p className="accountDangerNotice">This action cannot be undone.</p>
 			)}
-		</div>
+
+			<div className="deleteAccountActions">
+				<button
+					type="button"
+					className="deleteAccountButton"
+					disabled={deleteStatus === "submitting"}
+					onClick={deleteAccount}
+				>
+					<Trash2 className="accountButtonIcon" size={16} aria-hidden="true" />
+					<span>
+						{deleteStatus === "submitting"
+							? "Deleting..."
+							: isDeleteConfirming
+								? "Confirm delete"
+								: "Delete account"}
+					</span>
+				</button>
+
+				{isDeleteConfirming && (
+					<button type="button" className="cancelDeleteButton" onClick={cancelDeleteAccount}>
+						<X className="accountButtonIcon" size={16} aria-hidden="true" />
+						<span>Cancel</span>
+					</button>
+				)}
+			</div>
+
+			{deleteMessage && (
+				<p className="accountMessage accountMessageerror">{deleteMessage}</p>
+			)}
+		</section>
 	)
 }

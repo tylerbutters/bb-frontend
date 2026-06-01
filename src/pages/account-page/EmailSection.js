@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
+import { Mail, Save } from "lucide-react"
 import { requestEmailChange } from "../../api/users"
 import InputBox from "../../components/InputBox"
 import "../AuthPage.css"
+import AccountSectionHeader from "./AccountSectionHeader"
 
 export default function EmailSection({ currentUser, onUserUpdate }) {
 	const location = useLocation()
@@ -58,7 +60,11 @@ export default function EmailSection({ currentUser, onUserUpdate }) {
 
 	return (
 		<form className="accountSection" aria-label="Email settings" onSubmit={submitEmail}>
-			<h2>Email</h2>
+			<AccountSectionHeader
+				headingId="email-settings-heading"
+				icon={Mail}
+				title="Email"
+			/>
 
 			<InputBox
 				id="account-email"
@@ -75,7 +81,8 @@ export default function EmailSection({ currentUser, onUserUpdate }) {
 				className="authPrimaryButton"
 				disabled={feedback.status === "submitting"}
 			>
-				{feedback.status === "submitting" ? "Saving..." : "Save changes"}
+				<Save className="accountButtonIcon" size={16} aria-hidden="true" />
+				<span>{feedback.status === "submitting" ? "Saving..." : "Save changes"}</span>
 			</button>
 
 			{feedback.message && (
