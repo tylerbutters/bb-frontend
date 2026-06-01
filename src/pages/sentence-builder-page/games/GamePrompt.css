@@ -76,6 +76,31 @@
 }
 
 .gamePromptText {
+	display: flex;
+	min-height: 32px;
+	align-items: center;
+	justify-content: center;
 	margin-top: 10px;
 	font-size: 20px;
+}
+
+.gamePromptLoading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.gamePromptSpinner {
+	width: 24px;
+	height: 24px;
+	border: 3px solid var(--color-white-border);
+	border-top-color: white;
+	border-radius: 50%;
+	animation: gamePromptSpin 0.8s linear infinite;
+}
+
+@keyframes gamePromptSpin {
+	to {
+		transform: rotate(360deg);
+	}
 }

@@ -166,7 +166,11 @@ export default function GamePrompt({
 				</div>
 			</div>
 			<div className="gamePromptText">
-				{status === "loading" && "Loading..."}
+				{status === "loading" && (
+					<div className="gamePromptLoading" role="status" aria-label="Loading sentence">
+						<span className="gamePromptSpinner" aria-hidden="true" />
+					</div>
+				)}
 				{status === "error" && !isQuotaLimitError && "Could not load a prompt."}
 				{status === "ready" && prompt}
 			</div>
