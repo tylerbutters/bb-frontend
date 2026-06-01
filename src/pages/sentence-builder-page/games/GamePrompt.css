@@ -15,6 +15,7 @@
 	gap: 4px;
 	/* margin-bottom: 12px; */
 	padding: 3px;
+	background: var(--color-grey-background);
 	border: 1px solid var(--color-grey-border);
 	border-radius: 8px;
 }
@@ -35,8 +36,8 @@
 }
 
 .gamePromptDifficultyButtonSelected {
-	border-color: var(--color-grey-border);
-	background: var(--color-grey-background);
+	border-color: var(--color-white-border);
+	background: var(--color-white-background);
 	color: white;
 }
 

@@ -150,7 +150,7 @@ export default function GamePrompt({
 							aria-pressed={isHistoryOpen}
 							onClick={onOpenHistory}
 						>
-							<History size={23} />
+							<History size={20} />
 						</button>
 					)}
 					<button
@@ -160,7 +160,7 @@ export default function GamePrompt({
 						onClick={onRegenerate}
 						disabled={status === "loading"}
 					>
-						<RotateCcw size={23} />
+						<RotateCcw size={20} />
 						{/* {status === "loading" ? "Generating..." : "Regenerate"} */}
 					</button>
 				</div>
