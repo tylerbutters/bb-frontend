@@ -92,7 +92,7 @@ export default function AboutPage() {
 					<ul className="aboutList">
 						<li>Use Check to submit the sentence you built.</li>
 						<li>Build checks give feedback without requiring an account.</li>
-						<li>Practice checks require login so results can be saved to your account.</li>
+						<li>Practice checks work without an account. Log in to save results.</li>
 						<li>
 							If an answer is not quite right, feedback can explain what needs to change.
 						</li>

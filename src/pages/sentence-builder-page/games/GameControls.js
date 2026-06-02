@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react"
-import { Link } from "react-router-dom"
 import { checkGameAnswer, checkSandboxSentence, getGameAnswerFeedback } from "../../../api/games"
 import { recordLocalGameResult, updateLocalGameResultFeedback } from "../../../gameStatsStorage"
 import "./GameControls.css"
@@ -26,7 +25,6 @@ export default function GameControls({
 	challengeId,
 	difficulty,
 	currentUser,
-	gameQuota,
 	prompt,
 	promptStatus,
 	answer,
@@ -47,12 +45,18 @@ export default function GameControls({
 	const isSandboxCheck = gameMode === "sandbox"
 	const isChecking = checkStatus === "checking"
 	const isFeedbackLoading = feedbackStatus === "loading"
+	const requiresLogin = false
+	const isLoggedOutSandboxCheck = false
+	/*
+	TODO(auth): Re-enable this if challenge checks should require an account again.
 	const isChallengeCheck = hasAnswerChecker && !isSandboxCheck
 	const requiresLogin = isChallengeCheck && !currentUser
 	const isLoggedOutSandboxCheck = isSandboxCheck && !currentUser
+	*/
 	const isQuotaExhausted = false
 	/*
 	TODO(premium): Re-enable free quota blocking when premium is live.
+	const isChallengeCheck = hasAnswerChecker && !isSandboxCheck
 	const isFreeQuota =
 		isChallengeCheck && !requiresLogin && currentUser && gameQuota?.plan !== "premium"
 	const isQuotaExhausted = Boolean(!requiresLogin && isFreeQuota && gameQuota?.remaining === 0)
@@ -229,9 +233,7 @@ export default function GameControls({
 				currentFeedback
 					? {
 							...currentFeedback,
-							feedback:
-								currentFeedback.feedback ||
-								feedbackLoadErrorFeedback(error),
+							feedback: currentFeedback.feedback || feedbackLoadErrorFeedback(error),
 							feedbackPending: false,
 						}
 					: currentFeedback,
@@ -252,6 +254,8 @@ export default function GameControls({
 
 	return (
 		<div className="gameControls">
+			{/* TODO(auth): Re-enable this blocker and restore the Link import if challenge
+			checks should require an account again.
 			{requiresLogin && (
 				<div className="gameQuotaBlocker" role="status">
 					<p>Sign up to check challenge answers.</p>
@@ -260,6 +264,7 @@ export default function GameControls({
 					</Link>
 				</div>
 			)}
+			*/}
 			{/* TODO(premium): Re-enable this blocker when free quotas return.
 				<div className="gameQuotaBlocker" role="status">
 					<p>You've used today's 3 free challenge checks.</p>

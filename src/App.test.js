@@ -201,16 +201,9 @@ async function loginDefaultUser() {
 	})
 }
 
-function expectLoggedOutChallengeBlocker() {
-	const blocker = screen
-		.getByText("Sign up to check challenge answers.")
-		.closest(".gameQuotaBlocker")
-	expect(blocker).toBeInTheDocument()
-	expect(within(blocker).getByRole("link", { name: "Sign up" })).toHaveAttribute(
-		"href",
-		"/signup",
-	)
-	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
+function expectLoggedOutChallengeCheckAvailable() {
+	expect(screen.queryByText("Sign up to check challenge answers.")).not.toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument()
 }
 
 beforeEach(() => {
@@ -2482,7 +2475,7 @@ test("clears all sentence elements", async () => {
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
 })
 
-test("does not show sandbox sentence checking while logged out", async () => {
+test("shows sandbox sentence checking while logged out", async () => {
 	render(<App />)
 
 	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
@@ -2493,7 +2486,7 @@ test("does not show sandbox sentence checking while logged out", async () => {
 		expect(screen.getByText(".")).toBeInTheDocument()
 	})
 	expect(screen.getByRole("button", { name: "Clear all" })).toBeInTheDocument()
-	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument()
 	expect(screen.queryByText("Log in to check challenge answers.")).not.toBeInTheDocument()
 })
 
@@ -2683,7 +2676,7 @@ test("populates conjugation game elements from Japanese translation prompt data"
 	expect(screen.getAllByText("食べ").length).toBeGreaterThan(0)
 	expect(screen.getAllByText("たべ").length).toBeGreaterThan(0)
 	expect(screen.getAllByText("る").length).toBeGreaterThan(0)
-	expectLoggedOutChallengeBlocker()
+	expectLoggedOutChallengeCheckAvailable()
 })
 
 test("does not restore generated elements when switching to translate or sandbox", async () => {
@@ -2798,7 +2791,7 @@ test("populates particle game elements without preselected particles", async () 
 	expect(screen.queryByText("は")).not.toBeInTheDocument()
 	expect(screen.queryByText("を")).not.toBeInTheDocument()
 	expect(screen.queryByRole("button", { name: "Clear all" })).not.toBeInTheDocument()
-	expectLoggedOutChallengeBlocker()
+	expectLoggedOutChallengeCheckAvailable()
 })
 
 test("locks generated prompt elements from word replacement and deletion", async () => {
@@ -2890,7 +2883,7 @@ test("populates reorder game elements in the generated scrambled order", async (
 	expect(screen.getAllByText("む").length).toBeGreaterThan(0)
 	expect(screen.getAllByText("彼女").length).toBeGreaterThan(0)
 	expect(screen.getAllByText("は").length).toBeGreaterThan(0)
-	expectLoggedOutChallengeBlocker()
+	expectLoggedOutChallengeCheckAvailable()
 })
 
 test("populates fix sentence game elements with one mistake", async () => {
@@ -2933,7 +2926,7 @@ test("populates fix sentence game elements with one mistake", async () => {
 	expect(screen.getAllByText("に").length).toBeGreaterThan(0)
 	expect(screen.getAllByText("食べ").length).toBeGreaterThan(0)
 	expect(screen.queryByText("を")).not.toBeInTheDocument()
-	expectLoggedOutChallengeBlocker()
+	expectLoggedOutChallengeCheckAvailable()
 })
 
 test("changing translate difficulty regenerates the prompt and clears sentence elements", async () => {
