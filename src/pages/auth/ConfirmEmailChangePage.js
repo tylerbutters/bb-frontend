@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
-import { confirmEmailChange } from "../api/users"
+import { confirmEmailChange } from "../../api/users"
 import "./AuthPage.css"
 
 export default function ConfirmEmailChangePage() {

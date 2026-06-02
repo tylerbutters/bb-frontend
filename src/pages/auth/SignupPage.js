@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { confirmSignup, requestSignupConfirmation } from "../api/users"
-import InputBox from "../components/InputBox"
+import { confirmSignup, requestSignupConfirmation } from "../../api/users"
+import InputBox from "../../components/InputBox"
 import "./AuthPage.css"
 
 const RESEND_CODE_COOLDOWN_SECONDS = 30

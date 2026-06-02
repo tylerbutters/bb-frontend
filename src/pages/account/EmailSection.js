@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom"
 import { Mail, Save } from "lucide-react"
 import { requestEmailChange } from "../../api/users"
 import InputBox from "../../components/InputBox"
-import "../AuthPage.css"
+import "../auth/AuthPage.css"
 import AccountSectionHeader from "./AccountSectionHeader"
 
 export default function EmailSection({ currentUser, onUserUpdate }) {

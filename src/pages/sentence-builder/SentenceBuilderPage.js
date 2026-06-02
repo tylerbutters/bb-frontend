@@ -5,7 +5,7 @@ import GameModeSelector from "./games/GameModeSelector"
 import GamePrompt from "./games/GamePrompt"
 import SentenceBuilderWorkspace from "./components/SentenceBuilderWorkspace"
 import { japaneseTranslationToElements } from "./grammar/japaneseTranslationElements"
-import { GameHistoryDrawer, useGameHistoryDrawer } from "../GameHistoryDrawer"
+import { GameHistoryDrawer, useGameHistoryDrawer } from "../stats/GameHistoryDrawer"
 import "./GameQuota.css"
 
 const PROMPT_ELEMENT_GAME_MODES = new Set(["conjugations", "fix sentence", "particles", "reorder"])

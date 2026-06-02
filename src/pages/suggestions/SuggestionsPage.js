@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { sendSuggestion } from "../api/suggestions"
-import "./AuthPage.css"
+import { sendSuggestion } from "../../api/suggestions"
+import "../auth/AuthPage.css"
 import "./SuggestionsPage.css"
 
 export default function SuggestionsPage() {

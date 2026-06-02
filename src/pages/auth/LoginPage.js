@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { login } from "../api/auth"
-import InputBox from "../components/InputBox"
+import { login } from "../../api/auth"
+import InputBox from "../../components/InputBox"
 import "./AuthPage.css"
 
 export default function LoginPage({ onLogin }) {

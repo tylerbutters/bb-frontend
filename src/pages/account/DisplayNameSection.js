@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Save, User } from "lucide-react"
 import { updateUser } from "../../api/users"
 import InputBox from "../../components/InputBox"
-import "../AuthPage.css"
+import "../auth/AuthPage.css"
 import AccountSectionHeader from "./AccountSectionHeader"
 
 export default function DisplayNameSection({ currentUser, onUserUpdate }) {

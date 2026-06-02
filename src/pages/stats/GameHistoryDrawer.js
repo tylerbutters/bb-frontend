@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { getUserGameHistory, getUserStats } from "../api/users"
+import { getUserGameHistory, getUserStats } from "../../api/users"
 import {
 	emptyGameStatsResponse,
 	GAME_RECENT_FILTERS,
@@ -13,7 +13,7 @@ import {
 	normalizeGameStats,
 	normalizeGameStatsResponse,
 	parseGameRecentLimit,
-} from "../gameStatsStorage"
+} from "../../gameStatsStorage"
 import { CheckCircle2, Percent, Trophy, X, XCircle } from "lucide-react"
 import "./GameHistoryDrawer.css"
 

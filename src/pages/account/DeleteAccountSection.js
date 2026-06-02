@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Navigate } from "react-router-dom"
 import { Trash2, X } from "lucide-react"
 import { deleteUser } from "../../api/users"
-import "../AuthPage.css"
+import "../auth/AuthPage.css"
 import AccountSectionHeader from "./AccountSectionHeader"
 
 export default function DeleteAccountSection({ currentUser, onAccountDelete }) {

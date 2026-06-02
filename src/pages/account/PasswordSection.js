@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import { Lock, Save } from "lucide-react"
 import { updateUser } from "../../api/users"
 import InputBox from "../../components/InputBox"
-import "../AuthPage.css"
+import "../auth/AuthPage.css"
 import AccountSectionHeader from "./AccountSectionHeader"
 
 export default function PasswordSection({ currentUser, onUserUpdate, resetMessage }) {

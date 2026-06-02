@@ -528,6 +528,7 @@ test("opens the sign up page, confirms the email code, and creates an account", 
 
 	await waitFor(() => {
 		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
+		expect(screen.getByRole("tab", { name: "Build" })).toBeInTheDocument()
 	})
 	expect(window.location.pathname).toBe("/")
 

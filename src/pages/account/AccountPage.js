@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Navigate, useLocation, useNavigate } from "react-router-dom"
 import { LogOut } from "lucide-react"
-import "../AuthPage.css"
+import "../auth/AuthPage.css"
 import "./AccountPage.css"
 import DisplayNameSection from "./DisplayNameSection"
 import EmailSection from "./EmailSection"

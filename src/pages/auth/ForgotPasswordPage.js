@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import { confirmPasswordReset, requestPasswordReset } from "../api/auth"
-import InputBox from "../components/InputBox"
+import { confirmPasswordReset, requestPasswordReset } from "../../api/auth"
+import InputBox from "../../components/InputBox"
 import "./AuthPage.css"
 import { useLocation, useNavigate } from "react-router-dom"
 

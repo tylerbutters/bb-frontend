@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link, Navigate } from "react-router-dom"
 import { Search } from "lucide-react"
-import { getAdminUser, getAdminUserGameHistory, getAdminUsers } from "../api/admin"
+import { getAdminUser, getAdminUserGameHistory, getAdminUsers } from "../../api/admin"
 import {
 	emptyGameStatsResponse,
 	GAME_RECENT_FILTERS,
@@ -11,10 +11,10 @@ import {
 	normalizeGameStatsResponse,
 	parseGameRecentLimit,
 	TRACKED_GAME_MODES,
-} from "../gameStatsStorage"
-import "./AuthPage.css"
-import "./StatsPage.css"
-import "./GameHistoryDrawer.css"
+} from "../../gameStatsStorage"
+import "../auth/AuthPage.css"
+import "../stats/StatsPage.css"
+import "../stats/GameHistoryDrawer.css"
 import "./AdminPage.css"
 
 const USER_PAGE_SIZE = 25
