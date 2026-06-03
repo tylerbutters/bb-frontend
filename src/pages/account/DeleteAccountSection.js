@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Navigate } from "react-router-dom"
-import { Trash2, X } from "lucide-react"
+import { Trash2 } from "lucide-react"
 import { deleteUser } from "../../api/users"
 import "../auth/AuthPage.css"
 import AccountSectionHeader from "./AccountSectionHeader"
@@ -53,9 +53,7 @@ export default function DeleteAccountSection({ currentUser, onAccountDelete }) {
 				title="Delete account"
 			/>
 
-			{isDeleteConfirming && (
-				<p className="accountDangerNotice">This action cannot be undone.</p>
-			)}
+			{isDeleteConfirming && <p className="accountDangerNotice">This action cannot be undone.</p>}
 
 			<div className="deleteAccountActions">
 				<button
@@ -64,27 +62,21 @@ export default function DeleteAccountSection({ currentUser, onAccountDelete }) {
 					disabled={deleteStatus === "submitting"}
 					onClick={deleteAccount}
 				>
-					<Trash2 className="accountButtonIcon" size={16} aria-hidden="true" />
-					<span>
-						{deleteStatus === "submitting"
-							? "Deleting..."
-							: isDeleteConfirming
-								? "Confirm delete"
-								: "Delete account"}
-					</span>
+					{deleteStatus === "submitting"
+						? "Deleting..."
+						: isDeleteConfirming
+							? "Confirm delete"
+							: "Delete account"}
 				</button>
 
 				{isDeleteConfirming && (
 					<button type="button" className="cancelDeleteButton" onClick={cancelDeleteAccount}>
-						<X className="accountButtonIcon" size={16} aria-hidden="true" />
-						<span>Cancel</span>
+						Cancel
 					</button>
 				)}
 			</div>
 
-			{deleteMessage && (
-				<p className="accountMessage accountMessageerror">{deleteMessage}</p>
-			)}
+			{deleteMessage && <p className="accountMessage accountMessageerror">{deleteMessage}</p>}
 		</section>
 	)
 }

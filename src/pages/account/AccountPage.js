@@ -40,37 +40,25 @@ export default function AccountPage({ currentUser, onAccountDelete, onLogout, on
 			<main className="accountContent accountPageContent" aria-labelledby="account-heading">
 				<h1 id="account-heading">Account</h1>
 
-				<div className="accountGrid">
-					<div className="accountGridColumn">
-						<EmailSection currentUser={currentUser} onUserUpdate={onUserUpdate} />
-						<DeleteAccountSection currentUser={currentUser} onAccountDelete={onAccountDelete} />
-					</div>
+				<EmailSection currentUser={currentUser} onUserUpdate={onUserUpdate} />
+				<PasswordSection
+					currentUser={currentUser}
+					onUserUpdate={onUserUpdate}
+					resetMessage={resetMessage}
+				/>
 
-					<div className="accountGridColumn">
-						<PasswordSection
-							currentUser={currentUser}
-							onUserUpdate={onUserUpdate}
-							resetMessage={resetMessage}
-						/>
-
-						<section
-							className="accountSection accountSessionSection"
-							aria-labelledby="account-session-heading"
-						>
-							<AccountSectionHeader
-								headingId="account-session-heading"
-								icon={LogOut}
-								title="Session"
-							/>
-							<div className="accountSessionActions">
-								<button type="button" className="logoutButton" onClick={onLogout}>
-									<LogOut className="accountButtonIcon" size={16} aria-hidden="true" />
-									<span>Log out</span>
-								</button>
-							</div>
-						</section>
+				<section
+					className="accountSection accountSessionSection"
+					aria-labelledby="account-session-heading"
+				>
+					<AccountSectionHeader headingId="account-session-heading" icon={LogOut} title="Session" />
+					<div className="accountSessionActions">
+						<button type="button" className="logoutButton" onClick={onLogout}>
+							Log out
+						</button>
 					</div>
-				</div>
+				</section>
+				<DeleteAccountSection currentUser={currentUser} onAccountDelete={onAccountDelete} />
 			</main>
 		</div>
 	)

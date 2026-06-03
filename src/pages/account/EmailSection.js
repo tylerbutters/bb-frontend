@@ -60,11 +60,7 @@ export default function EmailSection({ currentUser, onUserUpdate }) {
 
 	return (
 		<form className="accountSection" aria-label="Email settings" onSubmit={submitEmail} noValidate>
-			<AccountSectionHeader
-				headingId="email-settings-heading"
-				icon={Mail}
-				title="Email"
-			/>
+			<AccountSectionHeader headingId="email-settings-heading" icon={Mail} title="Email" />
 
 			<InputBox
 				id="account-email"
@@ -81,8 +77,7 @@ export default function EmailSection({ currentUser, onUserUpdate }) {
 				className="authPrimaryButton"
 				disabled={feedback.status === "submitting"}
 			>
-				<Save className="accountButtonIcon" size={16} aria-hidden="true" />
-				<span>{feedback.status === "submitting" ? "Saving..." : "Save changes"}</span>
+				{feedback.status === "submitting" ? "Saving..." : "Save changes"}
 			</button>
 
 			{feedback.message && (

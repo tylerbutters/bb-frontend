@@ -82,12 +82,13 @@ export default function PasswordSection({ currentUser, onUserUpdate, resetMessag
 	}
 
 	return (
-		<form className="accountSection" aria-label="Password settings" onSubmit={submitPassword} noValidate>
-			<AccountSectionHeader
-				headingId="password-settings-heading"
-				icon={Lock}
-				title="Password"
-			/>
+		<form
+			className="accountSection"
+			aria-label="Password settings"
+			onSubmit={submitPassword}
+			noValidate
+		>
+			<AccountSectionHeader headingId="password-settings-heading" icon={Lock} title="Password" />
 
 			<InputBox
 				id="account-current-password"
@@ -131,8 +132,7 @@ export default function PasswordSection({ currentUser, onUserUpdate, resetMessag
 				className="authPrimaryButton"
 				disabled={feedback.status === "submitting"}
 			>
-				<Save className="accountButtonIcon" size={16} aria-hidden="true" />
-				<span>{feedback.status === "submitting" ? "Saving..." : "Save changes"}</span>
+				{feedback.status === "submitting" ? "Saving..." : "Save changes"}
 			</button>
 
 			{feedback.message && (
