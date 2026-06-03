@@ -1,0 +1,22 @@
+.appFooter {
+	display: flex;
+	justify-content: center;
+	gap: 18px;
+	padding: 22px 18px 28px;
+	background: var(--color-app-background);
+	box-sizing: border-box;
+	color: var(--color-grey-text);
+	font-size: 13px;
+}
+
+.appFooter a {
+	color: var(--color-grey-text);
+	text-decoration: none;
+}
+
+.appFooter a:hover,
+.appFooter a:focus-visible {
+	color: white;
+	text-decoration: underline;
+	outline: none;
+}
