@@ -17,7 +17,7 @@ const GAME_HISTORY_LABELS = {
 	reorder: "Word order",
 }
 
-export default function SentenceBuilderPage({ currentUser }) {
+export default function SentenceBuilderPage({ currentUser, onAuthExpired }) {
 	const [selectedGameMode, setSelectedGameMode] = useState("sandbox")
 	const [workspaceResetCount, setWorkspaceResetCount] = useState(0)
 	const [sentenceClearRequestCount, setSentenceClearRequestCount] = useState(0)
@@ -27,7 +27,7 @@ export default function SentenceBuilderPage({ currentUser }) {
 	const [japaneseSentence, setJapaneseSentence] = useState("")
 	const [hasSentenceElements, setHasSentenceElements] = useState(false)
 	const gameHistory = useGameHistoryDrawer(currentUser)
-	const gameQuota = useGameQuota(currentUser)
+	const gameQuota = useGameQuota(currentUser, { onAuthExpired })
 	const isGame = selectedGameMode && selectedGameMode !== "sandbox"
 	const isFreeQuotaExhausted = Boolean(
 		currentUser && gameQuota.quota?.plan !== "premium" && gameQuota.quota?.remaining === 0,
@@ -145,6 +145,7 @@ export default function SentenceBuilderPage({ currentUser }) {
 				canClearSentence={hasSentenceElements && !hasGeneratedPromptElements}
 				onGameQuotaChange={gameQuota.applyQuota}
 				onLocalGameQuotaUse={gameQuota.recordLocalChallengeCheck}
+				onAuthExpired={onAuthExpired}
 				onClearSentence={clearSentence}
 				onNext={regenerateGamePrompt}
 			/>

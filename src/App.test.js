@@ -699,7 +699,7 @@ test("logs in and replaces auth links with the user name", async () => {
 	expect(screen.getByRole("heading", { name: "Login" })).toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Sign up" })).toBeInTheDocument()
 	expect(screen.queryByRole("link", { name: "Account" })).not.toBeInTheDocument()
-	expect(window.localStorage.getItem("jsbCurrentUser")).toBeNull()
+	expect(window.localStorage.getItem("bbCurrentUser")).toBeNull()
 
 	const loginRequest = global.fetch.mock.calls.find(([url]) => url === `${API_BASE_URL}/login`)
 	expect(loginRequest[1]).toMatchObject({
@@ -803,7 +803,7 @@ test("opens account from the user menu and updates account details", async () =>
 	expect(screen.getByLabelText("Current password")).toHaveValue("")
 	expect(screen.getByLabelText("New password")).toHaveValue("")
 	expect(screen.getByLabelText("Confirm new password")).toHaveValue("")
-	expect(JSON.parse(window.localStorage.getItem("jsbCurrentUser"))).toEqual({
+	expect(JSON.parse(window.localStorage.getItem("bbCurrentUser"))).toEqual({
 		id: 1,
 		email: "tyler@example.com",
 		displayName: "Taylor",
@@ -847,7 +847,7 @@ test("deletes an account from the account page", async () => {
 	expect(deleteRequest[1]).toMatchObject({
 		method: "DELETE",
 	})
-	expect(window.localStorage.getItem("jsbCurrentUser")).toBeNull()
+	expect(window.localStorage.getItem("bbCurrentUser")).toBeNull()
 	expect(screen.getByRole("heading", { name: "Login" })).toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Sign up" })).toBeInTheDocument()
 })
@@ -1670,7 +1670,7 @@ test("redirects logged-out users away from stats", async () => {
 test("clears stale login state when stats auth has expired", async () => {
 	window.history.pushState({}, "", "/stats")
 	window.localStorage.setItem(
-		"jsbCurrentUser",
+		"bbCurrentUser",
 		JSON.stringify({
 			id: 1,
 			email: "tyler@example.com",
@@ -1702,7 +1702,7 @@ test("clears stale login state when stats auth has expired", async () => {
 	await waitFor(() => {
 		expect(window.location.pathname).toBe("/login")
 	})
-	expect(window.localStorage.getItem("jsbCurrentUser")).toBeNull()
+	expect(window.localStorage.getItem("bbCurrentUser")).toBeNull()
 	expect(screen.getByRole("heading", { name: "Login" })).toBeInTheDocument()
 	expect(screen.queryByText("Login is required.")).not.toBeInTheDocument()
 })
@@ -1721,7 +1721,7 @@ test("redirects logged-out users away from admin", async () => {
 test("shows a contained admin access message for non-admin users", () => {
 	window.history.pushState({}, "", "/admin")
 	window.localStorage.setItem(
-		"jsbCurrentUser",
+		"bbCurrentUser",
 		JSON.stringify({
 			id: 1,
 			email: "tyler@example.com",
@@ -1743,7 +1743,7 @@ test("shows a contained admin access message for non-admin users", () => {
 test("opens the direct admin page, searches users, and shows profile stats and history", async () => {
 	window.history.pushState({}, "", "/admin")
 	window.localStorage.setItem(
-		"jsbCurrentUser",
+		"bbCurrentUser",
 		JSON.stringify({
 			id: 1,
 			email: "admin@example.com",
@@ -1957,7 +1957,7 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 test("shows admin API errors without crashing", async () => {
 	window.history.pushState({}, "", "/admin")
 	window.localStorage.setItem(
-		"jsbCurrentUser",
+		"bbCurrentUser",
 		JSON.stringify({
 			id: 1,
 			email: "admin@example.com",
@@ -2206,9 +2206,9 @@ test("shows the daily quota blocker when prompt loading returns a quota error", 
 	expect(screen.queryByText("Buy premium for unlimited practice.")).not.toBeInTheDocument()
 })
 
-test("does not show a premium blocker when quota loading is rejected", async () => {
+test("clears stale login state when quota loading is rejected", async () => {
 	window.localStorage.setItem(
-		"jsbCurrentUser",
+		"bbCurrentUser",
 		JSON.stringify({
 			id: 1,
 			email: "tyler@example.com",
@@ -2261,13 +2261,16 @@ test("does not show a premium blocker when quota loading is rejected", async () 
 	await waitFor(() => {
 		expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
 	})
-	expect(screen.queryByText("Sign up to check challenge answers.")).not.toBeInTheDocument()
-	expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument()
+	await waitFor(() => {
+		expect(screen.getByText("Sign up to check challenge answers.")).toBeInTheDocument()
+	})
+	expect(window.localStorage.getItem("bbCurrentUser")).toBe(null)
+	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
 })
 
-test("does not turn a logged-in challenge check error into a premium blocker", async () => {
+test("clears stale login state when a challenge check requires auth", async () => {
 	window.localStorage.setItem(
-		"jsbCurrentUser",
+		"bbCurrentUser",
 		JSON.stringify({
 			id: 1,
 			email: "tyler@example.com",
@@ -2336,8 +2339,7 @@ test("does not turn a logged-in challenge check error into a premium blocker", a
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 
 	await waitFor(() => {
-		expect(screen.getByText("Not quite.")).toBeInTheDocument()
-		expect(screen.getByText("Log in to check challenge answers.")).toBeInTheDocument()
+		expect(screen.getByText("Sign up to check challenge answers.")).toBeInTheDocument()
 	})
 	expect(
 		screen.queryByText("Could not check the sentence right now. Try again in a moment."),
@@ -2347,7 +2349,10 @@ test("does not turn a logged-in challenge check error into a premium blocker", a
 	expect(
 		screen.queryByText("Not quite. Log in to check challenge answers."),
 	).not.toBeInTheDocument()
-	expect(screen.getByRole("button", { name: "Check again" })).toBeInTheDocument()
+	expect(screen.queryByText("Not quite.")).not.toBeInTheDocument()
+	expect(screen.getByText("Sign up to check challenge answers.")).toBeInTheDocument()
+	expect(window.localStorage.getItem("bbCurrentUser")).toBe(null)
+	expect(screen.queryByRole("button", { name: "Check again" })).not.toBeInTheDocument()
 })
 
 test("does not apply the old 3-check local fallback limit", async () => {
@@ -2496,7 +2501,7 @@ test("shows sandbox sentence checking while logged out", async () => {
 
 test("checks the sandbox sentence and shows feedback", async () => {
 	window.localStorage.setItem(
-		"jsbCurrentUser",
+		"bbCurrentUser",
 		JSON.stringify({
 			id: 1,
 			email: "tyler@example.com",
@@ -2574,7 +2579,7 @@ test("checks the sandbox sentence and shows feedback", async () => {
 
 test("shows a loading spinner while checking a sandbox sentence", async () => {
 	window.localStorage.setItem(
-		"jsbCurrentUser",
+		"bbCurrentUser",
 		JSON.stringify({
 			id: 1,
 			email: "tyler@example.com",

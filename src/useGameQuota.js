@@ -25,7 +25,7 @@ function normalizeQuota(quota, currentUser) {
 	}
 }
 
-export function useGameQuota(currentUser) {
+export function useGameQuota(currentUser, { onAuthExpired } = {}) {
 	const [quota, setQuota] = useState(null)
 	const [status, setStatus] = useState("idle")
 	const [message, setMessage] = useState("")
@@ -78,7 +78,11 @@ export function useGameQuota(currentUser) {
 			} catch (error) {
 				if (error.name === "AbortError") return null
 
-				console.log(error)
+				if (isAuthenticationRequiredError(error)) {
+					onAuthExpired?.()
+				} else {
+					console.log(error)
+				}
 
 				setStatus("error")
 				setMessage(error.message || "Could not load game limit.")
@@ -86,7 +90,7 @@ export function useGameQuota(currentUser) {
 				return null
 			}
 		},
-		[currentUser],
+		[currentUser, onAuthExpired],
 	)
 
 	useEffect(() => {
@@ -113,4 +117,8 @@ export function useGameQuota(currentUser) {
 		refreshQuota,
 		status,
 	}
+}
+
+function isAuthenticationRequiredError(error) {
+	return error?.status === 401 || error?.data?.error?.code === "AUTHENTICATION_REQUIRED"
 }

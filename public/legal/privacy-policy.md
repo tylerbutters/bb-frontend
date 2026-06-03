@@ -179,7 +179,7 @@ Bunsho Builder uses a first-party session cookie named `bb_session` to keep user
 
 Bunsho Builder also uses browser local storage for functionality and convenience. Local storage may include:
 
-- `jsbCurrentUser`, which stores limited current-user display state for the frontend;
+- `bbCurrentUser`, which stores limited current-user display state for the frontend;
 - `bbLocalGameResults:[user id]`, which stores local game results and history fallback data;
 - `bbFreeGameLimitIntroDismissed:[user id]`, which stores whether a free-limit notice has been dismissed; and
 - user preferences, such as default feedback visibility.

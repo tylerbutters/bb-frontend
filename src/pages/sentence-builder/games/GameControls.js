@@ -33,6 +33,7 @@ export default function GameControls({
 	canClearSentence,
 	onGameQuotaChange,
 	onLocalGameQuotaUse,
+	onAuthExpired,
 	onClearSentence,
 	onNext,
 }) {
@@ -136,7 +137,15 @@ export default function GameControls({
 
 			setFeedbackStatus("ready")
 		} catch (error) {
+			if (isAuthenticationRequiredError(error) && onAuthExpired) {
+				onAuthExpired?.()
+				setFeedbackStatus("idle")
+				setCheckStatus("idle")
+				return
+			}
+
 			console.log(error)
+
 			const quota = error.data?.error?.details?.quota
 			if (quota) onGameQuotaChange?.(quota)
 
@@ -197,12 +206,19 @@ export default function GameControls({
 			setFeedbackStatus("ready")
 		} catch (error) {
 			if (isAbortError(error)) return
-			console.log(error)
 			if (feedbackRequestId.current !== requestId) return
 
 			if (feedbackAbortControllerRef.current === abortController) {
 				feedbackAbortControllerRef.current = null
 			}
+
+			if (isAuthenticationRequiredError(error) && onAuthExpired) {
+				onAuthExpired?.()
+				setFeedbackStatus("idle")
+				return
+			}
+
+			console.log(error)
 			setFeedback((currentFeedback) =>
 				currentFeedback
 					? {
@@ -360,11 +376,7 @@ function isAbortError(error) {
 function gameCheckErrorFeedback(error) {
 	const errorCode = error?.data?.error?.code
 
-	if (
-		errorCode === "LOGIN_REQUIRED_FOR_CHALLENGE_CHECKS" ||
-		errorCode === "AUTHENTICATION_REQUIRED" ||
-		error?.status === 401
-	) {
+	if (isAuthenticationRequiredError(error)) {
 		return "Log in to check challenge answers."
 	}
 
@@ -386,11 +398,7 @@ function gameCheckErrorFeedback(error) {
 function feedbackLoadErrorFeedback(error) {
 	const errorCode = error?.data?.error?.code
 
-	if (
-		errorCode === "LOGIN_REQUIRED_FOR_CHALLENGE_CHECKS" ||
-		errorCode === "AUTHENTICATION_REQUIRED" ||
-		error?.status === 401
-	) {
+	if (isAuthenticationRequiredError(error)) {
 		return "Log in to load AI feedback for this answer."
 	}
 
@@ -411,4 +419,14 @@ function feedbackLoadErrorFeedback(error) {
 	}
 
 	return "Could not load feedback right now. Your answer was still checked."
+}
+
+function isAuthenticationRequiredError(error) {
+	const errorCode = error?.data?.error?.code
+
+	return (
+		errorCode === "LOGIN_REQUIRED_FOR_CHALLENGE_CHECKS" ||
+		errorCode === "AUTHENTICATION_REQUIRED" ||
+		error?.status === 401
+	)
 }

@@ -15,7 +15,7 @@ import AppFooter from "./components/AppFooter"
 import LegalDocumentPage from "./pages/legal/LegalDocumentPage"
 import { logout } from "./api/auth"
 
-const CURRENT_USER_STORAGE_KEY = "jsbCurrentUser"
+const CURRENT_USER_STORAGE_KEY = "bbCurrentUser"
 
 function readStoredUser() {
 	try {
@@ -54,7 +54,12 @@ export default function App() {
 			<Routes>
 				<Route
 					path="/"
-					element={<SentenceBuilderPage currentUser={currentUser} />}
+					element={
+						<SentenceBuilderPage
+							currentUser={currentUser}
+							onAuthExpired={clearCurrentUser}
+						/>
+					}
 				/>
 				<Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
 				<Route path="/signup" element={<SignupPage onSignup={handleLogin} />} />
