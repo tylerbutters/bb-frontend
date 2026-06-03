@@ -1,3 +1,5 @@
+import { notifyApiErrorToast } from "./apiErrorToasts"
+
 const DEFAULT_API_BASE_URL = "/api/v1"
 
 export const API_BASE_URL = (process.env.REACT_APP_API_URL || DEFAULT_API_BASE_URL).replace(
@@ -56,17 +58,25 @@ export async function apiRequest(path, { method = "GET", body, headers = {}, sig
 		requestOptions.signal = signal
 	}
 
-	const response = await fetch(`${API_BASE_URL}${apiPath(path)}`, requestOptions)
+	let response
+	try {
+		response = await fetch(`${API_BASE_URL}${apiPath(path)}`, requestOptions)
+	} catch (error) {
+		notifyApiErrorToast(error)
+		throw error
+	}
 	const data = await readResponseData(response)
 
 	if (!response.ok) {
-		throw new ApiError(
+		const error = new ApiError(
 			responseErrorMessage(data, `Request failed with ${response.status}.`),
 			{
 				status: response.status,
 				data,
 			},
 		)
+		notifyApiErrorToast(error)
+		throw error
 	}
 
 	return data

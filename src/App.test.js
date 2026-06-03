@@ -416,6 +416,8 @@ afterEach(() => {
 test("renders the initial add button", () => {
 	render(<App />)
 	expect(screen.getByRole("button", { name: "+ word" })).toBeInTheDocument()
+	expect(document.documentElement).toHaveClass("sentenceBuilderDocument")
+	expect(document.body).toHaveClass("sentenceBuilderBody")
 	expect(screen.getByRole("link", { name: "Bunsho Builder" })).toHaveAttribute("href", "/")
 	expect(screen.getByRole("link", { name: "About" })).toHaveAttribute("href", "/about")
 	expect(screen.getByRole("link", { name: "Suggestions" })).toHaveAttribute(
@@ -424,6 +426,43 @@ test("renders the initial add button", () => {
 	)
 	expect(screen.getByRole("link", { name: "Login" })).toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Sign up" })).toBeInTheDocument()
+	expect(screen.queryByRole("contentinfo", { name: "Legal" })).not.toBeInTheDocument()
+	expect(screen.queryByRole("link", { name: "Terms" })).not.toBeInTheDocument()
+	expect(screen.queryByRole("link", { name: "Privacy" })).not.toBeInTheDocument()
+})
+
+test("shows a top toast when a prompt API server error needs global attention", async () => {
+	global.fetch.mockImplementation((url) => {
+		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
+			return Promise.resolve({
+				ok: false,
+				status: 502,
+				json: jest.fn().mockResolvedValue({
+					error: {
+						code: "AI_SERVICE_ERROR",
+						message: "AI service failed.",
+					},
+				}),
+			})
+		}
+
+		return Promise.resolve({
+			ok: true,
+			json: jest.fn().mockResolvedValue({ translation: "." }),
+		})
+	})
+
+	render(<App />)
+
+	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
+
+	const toast = await screen.findByRole("alert")
+	expect(toast).toHaveTextContent("The AI service is unavailable right now. Try again in a moment.")
+
+	fireEvent.click(within(toast).getByRole("button", { name: "Dismiss notification" }))
+	await waitFor(() => {
+		expect(screen.queryByRole("alert")).not.toBeInTheDocument()
+	})
 })
 
 test("opens the about page", () => {
@@ -432,6 +471,8 @@ test("opens the about page", () => {
 	fireEvent.click(screen.getByRole("link", { name: "About" }))
 
 	expect(window.location.pathname).toBe("/about")
+	expect(document.documentElement).not.toHaveClass("sentenceBuilderDocument")
+	expect(document.body).not.toHaveClass("sentenceBuilderBody")
 	expect(screen.getByRole("heading", { name: "About Bunsho Builder" })).toBeInTheDocument()
 	expect(screen.getByText(/practice sentence structure/)).toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "support@bunshobuilder.com" })).toHaveAttribute(
@@ -439,6 +480,9 @@ test("opens the about page", () => {
 		"mailto:support@bunshobuilder.com",
 	)
 	expect(screen.getByRole("link", { name: "Bunsho Builder" })).toHaveAttribute("href", "/")
+	const footer = screen.getByRole("contentinfo", { name: "Legal" })
+	expect(within(footer).getByRole("link", { name: "Terms" })).toHaveAttribute("href", "/terms")
+	expect(within(footer).getByRole("link", { name: "Privacy" })).toHaveAttribute("href", "/privacy")
 })
 
 test("sends an anonymous suggestion", async () => {
@@ -1962,7 +2006,13 @@ test("shows admin API errors without crashing", async () => {
 
 	render(<App />)
 
-	expect(await screen.findByText("Could not load admin users.")).toBeInTheDocument()
+	await waitFor(() => {
+		expect(
+			screen
+				.getAllByText("Could not load admin users.")
+				.some((message) => message.classList.contains("accountMessage")),
+		).toBe(true)
+	})
 	expect(screen.getByLabelText("Search users")).toBeInTheDocument()
 })
 

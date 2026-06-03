@@ -1,0 +1,83 @@
+.toastViewport {
+	position: fixed;
+	top: 14px;
+	left: 50%;
+	z-index: 2400;
+	display: flex;
+	width: min(520px, calc(100vw - 24px));
+	flex-direction: column;
+	gap: 10px;
+	transform: translateX(-50%);
+	pointer-events: none;
+}
+
+.appToast {
+	display: flex;
+	transform-origin: top center;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	min-height: 44px;
+	padding: 10px 10px 10px 14px;
+	border: 1px solid var(--color-red-border);
+	border-radius: 8px;
+	background: var(--color-red-background);
+	box-shadow: 0 14px 36px var(--color-shadow);
+	box-sizing: border-box;
+	color: white;
+	pointer-events: auto;
+	animation: appToastEnter 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.appToastExiting {
+	pointer-events: none;
+	animation: appToastExit 0.18s ease-in both;
+}
+
+.appToastMessage {
+	font-size: 14px;
+	line-height: 1.35;
+	overflow-wrap: anywhere;
+}
+
+.appToastDismissButton {
+	display: inline-flex;
+	width: 32px;
+	height: 32px;
+	flex: 0 0 32px;
+	align-items: center;
+	justify-content: center;
+	border-radius: 8px;
+	color: white;
+	cursor: pointer;
+}
+
+.appToastDismissButton:hover,
+.appToastDismissButton:focus-visible {
+	background: var(--color-red-background-hover);
+	outline: none;
+}
+
+@keyframes appToastEnter {
+	from {
+		opacity: 0;
+		transform: translateY(-8px) scale(0.96);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@keyframes appToastExit {
+	from {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+
+	to {
+		opacity: 0;
+		transform: translateY(-8px) scale(0.96);
+	}
+}

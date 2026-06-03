@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useGameQuota } from "../../useGameQuota"
 import GameControls from "./games/GameControls"
 import GameModeSelector from "./games/GameModeSelector"
@@ -45,6 +45,16 @@ export default function SentenceBuilderPage({ currentUser, onAuthExpired }) {
 		return japaneseTranslationToElements(gamePromptData.japaneseTranslation)
 	}, [gamePromptData, selectedGameMode])
 	const hasGeneratedPromptElements = generatedPromptElements.length > 0
+
+	useEffect(() => {
+		document.documentElement.classList.add("sentenceBuilderDocument")
+		document.body.classList.add("sentenceBuilderBody")
+
+		return () => {
+			document.documentElement.classList.remove("sentenceBuilderDocument")
+			document.body.classList.remove("sentenceBuilderBody")
+		}
+	}, [])
 
 	const handleSentenceChange = useCallback(({ sentence, hasElements }) => {
 		setJapaneseSentence(sentence)

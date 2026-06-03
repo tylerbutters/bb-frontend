@@ -22,6 +22,20 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
+html.sentenceBuilderDocument,
+html.sentenceBuilderDocument body,
+html.sentenceBuilderDocument #root {
+	height: 100%;
+	overflow-y: hidden;
+	overscroll-behavior-y: none;
+}
+
+body.sentenceBuilderBody .app {
+	height: 100dvh;
+	min-height: 100dvh;
+	overflow: hidden;
+}
+
 code {
 	font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }

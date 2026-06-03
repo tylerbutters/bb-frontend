@@ -14,6 +14,7 @@ import AppNavbar from "./components/AppNavbar"
 import AppFooter from "./components/AppFooter"
 import LegalDocumentPage from "./pages/legal/LegalDocumentPage"
 import { logout } from "./api/auth"
+import ToastViewport from "./components/ToastViewport"
 
 const CURRENT_USER_STORAGE_KEY = "bbCurrentUser"
 
@@ -50,6 +51,7 @@ export default function App() {
 
 	return (
 		<BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
+			<ToastViewport />
 			<AppNavbar currentUser={currentUser} />
 			<Routes>
 				<Route
