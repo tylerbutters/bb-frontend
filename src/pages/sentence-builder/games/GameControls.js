@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { checkGameAnswer, checkSandboxSentence, getGameAnswerFeedback } from "../../../api/games"
-import { recordLocalGameResult, updateLocalGameResultFeedback } from "../../../gameStatsStorage"
+import { checkGameAnswer, checkSandboxSentence } from "../../../api/games"
+import { recordLocalGameResult } from "../../../gameStatsStorage"
 import "./GameControls.css"
 
 const SHOW_FEEDBACK_BY_DEFAULT_STORAGE_KEY = "bbShowFeedbackByDefault"
@@ -38,16 +38,12 @@ export default function GameControls({
 	onNext,
 }) {
 	const [checkStatus, setCheckStatus] = useState("idle")
-	const [feedbackStatus, setFeedbackStatus] = useState("idle")
 	const [feedback, setFeedback] = useState(null)
 	const [showFeedbackByDefault, setShowFeedbackByDefault] = useState(readShowFeedbackByDefault)
 	const [isFeedbackExpanded, setIsFeedbackExpanded] = useState(showFeedbackByDefault)
-	const feedbackRequestId = useRef(0)
-	const feedbackAbortControllerRef = useRef(null)
 	const hasAnswerChecker = hasGameAnswerChecker(gameMode)
 	const isSandboxCheck = gameMode === "sandbox"
 	const isChecking = checkStatus === "checking"
-	const isFeedbackLoading = feedbackStatus === "loading"
 	const isChallengeCheck = hasAnswerChecker && !isSandboxCheck
 	const requiresLogin = isChallengeCheck && !currentUser
 	const isLoggedOutSandboxCheck = false
@@ -61,24 +57,11 @@ export default function GameControls({
 		requiresLogin ||
 		isLoggedOutSandboxCheck ||
 		isQuotaExhausted
-	// const feedbackText =
-	// 	feedback &&
-	// 	`${feedback.correct ? "Correct." : "Not quite."}${
-	// 		feedback.feedback ? ` ${feedback.feedback}` : ""
-	// 	}`
 
 	useEffect(() => {
-		feedbackRequestId.current += 1
-		abortFeedbackRequest(feedbackAbortControllerRef)
 		setFeedback(null)
-		setFeedbackStatus("idle")
 		setIsFeedbackExpanded(showFeedbackByDefault)
 		setCheckStatus("idle")
-
-		return () => {
-			feedbackRequestId.current += 1
-			abortFeedbackRequest(feedbackAbortControllerRef)
-		}
 	}, [answer, challengeId, difficulty, gameMode, isVisible, prompt])
 
 	function toggleShowFeedbackByDefault() {
@@ -92,10 +75,7 @@ export default function GameControls({
 	async function checkAnswer() {
 		if (isCheckDisabled) return
 
-		feedbackRequestId.current += 1
-		abortFeedbackRequest(feedbackAbortControllerRef)
 		setCheckStatus("checking")
-		setFeedbackStatus("idle")
 		setFeedback(null)
 		setIsFeedbackExpanded(showFeedbackByDefault)
 
@@ -129,17 +109,9 @@ export default function GameControls({
 			setFeedback(nextFeedback)
 			setIsFeedbackExpanded(showFeedbackByDefault)
 			setCheckStatus("ready")
-
-			if (shouldLoadFeedbackSeparately({ isSandboxCheck, feedback: nextFeedback })) {
-				loadFeedbackDetails(checkPayload)
-				return
-			}
-
-			setFeedbackStatus("ready")
 		} catch (error) {
 			if (isAuthenticationRequiredError(error) && onAuthExpired) {
 				onAuthExpired?.()
-				setFeedbackStatus("idle")
 				setCheckStatus("idle")
 				return
 			}
@@ -164,71 +136,7 @@ export default function GameControls({
 				feedback: errorFeedback,
 			})
 			setIsFeedbackExpanded(showFeedbackByDefault)
-			setFeedbackStatus("ready")
 			setCheckStatus("error")
-		}
-	}
-
-	async function loadFeedbackDetails(checkPayload) {
-		const requestId = feedbackRequestId.current + 1
-		const abortController = new AbortController()
-		feedbackRequestId.current = requestId
-		abortFeedbackRequest(feedbackAbortControllerRef)
-		feedbackAbortControllerRef.current = abortController
-		setFeedbackStatus("loading")
-
-		try {
-			const nextFeedback = await getGameAnswerFeedback({
-				...checkPayload,
-				signal: abortController.signal,
-			})
-			if (feedbackRequestId.current !== requestId) return
-
-			if (feedbackAbortControllerRef.current === abortController) {
-				feedbackAbortControllerRef.current = null
-			}
-			if (nextFeedback.quota) onGameQuotaChange?.(nextFeedback.quota)
-			updateLocalGameResultFeedback(currentUser?.id, {
-				challengeId,
-				mode: gameMode,
-				prompt,
-				feedback: nextFeedback.feedback,
-			})
-			setFeedback((currentFeedback) =>
-				currentFeedback
-					? {
-							...currentFeedback,
-							feedback: nextFeedback.feedback,
-							feedbackPending: false,
-						}
-					: currentFeedback,
-			)
-			setFeedbackStatus("ready")
-		} catch (error) {
-			if (isAbortError(error)) return
-			if (feedbackRequestId.current !== requestId) return
-
-			if (feedbackAbortControllerRef.current === abortController) {
-				feedbackAbortControllerRef.current = null
-			}
-
-			if (isAuthenticationRequiredError(error) && onAuthExpired) {
-				onAuthExpired?.()
-				setFeedbackStatus("idle")
-				return
-			}
-
-			console.log(error)
-			setFeedback((currentFeedback) =>
-				currentFeedback
-					? {
-							...currentFeedback,
-							feedback: currentFeedback.feedback || feedbackLoadErrorFeedback(error),
-							feedbackPending: false,
-						}
-					: currentFeedback,
-			)
-			setFeedbackStatus("error")
 		}
 	}
 
@@ -238,7 +146,7 @@ export default function GameControls({
 	const showClearButton = Boolean(onClearSentence && canClearSentence)
 	const hasFeedbackDetails = Boolean(feedback && !feedback.correct && feedback.feedback)
 	const canToggleFeedback = Boolean(
-		!isSandboxCheck && feedback && !feedback.correct && (hasFeedbackDetails || isFeedbackLoading),
+		!isSandboxCheck && feedback && !feedback.correct && hasFeedbackDetails,
 	)
 	const showFeedbackDetails = canToggleFeedback && isFeedbackExpanded
 
@@ -276,13 +184,8 @@ export default function GameControls({
 								className="gameFeedback gameFeedbackWarning"
 								id="game-feedback-details"
 								role="status"
-								aria-label={isFeedbackLoading ? "Loading feedback" : undefined}
 							>
-								{isFeedbackLoading ? (
-									<span className="gameCheckingSpinner" aria-hidden="true" />
-								) : (
-									feedback.feedback
-								)}
+								{feedback.feedback}
 							</div>
 						)}
 						{canToggleFeedback && (
@@ -360,19 +263,6 @@ function hasGameAnswerChecker(gameMode) {
 	return Boolean(gameMode)
 }
 
-function shouldLoadFeedbackSeparately({ isSandboxCheck, feedback }) {
-	return Boolean(!isSandboxCheck && feedback?.feedbackPending && !feedback.correct)
-}
-
-function abortFeedbackRequest(feedbackAbortControllerRef) {
-	feedbackAbortControllerRef.current?.abort()
-	feedbackAbortControllerRef.current = null
-}
-
-function isAbortError(error) {
-	return error?.name === "AbortError"
-}
-
 function gameCheckErrorFeedback(error) {
 	const errorCode = error?.data?.error?.code
 
@@ -393,32 +283,6 @@ function gameCheckErrorFeedback(error) {
 	}
 
 	return "Could not check the sentence right now. Try again in a moment."
-}
-
-function feedbackLoadErrorFeedback(error) {
-	const errorCode = error?.data?.error?.code
-
-	if (isAuthenticationRequiredError(error)) {
-		return "Log in to load AI feedback for this answer."
-	}
-
-	if (errorCode === "DAILY_GAME_LIMIT_REACHED") {
-		return error?.message || "You're out of challenge checks for today."
-	}
-
-	if (errorCode === "CHALLENGE_FEEDBACK_NOT_AVAILABLE" || error?.status === 404) {
-		return "Feedback is no longer available for this prompt. Try the next sentence."
-	}
-
-	if (errorCode === "AI_SERVICE_ERROR" || errorCode === "AI_SERVICE_NOT_CONFIGURED") {
-		return "AI feedback is unavailable right now. Your answer was still checked."
-	}
-
-	if (error?.status >= 500) {
-		return "Feedback is unavailable right now. Your answer was still checked."
-	}
-
-	return "Could not load feedback right now. Your answer was still checked."
 }
 
 function isAuthenticationRequiredError(error) {
