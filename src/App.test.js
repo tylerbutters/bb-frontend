@@ -179,9 +179,9 @@ const defaultStatsResponse = {
 }
 const defaultQuotaResponse = {
 	plan: "free",
-	limit: 3,
+	limit: 15,
 	used: 1,
-	remaining: 2,
+	remaining: 14,
 	resetsAt: "2026-05-29T00:00:00.000Z",
 	canPlay: true,
 }
@@ -201,9 +201,12 @@ async function loginDefaultUser() {
 	})
 }
 
-function expectLoggedOutChallengeCheckAvailable() {
-	expect(screen.queryByText("Sign up to check challenge answers.")).not.toBeInTheDocument()
-	expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument()
+function expectLoggedOutChallengeCheckBlocked() {
+	const blocker = screen.getByText("Sign up to check challenge answers.").closest(".gameQuotaBlocker")
+
+	expect(blocker).not.toBeNull()
+	expect(within(blocker).getByRole("link", { name: "Sign up" })).toHaveAttribute("href", "/signup")
+	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
 }
 
 beforeEach(() => {
@@ -2060,7 +2063,7 @@ test("does not show the free challenge limit intro while premium is disabled", a
 	expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
 })
 
-test("does not block practice when the old free quota is exhausted", async () => {
+test("blocks challenge checks when the daily quota is exhausted", async () => {
 	global.fetch.mockImplementation((url) => {
 		if (url === `${API_BASE_URL}/login`) {
 			return Promise.resolve({
@@ -2081,8 +2084,8 @@ test("does not block practice when the old free quota is exhausted", async () =>
 				ok: true,
 				json: jest.fn().mockResolvedValue({
 					plan: "free",
-					limit: 3,
-					used: 3,
+					limit: 15,
+					used: 15,
 					remaining: 0,
 					resetsAt: "2026-05-29T00:00:00.000Z",
 					canPlay: false,
@@ -2118,19 +2121,22 @@ test("does not block practice when the old free quota is exhausted", async () =>
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
 	expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
-	expect(screen.queryByText("You've used today's 3 free challenge checks.")).not.toBeInTheDocument()
+	await waitFor(() => {
+		expect(screen.getByText("You're out of challenge checks for today.")).toBeInTheDocument()
+	})
+	expect(screen.getByText("Come back tomorrow for more challenge practice.")).toBeInTheDocument()
 	expect(screen.queryByText("Buy premium for unlimited practice.")).not.toBeInTheDocument()
-	expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument()
+	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
 
 	fireEvent.click(screen.getByRole("tab", { name: "Particles" }))
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
-	expect(screen.queryByText("You've used today's 3 free challenge checks.")).not.toBeInTheDocument()
-	expect(screen.getByRole("button", { name: "Check" })).toBeInTheDocument()
+	expect(screen.getByText("You're out of challenge checks for today.")).toBeInTheDocument()
+	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
 })
 
-test("shows a prompt error instead of premium upsell when old quota loading is rejected", async () => {
+test("shows the daily quota blocker when prompt loading returns a quota error", async () => {
 	global.fetch.mockImplementation((url) => {
 		if (url === `${API_BASE_URL}/login`) {
 			return Promise.resolve({
@@ -2151,8 +2157,8 @@ test("shows a prompt error instead of premium upsell when old quota loading is r
 				ok: true,
 				json: jest.fn().mockResolvedValue({
 					plan: "free",
-					limit: 3,
-					used: 2,
+					limit: 15,
+					used: 14,
 					remaining: 1,
 					resetsAt: "2026-05-29T00:00:00.000Z",
 					canPlay: true,
@@ -2167,12 +2173,12 @@ test("shows a prompt error instead of premium upsell when old quota loading is r
 				json: jest.fn().mockResolvedValue({
 					error: {
 						code: "DAILY_GAME_LIMIT_REACHED",
-						message: "You've used today's 3 free challenge checks.",
+						message: "You've used today's 15 challenge checks.",
 						details: {
 							quota: {
 								plan: "free",
-								limit: 3,
-								used: 3,
+								limit: 15,
+								used: 15,
 								remaining: 0,
 								resetsAt: "2026-05-29T00:00:00.000Z",
 								canPlay: false,
@@ -2197,9 +2203,9 @@ test("shows a prompt error instead of premium upsell when old quota loading is r
 	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
 
 	await waitFor(() => {
-		expect(screen.getByText("Could not load a prompt.")).toBeInTheDocument()
+		expect(screen.getByText("You're out of challenge checks for today.")).toBeInTheDocument()
 	})
-	expect(screen.queryByText("You've used today's 3 free challenge checks.")).not.toBeInTheDocument()
+	expect(screen.queryByText("Could not load a prompt.")).not.toBeInTheDocument()
 	expect(screen.queryByText("Buy premium for unlimited practice.")).not.toBeInTheDocument()
 })
 
@@ -2253,7 +2259,7 @@ test("does not show a premium blocker when quota loading is rejected", async () 
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
-	expect(screen.queryByText("You've used today's 3 free challenge checks.")).not.toBeInTheDocument()
+	expect(screen.queryByText("You're out of challenge checks for today.")).not.toBeInTheDocument()
 	expect(screen.queryByText("Buy premium for unlimited practice.")).not.toBeInTheDocument()
 	await waitFor(() => {
 		expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
@@ -2279,9 +2285,9 @@ test("does not turn a logged-in challenge check error into a premium blocker", a
 				ok: true,
 				json: jest.fn().mockResolvedValue({
 					plan: "free",
-					limit: 3,
+					limit: 15,
 					used: 0,
-					remaining: 3,
+					remaining: 15,
 					resetsAt: "2026-05-29T00:00:00.000Z",
 					canPlay: true,
 				}),
@@ -2339,7 +2345,7 @@ test("does not turn a logged-in challenge check error into a premium blocker", a
 	expect(
 		screen.queryByText("Could not check the sentence right now. Try again in a moment."),
 	).not.toBeInTheDocument()
-	expect(screen.queryByText("You've used today's 3 free challenge checks.")).not.toBeInTheDocument()
+	expect(screen.queryByText("You're out of challenge checks for today.")).not.toBeInTheDocument()
 	expect(screen.queryByText("Buy premium for unlimited practice.")).not.toBeInTheDocument()
 	expect(
 		screen.queryByText("Not quite. Log in to check challenge answers."),
@@ -2347,7 +2353,7 @@ test("does not turn a logged-in challenge check error into a premium blocker", a
 	expect(screen.getByRole("button", { name: "Check again" })).toBeInTheDocument()
 })
 
-test("does not apply the old local fallback challenge check limit", async () => {
+test("does not apply the old 3-check local fallback limit", async () => {
 	let promptIndex = 0
 
 	global.fetch.mockImplementation((url) => {
@@ -2446,7 +2452,7 @@ test("does not apply the old local fallback challenge check limit", async () => 
 		}
 	}
 
-	expect(screen.queryByText("You've used today's 3 free challenge checks.")).not.toBeInTheDocument()
+	expect(screen.queryByText("You're out of challenge checks for today.")).not.toBeInTheDocument()
 	expect(screen.queryByText("Buy premium for unlimited practice.")).not.toBeInTheDocument()
 	expect(screen.getByRole("button", { name: "Check again" })).toBeInTheDocument()
 })
@@ -2677,7 +2683,7 @@ test("populates conjugation game elements from Japanese translation prompt data"
 	expect(screen.getAllByText("食べ").length).toBeGreaterThan(0)
 	expect(screen.getAllByText("たべ").length).toBeGreaterThan(0)
 	expect(screen.getAllByText("る").length).toBeGreaterThan(0)
-	expectLoggedOutChallengeCheckAvailable()
+	expectLoggedOutChallengeCheckBlocked()
 })
 
 test("does not restore generated elements when switching to translate or sandbox", async () => {
@@ -2792,7 +2798,7 @@ test("populates particle game elements without preselected particles", async () 
 	expect(screen.queryByText("は")).not.toBeInTheDocument()
 	expect(screen.queryByText("を")).not.toBeInTheDocument()
 	expect(screen.queryByRole("button", { name: "Clear all" })).not.toBeInTheDocument()
-	expectLoggedOutChallengeCheckAvailable()
+	expectLoggedOutChallengeCheckBlocked()
 })
 
 test("locks generated prompt elements from word replacement and deletion", async () => {
@@ -2884,7 +2890,7 @@ test("populates reorder game elements in the generated scrambled order", async (
 	expect(screen.getAllByText("む").length).toBeGreaterThan(0)
 	expect(screen.getAllByText("彼女").length).toBeGreaterThan(0)
 	expect(screen.getAllByText("は").length).toBeGreaterThan(0)
-	expectLoggedOutChallengeCheckAvailable()
+	expectLoggedOutChallengeCheckBlocked()
 })
 
 test("populates fix sentence game elements with one mistake", async () => {
@@ -2927,7 +2933,7 @@ test("populates fix sentence game elements with one mistake", async () => {
 	expect(screen.getAllByText("に").length).toBeGreaterThan(0)
 	expect(screen.getAllByText("食べ").length).toBeGreaterThan(0)
 	expect(screen.queryByText("を")).not.toBeInTheDocument()
-	expectLoggedOutChallengeCheckAvailable()
+	expectLoggedOutChallengeCheckBlocked()
 })
 
 test("changing translate difficulty regenerates the prompt and clears sentence elements", async () => {

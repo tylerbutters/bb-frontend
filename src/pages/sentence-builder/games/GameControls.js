@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import { Link } from "react-router-dom"
 import { checkGameAnswer, checkSandboxSentence, getGameAnswerFeedback } from "../../../api/games"
 import { recordLocalGameResult, updateLocalGameResultFeedback } from "../../../gameStatsStorage"
 import "./GameControls.css"
@@ -25,6 +26,7 @@ export default function GameControls({
 	challengeId,
 	difficulty,
 	currentUser,
+	gameQuota,
 	prompt,
 	promptStatus,
 	answer,
@@ -45,22 +47,12 @@ export default function GameControls({
 	const isSandboxCheck = gameMode === "sandbox"
 	const isChecking = checkStatus === "checking"
 	const isFeedbackLoading = feedbackStatus === "loading"
-	const requiresLogin = false
-	const isLoggedOutSandboxCheck = false
-	/*
-	TODO(auth): Re-enable this if challenge checks should require an account again.
 	const isChallengeCheck = hasAnswerChecker && !isSandboxCheck
 	const requiresLogin = isChallengeCheck && !currentUser
-	const isLoggedOutSandboxCheck = isSandboxCheck && !currentUser
-	*/
-	const isQuotaExhausted = false
-	/*
-	TODO(premium): Re-enable free quota blocking when premium is live.
-	const isChallengeCheck = hasAnswerChecker && !isSandboxCheck
+	const isLoggedOutSandboxCheck = false
 	const isFreeQuota =
 		isChallengeCheck && !requiresLogin && currentUser && gameQuota?.plan !== "premium"
 	const isQuotaExhausted = Boolean(!requiresLogin && isFreeQuota && gameQuota?.remaining === 0)
-	*/
 	const isCheckDisabled =
 		!answer ||
 		isChecking ||
@@ -148,34 +140,16 @@ export default function GameControls({
 			const quota = error.data?.error?.details?.quota
 			if (quota) onGameQuotaChange?.(quota)
 
-			/*
-			TODO(premium): Re-enable quota exhaustion response handling when premium is live.
 			const errorCode = error.data?.error?.code
-			const EXHAUSTED_FREE_QUOTA = {
-				plan: "free",
-				limit: 3,
-				used: 3,
-				remaining: 0,
-				canPlay: false,
-			}
-			if (errorCode === "LOGIN_REQUIRED_FOR_CHALLENGE_CHECKS") {
-				if (currentUser) {
-					onGameQuotaChange?.(EXHAUSTED_FREE_QUOTA)
+			if (errorCode === "DAILY_GAME_LIMIT_REACHED") {
+				if (quota) {
+					setFeedback(null)
+					setCheckStatus("idle")
+					return
 				}
-				setFeedback(null)
-				setCheckStatus("idle")
-				return
 			}
-			*/
 
 			const errorFeedback = gameCheckErrorFeedback(error)
-			/*
-			TODO(premium): Re-enable premium-specific quota feedback.
-			const errorFeedback =
-				errorCode === "DAILY_GAME_LIMIT_REACHED"
-					? "You've used today's 3 free challenge checks."
-					: "Could not check the sentence right now. Try again in a moment."
-			*/
 			setFeedback({
 				correct: false,
 				feedback: errorFeedback,
@@ -254,8 +228,6 @@ export default function GameControls({
 
 	return (
 		<div className="gameControls">
-			{/* TODO(auth): Re-enable this blocker and restore the Link import if challenge
-			checks should require an account again.
 			{requiresLogin && (
 				<div className="gameQuotaBlocker" role="status">
 					<p>Sign up to check challenge answers.</p>
@@ -264,16 +236,12 @@ export default function GameControls({
 					</Link>
 				</div>
 			)}
-			*/}
-			{/* TODO(premium): Re-enable this blocker when free quotas return.
+			{isQuotaExhausted && (
 				<div className="gameQuotaBlocker" role="status">
-					<p>You've used today's 3 free challenge checks.</p>
-					<p>Buy premium for unlimited practice.</p>
-					<Link className="gameQuotaButton" to="/buy">
-						Buy premium
-					</Link>
+					<p>You're out of challenge checks for today.</p>
+					<p>Come back tomorrow for more challenge practice.</p>
 				</div>
-			*/}
+			)}
 			{isChecking && (
 				<div className="gameCheckingFeedback" role="status" aria-label="Checking answer">
 					<span className="gameCheckingSpinner" aria-hidden="true" />
@@ -401,7 +369,7 @@ function gameCheckErrorFeedback(error) {
 	}
 
 	if (errorCode === "DAILY_GAME_LIMIT_REACHED") {
-		return error?.message || "You've used today's free challenge checks."
+		return error?.message || "You're out of challenge checks for today."
 	}
 
 	if (errorCode === "AI_SERVICE_ERROR" || errorCode === "AI_SERVICE_NOT_CONFIGURED") {
@@ -427,7 +395,7 @@ function feedbackLoadErrorFeedback(error) {
 	}
 
 	if (errorCode === "DAILY_GAME_LIMIT_REACHED") {
-		return error?.message || "You've used today's free challenge checks."
+		return error?.message || "You're out of challenge checks for today."
 	}
 
 	if (errorCode === "CHALLENGE_FEEDBACK_NOT_AVAILABLE" || error?.status === 404) {

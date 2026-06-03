@@ -29,13 +29,9 @@ export default function SentenceBuilderPage({ currentUser }) {
 	const gameHistory = useGameHistoryDrawer(currentUser)
 	const gameQuota = useGameQuota(currentUser)
 	const isGame = selectedGameMode && selectedGameMode !== "sandbox"
-	const isFreeQuotaExhausted = false
-	/*
-	TODO(premium): Re-enable free quota blocking when premium is live.
 	const isFreeQuotaExhausted = Boolean(
 		currentUser && gameQuota.quota?.plan !== "premium" && gameQuota.quota?.remaining === 0,
 	)
-	*/
 	const historyGameMode = resolveHistoryGameMode(selectedGameMode, gamePromptData?.mode)
 	const historyGameLabel = historyGameMode
 		? GAME_HISTORY_LABELS[historyGameMode] || historyGameMode
@@ -162,7 +158,7 @@ export default function SentenceBuilderPage({ currentUser }) {
 						aria-modal="true"
 					>
 						<h2 id="free-limit-title">Free challenge checks</h2>
-						<p>Free accounts get 3 challenge checks per day.</p>
+						<p>Free accounts get a daily challenge check limit.</p>
 						<button
 							type="button"
 							className="freeLimitModalButton"

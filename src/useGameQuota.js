@@ -1,83 +1,19 @@
 import { useCallback, useEffect, useState } from "react"
 import { getUserGameQuota } from "./api/users"
 
-const FREE_DAILY_CHALLENGE_LIMIT = 3
-const LOCAL_QUOTA_STORAGE_PREFIX = "bbFreeGameQuota"
-
-function utcDayKey(date = new Date()) {
-	return date.toISOString().slice(0, 10)
-}
-
-function nextUtcReset(date = new Date()) {
-	const resetDate = new Date(
-		Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1),
-	)
-
-	return resetDate.toISOString()
-}
-
-function localQuotaStorageKey(userId, date = new Date()) {
-	return `${LOCAL_QUOTA_STORAGE_PREFIX}:${userId}:${utcDayKey(date)}`
-}
-
-function readLocalQuotaEntry(userId) {
-	if (!userId) return { used: 0, challengeIds: [] }
-
-	try {
-		const entry = JSON.parse(window.localStorage.getItem(localQuotaStorageKey(userId)))
-		if (!entry || typeof entry !== "object") return { used: 0, challengeIds: [] }
-
-		return {
-			used: Number(entry.used || 0),
-			challengeIds: Array.isArray(entry.challengeIds) ? entry.challengeIds : [],
-		}
-	} catch {
-		return { used: 0, challengeIds: [] }
-	}
-}
-
-function writeLocalQuotaEntry(userId, entry) {
-	if (!userId) return
-
-	window.localStorage.setItem(
-		localQuotaStorageKey(userId),
-		JSON.stringify({
-			used: Number(entry.used || 0),
-			challengeIds: Array.isArray(entry.challengeIds) ? entry.challengeIds : [],
-		}),
-	)
-}
-
-function createChallengeQuotaKey({ challengeId, gameMode, difficulty, prompt } = {}) {
-	if (challengeId) return `id:${challengeId}`
-	if (!prompt) return ""
-
-	return `prompt:${gameMode || "unknown"}:${difficulty || "easy"}:${prompt}`
-}
-
-function createUnlimitedQuota(quota, currentUser) {
-	return {
-		plan: quota?.plan || currentUser?.plan || "free",
-		limit: null,
-		used: Number(quota?.used || 0),
-		remaining: null,
-		resetsAt: quota?.resetsAt || nextUtcReset(),
-		canPlay: true,
-	}
-}
-
 function normalizeQuota(quota, currentUser) {
-	return createUnlimitedQuota(quota, currentUser)
+	if (!quota) return null
 
-	/*
-	TODO(premium): Re-enable finite free quota handling when premium is live.
 	const plan = quota?.plan || currentUser?.plan || "free"
 	const isPremium = plan === "premium"
-	const limit = isPremium ? null : Number(quota?.limit ?? FREE_DAILY_CHALLENGE_LIMIT)
+	const limit = quota?.limit == null ? null : Number(quota.limit)
 	const used = Number(quota?.used || 0)
 	const remaining = isPremium
 		? null
-		: Math.max(Number(quota?.remaining ?? limit - used), 0)
+		: quota?.remaining == null
+			? null
+			: Math.max(Number(quota.remaining), 0)
+	const canPlay = Boolean(isPremium || quota?.canPlay || (remaining != null && remaining > 0))
 
 	return {
 		plan,
@@ -85,45 +21,12 @@ function normalizeQuota(quota, currentUser) {
 		used,
 		remaining,
 		resetsAt: quota?.resetsAt || "",
-		canPlay: isPremium || remaining > 0,
+		canPlay,
 	}
-	*/
-}
-
-function createLocalQuota(currentUser, used) {
-	return normalizeQuota(
-		{
-			plan: currentUser?.plan || "free",
-			limit: FREE_DAILY_CHALLENGE_LIMIT,
-			used,
-			remaining: Math.max(FREE_DAILY_CHALLENGE_LIMIT - Number(used || 0), 0),
-			resetsAt: nextUtcReset(),
-		},
-		currentUser,
-	)
-}
-
-function mergeQuotaWithLocalUsage(quota, currentUser) {
-	const normalizedQuota = normalizeQuota(quota, currentUser)
-	return normalizedQuota
-
-	/*
-	TODO(premium): Re-enable local usage merging for free-account quota fallback.
-	if (normalizedQuota.plan === "premium") return normalizedQuota
-
-	const localUsage = readLocalQuotaEntry(currentUser?.id)
-	const used = Math.max(Number(normalizedQuota.used || 0), Number(localUsage.used || 0))
-
-	return createLocalQuota(currentUser, used)
-	*/
 }
 
 export function useGameQuota(currentUser) {
-	const [quota, setQuota] = useState(() =>
-		currentUser
-			? createLocalQuota(currentUser, readLocalQuotaEntry(currentUser.id).used)
-			: null,
-	)
+	const [quota, setQuota] = useState(null)
 	const [status, setStatus] = useState("idle")
 	const [message, setMessage] = useState("")
 
@@ -134,43 +37,22 @@ export function useGameQuota(currentUser) {
 				return
 			}
 
-			setQuota(mergeQuotaWithLocalUsage(nextQuota, currentUser))
+			setQuota(normalizeQuota(nextQuota, currentUser))
 		},
 		[currentUser],
 	)
 
 	const recordLocalChallengeCheck = useCallback(
 		(challenge) => {
-			return null
-
-			/*
-			TODO(premium): Re-enable local quota tracking for free challenge checks.
-			if (
-				!currentUser ||
-				currentUser.plan === "premium" ||
-				challenge?.serverQuota?.plan === "premium"
-			) {
+			if (!currentUser || !challenge?.serverQuota) {
 				return null
 			}
 
-			const challengeKey = createChallengeQuotaKey(challenge)
-			if (!challengeKey) return null
-
-			const entry = readLocalQuotaEntry(currentUser.id)
-			const challengeIds = [...new Set(entry.challengeIds)]
-			const wasAlreadyRecorded = challengeIds.includes(challengeKey)
-			if (!wasAlreadyRecorded) challengeIds.push(challengeKey)
-
-			const baselineUsed = Math.max(Number(entry.used || 0), Number(quota?.used || 0))
-			const used = wasAlreadyRecorded ? baselineUsed : baselineUsed + 1
-			writeLocalQuotaEntry(currentUser.id, { used, challengeIds })
-
-			const nextQuota = createLocalQuota(currentUser, used)
+			const nextQuota = normalizeQuota(challenge.serverQuota, currentUser)
 			setQuota(nextQuota)
 			return nextQuota
-			*/
 		},
-		[currentUser, quota?.used],
+		[currentUser],
 	)
 
 	const refreshQuota = useCallback(
@@ -189,7 +71,7 @@ export function useGameQuota(currentUser) {
 				const nextQuota = await getUserGameQuota(currentUser.id, { signal })
 				if (signal?.aborted) return null
 
-				const normalizedQuota = mergeQuotaWithLocalUsage(nextQuota, currentUser)
+				const normalizedQuota = normalizeQuota(nextQuota, currentUser)
 				setQuota(normalizedQuota)
 				setStatus("ready")
 				return normalizedQuota
@@ -197,20 +79,10 @@ export function useGameQuota(currentUser) {
 				if (error.name === "AbortError") return null
 
 				console.log(error)
-				/*
-				TODO(premium): Re-enable quota exhaustion fallback for free accounts.
-				if (error.status === 401 && currentUser?.plan !== "premium") {
-					const exhaustedQuota = createLocalQuota(currentUser, FREE_DAILY_CHALLENGE_LIMIT)
-					setQuota(exhaustedQuota)
-					setStatus("ready")
-					setMessage("")
-					return exhaustedQuota
-				}
-				*/
 
 				setStatus("error")
 				setMessage(error.message || "Could not load game limit.")
-				setQuota(createLocalQuota(currentUser, readLocalQuotaEntry(currentUser.id).used))
+				setQuota(null)
 				return null
 			}
 		},

@@ -22,12 +22,8 @@ export default function GamePrompt({
 	const [errorCode, setErrorCode] = useState("")
 	const [difficulty, setDifficulty] = useState(PROMPT_DIFFICULTIES[0])
 	const hasPromptGenerator = hasGamePromptGenerator(gameMode)
-	const isQuotaLimitError = false
-	/*
-	TODO(premium): Re-enable quota-limit prompt suppression when premium is live.
 	const isQuotaLimitError =
 		errorCode === "DAILY_GAME_LIMIT_REACHED" || Boolean(isQuotaExhausted)
-	*/
 
 	useEffect(() => {
 		if (!isVisible || !hasPromptGenerator) {
@@ -76,21 +72,10 @@ export default function GamePrompt({
 				if (controller.signal.aborted) return
 				console.log(error)
 				const nextErrorCode = error.data?.error?.code || ""
-				/*
-				TODO(premium): Re-enable quota updates from prompt-load failures.
 				const quota = error.data?.error?.details?.quota
-				if (nextErrorCode === "DAILY_GAME_LIMIT_REACHED") {
-					onGameQuotaChange?.(
-						quota || {
-							plan: "free",
-							limit: 3,
-							used: 3,
-							remaining: 0,
-							canPlay: false,
-						},
-					)
+				if (nextErrorCode === "DAILY_GAME_LIMIT_REACHED" && quota) {
+					onGameQuotaChange?.(quota)
 				}
-				*/
 
 				setPrompt("")
 				setStatus("error")
