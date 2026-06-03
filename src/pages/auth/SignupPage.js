@@ -174,6 +174,10 @@ export default function SignupPage({ onSignup }) {
 						autoComplete="new-password"
 						isPassword
 					/>
+					<p className="authLegalText">
+						By creating an account, you agree to the <Link to="/terms">Terms</Link>{" "}
+						and <Link to="/privacy">Privacy Policy</Link>.
+					</p>
 					<button type="submit" className="authPrimaryButton" disabled={isRequestingSignupCode}>
 						{isRequestingSignupCode ? "Sending code..." : "Send code"}
 					</button>

@@ -243,11 +243,21 @@
 	text-align: center;
 }
 
-.authSwitchText a {
+.authLegalText {
+	margin: 0;
+	color: var(--color-grey-text);
+	font-size: 12px;
+	line-height: 1.4;
+	text-align: center;
+}
+
+.authSwitchText a,
+.authLegalText a {
 	color: white;
 	text-decoration: none;
 }
 
-.authSwitchText a:hover {
+.authSwitchText a:hover,
+.authLegalText a:hover {
 	text-decoration: underline;
 }

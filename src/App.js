@@ -11,6 +11,8 @@ import SuggestionsPage from "./pages/suggestions/SuggestionsPage"
 import StatsPage from "./pages/stats/StatsPage"
 import AdminPage from "./pages/admin/AdminPage"
 import AppNavbar from "./components/AppNavbar"
+import AppFooter from "./components/AppFooter"
+import LegalDocumentPage from "./pages/legal/LegalDocumentPage"
 import { logout } from "./api/auth"
 
 const CURRENT_USER_STORAGE_KEY = "jsbCurrentUser"
@@ -58,6 +60,8 @@ export default function App() {
 				<Route path="/signup" element={<SignupPage onSignup={handleLogin} />} />
 				<Route path="/about" element={<AboutPage />} />
 				<Route path="/suggestions" element={<SuggestionsPage />} />
+				<Route path="/terms" element={<LegalDocumentPage documentKey="terms" />} />
+				<Route path="/privacy" element={<LegalDocumentPage documentKey="privacy" />} />
 				{/* TODO(premium): Re-enable when checkout launches: <Route path="/buy" element={<BuyPage />} /> */}
 				<Route
 					path="/account"
@@ -92,6 +96,7 @@ export default function App() {
 				/>
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
+			<AppFooter />
 		</BrowserRouter>
 	)
 }
