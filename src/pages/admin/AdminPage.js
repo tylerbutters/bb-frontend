@@ -308,9 +308,7 @@ export default function AdminPage({ currentUser, onAuthExpired }) {
 			: statsMode === "all"
 				? profileStats.total
 				: (profileStats.games || []).find((game) => game.mode === statsMode)
-	const selectedUserLabel = selectedUser
-		? selectedUser.displayName || selectedUser.email
-		: "No user selected"
+	const selectedUserLabel = selectedUser ? selectedUser.email : "No user selected"
 	const isUsersLoading = usersStatus === "loading"
 	const isUsersLoadingMore = usersStatus === "loadingMore"
 	const isProfileLoading = profileStatus === "loading"
@@ -334,7 +332,7 @@ export default function AdminPage({ currentUser, onAuthExpired }) {
 									id="admin-user-search"
 									type="search"
 									value={searchInput}
-									placeholder="Email or display name"
+									placeholder="Email"
 									onChange={(event) => setSearchInput(event.target.value)}
 								/>
 								<button type="submit" className="adminIconButton" aria-label="Search">
@@ -366,8 +364,7 @@ export default function AdminPage({ currentUser, onAuthExpired }) {
 										}`}
 										onClick={() => selectUser(user)}
 									>
-										<span className="adminUserName">{user.displayName || "Unnamed user"}</span>
-										<span className="adminUserEmail">{user.email}</span>
+										<span className="adminUserName">{user.email}</span>
 										<span className="adminUserMeta">
 											{user.plan || "free"} / {user.role || "user"}
 										</span>
@@ -412,10 +409,6 @@ export default function AdminPage({ currentUser, onAuthExpired }) {
 									<div className="adminProfileField">
 										<span>Email</span>
 										<strong>{formatValue(selectedUser.email)}</strong>
-									</div>
-									<div className="adminProfileField">
-										<span>Display name</span>
-										<strong>{formatValue(selectedUser.displayName)}</strong>
 									</div>
 									<div className="adminProfileField">
 										<span>Plan</span>

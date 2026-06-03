@@ -82,7 +82,7 @@ export default function PasswordSection({ currentUser, onUserUpdate, resetMessag
 	}
 
 	return (
-		<form className="accountSection" aria-label="Password settings" onSubmit={submitPassword}>
+		<form className="accountSection" aria-label="Password settings" onSubmit={submitPassword} noValidate>
 			<AccountSectionHeader
 				headingId="password-settings-heading"
 				icon={Lock}

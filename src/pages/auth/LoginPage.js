@@ -58,7 +58,7 @@ export default function LoginPage({ onLogin }) {
 
 	return (
 		<div className="app loginPage">
-			<form className="loginForm" method="post" action="/login" onSubmit={submitLogin}>
+			<form className="loginForm" method="post" action="/login" onSubmit={submitLogin} noValidate>
 				<h1>Login</h1>
 				<InputBox
 					id="login-email"

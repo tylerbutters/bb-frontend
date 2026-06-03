@@ -60,7 +60,7 @@ We collect information you provide directly, information created when you use Bu
 
 This may include:
 
-- account information, such as email address, display name, account creation date, and account update date;
+- account information, such as email address, account creation date, and account update date;
 - password and account security information, such as password hashes, signup confirmation codes, password reset codes, email change tokens, expiry times, and attempt counts;
 - session information, such as session token hashes, cookie data, login state, session creation, expiry, revocation, and last-used timestamps;
 - challenge and practice information, such as game mode, difficulty, challenge ID, prompt, submitted answer, correctness result, feedback, stats, history, and creation date;
@@ -113,7 +113,7 @@ Current providers may include:
 
 The information shared with third-party providers may include:
 
-- account information such as email address and display name;
+- account information such as email address;
 - session, security, usage, quota, and technical log data;
 - challenge prompts, submitted answers, expected answers, and feedback-related text;
 - text submitted for translation; and

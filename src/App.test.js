@@ -215,7 +215,6 @@ beforeEach(() => {
 	let mockCurrentUser = {
 		id: 1,
 		email: "tyler@example.com",
-		displayName: "Tyler",
 	}
 	global.fetch = jest.fn((url, options = {}) => {
 		if (url === `${API_BASE_URL}/users/signup-confirmation/request`) {
@@ -234,7 +233,6 @@ beforeEach(() => {
 					user: {
 						id: 1,
 						email: "tyler@example.com",
-						displayName: "Tyler",
 					},
 				}),
 			})
@@ -494,7 +492,6 @@ test("opens the sign up page, confirms the email code, and creates an account", 
 	expect(screen.getByRole("link", { name: "Login" })).toHaveAttribute("href", "/login")
 	expect(window.location.pathname).toBe("/signup")
 
-	fireEvent.change(screen.getByLabelText("Display name"), { target: { value: "Tyler" } })
 	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
 	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
 	fireEvent.click(screen.getByRole("button", { name: "Send code" }))
@@ -521,7 +518,6 @@ test("opens the sign up page, confirms the email code, and creates an account", 
 		},
 	})
 	expect(JSON.parse(signupRequest[1].body)).toEqual({
-		displayName: "Tyler",
 		email: "tyler@example.com",
 		password: "password1",
 	})
@@ -556,7 +552,7 @@ test("renders the sign up page at the sign up route", () => {
 	render(<App />)
 
 	expect(screen.getByRole("heading", { name: "Sign up" })).toBeInTheDocument()
-	expect(screen.getByLabelText("Display name")).toBeInTheDocument()
+	expect(screen.queryByLabelText("Display name")).not.toBeInTheDocument()
 	expect(screen.getByLabelText("Email")).toBeInTheDocument()
 	const passwordInput = screen.getByLabelText("Password")
 	expect(passwordInput).toHaveAttribute("type", "password")
@@ -730,21 +726,13 @@ test("opens account from the user menu and updates account details", async () =>
 
 	expect(window.location.pathname).toBe("/account")
 	expect(screen.getByRole("heading", { name: "Account" })).toBeInTheDocument()
-	expect(screen.getByLabelText("Display name")).toHaveValue("Tyler")
+	expect(screen.queryByLabelText("Display name")).not.toBeInTheDocument()
 	expect(screen.getByLabelText("Email")).toHaveValue("tyler@example.com")
 	expect(screen.getByRole("button", { name: "Log out" })).toBeInTheDocument()
-	expect(screen.getAllByRole("button", { name: "Save changes" })).toHaveLength(3)
+	expect(screen.getAllByRole("button", { name: "Save changes" })).toHaveLength(2)
 
-	const displayNameSection = screen.getByRole("form", { name: "Display name settings" })
 	const emailSection = screen.getByRole("form", { name: "Email settings" })
 	const passwordSection = screen.getByRole("form", { name: "Password settings" })
-
-	fireEvent.change(screen.getByLabelText("Display name"), { target: { value: "Taylor" } })
-	fireEvent.click(within(displayNameSection).getByRole("button", { name: "Save changes" }))
-
-	await waitFor(() => {
-		expect(within(displayNameSection).getByText("Account updated.")).toBeInTheDocument()
-	})
 
 	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "taylor@example.com" } })
 	fireEvent.click(within(emailSection).getByRole("button", { name: "Save changes" }))
@@ -785,7 +773,7 @@ test("opens account from the user menu and updates account details", async () =>
 		([url, options]) =>
 			url === `${API_BASE_URL}/users/1/email-change/request` && options.method === "POST",
 	)
-	expect(accountRequests).toHaveLength(2)
+	expect(accountRequests).toHaveLength(1)
 	expect(emailChangeRequests).toHaveLength(1)
 	expect(accountRequests[0][1]).toMatchObject({
 		method: "PATCH",
@@ -794,7 +782,6 @@ test("opens account from the user menu and updates account details", async () =>
 		},
 	})
 	expect(accountRequests.map(([, options]) => JSON.parse(options.body))).toEqual([
-		{ displayName: "Taylor" },
 		{ currentPassword: "password1", password: "password2" },
 	])
 	expect(JSON.parse(emailChangeRequests[0][1].body)).toEqual({
@@ -806,7 +793,6 @@ test("opens account from the user menu and updates account details", async () =>
 	expect(JSON.parse(window.localStorage.getItem("bbCurrentUser"))).toEqual({
 		id: 1,
 		email: "tyler@example.com",
-		displayName: "Taylor",
 	})
 
 	fireEvent.click(screen.getByRole("link", { name: "Bunsho Builder" }))
@@ -1098,7 +1084,6 @@ test("opens game history with empty metrics and a loading spinner", async () => 
 					user: {
 						id: 1,
 						email: "tyler@example.com",
-						displayName: "Tyler",
 					},
 				}),
 			})
@@ -1217,7 +1202,6 @@ test("reopens populated game history while refreshing it in the background", asy
 					user: {
 						id: 1,
 						email: "tyler@example.com",
-						displayName: "Tyler",
 					},
 				}),
 			})
@@ -1463,7 +1447,6 @@ test("shows zero-backgrounded stats panels when stats have not been created yet"
 					user: {
 						id: 1,
 						email: "tyler@example.com",
-						displayName: "Tyler",
 					},
 				}),
 			})
@@ -1542,7 +1525,6 @@ test("shows locally recorded stats when backend stats are unavailable", async ()
 					user: {
 						id: 1,
 						email: "tyler@example.com",
-						displayName: "Tyler",
 					},
 				}),
 			})
@@ -1674,7 +1656,6 @@ test("clears stale login state when stats auth has expired", async () => {
 		JSON.stringify({
 			id: 1,
 			email: "tyler@example.com",
-			displayName: "Tyler",
 		}),
 	)
 	global.fetch.mockImplementation((url) => {
@@ -1725,7 +1706,6 @@ test("shows a contained admin access message for non-admin users", () => {
 		JSON.stringify({
 			id: 1,
 			email: "tyler@example.com",
-			displayName: "Tyler",
 			role: "user",
 		}),
 	)
@@ -1747,14 +1727,12 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 		JSON.stringify({
 			id: 1,
 			email: "admin@example.com",
-			displayName: "Admin",
 			role: "admin",
 		}),
 	)
 	const listedUser = {
 		id: 2,
 		email: "tyler@example.com",
-		displayName: "Tyler",
 		plan: "free",
 		role: "user",
 		createdAt: "2026-01-01T00:00:00.000Z",
@@ -1897,16 +1875,15 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 	fireEvent.click(screen.getByRole("button", { name: "Search" }))
 
 	const userButton = await screen.findByRole("button", {
-		name: /Tyler tyler@example\.com free \/ user/,
+		name: /tyler@example\.com free \/ user/,
 	})
 	fireEvent.click(userButton)
 
 	const profile = screen.getByLabelText("Selected user profile")
 	await waitFor(() => {
-		expect(within(profile).getByText("tyler@example.com")).toBeInTheDocument()
+		expect(within(profile).getAllByText("tyler@example.com").length).toBeGreaterThan(0)
 	})
-	expect(within(profile).getByText("Display name")).toBeInTheDocument()
-	expect(within(profile).getAllByText("Tyler").length).toBeGreaterThan(0)
+	expect(within(profile).queryByText("Display name")).not.toBeInTheDocument()
 
 	const stats = screen.getByLabelText("Selected user stats")
 	await waitFor(() => {
@@ -1961,7 +1938,6 @@ test("shows admin API errors without crashing", async () => {
 		JSON.stringify({
 			id: 1,
 			email: "admin@example.com",
-			displayName: "Admin",
 			role: "admin",
 		}),
 	)
@@ -2069,7 +2045,6 @@ test("blocks challenge checks when the daily quota is exhausted", async () => {
 					user: {
 						id: 1,
 						email: "tyler@example.com",
-						displayName: "Tyler",
 						plan: "free",
 					},
 				}),
@@ -2142,7 +2117,6 @@ test("shows the daily quota blocker when prompt loading returns a quota error", 
 					user: {
 						id: 1,
 						email: "tyler@example.com",
-						displayName: "Tyler",
 						plan: "free",
 					},
 				}),
@@ -2212,7 +2186,6 @@ test("clears stale login state when quota loading is rejected", async () => {
 		JSON.stringify({
 			id: 1,
 			email: "tyler@example.com",
-			displayName: "Tyler",
 			plan: "free",
 		}),
 	)
@@ -2274,7 +2247,6 @@ test("clears stale login state when a challenge check requires auth", async () =
 		JSON.stringify({
 			id: 1,
 			email: "tyler@example.com",
-			displayName: "Tyler",
 			plan: "free",
 		}),
 	)
@@ -2366,7 +2338,6 @@ test("does not apply the old 3-check local fallback limit", async () => {
 					user: {
 						id: 1,
 						email: "tyler@example.com",
-						displayName: "Tyler",
 						plan: "free",
 					},
 				}),
@@ -2505,7 +2476,6 @@ test("checks the sandbox sentence and shows feedback", async () => {
 		JSON.stringify({
 			id: 1,
 			email: "tyler@example.com",
-			displayName: "Tyler",
 			plan: "free",
 		}),
 	)
@@ -2583,7 +2553,6 @@ test("shows a loading spinner while checking a sandbox sentence", async () => {
 		JSON.stringify({
 			id: 1,
 			email: "tyler@example.com",
-			displayName: "Tyler",
 			plan: "free",
 		}),
 	)
@@ -2997,7 +2966,6 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 					user: {
 						id: 1,
 						email: "tyler@example.com",
-						displayName: "Tyler",
 					},
 				}),
 			})
@@ -3096,7 +3064,6 @@ test("sends the same challenge ID for repeated checks on one prompt", async () =
 					user: {
 						id: 1,
 						email: "tyler@example.com",
-						displayName: "Tyler",
 					},
 				}),
 			})
@@ -3199,7 +3166,6 @@ test("shows challenge result immediately while detailed feedback loads separatel
 					user: {
 						id: 1,
 						email: "tyler@example.com",
-						displayName: "Tyler",
 					},
 				}),
 			})
@@ -3304,7 +3270,6 @@ test("calls prompt and check endpoints with a random real mode for shuffle", asy
 					user: {
 						id: 1,
 						email: "tyler@example.com",
-						displayName: "Tyler",
 					},
 				}),
 			})

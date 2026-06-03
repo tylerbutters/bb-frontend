@@ -45,7 +45,7 @@ We may suspend, restrict, or delete accounts, remove content, block access, or c
 
 ## Practice Content
 
-You are responsible for the sentences, answers, prompts, display names, suggestions, support messages, and other content you submit.
+You are responsible for the sentences, answers, prompts, suggestions, support messages, and other content you submit.
 
 You give us permission to use, transmit, store, process, and display your submitted content only as needed to provide, operate, secure, troubleshoot, and support Bunsho Builder. This includes answer checking, translations, stats, history, account features, support, and service maintenance.
 

@@ -12,7 +12,6 @@ export default function SignupPage({ onSignup }) {
 	const [signupForm, setSignupForm] = useState({
 		email: "",
 		password: "",
-		displayName: "",
 	})
 	const [confirmationCode, setConfirmationCode] = useState("")
 	const [signupStatus, setSignupStatus] = useState("idle")
@@ -143,17 +142,9 @@ export default function SignupPage({ onSignup }) {
 					method="post"
 					action="/users/signup-confirmation/request"
 					onSubmit={submitSignupRequest}
+					noValidate
 				>
 					<h1>Sign up</h1>
-					<InputBox
-						id="signup-display-name"
-						name="displayName"
-						fieldClassName="signupField"
-						label="Display name"
-						value={signupForm.displayName}
-						onChange={(value) => updateSignupField("displayName", value)}
-						autoComplete="name"
-					/>
 					<InputBox
 						id="signup-email"
 						name="email"
@@ -195,6 +186,7 @@ export default function SignupPage({ onSignup }) {
 					method="post"
 					action="/users/signup-confirmation/confirm"
 					onSubmit={submitSignupConfirm}
+					noValidate
 				>
 					<h1>Confirm email</h1>
 					<p className="resetEmailNotice">

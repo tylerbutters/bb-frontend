@@ -174,6 +174,7 @@ export default function ForgotPasswordPage() {
 					method="post"
 					action="/login/password-reset/confirm"
 					onSubmit={submitPasswordResetConfirm}
+					noValidate
 				>
 					<h1>Reset Password</h1>
 
@@ -257,6 +258,7 @@ export default function ForgotPasswordPage() {
 				method="post"
 				action="/login/password-reset/request"
 				onSubmit={submitPasswordResetRequest}
+				noValidate
 			>
 				<h1>Reset Password</h1>
 

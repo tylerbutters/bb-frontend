@@ -3,7 +3,6 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom"
 import { LogOut } from "lucide-react"
 import "../auth/AuthPage.css"
 import "./AccountPage.css"
-import DisplayNameSection from "./DisplayNameSection"
 import EmailSection from "./EmailSection"
 import PasswordSection from "./PasswordSection"
 import DeleteAccountSection from "./DeleteAccountSection"
@@ -43,7 +42,6 @@ export default function AccountPage({ currentUser, onAccountDelete, onLogout, on
 
 				<div className="accountGrid">
 					<div className="accountGridColumn">
-						<DisplayNameSection currentUser={currentUser} onUserUpdate={onUserUpdate} />
 						<EmailSection currentUser={currentUser} onUserUpdate={onUserUpdate} />
 						<DeleteAccountSection currentUser={currentUser} onAccountDelete={onAccountDelete} />
 					</div>

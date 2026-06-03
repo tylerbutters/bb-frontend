@@ -59,7 +59,7 @@ export default function EmailSection({ currentUser, onUserUpdate }) {
 	}
 
 	return (
-		<form className="accountSection" aria-label="Email settings" onSubmit={submitEmail}>
+		<form className="accountSection" aria-label="Email settings" onSubmit={submitEmail} noValidate>
 			<AccountSectionHeader
 				headingId="email-settings-heading"
 				icon={Mail}
