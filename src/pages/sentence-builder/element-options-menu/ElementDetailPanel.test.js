@@ -1,4 +1,5 @@
-import { getElementDetail } from "./ElementDetailPanel"
+import { render, screen } from "@testing-library/react"
+import ElementDetailPanel, { getElementDetail } from "./ElementDetailPanel"
 
 describe("getElementDetail", () => {
 	test("returns conjugation details for conjugation menu options", () => {
@@ -39,5 +40,13 @@ describe("getElementDetail", () => {
 
 	test("returns no detail for unsupported options", () => {
 		expect(getElementDetail({ elementType: "punctuation", text: "。" })).toBeNull()
+	})
+
+	test("shows conjugation example arrows as right arrows", () => {
+		render(<ElementDetailPanel element={{ text: "ない" }} isOpen />)
+
+		expect(screen.getByText("食べる → 食べない")).toBeInTheDocument()
+		expect(screen.queryByText("食べる => 食べない")).not.toBeInTheDocument()
+		expect(screen.queryByText("(食べない)")).not.toBeInTheDocument()
 	})
 })
