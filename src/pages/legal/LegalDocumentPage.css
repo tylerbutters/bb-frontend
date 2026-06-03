@@ -58,8 +58,13 @@
 }
 
 .legalContent strong,
-.legalContent a {
+.legalContent a,
+.legalContent code {
 	color: white;
+}
+
+.legalContent code {
+	font-size: 0.95em;
 }
 
 .legalContent a:hover {

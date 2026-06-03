@@ -1,6 +1,11 @@
+import { useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
 import { legalDocuments } from "./legalDocuments"
 import "./LegalDocumentPage.css"
+
+function publicDocumentPath(path) {
+	return `${process.env.PUBLIC_URL || ""}${path}`
+}
 
 function slugify(text) {
 	return text
@@ -10,11 +15,17 @@ function slugify(text) {
 }
 
 function renderInlineText(text) {
-	const parts = text.split(/(\*\*[^*]+\*\*|https?:\/\/[^\s)]+)/g).filter(Boolean)
+	const parts = text
+		.split(/(\*\*[^*]+\*\*|`[^`]+`|https?:\/\/[^\s)]+)/g)
+		.filter(Boolean)
 
 	return parts.map((part, index) => {
 		if (part.startsWith("**") && part.endsWith("**")) {
 			return <strong key={index}>{part.slice(2, -2)}</strong>
+		}
+
+		if (part.startsWith("`") && part.endsWith("`")) {
+			return <code key={index}>{part.slice(1, -1)}</code>
 		}
 
 		if (part.startsWith("http://") || part.startsWith("https://")) {
@@ -117,15 +128,64 @@ function LegalBlock({ block, documentKey }) {
 
 export default function LegalDocumentPage({ documentKey }) {
 	const document = legalDocuments[documentKey]
+	const [markdown, setMarkdown] = useState("")
+	const [status, setStatus] = useState("loading")
+
+	useEffect(() => {
+		if (!document) {
+			setMarkdown("")
+			setStatus("missing")
+			return undefined
+		}
+
+		const controller = new AbortController()
+
+		setMarkdown("")
+		setStatus("loading")
+
+		fetch(publicDocumentPath(document.path), {
+			signal: controller.signal,
+		})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(`Legal document request failed with ${response.status}`)
+				}
+
+				return response.text()
+			})
+			.then((text) => {
+				setMarkdown(text)
+				setStatus("ready")
+			})
+			.catch((error) => {
+				if (error.name === "AbortError") return
+
+				setMarkdown("")
+				setStatus("error")
+			})
+
+		return () => controller.abort()
+	}, [document])
 
 	if (!document) return <Navigate to="/" replace />
 
+	const isLoading = status === "loading"
+	const hasError = status === "error"
+
 	return (
 		<div className="app legalPage">
-			<main className="legalContent" aria-labelledby={`${documentKey}-heading`}>
-				{createBlocks(document).map((block, index) => (
-					<LegalBlock block={block} documentKey={documentKey} key={index} />
-				))}
+			<main
+				className="legalContent"
+				aria-busy={isLoading ? "true" : undefined}
+				aria-labelledby={`${documentKey}-heading`}
+			>
+				{isLoading && <p>Loading legal document...</p>}
+				{hasError && <p role="alert">Legal document could not be loaded.</p>}
+				{!isLoading &&
+					!hasError &&
+					createBlocks(markdown).map((block, index) => (
+						<LegalBlock block={block} documentKey={documentKey} key={index} />
+					))}
 			</main>
 		</div>
 	)
