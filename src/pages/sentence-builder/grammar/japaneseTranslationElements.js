@@ -95,8 +95,42 @@ function matchesTranslationWord(element, word) {
 	if (element.text === kanji && element.textKana === kana) return true
 	if (element.text === kanji && !element.textKana && kanji === kana) return true
 	if (element.text === kana && element.textKana === kana) return true
+	// JMdict marks some common kanji spellings as "usually kana", so the processed
+	// element keeps only the kana even when generated prompts include the kanji form.
+	if (element.text === kana && !element.textKana) return true
 
 	return false
+}
+
+function getInflectableEndingLength(element) {
+	if (!["verb", "adjective"].includes(element?.elementType)) return 0
+	if (!element.ending) return 0
+
+	return element.ending.length
+}
+
+function applyPromptSurface(element, word) {
+	const kanji = normalizeValue(word?.kanji)
+	const kana = normalizeValue(word?.kana)
+
+	if (!kanji || !kana) return element
+
+	const textKana = kanji === kana ? element.textKana : kana
+	const promptElement = {
+		...element,
+		text: kanji,
+		textKana,
+	}
+	const endingLength = getInflectableEndingLength(promptElement)
+
+	if (!endingLength) return promptElement
+
+	return {
+		...promptElement,
+		stem: kanji.slice(0, -endingLength),
+		stemKana: textKana ? textKana.slice(0, -endingLength) : element.stemKana,
+		ending: kanji.slice(-endingLength),
+	}
 }
 
 function lookupTranslationElement(word) {
@@ -385,15 +419,16 @@ function canAttachPromptParticle(element) {
 export function japaneseTranslationToElements(japaneseTranslation = []) {
 	if (!Array.isArray(japaneseTranslation)) return []
 	// alert(JSON.stringify(japaneseTranslation))
-	return japaneseTranslation
-		.map((word) => {
-			const match = lookupTranslationElement(word)
-			if (!match) return null
+		return japaneseTranslation
+			.map((word) => {
+				const match = lookupTranslationElement(word)
+				if (!match) return null
 
-			const elementWithForm = applyPromptForm(match, word.form)
-			const elementWithConjugation = applyPromptConjugation(elementWithForm, word.conjugation)
+				const elementWithPromptSurface = applyPromptSurface(match, word)
+				const elementWithForm = applyPromptForm(elementWithPromptSurface, word.form)
+				const elementWithConjugation = applyPromptConjugation(elementWithForm, word.conjugation)
 
-			return normalizeElement(attachParticle(elementWithConjugation, word.particle))
+				return normalizeElement(attachParticle(elementWithConjugation, word.particle))
 		})
 		.filter(Boolean)
 }

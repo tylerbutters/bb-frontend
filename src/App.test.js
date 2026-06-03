@@ -1594,11 +1594,8 @@ test("shows locally recorded stats when backend stats are unavailable", async ()
 	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
 	fireEvent.click(screen.getByRole("button", { name: "Login" }))
 
-	await waitFor(() => {
-		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
-	})
-
-	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
+		const translateTab = await screen.findByRole("tab", { name: "Translate" })
+		fireEvent.click(translateTab)
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
