@@ -45,6 +45,10 @@ export default function SentenceBuilderPage({ currentUser, onAuthExpired }) {
 		return japaneseTranslationToElements(gamePromptData.japaneseTranslation)
 	}, [gamePromptData, selectedGameMode])
 	const hasGeneratedPromptElements = generatedPromptElements.length > 0
+	const generatedPromptWorkspacePermissions = getGeneratedPromptWorkspacePermissions({
+		generatedElementMode,
+		hasGeneratedPromptElements,
+	})
 
 	useEffect(() => {
 		document.documentElement.classList.add("sentenceBuilderDocument")
@@ -138,8 +142,10 @@ export default function SentenceBuilderPage({ currentUser, onAuthExpired }) {
 				clearKey={sentenceClearRequestCount}
 				generatedElements={generatedPromptElements}
 				generatedElementMode={generatedElementMode}
-				canAddElements={!hasGeneratedPromptElements}
-				canDragGeneratedElements={generatedElementMode === "reorder"}
+				canAddElements={generatedPromptWorkspacePermissions.canAddElements}
+				canDragGeneratedElements={
+					generatedPromptWorkspacePermissions.canDragGeneratedElements
+				}
 				onSentenceChange={handleSentenceChange}
 			/>
 			<GameControls
@@ -191,6 +197,19 @@ function shouldPopulatePromptElements(gameMode, promptData) {
 	if (!PROMPT_ELEMENT_GAME_MODES.has(generatedGameMode)) return false
 
 	return Array.isArray(promptData?.japaneseTranslation)
+}
+
+export function getGeneratedPromptWorkspacePermissions({
+	generatedElementMode,
+	hasGeneratedPromptElements,
+}) {
+	const canFreelyEditGeneratedSentence = generatedElementMode === "fix sentence"
+
+	return {
+		canAddElements: !hasGeneratedPromptElements || canFreelyEditGeneratedSentence,
+		canDragGeneratedElements:
+			generatedElementMode === "reorder" || canFreelyEditGeneratedSentence,
+	}
 }
 
 function resolveHistoryGameMode(selectedGameMode, generatedGameMode) {

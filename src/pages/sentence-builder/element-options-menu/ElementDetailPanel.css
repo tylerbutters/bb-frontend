@@ -143,11 +143,9 @@
 }
 
 .elementDetailTranslations,
-.elementDetailConstructionFormula,
-.elementDetailExamples {
+.elementDetailConstructionFormula {
 	color: var(--color-white-border-hover);
 	font-size: 14px;
-	line-height: 1.4;
 }
 
 .elementDetailConstructions {
@@ -163,8 +161,13 @@
 .elementDetailExamples {
 	margin-top: 3px;
 	color: var(--color-grey-text);
+	font-size: 14px;
 }
 
 .elementDetailExampleTranslation {
 	font-style: italic;
+}
+
+.elementDetailConjugationEnding {
+	font-weight: 800;
 }

@@ -28,7 +28,11 @@ export default function Element({
 		generatedElementMode === "particles" ||
 		generatedElementMode === "fix sentence"
 	const canEditConjugation =
-		!isGeneratedPromptElement || generatedElementMode === "conjugations"
+		!isGeneratedPromptElement ||
+		generatedElementMode === "conjugations" ||
+		generatedElementMode === "fix sentence"
+	const canDeleteBaseElement =
+		!isGeneratedPromptElement || generatedElementMode === "fix sentence"
 	const canEditAffixes = !isGeneratedPromptElement
 	const canEditCounter = !isGeneratedPromptElement
 	const particleOptions = useMemo(() => {
@@ -116,7 +120,7 @@ export default function Element({
 					elementOptions={defaultElements}
 					onSelect={updateBaseElement}
 					deleteElement={() => setIsClosing(true)}
-					hasDelete={!isGeneratedPromptElement}
+					hasDelete={canDeleteBaseElement}
 					menuTitle="Word"
 				/>
 			)}

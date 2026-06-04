@@ -9,22 +9,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + る",
-				examples: ["食べる → 食べる"],
+				examples: [
+					{ base: "食べる", conjugation: "食べる" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B3",
-				examples: ["読む → 読む", "書く → 書く"],
+				examples: [
+					{ base: "読む", conjugation: "読む" },
+					{ base: "書く", conjugation: "書く" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "する",
-				examples: ["する → する"],
+				examples: [
+					{ base: "する", conjugation: "する" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "くる",
-				examples: ["くる → くる"],
+				examples: [
+					{ base: "くる", conjugation: "くる" },
+				],
 			},
 		],
 	},
@@ -38,22 +47,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + ない",
-				examples: ["食べる → 食べない"],
+				examples: [
+					{ base: "食べる", conjugation: "食べない" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B1 + ない",
-				examples: ["読む → 読まない", "書く → 書かない"],
+				examples: [
+					{ base: "読む", conjugation: "読まない" },
+					{ base: "書く", conjugation: "書かない" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "しない",
-				examples: ["する → しない"],
+				examples: [
+					{ base: "する", conjugation: "しない" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "こない",
-				examples: ["くる → こない"],
+				examples: [
+					{ base: "くる", conjugation: "こない" },
+				],
 			},
 		],
 	},
@@ -67,22 +85,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + た",
-				examples: ["食べる → 食べた"],
+				examples: [
+					{ base: "食べる", conjugation: "食べた" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "Bta",
-				examples: ["読む → 読んだ", "書く → 書いた"],
+				examples: [
+					{ base: "読む", conjugation: "読んだ" },
+					{ base: "書く", conjugation: "書いた" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "した",
-				examples: ["する → した"],
+				examples: [
+					{ base: "する", conjugation: "した" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "きた",
-				examples: ["くる → きた"],
+				examples: [
+					{ base: "くる", conjugation: "きた" },
+				],
 			},
 		],
 	},
@@ -96,22 +123,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + なかった",
-				examples: ["食べる → 食べなかった"],
+				examples: [
+					{ base: "食べる", conjugation: "食べなかった" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B1 + なかった",
-				examples: ["読む → 読まなかった", "書く → 書かなかった"],
+				examples: [
+					{ base: "読む", conjugation: "読まなかった" },
+					{ base: "書く", conjugation: "書かなかった" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "しなかった",
-				examples: ["する → しなかった"],
+				examples: [
+					{ base: "する", conjugation: "しなかった" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "こなかった",
-				examples: ["くる → こなかった"],
+				examples: [
+					{ base: "くる", conjugation: "こなかった" },
+				],
 			},
 		],
 	},
@@ -125,22 +161,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + て",
-				examples: ["食べる → 食べて"],
+				examples: [
+					{ base: "食べる", conjugation: "食べて" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "Bte",
-				examples: ["読む → 読んで", "書く → 書いて"],
+				examples: [
+					{ base: "読む", conjugation: "読んで" },
+					{ base: "書く", conjugation: "書いて" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "して",
-				examples: ["する → して"],
+				examples: [
+					{ base: "する", conjugation: "して" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "きて",
-				examples: ["くる → きて"],
+				examples: [
+					{ base: "くる", conjugation: "きて" },
+				],
 			},
 		],
 	},
@@ -154,22 +199,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + たい",
-				examples: ["食べる → 食べたい"],
+				examples: [
+					{ base: "食べる", conjugation: "食べたい" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B2 + たい",
-				examples: ["読む → 読みたい", "書く → 書きたい"],
+				examples: [
+					{ base: "読む", conjugation: "読みたい" },
+					{ base: "書く", conjugation: "書きたい" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "したい",
-				examples: ["する → したい"],
+				examples: [
+					{ base: "する", conjugation: "したい" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "きたい",
-				examples: ["くる → きたい"],
+				examples: [
+					{ base: "くる", conjugation: "きたい" },
+				],
 			},
 		],
 	},
@@ -183,22 +237,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + よう",
-				examples: ["食べる → 食べよう"],
+				examples: [
+					{ base: "食べる", conjugation: "食べよう" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B5 + う",
-				examples: ["読む → 読もう", "書く → 書こう"],
+				examples: [
+					{ base: "読む", conjugation: "読もう" },
+					{ base: "書く", conjugation: "書こう" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "しよう",
-				examples: ["する → しよう"],
+				examples: [
+					{ base: "する", conjugation: "しよう" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "こよう",
-				examples: ["くる → こよう"],
+				examples: [
+					{ base: "くる", conjugation: "こよう" },
+				],
 			},
 		],
 	},
@@ -212,22 +275,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + ろ",
-				examples: ["食べる → 食べろ"],
+				examples: [
+					{ base: "食べる", conjugation: "食べろ" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B4",
-				examples: ["読む → 読め", "書く → 書け"],
+				examples: [
+					{ base: "読む", conjugation: "読め" },
+					{ base: "書く", conjugation: "書け" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "しろ",
-				examples: ["する → しろ"],
+				examples: [
+					{ base: "する", conjugation: "しろ" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "こい",
-				examples: ["くる → こい"],
+				examples: [
+					{ base: "くる", conjugation: "こい" },
+				],
 			},
 		],
 	},
@@ -241,22 +313,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "dictionary form + な",
-				examples: ["食べる → 食べるな"],
+				examples: [
+					{ base: "食べる", conjugation: "食べるな" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "dictionary form + な",
-				examples: ["読む → 読むな", "書く → 書くな"],
+				examples: [
+					{ base: "読む", conjugation: "読むな" },
+					{ base: "書く", conjugation: "書くな" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "するな",
-				examples: ["する → するな"],
+				examples: [
+					{ base: "する", conjugation: "するな" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "くるな",
-				examples: ["くる → くるな"],
+				examples: [
+					{ base: "くる", conjugation: "くるな" },
+				],
 			},
 		],
 	},
@@ -270,22 +351,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + られる",
-				examples: ["食べる → 食べられる"],
+				examples: [
+					{ base: "食べる", conjugation: "食べられる" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B4 + る",
-				examples: ["読む → 読める", "書く → 書ける"],
+				examples: [
+					{ base: "読む", conjugation: "読める" },
+					{ base: "書く", conjugation: "書ける" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "できる",
-				examples: ["する → できる"],
+				examples: [
+					{ base: "する", conjugation: "できる" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "こられる",
-				examples: ["くる → こられる"],
+				examples: [
+					{ base: "くる", conjugation: "こられる" },
+				],
 			},
 		],
 	},
@@ -299,22 +389,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + られる",
-				examples: ["食べる → 食べられる"],
+				examples: [
+					{ base: "食べる", conjugation: "食べられる" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B1 + れる",
-				examples: ["読む → 読まれる", "書く → 書かれる"],
+				examples: [
+					{ base: "読む", conjugation: "読まれる" },
+					{ base: "書く", conjugation: "書かれる" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "される",
-				examples: ["する → される"],
+				examples: [
+					{ base: "する", conjugation: "される" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "こられる",
-				examples: ["くる → こられる"],
+				examples: [
+					{ base: "くる", conjugation: "こられる" },
+				],
 			},
 		],
 	},
@@ -328,22 +427,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + させる",
-				examples: ["食べる → 食べさせる"],
+				examples: [
+					{ base: "食べる", conjugation: "食べさせる" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B1 + せる",
-				examples: ["読む → 読ませる", "書く → 書かせる"],
+				examples: [
+					{ base: "読む", conjugation: "読ませる" },
+					{ base: "書く", conjugation: "書かせる" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "させる",
-				examples: ["する → させる"],
+				examples: [
+					{ base: "する", conjugation: "させる" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "こさせる",
-				examples: ["くる → こさせる"],
+				examples: [
+					{ base: "くる", conjugation: "こさせる" },
+				],
 			},
 		],
 	},
@@ -357,22 +465,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + れば",
-				examples: ["食べる → 食べれば"],
+				examples: [
+					{ base: "食べる", conjugation: "食べれば" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B4 + ば",
-				examples: ["読む → 読めば", "書く → 書けば"],
+				examples: [
+					{ base: "読む", conjugation: "読めば" },
+					{ base: "書く", conjugation: "書けば" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "すれば",
-				examples: ["する → すれば"],
+				examples: [
+					{ base: "する", conjugation: "すれば" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "くれば",
-				examples: ["くる → くれば"],
+				examples: [
+					{ base: "くる", conjugation: "くれば" },
+				],
 			},
 		],
 	},
@@ -386,22 +503,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + たら",
-				examples: ["食べる → 食べたら"],
+				examples: [
+					{ base: "食べる", conjugation: "食べたら" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "Bta + ら",
-				examples: ["読む → 読んだら", "書く → 書いたら"],
+				examples: [
+					{ base: "読む", conjugation: "読んだら" },
+					{ base: "書く", conjugation: "書いたら" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "したら",
-				examples: ["する → したら"],
+				examples: [
+					{ base: "する", conjugation: "したら" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "きたら",
-				examples: ["くる → きたら"],
+				examples: [
+					{ base: "くる", conjugation: "きたら" },
+				],
 			},
 		],
 	},
@@ -415,22 +541,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + ながら",
-				examples: ["食べる → 食べながら"],
+				examples: [
+					{ base: "食べる", conjugation: "食べながら" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B2 + ながら",
-				examples: ["読む → 読みながら", "書く → 書きながら"],
+				examples: [
+					{ base: "読む", conjugation: "読みながら" },
+					{ base: "書く", conjugation: "書きながら" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "しながら",
-				examples: ["する → しながら"],
+				examples: [
+					{ base: "する", conjugation: "しながら" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "きながら",
-				examples: ["くる → きながら"],
+				examples: [
+					{ base: "くる", conjugation: "きながら" },
+				],
 			},
 		],
 	},
@@ -444,22 +579,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + すぎる",
-				examples: ["食べる → 食べすぎる"],
+				examples: [
+					{ base: "食べる", conjugation: "食べすぎる" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B2 + すぎる",
-				examples: ["読む → 読みすぎる", "書く → 書きすぎる"],
+				examples: [
+					{ base: "読む", conjugation: "読みすぎる" },
+					{ base: "書く", conjugation: "書きすぎる" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "しすぎる",
-				examples: ["する → しすぎる"],
+				examples: [
+					{ base: "する", conjugation: "しすぎる" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "きすぎる",
-				examples: ["くる → きすぎる"],
+				examples: [
+					{ base: "くる", conjugation: "きすぎる" },
+				],
 			},
 		],
 	},
@@ -473,22 +617,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + やすい",
-				examples: ["食べる → 食べやすい"],
+				examples: [
+					{ base: "食べる", conjugation: "食べやすい" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B2 + やすい",
-				examples: ["読む → 読みやすい", "書く → 書きやすい"],
+				examples: [
+					{ base: "読む", conjugation: "読みやすい" },
+					{ base: "書く", conjugation: "書きやすい" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "しやすい",
-				examples: ["する → しやすい"],
+				examples: [
+					{ base: "する", conjugation: "しやすい" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "きやすい",
-				examples: ["くる → きやすい"],
+				examples: [
+					{ base: "くる", conjugation: "きやすい" },
+				],
 			},
 		],
 	},
@@ -502,22 +655,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + にくい",
-				examples: ["食べる → 食べにくい"],
+				examples: [
+					{ base: "食べる", conjugation: "食べにくい" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B2 + にくい",
-				examples: ["読む → 読みにくい", "書く → 書きにくい"],
+				examples: [
+					{ base: "読む", conjugation: "読みにくい" },
+					{ base: "書く", conjugation: "書きにくい" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "しにくい",
-				examples: ["する → しにくい"],
+				examples: [
+					{ base: "する", conjugation: "しにくい" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "きにくい",
-				examples: ["くる → きにくい"],
+				examples: [
+					{ base: "くる", conjugation: "きにくい" },
+				],
 			},
 		],
 	},
@@ -531,22 +693,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + 方",
-				examples: ["食べる → 食べ方"],
+				examples: [
+					{ base: "食べる", conjugation: "食べ方" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B2 + 方",
-				examples: ["読む → 読み方", "書く → 書き方"],
+				examples: [
+					{ base: "読む", conjugation: "読み方" },
+					{ base: "書く", conjugation: "書き方" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "し方",
-				examples: ["する → し方"],
+				examples: [
+					{ base: "する", conjugation: "し方" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "き方",
-				examples: ["くる → き方"],
+				examples: [
+					{ base: "くる", conjugation: "き方" },
+				],
 			},
 		],
 	},
@@ -560,22 +731,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + ます",
-				examples: ["食べる → 食べます"],
+				examples: [
+					{ base: "食べる", conjugation: "食べます" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B2 + ます",
-				examples: ["読む → 読みます", "書く → 書きます"],
+				examples: [
+					{ base: "読む", conjugation: "読みます" },
+					{ base: "書く", conjugation: "書きます" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "します",
-				examples: ["する → します"],
+				examples: [
+					{ base: "する", conjugation: "します" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "きます",
-				examples: ["くる → きます"],
+				examples: [
+					{ base: "くる", conjugation: "きます" },
+				],
 			},
 		],
 	},
@@ -589,22 +769,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + ません",
-				examples: ["食べる → 食べません"],
+				examples: [
+					{ base: "食べる", conjugation: "食べません" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B2 + ません",
-				examples: ["読む → 読みません", "書く → 書きません"],
+				examples: [
+					{ base: "読む", conjugation: "読みません" },
+					{ base: "書く", conjugation: "書きません" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "しません",
-				examples: ["する → しません"],
+				examples: [
+					{ base: "する", conjugation: "しません" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "きません",
-				examples: ["くる → きません"],
+				examples: [
+					{ base: "くる", conjugation: "きません" },
+				],
 			},
 		],
 	},
@@ -618,22 +807,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + まして",
-				examples: ["食べる → 食べまして"],
+				examples: [
+					{ base: "食べる", conjugation: "食べまして" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B2 + まして",
-				examples: ["読む → 読みまして", "書く → 書きまして"],
+				examples: [
+					{ base: "読む", conjugation: "読みまして" },
+					{ base: "書く", conjugation: "書きまして" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "しまして",
-				examples: ["する → しまして"],
+				examples: [
+					{ base: "する", conjugation: "しまして" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "きまして",
-				examples: ["くる → きまして"],
+				examples: [
+					{ base: "くる", conjugation: "きまして" },
+				],
 			},
 		],
 	},
@@ -647,22 +845,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + ました",
-				examples: ["食べる → 食べました"],
+				examples: [
+					{ base: "食べる", conjugation: "食べました" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B2 + ました",
-				examples: ["読む → 読みました", "書く → 書きました"],
+				examples: [
+					{ base: "読む", conjugation: "読みました" },
+					{ base: "書く", conjugation: "書きました" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "しました",
-				examples: ["する → しました"],
+				examples: [
+					{ base: "する", conjugation: "しました" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "きました",
-				examples: ["くる → きました"],
+				examples: [
+					{ base: "くる", conjugation: "きました" },
+				],
 			},
 		],
 	},
@@ -676,22 +883,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + ましたら",
-				examples: ["食べる → 食べましたら"],
+				examples: [
+					{ base: "食べる", conjugation: "食べましたら" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B2 + ましたら",
-				examples: ["読む → 読みましたら", "書く → 書きましたら"],
+				examples: [
+					{ base: "読む", conjugation: "読みましたら" },
+					{ base: "書く", conjugation: "書きましたら" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "しましたら",
-				examples: ["する → しましたら"],
+				examples: [
+					{ base: "する", conjugation: "しましたら" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "きましたら",
-				examples: ["くる → きましたら"],
+				examples: [
+					{ base: "くる", conjugation: "きましたら" },
+				],
 			},
 		],
 	},
@@ -705,22 +921,31 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + ましょう",
-				examples: ["食べる → 食べましょう"],
+				examples: [
+					{ base: "食べる", conjugation: "食べましょう" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B2 + ましょう",
-				examples: ["読む → 読みましょう", "書く → 書きましょう"],
+				examples: [
+					{ base: "読む", conjugation: "読みましょう" },
+					{ base: "書く", conjugation: "書きましょう" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "しましょう",
-				examples: ["する → しましょう"],
+				examples: [
+					{ base: "する", conjugation: "しましょう" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "きましょう",
-				examples: ["くる → きましょう"],
+				examples: [
+					{ base: "くる", conjugation: "きましょう" },
+				],
 			},
 		],
 	},
@@ -734,7 +959,9 @@ export const conjugationDetails = [
 			{
 				label: "I adjective",
 				construction: "stem + くない",
-				examples: ["高い → 高くない"],
+				examples: [
+					{ base: "高い", conjugation: "高くない" },
+				],
 			},
 		],
 	},
@@ -748,7 +975,9 @@ export const conjugationDetails = [
 			{
 				label: "I adjective",
 				construction: "stem + ければ",
-				examples: ["高い → 高ければ"],
+				examples: [
+					{ base: "高い", conjugation: "高ければ" },
+				],
 			},
 		],
 	},
@@ -762,7 +991,9 @@ export const conjugationDetails = [
 			{
 				label: "I adjective",
 				construction: "stem + い",
-				examples: ["高い → 高い"],
+				examples: [
+					{ base: "高い", conjugation: "高い" },
+				],
 			},
 		],
 	},
@@ -776,7 +1007,9 @@ export const conjugationDetails = [
 			{
 				label: "I adjective",
 				construction: "stem + かった",
-				examples: ["高い → 高かった"],
+				examples: [
+					{ base: "高い", conjugation: "高かった" },
+				],
 			},
 		],
 	},
@@ -790,7 +1023,9 @@ export const conjugationDetails = [
 			{
 				label: "I adjective",
 				construction: "stem + くて",
-				examples: ["高い → 高くて"],
+				examples: [
+					{ base: "高い", conjugation: "高くて" },
+				],
 			},
 		],
 	},
@@ -804,7 +1039,9 @@ export const conjugationDetails = [
 			{
 				label: "I adjective",
 				construction: "stem + く",
-				examples: ["高い → 高く"],
+				examples: [
+					{ base: "高い", conjugation: "高く" },
+				],
 			},
 		],
 	},
@@ -818,27 +1055,38 @@ export const conjugationDetails = [
 			{
 				label: "Ichidan",
 				construction: "stem + そう",
-				examples: ["食べる → 食べそう"],
+				examples: [
+					{ base: "食べる", conjugation: "食べそう" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B2 + そう",
-				examples: ["読む → 読みそう", "書く → 書きそう"],
+				examples: [
+					{ base: "読む", conjugation: "読みそう" },
+					{ base: "書く", conjugation: "書きそう" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "しそう",
-				examples: ["する → しそう"],
+				examples: [
+					{ base: "する", conjugation: "しそう" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "きそう",
-				examples: ["くる → きそう"],
+				examples: [
+					{ base: "くる", conjugation: "きそう" },
+				],
 			},
 			{
 				label: "I adjective",
 				construction: "stem + そう",
-				examples: ["高い → 高そう"],
+				examples: [
+					{ base: "高い", conjugation: "高そう" },
+				],
 			},
 		],
 	},
@@ -852,7 +1100,9 @@ export const conjugationDetails = [
 			{
 				label: "Copula",
 				construction: "だ",
-				examples: ["だ"],
+				examples: [
+					{ conjugation: "だ" },
+				],
 			},
 		],
 	},
@@ -866,7 +1116,9 @@ export const conjugationDetails = [
 			{
 				label: "Copula",
 				construction: "だった + ら",
-				examples: ["だったら"],
+				examples: [
+					{ conjugation: "だったら" },
+				],
 			},
 		],
 	},
@@ -880,7 +1132,9 @@ export const conjugationDetails = [
 			{
 				label: "Copula",
 				construction: "だった",
-				examples: ["だった"],
+				examples: [
+					{ conjugation: "だった" },
+				],
 			},
 		],
 	},
@@ -894,7 +1148,9 @@ export const conjugationDetails = [
 			{
 				label: "Copula",
 				construction: "で",
-				examples: ["で"],
+				examples: [
+					{ conjugation: "で" },
+				],
 			},
 		],
 	},
@@ -908,7 +1164,9 @@ export const conjugationDetails = [
 			{
 				label: "Copula",
 				construction: "です",
-				examples: ["です"],
+				examples: [
+					{ conjugation: "です" },
+				],
 			},
 		],
 	},
@@ -922,7 +1180,9 @@ export const conjugationDetails = [
 			{
 				label: "Copula",
 				construction: "でした + ら",
-				examples: ["でしたら"],
+				examples: [
+					{ conjugation: "でしたら" },
+				],
 			},
 		],
 	},
@@ -936,7 +1196,9 @@ export const conjugationDetails = [
 			{
 				label: "Copula",
 				construction: "でした",
-				examples: ["でした"],
+				examples: [
+					{ conjugation: "でした" },
+				],
 			},
 		],
 	},
@@ -950,7 +1212,9 @@ export const conjugationDetails = [
 			{
 				label: "Copula",
 				construction: "でして",
-				examples: ["でして"],
+				examples: [
+					{ conjugation: "でして" },
+				],
 			},
 		],
 	},
