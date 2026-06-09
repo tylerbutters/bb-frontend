@@ -3,8 +3,12 @@ import adverbs from "../jmdict/processed/adverbs.json"
 import counters from "../jmdict/processed/counters.json"
 import nouns from "../jmdict/processed/nouns.json"
 import verbs from "../jmdict/processed/verbs.json"
-import { conjugations } from "./conjugationData"
-import { getGodanConjugationOptions } from "./conjugationOptions"
+import {
+	findGodanConjugationCategory,
+	getConjugationForm,
+	getFollowUpConjugationOptions,
+	getGodanConjugationOptions,
+} from "./conjugationOptions"
 import normalizeElement from "./normalizeElement"
 
 const dictionaryGroups = {
@@ -170,9 +174,9 @@ function cloneConjugation(conjugation) {
 }
 
 function createPromptConjugation(conjugationText) {
-	const conjugationData = conjugations[conjugationText]
+	const conjugationForm = getConjugationForm(conjugationText)
 
-	if (!conjugationData) {
+	if (!conjugationForm) {
 		return {
 			stem: conjugationText,
 			conjugation: {},
@@ -180,7 +184,7 @@ function createPromptConjugation(conjugationText) {
 	}
 
 	return {
-		...conjugationData,
+		...conjugationForm,
 		conjugation: {},
 	}
 }
@@ -199,17 +203,6 @@ function resolveConjugationChain(conjugationTexts = []) {
 	if (!conjugationText) return {}
 
 	return appendConjugationChain(createPromptConjugation(conjugationText), remainingTexts)
-}
-
-function findGodanConjugationCategory(element, conjugationText) {
-	const conjugationOptions = getGodanConjugationOptions(element)
-
-	return (
-		conjugationOptions.find((category) => category.text === conjugationText) ||
-		conjugationOptions.find((category) =>
-			category.list?.some((conjugation) => conjugation.text === conjugationText),
-		)
-	)
 }
 
 function resolveGodanConjugation(element, conjugationTexts) {
@@ -251,11 +244,7 @@ function isGodanVerb(element) {
 }
 
 function getConjugationOptionsForElement(element) {
-	return (
-		element?.conjugationOptions ||
-		conjugations[`${element?.stem || ""}${element?.ending || ""}`]?.conjugationOptions ||
-		[]
-	)
+	return getFollowUpConjugationOptions(element)
 }
 
 function getGodanCategoryByListText(element, text) {

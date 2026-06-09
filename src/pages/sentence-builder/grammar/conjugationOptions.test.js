@@ -1,5 +1,7 @@
 import {
-	createConjugationFromData,
+	createConjugationFromForm,
+	getConjugationForm,
+	getConjugationOptionsForParent,
 	getGodanConjugationOptions,
 	initializeNestedElement,
 } from "./conjugationOptions"
@@ -90,6 +92,53 @@ describe("getGodanConjugationOptions", () => {
 	})
 })
 
+describe("getConjugationOptionsForParent", () => {
+	test("uses prompt-attached options for generated nested conjugations", () => {
+		const promptOptions = [{ text: "せる" }, { text: "れる" }]
+
+		expect(
+			getConjugationOptionsForParent({
+				stem: "か",
+				conjugationOptions: promptOptions,
+			}),
+		).toBe(promptOptions)
+	})
+
+	test("falls back to the local follow-up options table", () => {
+		expect(
+			getConjugationOptionsForParent({
+				stem: "られ",
+				ending: "る",
+			}),
+		).toEqual(expect.arrayContaining([expect.objectContaining({ text: "た" })]))
+	})
+
+	test("keeps godan options available after the visible ending changes", () => {
+		expect(
+			getConjugationOptionsForParent({
+				elementType: "verb",
+				verbType: "godan-iku",
+				baseEnding: "く",
+				ending: "か",
+			}),
+		).toEqual(expect.arrayContaining([expect.objectContaining({ text: "か" })]))
+	})
+})
+
+describe("getConjugationForm", () => {
+	test("hydrates follow-up options from the named option table", () => {
+		expect(getConjugationForm("られる")).toEqual(
+			expect.objectContaining({
+				stem: "られ",
+				ending: "る",
+				conjugationOptions: expect.arrayContaining([
+					expect.objectContaining({ text: "ない" }),
+				]),
+			}),
+		)
+	})
+})
+
 describe("initializeNestedElement", () => {
 	test("initializes a plain verb with its ending as the first conjugation stem", () => {
 		expect(
@@ -127,10 +176,10 @@ describe("initializeNestedElement", () => {
 	})
 })
 
-describe("createConjugationFromData", () => {
+describe("createConjugationFromForm", () => {
 	test("creates a normalized conjugation object", () => {
 		expect(
-			createConjugationFromData({
+			createConjugationFromForm({
 				conjugationType: "te",
 				stem: "食べて",
 			}),

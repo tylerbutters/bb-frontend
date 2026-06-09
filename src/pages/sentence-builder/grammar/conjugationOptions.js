@@ -1,6 +1,12 @@
-import { godanDefaults, godanRows } from "./conjugationData"
+import {
+	baseOptionsByParentType,
+	conjugationFormByText,
+	followUpOptionsByKey,
+	godanDefaults,
+	godanRows,
+} from "./conjugationData"
 
-const ARU_B1_OPTIONS = godanDefaults.B1.filter((option) => option.text !== "ない")
+const ARU_B1_OPTIONS = godanDefaults.b1.filter((option) => option.text !== "ない")
 
 function getGodanEnding(parentConjugation) {
 	return parentConjugation.verbType === "godan-haru"
@@ -12,68 +18,138 @@ function createGodanCategory(text, list) {
 	return { text, list }
 }
 
+function createGodanB2Category(text) {
+	return createGodanCategory(text, [
+		...godanDefaults.b2,
+		{ text, conjugationType: "aux", detailId: "verb-stem" },
+	])
+}
+
+function createGodanB3Category(text) {
+	return createGodanCategory(text, [{ text, detailId: "verb-non-past" }])
+}
+
+function createGodanTeCategory(text) {
+	return createGodanCategory(text, [{ text, conjugationType: "te", detailId: "verb-te-form" }])
+}
+
+function createGodanPastCategory(text) {
+	return createGodanCategory(text, [{ text, detailId: "verb-past" }])
+}
+
+function createStandardGodanCategories(row) {
+	return [
+		createGodanCategory(row.b1, godanDefaults.b1),
+		createGodanB2Category(row.b2),
+		createGodanB3Category(row.b3),
+		createGodanCategory(row.b4, godanDefaults.b4),
+		createGodanCategory(row.b5, godanDefaults.b5),
+		createGodanTeCategory(row.te),
+		createGodanPastCategory(row.past),
+	]
+}
+
 export function getGodanConjugationOptions(parentConjugation) {
 	const row = godanRows[getGodanEnding(parentConjugation)]
 	if (!row) return []
 
-	const [B1, B2, B3, B4, B5, Bte, Bta] = row
-
 	if (parentConjugation.verbType === "godan-aru") {
 		return [
 			{ text: "ない", replacesParent: true, detailId: "verb-negative" },
-			createGodanCategory(B1, ARU_B1_OPTIONS),
-			createGodanCategory(B2, [
-				...godanDefaults.B2,
-				{ text: B2, conjugationType: "aux", detailId: "verb-stem" },
-			]),
-			createGodanCategory(B3, [{ text: B3, detailId: "verb-non-past" }]),
-			createGodanCategory(B4, godanDefaults.B4),
-			createGodanCategory(B5, godanDefaults.B5),
-			createGodanCategory(Bte, [{ text: Bte, conjugationType: "te", detailId: "verb-te-form" }]),
-			createGodanCategory(Bta, [{ text: Bta, detailId: "verb-past" }]),
+			createGodanCategory(row.b1, ARU_B1_OPTIONS),
+			createGodanB2Category(row.b2),
+			createGodanB3Category(row.b3),
+			createGodanCategory(row.b4, godanDefaults.b4),
+			createGodanCategory(row.b5, godanDefaults.b5),
+			createGodanTeCategory(row.te),
+			createGodanPastCategory(row.past),
 		]
 	}
 
 	if (parentConjugation.verbType === "godan-haru") {
 		return [
-			createGodanCategory(B1, godanDefaults.B1),
-			createGodanCategory("い", [...godanDefaults.B2, { text: "い", detailId: "verb-stem" }]),
-			createGodanCategory(B2, [{ text: B2, conjugationType: "aux", detailId: "verb-stem" }]),
-			createGodanCategory(B3, [{ text: B3, detailId: "verb-non-past" }]),
-			createGodanCategory(B4, godanDefaults.B4),
-			createGodanCategory(B5, godanDefaults.B5),
-			createGodanCategory(Bte, [{ text: Bte, conjugationType: "te", detailId: "verb-te-form" }]),
-			createGodanCategory(Bta, [{ text: Bta, detailId: "verb-past" }]),
+			createGodanCategory(row.b1, godanDefaults.b1),
+			createGodanCategory("い", [...godanDefaults.b2, { text: "い", detailId: "verb-stem" }]),
+			createGodanB2Category(row.b2),
+			createGodanB3Category(row.b3),
+			createGodanCategory(row.b4, godanDefaults.b4),
+			createGodanCategory(row.b5, godanDefaults.b5),
+			createGodanTeCategory(row.te),
+			createGodanPastCategory(row.past),
 		]
 	}
 
 	if (parentConjugation.verbType === "godan-iku") {
 		return [
-			createGodanCategory(B1, godanDefaults.B1),
-			createGodanCategory(B2, [
-				...godanDefaults.B2,
-				{ text: B2, conjugationType: "aux", detailId: "verb-stem" },
-			]),
-			createGodanCategory(B3, [{ text: B3, detailId: "verb-non-past" }]),
-			createGodanCategory(B4, godanDefaults.B4),
-			createGodanCategory(B5, godanDefaults.B5),
-			createGodanCategory("って", [{ text: "って", conjugationType: "te", detailId: "verb-te-form" }]),
-			createGodanCategory("った", [{ text: "った", detailId: "verb-past" }]),
+			createGodanCategory(row.b1, godanDefaults.b1),
+			createGodanB2Category(row.b2),
+			createGodanB3Category(row.b3),
+			createGodanCategory(row.b4, godanDefaults.b4),
+			createGodanCategory(row.b5, godanDefaults.b5),
+			createGodanTeCategory("って"),
+			createGodanPastCategory("った"),
 		]
 	}
 
-	return [
-		createGodanCategory(B1, godanDefaults.B1),
-		createGodanCategory(B2, [
-			...godanDefaults.B2,
-			{ text: B2, conjugationType: "aux", detailId: "verb-stem" },
-		]),
-		createGodanCategory(B3, [{ text: B3, detailId: "verb-non-past" }]),
-		createGodanCategory(B4, godanDefaults.B4),
-		createGodanCategory(B5, godanDefaults.B5),
-		createGodanCategory(Bte, [{ text: Bte, conjugationType: "te", detailId: "verb-te-form" }]),
-		createGodanCategory(Bta, [{ text: Bta, detailId: "verb-past" }]),
-	]
+	return createStandardGodanCategories(row)
+}
+
+export function findGodanConjugationCategory(parentConjugation, text) {
+	return getGodanConjugationOptions(parentConjugation).find(
+		(category) =>
+			category.text === text || category.list?.some((conjugation) => conjugation.text === text),
+	)
+}
+
+function hydrateConjugationForm(form) {
+	if (!form) return null
+
+	const { followUpOptionsKey, ...conjugationForm } = form
+	if (!followUpOptionsKey) return conjugationForm
+
+	// Callers need ready-to-render options, not the compact data-table key.
+	return {
+		...conjugationForm,
+		conjugationOptions: followUpOptionsByKey[followUpOptionsKey] || [],
+	}
+}
+
+export function getConjugationForm(text) {
+	return hydrateConjugationForm(conjugationFormByText[text])
+}
+
+export function getFollowUpConjugationOptions(conjugation) {
+	if (conjugation?.conjugationOptions) return conjugation.conjugationOptions
+
+	const conjugationText = `${conjugation?.stem || ""}${conjugation?.ending || ""}`
+	return getConjugationForm(conjugationText)?.conjugationOptions || []
+}
+
+export function getBaseConjugationOptions(parentConjugation) {
+	if (!parentConjugation) return []
+
+	if (parentConjugation.elementType === "adjective") {
+		if (parentConjugation.adjectiveType === "i-type") return baseOptionsByParentType.iAdjective
+		if (parentConjugation.adjectiveType === "ii") return baseOptionsByParentType.iiAdjective
+		return []
+	}
+
+	if (parentConjugation.elementType === "verb") {
+		if (parentConjugation.verbType?.includes("godan")) {
+			return getGodanConjugationOptions(parentConjugation)
+		}
+
+		return baseOptionsByParentType[parentConjugation.verbType] || []
+	}
+
+	if (parentConjugation.elementType === "desu") return baseOptionsByParentType.desu
+
+	return null
+}
+
+export function getConjugationOptionsForParent(parentConjugation) {
+	const baseOptions = getBaseConjugationOptions(parentConjugation)
+	return baseOptions || getFollowUpConjugationOptions(parentConjugation)
 }
 
 export function initializeNestedElement(element) {
@@ -111,11 +187,11 @@ export function initializeNestedElement(element) {
 	return element
 }
 
-export function createConjugationFromData(conjugationData) {
+export function createConjugationFromForm(conjugationForm = {}) {
 	return {
-		conjugationType: conjugationData.conjugationType,
-		stem: conjugationData.stem || "",
-		ending: conjugationData.ending || "",
+		conjugationType: conjugationForm.conjugationType,
+		stem: conjugationForm.stem || "",
+		ending: conjugationForm.ending || "",
 		conjugation: {},
 	}
 }

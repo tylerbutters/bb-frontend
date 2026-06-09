@@ -1,44 +1,34 @@
-import { conjugations } from "../grammar/conjugationData"
-import { getConjugationOptionsForParent } from "./Conjugation"
+import { getConjugationOptionsForParent } from "../grammar/conjugationOptions"
 
 describe("getConjugationOptionsForParent", () => {
 	test("uses prompt-attached options for generated nested conjugations", () => {
 		const promptOptions = [{ text: "せる" }, { text: "れる" }]
 
 		expect(
-			getConjugationOptionsForParent(
-				{
-					stem: "か",
-					conjugationOptions: promptOptions,
-				},
-				conjugations,
-			),
+			getConjugationOptionsForParent({
+				stem: "か",
+				conjugationOptions: promptOptions,
+			}),
 		).toBe(promptOptions)
 	})
 
 	test("falls back to the local conjugation table", () => {
 		expect(
-			getConjugationOptionsForParent(
-				{
-					stem: "られ",
-					ending: "る",
-				},
-				conjugations,
-			),
+			getConjugationOptionsForParent({
+				stem: "られ",
+				ending: "る",
+			}),
 		).toEqual(expect.arrayContaining([expect.objectContaining({ text: "た" })]))
 	})
 
 	test("keeps godan options available after the visible ending changes", () => {
 		expect(
-			getConjugationOptionsForParent(
-				{
-					elementType: "verb",
-					verbType: "godan-iku",
-					baseEnding: "く",
-					ending: "か",
-				},
-				conjugations,
-			),
+			getConjugationOptionsForParent({
+				elementType: "verb",
+				verbType: "godan-iku",
+				baseEnding: "く",
+				ending: "か",
+			}),
 		).toEqual(expect.arrayContaining([expect.objectContaining({ text: "か" })]))
 	})
 })

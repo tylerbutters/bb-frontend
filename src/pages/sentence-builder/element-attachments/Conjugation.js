@@ -8,61 +8,14 @@ import ConjugationEnding from "./ConjugationEnding"
 import Adjective from "../elements/Adjective"
 import Particle from "./Particle"
 import {
-	createConjugationFromData,
-	getGodanConjugationOptions,
+	createConjugationFromForm,
+	findGodanConjugationCategory,
+	getConjugationForm,
+	getConjugationOptionsForParent,
 	initializeNestedElement,
 } from "../grammar/conjugationOptions"
-import { auxiliaries, conjugations } from "../grammar/conjugationData"
+import { auxiliaries } from "../grammar/conjugationData"
 import { particles } from "../grammar/particleData"
-
-export function getConjugationOptionsForParent(parentConjugation, conjugations) {
-	let conjugationOptions
-
-	switch (parentConjugation.elementType) {
-		case "adjective":
-			switch (parentConjugation.adjectiveType) {
-				case "i-type":
-					conjugationOptions = conjugations["iAdjDefault"]
-					break
-				case "ii":
-					conjugationOptions = conjugations["iiDefault"]
-					break
-				default:
-					conjugationOptions = []
-					break
-			}
-			break
-		case "verb": //is the first conjugation
-			switch (parentConjugation.verbType) {
-				case "suru":
-					conjugationOptions = conjugations["suruDefault"] || []
-					break
-				case "kuru":
-					conjugationOptions = conjugations["kuruDefault"] || []
-					break
-				case "ichidan":
-					conjugationOptions = conjugations["ichidanDefault"] || []
-					break
-				case "kureru":
-					conjugationOptions = conjugations["kureruDefault"] || []
-					break
-				default:
-					conjugationOptions = getGodanConjugationOptions(parentConjugation)
-					break
-			}
-			break
-		case "desu":
-			conjugationOptions = conjugations["desuDefault"]
-			break
-		default:
-			conjugationOptions =
-				parentConjugation.conjugationOptions ||
-				conjugations[`${parentConjugation.stem || ""}${parentConjugation.ending || ""}`]
-					?.conjugationOptions ||
-				[]
-	}
-	return conjugationOptions || []
-}
 
 export default function Conjugation({
 	parentConjugation,
@@ -77,7 +30,7 @@ export default function Conjugation({
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const elementRef = useRef(null)
 	const currentConjugation = parentConjugation?.conjugation
-	const conjugationOptions = getConjugationOptionsForParent(parentConjugation, conjugations)
+	const conjugationOptions = getConjugationOptionsForParent(parentConjugation)
 	const particleOptions = useMemo(
 		() => particles.filter((particle) => particle.attachesTo.includes("te")),
 		[],
@@ -134,10 +87,10 @@ export default function Conjugation({
 			return
 		}
 
-		let conjugationData = conjugations[selectedConjugation.text]
+		let conjugationForm = getConjugationForm(selectedConjugation.text)
 
 		if (selectedConjugation.replacesParent) {
-			if (!conjugationData) {
+			if (!conjugationForm) {
 				alert("Haven't made this conjugation yet")
 				return
 			}
@@ -145,7 +98,7 @@ export default function Conjugation({
 			updateConjugation({
 				...parentConjugation,
 				conjugation: {
-					...createConjugationFromData(conjugationData),
+					...createConjugationFromForm(conjugationForm),
 					replacesParent: true,
 				},
 			})
@@ -154,12 +107,10 @@ export default function Conjugation({
 
 		if (parentConjugation.verbType?.includes("godan")) {
 			const selectedCategory =
-				conjugationOptions.find(
-					(category) => category.text === selectedConjugation.selectedCategoryText,
-				) ||
-				conjugationOptions.find((category) =>
-					category.list?.some((conjugation) => conjugation.text === selectedConjugation.text),
-				)
+				findGodanConjugationCategory(
+					parentConjugation,
+					selectedConjugation.selectedCategoryText,
+				) || findGodanConjugationCategory(parentConjugation, selectedConjugation.text)
 			if (!selectedCategory) return
 			const singleCharacterConjugation = selectedConjugation.text === selectedCategory.text
 
@@ -177,7 +128,7 @@ export default function Conjugation({
 					},
 				})
 			} else {
-				if (!conjugationData) {
+				if (!conjugationForm) {
 					alert("Haven't made this conjugation yet")
 					return
 				}
@@ -186,23 +137,23 @@ export default function Conjugation({
 					...parentConjugation,
 					baseEnding: parentConjugation.baseEnding || parentConjugation.ending,
 					ending: selectedCategory.text,
-					conjugation: createConjugationFromData(conjugationData),
+					conjugation: createConjugationFromForm(conjugationForm),
 				})
 			}
 		} else {
-			if (!conjugationData) {
+			if (!conjugationForm) {
 				alert("Haven't made this conjugation yet")
 				return
 			}
 			//if its ichidan ru
 			if (selectedConjugation.text === "る") {
-				conjugationData = conjugations["ichidanDefault"]
+				conjugationForm = {}
 			}
 
 			// //if its an te verb or b2
 			updateConjugation({
 				...parentConjugation,
-				conjugation: createConjugationFromData(conjugationData),
+				conjugation: createConjugationFromForm(conjugationForm),
 			})
 		}
 	}
