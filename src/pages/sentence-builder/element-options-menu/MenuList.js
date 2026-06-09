@@ -12,7 +12,8 @@ export default function MenuList({
 	onHoverOption,
 	onLeaveOptions,
 	detailSource,
-	selectedCategory,
+	categoryText,
+	selectedOptionText,
 }) {
 	const [searchText, setSearchText] = useState("")
 	const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
@@ -60,7 +61,7 @@ export default function MenuList({
 	function showOptionDetail(e, element) {
 		const rect = e.currentTarget.getBoundingClientRect()
 
-		onHoverOption?.(element, detailSource, selectedCategory, {
+		onHoverOption?.(element, detailSource, categoryText, {
 			top: rect.top,
 			right: rect.right,
 			bottom: rect.bottom,
@@ -92,9 +93,12 @@ export default function MenuList({
 					<button
 						type="button"
 						key={index}
-						className={`elementsMenuButton ${
-							selectedCategory === element?.text && "selectedElementsMenuButton"
-						}`}
+						className={[
+							"elementsMenuButton",
+							selectedOptionText === element?.text ? "selectedElementsMenuButton" : "",
+						]
+							.filter(Boolean)
+							.join(" ")}
 						onClick={() => onSelectOption(element)}
 						onFocus={(e) => showOptionDetail(e, element)}
 						onMouseEnter={(e) => showOptionDetail(e, element)}

@@ -62,7 +62,7 @@ describe("getGodanConjugationOptions", () => {
 				{ text: "ない", detailId: "verb-negative" },
 				{ text: "れる", detailId: "verb-passive" },
 				{ text: "せる", detailId: "verb-causative" },
-				{ text: "ず" },
+				{ text: "ず", detailId: "verb-zu-negative" },
 			],
 		})
 		expect(findCategory(options, "った")).toEqual({

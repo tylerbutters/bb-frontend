@@ -358,7 +358,7 @@ export default function ElementsMenu({
 			<MenuList
 				hasSearch={selectedCategory === "Punctuation" ? false : secondHasSearch}
 				elementOptions={secondaryElementOptions}
-				selectedCategory={selectedCategory}
+				categoryText={selectedCategory}
 				detailSource="secondary"
 				onHoverOption={showActiveDetail}
 				onLeaveOptions={clearActiveDetail}
@@ -371,7 +371,8 @@ export default function ElementsMenu({
 			<MenuList
 				hasSearch={hasSearch}
 				elementOptions={elementOptions}
-				selectedCategory={selectedCategory}
+				categoryText={selectedCategory}
+				selectedOptionText={selectedCategory}
 				detailSource="primary"
 				onHoverOption={showActiveDetail}
 				onLeaveOptions={clearActiveDetail}

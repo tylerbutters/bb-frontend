@@ -58,6 +58,64 @@ export const conjugationDetails = [
 		],
 	},
 	{
+		id: "verb-negative-te-form",
+		type: "Verb Conjugation",
+		grammaticalName: "Negative te form",
+		englishTranslation: "Without doing",
+		optionTexts: ["ないで", "しないで", "こないで"],
+		constructions: [
+			{
+				label: "Ichidan",
+				construction: "stem + ないで",
+				examples: ["食べる => 食べないで"],
+			},
+			{
+				label: "Godan",
+				construction: "B1 + ないで",
+				examples: ["読む => 読まないで", "書く => 書かないで"],
+			},
+			{
+				label: "Suru",
+				construction: "しないで",
+				examples: ["する => しないで"],
+			},
+			{
+				label: "Kuru",
+				construction: "こないで",
+				examples: ["くる => こないで"],
+			},
+		],
+	},
+	{
+		id: "verb-zu-negative",
+		type: "Verb Conjugation",
+		grammaticalName: "Zu negative",
+		englishTranslation: "Without doing / not doing",
+		optionTexts: ["ず", "せず", "こず"],
+		constructions: [
+			{
+				label: "Ichidan",
+				construction: "stem + ず",
+				examples: ["食べる => 食べず"],
+			},
+			{
+				label: "Godan",
+				construction: "B1 + ず",
+				examples: ["読む => 読まず", "書く => 書かず"],
+			},
+			{
+				label: "Suru",
+				construction: "せず",
+				examples: ["する => せず"],
+			},
+			{
+				label: "Kuru",
+				construction: "こず",
+				examples: ["くる => こず"],
+			},
+		],
+	},
+	{
 		id: "verb-past",
 		type: "Verb Conjugation",
 		grammaticalName: "Past",
@@ -83,6 +141,35 @@ export const conjugationDetails = [
 				label: "Kuru",
 				construction: "きた",
 				examples: ["くる => きた"],
+			},
+		],
+	},
+	{
+		id: "verb-tari-form",
+		type: "Verb Conjugation",
+		grammaticalName: "Tari form",
+		englishTranslation: "Do things like",
+		optionTexts: ["たり", "したり", "きたり"],
+		constructions: [
+			{
+				label: "Ichidan",
+				construction: "stem + たり",
+				examples: ["食べる => 食べたり"],
+			},
+			{
+				label: "Godan",
+				construction: "Bta + り",
+				examples: ["読む => 読んだり", "書く => 書いたり"],
+			},
+			{
+				label: "Suru",
+				construction: "したり",
+				examples: ["する => したり"],
+			},
+			{
+				label: "Kuru",
+				construction: "きたり",
+				examples: ["くる => きたり"],
 			},
 		],
 	},

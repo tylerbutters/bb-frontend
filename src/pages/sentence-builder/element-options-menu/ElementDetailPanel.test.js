@@ -10,6 +10,24 @@ describe("getElementDetail", () => {
 		})
 	})
 
+	test("returns conjugation details for negative te, tari, and zu options", () => {
+		expect(getElementDetail({ text: "ないで", detailId: "verb-negative-te-form" })).toMatchObject({
+			kind: "conjugation",
+			grammaticalName: "Negative te form",
+			englishTranslation: "Without doing",
+		})
+		expect(getElementDetail({ text: "たり", detailId: "verb-tari-form" })).toMatchObject({
+			kind: "conjugation",
+			grammaticalName: "Tari form",
+			englishTranslation: "Do things like",
+		})
+		expect(getElementDetail({ text: "ず", detailId: "verb-zu-negative" })).toMatchObject({
+			kind: "conjugation",
+			grammaticalName: "Zu negative",
+			englishTranslation: "Without doing / not doing",
+		})
+	})
+
 	test("formats vocabulary details from processed JMdict entries", () => {
 		expect(
 			getElementDetail({

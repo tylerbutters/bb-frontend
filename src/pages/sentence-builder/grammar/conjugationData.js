@@ -15,28 +15,28 @@ function textOptions(items, elementType) {
 const rareruOptions = textOptions([
 	{ text: "る", detailId: "verb-non-past" },
 	{ text: "ない", detailId: "verb-negative" },
-	"ないで",
+	{ text: "ないで", detailId: "verb-negative-te-form" },
 	{ text: "たい", detailId: "verb-desire" },
 	{ text: "た", detailId: "verb-past" },
-	"たり",
+	{ text: "たり", detailId: "verb-tari-form" },
 	{ text: "て", detailId: "verb-te-form" },
 	{ text: "よう", detailId: "verb-volitional" },
 	{ text: "ます", detailId: "verb-polite-non-past" },
-	"ず",
+	{ text: "ず", detailId: "verb-zu-negative" },
 ])
 
 const saseruOptions = textOptions([
 	{ text: "る", detailId: "verb-non-past" },
 	{ text: "ない", detailId: "verb-negative" },
-	"ないで",
+	{ text: "ないで", detailId: "verb-negative-te-form" },
 	{ text: "たい", detailId: "verb-desire" },
 	{ text: "ます", detailId: "verb-polite-non-past" },
 	{ text: "た", detailId: "verb-past" },
-	"たり",
+	{ text: "たり", detailId: "verb-tari-form" },
 	{ text: "て", detailId: "verb-te-form" },
 	{ text: "よう", detailId: "verb-volitional" },
 	{ text: "られる", detailId: "verb-passive" },
-	"ず",
+	{ text: "ず", detailId: "verb-zu-negative" },
 ])
 
 const masuOptions = textOptions([
@@ -79,7 +79,7 @@ export const godanDefaults = {
 		{ text: "ない", detailId: "verb-negative" },
 		{ text: "れる", detailId: "verb-passive" },
 		{ text: "せる", detailId: "verb-causative" },
-		"ず",
+		{ text: "ず", detailId: "verb-zu-negative" },
 	]),
 	B2: textOptions([
 		{ text: "ます", detailId: "verb-polite-non-past" },
