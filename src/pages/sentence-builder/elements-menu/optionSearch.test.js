@@ -1,4 +1,4 @@
-import { filterElementOptions } from "./elementOptionsSearch"
+import { filterElementOptions } from "./optionSearch"
 
 describe("filterElementOptions", () => {
 	const options = [

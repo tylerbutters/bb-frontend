@@ -14,6 +14,9 @@ function TestNestedElementPointerGuard() {
 			<div data-testid="menu" className="elementsMenuContainer">
 				<div data-testid="menu-child" className="elementContainer" />
 			</div>
+			<div data-testid="flyout-menu" className="flyoutMenuPanel">
+				<div data-testid="flyout-menu-child" className="elementContainer" />
+			</div>
 		</>
 	)
 }
@@ -54,10 +57,26 @@ test("adds hover classes outside menus and clears them on pointer out", () => {
 test("does not hover parent-style element nodes inside option menus", () => {
 	render(<TestNestedElementPointerGuard />)
 	const menuChild = screen.getByTestId("menu-child")
+	const flyoutMenuChild = screen.getByTestId("flyout-menu-child")
 
 	fireEvent.pointerOver(menuChild)
+	fireEvent.pointerOver(flyoutMenuChild)
 
 	expect(menuChild).not.toHaveClass("hoverElement")
+	expect(flyoutMenuChild).not.toHaveClass("hoverElement")
+})
+
+test("keeps current element hover feedback unchanged when the pointer enters an option menu", () => {
+	render(<TestNestedElementPointerGuard />)
+	const element = screen.getByTestId("element")
+	const flyoutMenu = screen.getByTestId("flyout-menu")
+
+	fireEvent.pointerOver(element)
+	expect(element).toHaveClass("hoverElement")
+
+	fireEvent.pointerOver(flyoutMenu)
+
+	expect(element).toHaveClass("hoverElement")
 })
 
 test("does not add feedback classes to locked elements", () => {

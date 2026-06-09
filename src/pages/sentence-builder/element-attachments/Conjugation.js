@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react"
-import ElementsMenu from "../element-options-menu/ElementsMenu"
+import ElementsMenu from "../elements-menu/ElementsMenu"
 import "../elements/Element.css"
 import AddButton from "../components/AddButton"
 import verbs from "../jmdict/processed/verbs.json"

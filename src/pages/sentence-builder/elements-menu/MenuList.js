@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import JapaneseText from "../components/JapaneseText"
-import { filterElementOptions } from "./elementOptionsSearch"
+import { filterElementOptions } from "./optionSearch"
 import "./MenuList.css"
 
 const PAGE_SIZE = 50
@@ -9,6 +9,7 @@ const SEARCH_LIST_STYLE = { height: 300, width: 250 }
 export default function MenuList({
 	hasSearch,
 	elementOptions = [],
+	isOptionClickable = () => true,
 	onSelectOption,
 	onHoverOption,
 	selectedOptionText,
@@ -71,6 +72,7 @@ export default function MenuList({
 					<MenuOptionButton
 						key={getMenuOptionKey(element, index)}
 						element={element}
+						isClickable={isOptionClickable(element)}
 						isSelected={selectedOptionText === element?.text}
 						onHoverOption={onHoverOption}
 						onSelectOption={onSelectOption}
@@ -84,6 +86,7 @@ export default function MenuList({
 
 function MenuOptionButton({
 	element,
+	isClickable,
 	isSelected,
 	onHoverOption,
 	onSelectOption,
@@ -92,8 +95,8 @@ function MenuOptionButton({
 		onHoverOption?.(element, getOptionAnchorRect(e))
 	}
 
-	function selectOption(e) {
-		onSelectOption?.(element, getOptionAnchorRect(e))
+	function selectOption() {
+		onSelectOption?.(element)
 	}
 
 	return (
@@ -105,7 +108,7 @@ function MenuOptionButton({
 			]
 				.filter(Boolean)
 				.join(" ")}
-			onClick={selectOption}
+			onClick={isClickable ? selectOption : undefined}
 			onFocus={showDetail}
 			onMouseEnter={showDetail}
 		>

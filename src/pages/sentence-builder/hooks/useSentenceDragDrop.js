@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
-import { MENU_CLOSE_EVENT } from "../element-options-menu/elementsMenuConstants"
+import { MENU_CLOSE_EVENT } from "../elements-menu/menuEvents"
 
 const DRAG_DROP_TRANSITION_MS = 180
 const DRAG_START_THRESHOLD = 4
 const DRAG_BLOCKED_TARGET_SELECTOR =
-	".baseInsideElement, .addButton, input, button, .elementsMenuContainer"
+	".baseInsideElement, .addButton, input, button, .elementsMenuContainer, .flyoutMenuPanel, .menuPanel"
 
 export default function useSentenceDragDrop({ elements, setElements, containerRef, scale }) {
 	const elementDragRefs = useRef(new Map())

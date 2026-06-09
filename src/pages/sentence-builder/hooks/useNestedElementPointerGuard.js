@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 
 const ELEMENT_POINTER_SELECTOR = ".baseInsideElement,.elementContainer,.addButton"
-const ELEMENT_MENU_SELECTOR = ".elementsMenuContainer"
+const ELEMENT_MENU_SELECTOR = ".elementsMenuContainer,.flyoutMenuPanel,.menuPanel"
 const NESTED_CONTROL_SELECTOR = "input, button"
 const LOCKED_ELEMENT_SELECTOR =
 	".baseInsideElementLocked,.elementContainerLocked,.addButton:disabled"

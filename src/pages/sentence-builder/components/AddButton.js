@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { Plus } from "lucide-react"
-import ElementsMenu from "../element-options-menu/ElementsMenu"
+import ElementsMenu from "../elements-menu/ElementsMenu"
 import "./AddButton.css"
 
 export default function AddButton({

@@ -1,5 +1,6 @@
-import { fireEvent, render, screen } from "@testing-library/react"
+import { act, fireEvent, render, screen } from "@testing-library/react"
 import ElementsMenu from "./ElementsMenu"
+import { MENU_TRANSITION_MS } from "./menuEvents"
 
 beforeAll(() => {
 	class MockIntersectionObserver {
@@ -316,17 +317,63 @@ test("keeps secondary detail open after leaving the hovered submenu option", () 
 	expect(document.querySelectorAll(".flyoutMenuPanel")).toHaveLength(1)
 })
 
-test("keeps a click-opened secondary menu after leaving the primary option", () => {
+test("does not toggle a hover-opened secondary menu when clicking the primary option", () => {
 	renderOpenMenu()
 
 	const categoryButton = screen.getByRole("button", { name: "か" })
-	fireEvent.click(categoryButton)
+	fireEvent.mouseEnter(categoryButton)
 	expect(screen.getByRole("button", { name: "ない" })).toBeInTheDocument()
 
-	fireEvent.mouseLeave(categoryButton)
+	fireEvent.click(categoryButton)
 
 	expect(screen.getByRole("button", { name: "ない" })).toBeInTheDocument()
 	expect(screen.getByRole("button", { name: "れる" })).toBeInTheDocument()
+})
+
+test("does not open a secondary menu from click alone", () => {
+	renderOpenMenu()
+
+	fireEvent.click(screen.getByRole("button", { name: "か" }))
+
+	expect(screen.queryByRole("button", { name: "ない" })).not.toBeInTheDocument()
+	expect(screen.queryByRole("button", { name: "れる" })).not.toBeInTheDocument()
+})
+
+test("keeps flyout panels mounted with closing animation while the menu closes", () => {
+	jest.useFakeTimers()
+	const { anchorRef, rerender } = renderOpenMenu({
+		elementOptions: [
+			{
+				text: "か",
+				list: [{ text: "ない", detailId: "verb-negative" }, { text: "れる" }],
+			},
+		],
+	})
+
+	fireEvent.mouseEnter(screen.getByRole("button", { name: "か" }))
+	fireEvent.mouseEnter(screen.getByRole("button", { name: "ない" }))
+
+	expect(document.querySelectorAll(".flyoutMenuPanel")).toHaveLength(2)
+
+	rerender(
+		<ElementsMenu
+			{...getMenuProps({ isModalOpen: false }, anchorRef)}
+		/>,
+	)
+
+	expect(document.querySelector(".elementsMenuContainer")).toHaveClass(
+		"elementsMenuClosing",
+	)
+	document.querySelectorAll(".flyoutMenuPanel").forEach((panel) => {
+		expect(panel).toHaveClass("flyoutMenuPanelClosing")
+	})
+
+	act(() => {
+		jest.advanceTimersByTime(MENU_TRANSITION_MS)
+	})
+
+	expect(document.querySelector(".elementsMenuContainer")).not.toBeInTheDocument()
+	expect(document.querySelector(".flyoutMenuPanel")).not.toBeInTheDocument()
 })
 
 test("opens a secondary menu from hover by default", () => {

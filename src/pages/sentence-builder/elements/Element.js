@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react"
-import ElementsMenu from "../element-options-menu/ElementsMenu"
+import ElementsMenu from "../elements-menu/ElementsMenu"
 import "./Element.css"
 import Particle from "../element-attachments/Particle"
 import AnimatedWidth from "./AnimatedWidth"

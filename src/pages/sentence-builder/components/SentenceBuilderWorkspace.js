@@ -7,8 +7,14 @@ import { getDefaultElementOptions } from "../elements/elementTypes"
 import normalizeElement from "../grammar/normalizeElement"
 import useNestedElementPointerGuard from "../hooks/useNestedElementPointerGuard"
 import useSentenceDragDrop from "../hooks/useSentenceDragDrop"
+import { MENU_OPEN_EVENT } from "../elements-menu/menuEvents"
 
 const SENTENCE_ELEMENTS_VIEWPORT_PADDING = 100
+const ELEMENT_MENU_SELECTOR = ".elementsMenuContainer,.flyoutMenuPanel,.menuPanel"
+const INACTIVE_MENU_MOUSE = {
+	x: Number.NEGATIVE_INFINITY,
+	y: Number.NEGATIVE_INFINITY,
+}
 
 export default function SentenceBuilderWorkspace({
 	generatedElements = [],
@@ -80,11 +86,27 @@ export default function SentenceBuilderWorkspace({
 
 	useEffect(() => {
 		function handleMove(e) {
+			if (
+				e.target?.closest?.(ELEMENT_MENU_SELECTOR) ||
+				document.querySelector(".elementsMenuContainer")
+			) {
+				setMouse(INACTIVE_MENU_MOUSE)
+				return
+			}
+
 			setMouse({ x: e.clientX, y: e.clientY })
 		}
 
+		function handleMenuOpen() {
+			setMouse(INACTIVE_MENU_MOUSE)
+		}
+
 		window.addEventListener("mousemove", handleMove)
-		return () => window.removeEventListener("mousemove", handleMove)
+		window.addEventListener(MENU_OPEN_EVENT, handleMenuOpen)
+		return () => {
+			window.removeEventListener("mousemove", handleMove)
+			window.removeEventListener(MENU_OPEN_EVENT, handleMenuOpen)
+		}
 	}, [])
 
 	useLayoutEffect(() => {

@@ -2,7 +2,7 @@ import { toRomaji } from "wanakana"
 import JapaneseText from "../components/JapaneseText"
 import { getConjugationDetail } from "../grammar/conjugationDetailsData"
 import { getParticleDetail } from "../grammar/particleDetailsData"
-import "./ElementDetailPanel.css"
+import "./DetailPanel.css"
 
 const VOCABULARY_TYPES = new Set([
 	"noun",
@@ -48,7 +48,7 @@ export function getElementDetail(element) {
 	return null
 }
 
-export function ElementDetailPanelContent({ detail: providedDetail, element }) {
+export function DetailPanelContent({ detail: providedDetail, element }) {
 	const detail = providedDetail || getElementDetail(element)
 	if (!detail) return null
 
