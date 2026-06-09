@@ -48,24 +48,6 @@ export function getElementDetail(element) {
 	return null
 }
 
-export default function ElementDetailPanel({ element, isOpen, panelRef, style }) {
-	const detail = getElementDetail(element)
-	if (!detail) return null
-
-	return (
-		<aside
-			ref={panelRef}
-			popover="manual"
-			className={`elementDetailPanel ${
-				isOpen ? "elementDetailPanelOpen" : "elementDetailPanelClosing"
-			}`}
-			style={style}
-		>
-			<ElementDetailPanelContent detail={detail} />
-		</aside>
-	)
-}
-
 export function ElementDetailPanelContent({ detail: providedDetail, element }) {
 	const detail = providedDetail || getElementDetail(element)
 	if (!detail) return null
@@ -82,13 +64,11 @@ export function ElementDetailPanelContent({ detail: providedDetail, element }) {
 function VocabularyDetail({ detail }) {
 	return (
 		<div className="elementDetailContent">
-			<div className="elementDetailHeader">
-				<span className="elementDetailType">{detail.type}</span>
-				<span className="elementDetailName">
-					<JapaneseText text={detail.word} reading={detail.kana} />
-				</span>
-				<span className="elementDetailTranslation">{detail.romaji}</span>
-			</div>
+			<DetailHeader
+				type={detail.type}
+				name={<JapaneseText text={detail.word} reading={detail.kana} />}
+				translation={detail.romaji}
+			/>
 			<div className="elementDetailSection">
 				<div className="elementDetailTranslations">{detail.translations.join("; ")}</div>
 			</div>
@@ -99,33 +79,21 @@ function VocabularyDetail({ detail }) {
 function ConjugationDetail({ detail }) {
 	return (
 		<div className="elementDetailContent">
-			<div className="elementDetailHeader">
-				<span className="elementDetailType">{detail.type}</span>
-				<span className="elementDetailName">{detail.grammaticalName}</span>
-				{detail.englishTranslation && (
-					<span className="elementDetailTranslation">{detail.englishTranslation}</span>
-				)}
-			</div>
+			<DetailHeader
+				type={detail.type}
+				name={detail.grammaticalName}
+				translation={detail.englishTranslation}
+			/>
 
 			<div className="elementDetailSection">
 				<div className="elementDetailConstructions">
 					{detail.constructions.map((construction) => (
-						<div
+						<DetailConstruction
 							key={`${construction.label}:${construction.construction}`}
-							className="elementDetailConstruction"
-						>
-							<div className="elementDetailConstructionFormula">
-								<span className="elementDetailConstructionLabel">{construction.label}:</span>{" "}
-								{construction.construction}
-							</div>
-							<div className="elementDetailExamples">
-								{construction.examples.map((example) => (
-									<div key={getExampleKey(example)}>
-										<ExampleText example={example} />
-									</div>
-								))}
-							</div>
-						</div>
+							label={construction.label}
+							body={construction.construction}
+							examples={construction.examples}
+						/>
 					))}
 				</div>
 			</div>
@@ -136,30 +104,53 @@ function ConjugationDetail({ detail }) {
 function ParticleDetail({ detail }) {
 	return (
 		<div className="elementDetailContent">
-			<div className="elementDetailHeader">
-				<span className="elementDetailType">{detail.type}</span>
-				<span className="elementDetailName">{detail.text}</span>
-				<span className="elementDetailTranslation">{detail.englishTranslation}</span>
-			</div>
+			<DetailHeader
+				type={detail.type}
+				name={detail.text}
+				translation={detail.englishTranslation}
+			/>
 
 			<div className="elementDetailSection">
 				<div className="elementDetailConstructions">
-					{detail.uses.map((use) => (
-						<div key={use.label} className="elementDetailConstruction">
-							<div className="elementDetailConstructionFormula">
-								<span className="elementDetailConstructionLabel">{use.label}:</span>{" "}
-								{use.meaning}
-							</div>
-							<div className="elementDetailExamples">
-								{use.examples.map((example) => (
-									<div key={example}>
-										<ExampleText example={example} />
-									</div>
-								))}
-							</div>
-						</div>
+					{detail.uses.map((particleUse) => (
+						<DetailConstruction
+							key={particleUse.label}
+							label={particleUse.label}
+							body={particleUse.meaning}
+							examples={particleUse.examples}
+						/>
 					))}
 				</div>
+			</div>
+		</div>
+	)
+}
+
+function DetailHeader({ type, name, translation }) {
+	return (
+		<div className="elementDetailHeader">
+			<span className="elementDetailType">{type}</span>
+			<span className="elementDetailName">{name}</span>
+			{translation && (
+				<span className="elementDetailTranslation">{translation}</span>
+			)}
+		</div>
+	)
+}
+
+function DetailConstruction({ label, body, examples }) {
+	return (
+		<div className="elementDetailConstruction">
+			<div className="elementDetailConstructionFormula">
+				<span className="elementDetailConstructionLabel">{label}:</span>{" "}
+				{body}
+			</div>
+			<div className="elementDetailExamples">
+				{examples.map((example) => (
+					<div key={getExampleKey(example)}>
+						<ExampleText example={example} />
+					</div>
+				))}
 			</div>
 		</div>
 	)
@@ -239,7 +230,6 @@ function parseTranslationExample(text) {
 	if (!japanese || !english || extra !== undefined) return null
 
 	return {
-		type: "translation",
 		japanese,
 		english,
 	}
@@ -269,7 +259,6 @@ function getVocabularyDetail(element) {
 		type: VOCABULARY_TYPE_LABELS[element.elementType] || element.elementType,
 		word: element.text,
 		kana,
-		hasReading: Boolean(element.textKana && element.textKana !== element.text),
 		romaji,
 		translations: element.meanings,
 	}

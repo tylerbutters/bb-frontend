@@ -135,7 +135,6 @@ test("renders hover-opened secondary menus as submenu flyouts", () => {
 
 	expect(document.querySelector(".flyoutMenuPanel")).toHaveClass(
 		"flyoutMenuPanel-submenu",
-		"flyoutMenuPanelOpen",
 	)
 })
 
@@ -198,6 +197,32 @@ test("positions element detail from the hovered option", () => {
 	})
 })
 
+test("keeps primary detail open after leaving the hovered option", () => {
+	renderOpenMenu({
+		elementOptions: [
+			{ text: "ない", detailId: "verb-negative" },
+			{ text: "。" },
+		],
+	})
+
+	const detailButton = screen.getByRole("button", { name: "ない" })
+	fireEvent.mouseEnter(detailButton)
+
+	expect(screen.getByText("Negative")).toBeInTheDocument()
+	expect(detailButton).toHaveClass("selectedElementsMenuButton")
+
+	fireEvent.mouseLeave(detailButton)
+	fireEvent.mouseLeave(document.querySelector(".menuListItemContainer"))
+
+	expect(screen.getByText("Negative")).toBeInTheDocument()
+	expect(detailButton).toHaveClass("selectedElementsMenuButton")
+
+	fireEvent.mouseEnter(screen.getByRole("button", { name: "。" }))
+
+	expect(screen.queryByText("Negative")).not.toBeInTheDocument()
+	expect(detailButton).not.toHaveClass("selectedElementsMenuButton")
+})
+
 test("keeps a hover-opened secondary menu after leaving the primary option", () => {
 	const onSelect = jest.fn()
 	renderOpenMenu({ onSelect })
@@ -205,6 +230,7 @@ test("keeps a hover-opened secondary menu after leaving the primary option", () 
 	const categoryButton = screen.getByRole("button", { name: "か" })
 	fireEvent.mouseEnter(categoryButton)
 	expect(screen.getByRole("button", { name: "ない" })).toBeInTheDocument()
+	expect(categoryButton).toHaveClass("selectedElementsMenuButton")
 
 	fireEvent.mouseLeave(categoryButton)
 
@@ -257,6 +283,37 @@ test("shows detail in another layer when hovering an option in a secondary menu"
 		detailId: "verb-negative",
 		selectedCategoryText: "か",
 	})
+})
+
+test("keeps secondary detail open after leaving the hovered submenu option", () => {
+	renderOpenMenu({
+		elementOptions: [
+			{
+				text: "か",
+				list: [{ text: "ない", detailId: "verb-negative" }, { text: "れる" }],
+			},
+		],
+	})
+
+	fireEvent.mouseEnter(screen.getByRole("button", { name: "か" }))
+
+	const secondaryOption = screen.getByRole("button", { name: "ない" })
+	fireEvent.mouseEnter(secondaryOption)
+
+	expect(screen.getByText("Negative")).toBeInTheDocument()
+	expect(secondaryOption).toHaveClass("selectedElementsMenuButton")
+
+	fireEvent.mouseLeave(secondaryOption)
+	fireEvent.mouseLeave(document.querySelector(".flyoutMenuPanel-submenu .menuListItemContainer"))
+
+	expect(screen.getByText("Negative")).toBeInTheDocument()
+	expect(secondaryOption).toHaveClass("selectedElementsMenuButton")
+
+	fireEvent.mouseEnter(screen.getByRole("button", { name: "れる" }))
+
+	expect(screen.queryByText("Negative")).not.toBeInTheDocument()
+	expect(secondaryOption).not.toHaveClass("selectedElementsMenuButton")
+	expect(document.querySelectorAll(".flyoutMenuPanel")).toHaveLength(1)
 })
 
 test("keeps a click-opened secondary menu after leaving the primary option", () => {

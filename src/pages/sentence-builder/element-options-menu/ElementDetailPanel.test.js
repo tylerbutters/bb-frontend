@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react"
-import ElementDetailPanel, { getElementDetail } from "./ElementDetailPanel"
+import { ElementDetailPanelContent, getElementDetail } from "./ElementDetailPanel"
 
 describe("getElementDetail", () => {
 	test("returns conjugation details for conjugation menu options", () => {
@@ -85,7 +85,7 @@ describe("getElementDetail", () => {
 
 	test("shows conjugation example arrows as right arrows", () => {
 		const { container } = render(
-			<ElementDetailPanel element={{ text: "ない", detailId: "verb-negative" }} isOpen />,
+			<ElementDetailPanelContent element={{ text: "ない", detailId: "verb-negative" }} />,
 		)
 
 		expect(container).toHaveTextContent("食べる → 食べない")
@@ -95,7 +95,7 @@ describe("getElementDetail", () => {
 
 	test("bolds only the changed endings in conjugation examples", () => {
 		const { container } = render(
-			<ElementDetailPanel element={{ text: "ない", detailId: "verb-negative" }} isOpen />,
+			<ElementDetailPanelContent element={{ text: "ない", detailId: "verb-negative" }} />,
 		)
 		const getEndingTexts = (exampleText) => {
 			const exampleLine = Array.from(

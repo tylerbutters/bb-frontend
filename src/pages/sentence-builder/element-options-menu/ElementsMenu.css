@@ -1,6 +1,7 @@
 .elementsMenuContainer {
 	--element-options-anchor-gap: 10px;
 	--element-options-panel-gap: 8px;
+	--element-options-panel-width: min(250px, calc(100vw - 32px));
 	inset: auto;
 	position: fixed;
 	z-index: 2000;
@@ -77,7 +78,6 @@
 .elementsMenuTitle {
 	padding: 9px 12px;
 	border-bottom: 1px solid var(--color-grey-border);
-	/* background-color: var(--color-lightgrey1-background); */
 	color: white;
 	font-size: 15px;
 	text-align: center;
@@ -87,7 +87,6 @@
 	display: flex;
 	padding: 8px;
 	border-top: 1px solid var(--color-grey-border);
-	/* background-color: var(--color-lightgrey2-background); */
 }
 
 .deleteElementButton {
@@ -106,7 +105,7 @@
 .menuPanel {
 	display: flex;
 	flex-direction: column;
-	width: min(250px, calc(100vw - 32px));
+	width: var(--element-options-panel-width);
 	max-height: 350px;
 	overflow: hidden;
 	border: 1px solid var(--color-grey-border);
@@ -116,11 +115,15 @@
 }
 
 .flyoutMenuPanel {
+	--element-options-panel-width: min(250px, calc(100vw - 32px));
 	inset: auto;
 	position: fixed;
 	z-index: 2001;
 	margin: 0;
 	padding: 0;
+	overflow: visible;
+	border: 0;
+	background: transparent;
 	color: inherit;
 	box-shadow: 0 18px 30px var(--color-shadow);
 	will-change: opacity, transform;
@@ -128,15 +131,6 @@
 
 .flyoutMenuPanel:popover-open {
 	display: flex;
-}
-
-.flyoutMenuPanelOpen {
-	animation: none;
-}
-
-.flyoutMenuPanelClosing {
-	pointer-events: none;
-	animation: flyoutMenuPanelOut 160ms ease-in-out both;
 }
 
 .flyoutMenuPanel-layer {
@@ -152,7 +146,7 @@
 }
 
 .flyoutMenuPanel-detail {
-	width: min(340px, calc(100vw - 32px));
+	width: var(--element-options-panel-width);
 	max-height: min(520px, calc(100vh - 32px));
 	overflow-x: hidden;
 	overflow-y: auto;
@@ -160,20 +154,14 @@
 	color: white;
 }
 
-.flyoutMenuPanel-detail:popover-open {
-	display: block;
+.flyoutMenuPanel-detail > .menuPanel {
+	width: 100%;
+	max-height: none;
+	overflow: visible;
 }
 
-@keyframes flyoutMenuPanelOut {
-	from {
-		transform: scale(1);
-		opacity: 1;
-	}
-
-	to {
-		transform: scale(0.95);
-		opacity: 0;
-	}
+.flyoutMenuPanel-detail:popover-open {
+	display: block;
 }
 
 .modalContainer {

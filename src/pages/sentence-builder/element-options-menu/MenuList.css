@@ -25,7 +25,6 @@
 
 .menuListItemContainer {
 	display: flex;
-	/* background-color: red; */
 	flex-direction: column;
 	gap: 3px;
 	width: 100%;

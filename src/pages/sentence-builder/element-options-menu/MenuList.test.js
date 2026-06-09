@@ -33,8 +33,8 @@ test("stores typed search text instead of the change event", () => {
 	expect(screen.getByText("走る")).toBeInTheDocument()
 })
 
-test("does not highlight an option just because it matches the parent category text", () => {
-	render(<MenuList elementOptions={[{ text: "れ" }]} categoryText="れ" />)
+test("does not highlight an option when selectedOptionText is not set", () => {
+	render(<MenuList elementOptions={[{ text: "れ" }]} />)
 
 	expect(screen.getByRole("button", { name: "れ" })).not.toHaveClass(
 		"selectedElementsMenuButton",
