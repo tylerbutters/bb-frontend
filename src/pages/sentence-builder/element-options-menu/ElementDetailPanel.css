@@ -54,15 +54,18 @@
 	}
 }
 
-.elementDetailPanel::-webkit-scrollbar {
+.elementDetailPanel::-webkit-scrollbar,
+.flyoutMenuPanel-detail::-webkit-scrollbar {
 	width: 8px;
 }
 
-.elementDetailPanel::-webkit-scrollbar-track {
+.elementDetailPanel::-webkit-scrollbar-track,
+.flyoutMenuPanel-detail::-webkit-scrollbar-track {
 	background: transparent;
 }
 
-.elementDetailPanel::-webkit-scrollbar-thumb {
+.elementDetailPanel::-webkit-scrollbar-thumb,
+.flyoutMenuPanel-detail::-webkit-scrollbar-thumb {
 	border: 2px solid var(--color-grey-background);
 	border-radius: 999px;
 }

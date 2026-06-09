@@ -10,6 +10,7 @@ export default function MenuList({
 	elementOptions = [],
 	onSelectOption,
 	onHoverOption,
+	onLeaveOption,
 	onLeaveOptions,
 	detailSource,
 	categoryText,
@@ -58,17 +59,29 @@ export default function MenuList({
 		return element?.meanings?.slice(0, 3).join("; ")
 	}
 
-	function showOptionDetail(e, element) {
+	function getOptionAnchorRect(e) {
 		const rect = e.currentTarget.getBoundingClientRect()
 
-		onHoverOption?.(element, detailSource, categoryText, {
+		return {
 			top: rect.top,
 			right: rect.right,
 			bottom: rect.bottom,
 			left: rect.left,
 			width: rect.width,
 			height: rect.height,
-		})
+		}
+	}
+
+	function showOptionDetail(e, element) {
+		onHoverOption?.(element, detailSource, categoryText, getOptionAnchorRect(e))
+	}
+
+	function selectOption(e, element) {
+		onSelectOption(element, getOptionAnchorRect(e))
+	}
+
+	function leaveOption(element) {
+		onLeaveOption?.(element, detailSource, categoryText)
 	}
 
 	return (
@@ -99,9 +112,10 @@ export default function MenuList({
 						]
 							.filter(Boolean)
 							.join(" ")}
-						onClick={() => onSelectOption(element)}
+						onClick={(e) => selectOption(e, element)}
 						onFocus={(e) => showOptionDetail(e, element)}
 						onMouseEnter={(e) => showOptionDetail(e, element)}
+						onMouseLeave={() => leaveOption(element)}
 					>
 						<div className="elementsMenuButtonText">
 							<JapaneseText text={element?.text} reading={element?.textKana} />

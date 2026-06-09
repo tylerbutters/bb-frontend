@@ -1,13 +1,11 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import "./ElementsMenu.css"
-import ElementDetailPanel, { getElementDetail } from "./ElementDetailPanel"
+import { ElementDetailPanelContent, getElementDetail } from "./ElementDetailPanel"
 import MenuList from "./MenuList"
 import { MENU_CLOSE_EVENT, MENU_OPEN_EVENT, MENU_TRANSITION_MS } from "./elementsMenuConstants"
 
 const MENU_VIEWPORT_PADDING = 16
-const DETAIL_HOVER_DELAY_MS = 500
-const DETAIL_TRANSITION_MS = 160
 
 export default function ElementsMenu({
 	anchorRef,
@@ -22,23 +20,24 @@ export default function ElementsMenu({
 	menuTitle,
 }) {
 	const modalRef = useRef(null)
-	const secondaryPanelRef = useRef(null)
-	const detailPanelRef = useRef(null)
-	const detailHoverTimeoutRef = useRef(null)
-	const detailHoverSourceRef = useRef(null)
-	const detailCloseTimeoutRef = useRef(null)
-	const secondaryCloseTimeoutRef = useRef(null)
+	const flyoutPanelRef = useRef(null)
+	const detailLayerPanelRef = useRef(null)
+	const flyoutCloseTimeoutRef = useRef(null)
+	const detailLayerCloseTimeoutRef = useRef(null)
 	const menuIdRef = useRef(Symbol("elements-menu"))
 	const [shouldRenderMenu, setShouldRenderMenu] = useState(isModalOpen)
-	const [shouldRenderSecondaryPanel, setShouldRenderSecondaryPanel] = useState(false)
-	const [isSecondaryPanelOpen, setIsSecondaryPanelOpen] = useState(false)
-	const [selectedCategory, setSelectedCategory] = useState()
-	const [secondaryElementOptions, setSecondaryElementOptions] = useState([])
-	const [secondaryPlacement, setSecondaryPlacement] = useState("right")
-	const [shouldRenderDetailPanel, setShouldRenderDetailPanel] = useState(false)
-	const [isDetailPanelOpen, setIsDetailPanelOpen] = useState(false)
-	const [activeDetail, setActiveDetail] = useState(null)
-	const [detailPanelStyle, setDetailPanelStyle] = useState()
+	const [menuAnchorRect, setMenuAnchorRect] = useState()
+	const [menuPanelStyle, setMenuPanelStyle] = useState()
+	const [activeFlyout, setActiveFlyout] = useState(null)
+	const [isFlyoutPanelOpen, setIsFlyoutPanelOpen] = useState(false)
+	const [flyoutPlacement, setFlyoutPlacement] = useState("right")
+	const [flyoutPanelStyle, setFlyoutPanelStyle] = useState()
+	const [activeDetailLayer, setActiveDetailLayer] = useState(null)
+	const [isDetailLayerOpen, setIsDetailLayerOpen] = useState(false)
+	const [detailLayerPlacement, setDetailLayerPlacement] = useState("right")
+	const [detailLayerStyle, setDetailLayerStyle] = useState()
+	const selectedCategory =
+		activeFlyout?.type === "submenu" ? activeFlyout.categoryText : undefined
 
 	const closeMenu = useCallback(() => {
 		setIsModalOpen(false)
@@ -46,6 +45,8 @@ export default function ElementsMenu({
 
 	useEffect(() => {
 		if (isModalOpen) {
+			setMenuAnchorRect(getElementAnchorRect(anchorRef?.current))
+			setMenuPanelStyle(undefined)
 			setShouldRenderMenu(true)
 			window.dispatchEvent(
 				new CustomEvent(MENU_OPEN_EVENT, {
@@ -56,37 +57,26 @@ export default function ElementsMenu({
 		}
 
 		const timeout = setTimeout(() => {
-			if (secondaryCloseTimeoutRef.current) {
-				clearTimeout(secondaryCloseTimeoutRef.current)
-				secondaryCloseTimeoutRef.current = null
-			}
-			clearDetailHoverTimeout()
-			clearDetailCloseTimeout()
+			clearFlyoutCloseTimeout()
+			clearDetailLayerCloseTimeout()
 
-			hideNativePopover(detailPanelRef.current)
+			hideNativePopover(detailLayerPanelRef.current)
+			hideNativePopover(flyoutPanelRef.current)
 			hideNativePopover(modalRef.current)
 			setShouldRenderMenu(false)
-			setShouldRenderSecondaryPanel(false)
-			setIsSecondaryPanelOpen(false)
-			setSelectedCategory(null)
-			setSecondaryElementOptions([])
-			setSecondaryPlacement("right")
-			setShouldRenderDetailPanel(false)
-			setIsDetailPanelOpen(false)
-			setActiveDetail(null)
-			setDetailPanelStyle(undefined)
+			setMenuAnchorRect(undefined)
+			setMenuPanelStyle(undefined)
+			resetFlyoutPanel()
+			resetDetailLayerPanel()
 		}, MENU_TRANSITION_MS)
 
 		return () => clearTimeout(timeout)
-	}, [isModalOpen])
+	}, [anchorRef, isModalOpen])
 
 	useEffect(() => {
 		return () => {
-			if (secondaryCloseTimeoutRef.current) {
-				clearTimeout(secondaryCloseTimeoutRef.current)
-			}
-			clearDetailHoverTimeout()
-			clearDetailCloseTimeout()
+			clearFlyoutCloseTimeout()
+			clearDetailLayerCloseTimeout()
 		}
 	}, [])
 
@@ -111,7 +101,8 @@ export default function ElementsMenu({
 		function handlePointerDown(e) {
 			if (anchorRef?.current?.contains(e.target)) return
 			if (modalRef.current?.contains(e.target)) return
-			if (detailPanelRef.current?.contains(e.target)) return
+			if (flyoutPanelRef.current?.contains(e.target)) return
+			if (detailLayerPanelRef.current?.contains(e.target)) return
 
 			closeMenu()
 		}
@@ -132,182 +123,241 @@ export default function ElementsMenu({
 	}, [anchorRef, closeMenu, isModalOpen])
 
 	useLayoutEffect(() => {
-		if (!shouldRenderMenu || !isModalOpen) return
-		showNativePopover(modalRef.current, anchorRef?.current)
-	}, [anchorRef, isModalOpen, shouldRenderMenu])
-
-	useLayoutEffect(() => {
-		if (!shouldRenderMenu || !shouldRenderSecondaryPanel || !isSecondaryPanelOpen || !isModalOpen) {
-			return
-		}
+		if (!shouldRenderMenu || !isModalOpen || !menuAnchorRect) return
 
 		const menu = modalRef.current
-		const secondaryPanel = secondaryPanelRef.current
-		if (!menu || !secondaryPanel) return
+		if (!menu) return
+
+		showNativePopover(menu)
 
 		const menuRect = menu.getBoundingClientRect()
-		const secondaryRect = secondaryPanel.getBoundingClientRect()
-		const styles = window.getComputedStyle(menu)
-		const panelGap = parseFloat(styles.getPropertyValue("--element-options-panel-gap")) || 0
-		const rightEdge = menuRect.right + panelGap + secondaryRect.width
-		const nextPlacement = rightEdge > window.innerWidth - MENU_VIEWPORT_PADDING ? "left" : "right"
+		const style = getPrimaryMenuLayout(menuAnchorRect, menuRect, getMenuAnchorGap(menu))
 
-		setSecondaryPlacement((currentPlacement) =>
-			currentPlacement === nextPlacement ? currentPlacement : nextPlacement,
-		)
-	}, [
-		isModalOpen,
-		isSecondaryPanelOpen,
-		secondaryElementOptions,
-		shouldRenderMenu,
-		shouldRenderSecondaryPanel,
-	])
-
-	useLayoutEffect(() => {
-		if (!shouldRenderDetailPanel || !activeDetail || !isModalOpen || !shouldRenderMenu) {
-			return
-		}
-
-		const detailPanel = detailPanelRef.current
-		const menu = modalRef.current
-		const anchorRect = activeDetail.anchorRect
-		if (!detailPanel || !menu || !anchorRect) return
-
-		showNativePopover(detailPanel)
-
-		const detailRect = detailPanel.getBoundingClientRect()
-		const styles = window.getComputedStyle(menu)
-		const panelGap = parseFloat(styles.getPropertyValue("--element-options-panel-gap")) || 0
-		const maxLeft = window.innerWidth - detailRect.width - MENU_VIEWPORT_PADDING
-		const maxTop = window.innerHeight - detailRect.height - MENU_VIEWPORT_PADDING
-		const rightSideLeft = anchorRect.right + panelGap
-		const leftSideLeft = anchorRect.left - detailRect.width - panelGap
-		let left = rightSideLeft
-
-		if (left > maxLeft) {
-			left = leftSideLeft
-		}
-
-		left = Math.max(MENU_VIEWPORT_PADDING, Math.min(left, maxLeft))
-		const top = Math.max(MENU_VIEWPORT_PADDING, Math.min(anchorRect.top, maxTop))
-
-		setDetailPanelStyle((currentStyle) => {
-			if (currentStyle?.left === left && currentStyle?.top === top) {
+		setMenuPanelStyle((currentStyle) => {
+			if (currentStyle?.left === style.left && currentStyle?.top === style.top) {
 				return currentStyle
 			}
 
-			return { left, top }
+			return style
 		})
-	}, [
-		activeDetail,
-		isModalOpen,
-		secondaryPlacement,
-		shouldRenderDetailPanel,
-		shouldRenderMenu,
-		shouldRenderSecondaryPanel,
-	])
+	}, [isModalOpen, menuAnchorRect, shouldRenderMenu])
 
-	function closeSecondaryPanel() {
-		if (secondaryCloseTimeoutRef.current) {
-			clearTimeout(secondaryCloseTimeoutRef.current)
+	useLayoutEffect(() => {
+		if (!shouldRenderMenu || !activeFlyout || !isFlyoutPanelOpen || !isModalOpen) {
+			return
 		}
 
-		setIsSecondaryPanelOpen(false)
-		secondaryCloseTimeoutRef.current = setTimeout(finishSecondaryPanelClose, MENU_TRANSITION_MS)
-	}
+		const flyoutPanel = flyoutPanelRef.current
+		const menu = modalRef.current
+		const anchorRect = activeFlyout.anchorRect
+		if (!flyoutPanel || !menu || !anchorRect) return
 
-	function openSecondaryPanel(selectedElement) {
-		if (secondaryCloseTimeoutRef.current) {
-			clearTimeout(secondaryCloseTimeoutRef.current)
-			secondaryCloseTimeoutRef.current = null
+		showNativePopover(flyoutPanel)
+
+		const flyoutRect = flyoutPanel.getBoundingClientRect()
+		const { placement, style } = getAnchoredPanelLayout(
+			anchorRect,
+			flyoutRect,
+			getMenuPanelGap(menu),
+		)
+
+		setFlyoutPlacement((currentPlacement) =>
+			currentPlacement === placement ? currentPlacement : placement,
+		)
+		setFlyoutPanelStyle((currentStyle) => {
+			if (currentStyle?.left === style.left && currentStyle?.top === style.top) {
+				return currentStyle
+			}
+
+			return style
+		})
+	}, [activeFlyout, isFlyoutPanelOpen, isModalOpen, shouldRenderMenu])
+
+	useLayoutEffect(() => {
+		if (!shouldRenderMenu || !activeDetailLayer || !isDetailLayerOpen || !isModalOpen) {
+			return
 		}
 
-		setSelectedCategory(selectedElement.text)
-		setSecondaryElementOptions(selectedElement.list)
-		setSecondaryPlacement("right")
-		setShouldRenderSecondaryPanel(true)
-		setIsSecondaryPanelOpen(true)
+		const detailLayerPanel = detailLayerPanelRef.current
+		const menu = modalRef.current
+		const anchorRect = activeDetailLayer.anchorRect
+		if (!detailLayerPanel || !menu || !anchorRect) return
+
+		showNativePopover(detailLayerPanel)
+
+		const detailLayerRect = detailLayerPanel.getBoundingClientRect()
+		const { placement, style } = getAnchoredPanelLayout(
+			anchorRect,
+			detailLayerRect,
+			getMenuPanelGap(menu),
+		)
+
+		setDetailLayerPlacement((currentPlacement) =>
+			currentPlacement === placement ? currentPlacement : placement,
+		)
+		setDetailLayerStyle((currentStyle) => {
+			if (currentStyle?.left === style.left && currentStyle?.top === style.top) {
+				return currentStyle
+			}
+
+			return style
+		})
+	}, [activeDetailLayer, isDetailLayerOpen, isModalOpen, shouldRenderMenu])
+
+	function clearFlyoutCloseTimeout() {
+		if (!flyoutCloseTimeoutRef.current) return
+
+		clearTimeout(flyoutCloseTimeoutRef.current)
+		flyoutCloseTimeoutRef.current = null
 	}
 
-	function finishSecondaryPanelClose() {
-		if (secondaryCloseTimeoutRef.current) {
-			clearTimeout(secondaryCloseTimeoutRef.current)
-			secondaryCloseTimeoutRef.current = null
+	function clearDetailLayerCloseTimeout() {
+		if (!detailLayerCloseTimeoutRef.current) return
+
+		clearTimeout(detailLayerCloseTimeoutRef.current)
+		detailLayerCloseTimeoutRef.current = null
+	}
+
+	function resetFlyoutPanel() {
+		setActiveFlyout(null)
+		setIsFlyoutPanelOpen(false)
+		setFlyoutPlacement("right")
+		setFlyoutPanelStyle(undefined)
+	}
+
+	function resetDetailLayerPanel() {
+		setActiveDetailLayer(null)
+		setIsDetailLayerOpen(false)
+		setDetailLayerPlacement("right")
+		setDetailLayerStyle(undefined)
+	}
+
+	function finishFlyoutPanelClose() {
+		clearFlyoutCloseTimeout()
+		hideNativePopover(detailLayerPanelRef.current)
+		hideNativePopover(flyoutPanelRef.current)
+		resetDetailLayerPanel()
+		resetFlyoutPanel()
+	}
+
+	function closeFlyoutPanel() {
+		clearFlyoutCloseTimeout()
+		setIsFlyoutPanelOpen(false)
+		flyoutCloseTimeoutRef.current = setTimeout(finishFlyoutPanelClose, MENU_TRANSITION_MS)
+	}
+
+	function openFlyoutPanel(nextFlyout) {
+		clearFlyoutCloseTimeout()
+		clearDetailLayerCloseTimeout()
+		hideNativePopover(detailLayerPanelRef.current)
+		resetDetailLayerPanel()
+		setActiveFlyout(nextFlyout)
+		setFlyoutPlacement("right")
+		setFlyoutPanelStyle(undefined)
+		setIsFlyoutPanelOpen(true)
+	}
+
+	function openSubmenuPanel(selectedElement, anchorRect) {
+		openFlyoutPanel({
+			type: "submenu",
+			categoryText: selectedElement.text,
+			elementOptions: selectedElement.list,
+			anchorRect,
+		})
+	}
+
+	function finishDetailLayerClose() {
+		clearDetailLayerCloseTimeout()
+		hideNativePopover(detailLayerPanelRef.current)
+		resetDetailLayerPanel()
+	}
+
+	function closeDetailLayerPanel() {
+		if (!activeDetailLayer) return
+
+		clearDetailLayerCloseTimeout()
+		setIsDetailLayerOpen(false)
+		detailLayerCloseTimeoutRef.current = setTimeout(
+			finishDetailLayerClose,
+			MENU_TRANSITION_MS,
+		)
+	}
+
+	function openDetailLayerPanel(element, anchorRect) {
+		if (!getElementDetail(element)) {
+			closeDetailLayerPanel()
+			return
 		}
 
-		setShouldRenderSecondaryPanel(false)
-		setSelectedCategory(null)
-		setSecondaryElementOptions([])
-		setSecondaryPlacement("right")
-		clearActiveDetail("secondary")
-	}
+		if (
+			activeDetailLayer?.element === element &&
+			activeDetailLayer.anchorRect === anchorRect &&
+			isDetailLayerOpen
+		) {
+			return
+		}
 
-	function clearDetailHoverTimeout(source) {
-		if (!detailHoverTimeoutRef.current) return
-		if (source && detailHoverSourceRef.current !== source) return
-
-		clearTimeout(detailHoverTimeoutRef.current)
-		detailHoverTimeoutRef.current = null
-		detailHoverSourceRef.current = null
-	}
-
-	function clearDetailCloseTimeout() {
-		if (!detailCloseTimeoutRef.current) return
-
-		clearTimeout(detailCloseTimeoutRef.current)
-		detailCloseTimeoutRef.current = null
-	}
-
-	function finishDetailPanelClose() {
-		hideNativePopover(detailPanelRef.current)
-		setShouldRenderDetailPanel(false)
-		setIsDetailPanelOpen(false)
-		setActiveDetail(null)
-		setDetailPanelStyle(undefined)
+		clearDetailLayerCloseTimeout()
+		setActiveDetailLayer({ element, anchorRect })
+		setDetailLayerPlacement("right")
+		setDetailLayerStyle(undefined)
+		setIsDetailLayerOpen(true)
 	}
 
 	function closeActiveDetail(source) {
-		clearDetailHoverTimeout(source)
+		if (activeFlyout?.type !== "detail") return
+		if (source && activeFlyout.source !== source) return
 
-		if (!activeDetail) return
-		if (source && activeDetail.source !== source) return
+		closeFlyoutPanel()
+	}
 
-		clearDetailCloseTimeout()
-		setIsDetailPanelOpen(false)
-		detailCloseTimeoutRef.current = setTimeout(finishDetailPanelClose, DETAIL_TRANSITION_MS)
+	function openDetailPanel(element, source, categoryText, anchorRect) {
+		openFlyoutPanel({
+			type: "detail",
+			element,
+			source,
+			categoryText,
+			anchorRect,
+		})
 	}
 
 	function showActiveDetail(element, source, categoryText, anchorRect) {
 		if (!getElementDetail(element)) {
-			closeActiveDetail(source)
+			closeActiveFlyout(source)
 			return
 		}
 
-		if (activeDetail?.element === element && activeDetail?.source === source && isDetailPanelOpen) {
+		if (
+			activeFlyout?.type === "detail" &&
+			activeFlyout.element === element &&
+			activeFlyout.source === source &&
+			isFlyoutPanelOpen
+		) {
 			return
 		}
 
-		clearDetailHoverTimeout()
-		closeActiveDetail()
-		detailHoverSourceRef.current = source
-		detailHoverTimeoutRef.current = setTimeout(() => {
-			clearDetailCloseTimeout()
-			detailHoverTimeoutRef.current = null
-			detailHoverSourceRef.current = null
-			setActiveDetail({
-				element,
-				source,
-				categoryText,
-				anchorRect,
-			})
-			setDetailPanelStyle(undefined)
-			setShouldRenderDetailPanel(true)
-			setIsDetailPanelOpen(true)
-		}, DETAIL_HOVER_DELAY_MS)
+		openDetailPanel(element, source, categoryText, anchorRect)
 	}
 
 	function clearActiveDetail(source) {
 		closeActiveDetail(source)
+	}
+
+	function handleLeaveOptions(source) {
+		if (source === "secondary") {
+			closeDetailLayerPanel()
+			return
+		}
+
+		clearActiveDetail(source)
+	}
+
+	function closeActiveFlyout(source) {
+		if (!activeFlyout) return
+		if (source && activeFlyout?.source && activeFlyout.source !== source) return
+		if (source === "secondary" && activeFlyout?.type !== "detail") return
+
+		closeFlyoutPanel()
 	}
 
 	function handleSelectOption(selectedElement, categoryText) {
@@ -322,22 +372,45 @@ export default function ElementsMenu({
 		closeMenu()
 	}
 
-	function handleSelectCategory(selectedElement) {
-		if (
-			selectedElement.list?.length === 1 &&
-			selectedElement.list[0].text === selectedElement.text
-		) {
-			handleSelectOption(selectedElement.list[0])
-		} else if (!selectedElement.list) {
-			handleSelectOption(selectedElement)
+	function handleSelectCategory(selectedElement, anchorRect) {
+		const directOption = getDirectSelectOption(selectedElement)
+
+		if (directOption) {
+			handleSelectOption(directOption)
 		} else {
 			if (selectedCategory === selectedElement.text) {
-				closeSecondaryPanel()
+				closeFlyoutPanel()
 				return
 			}
 
-			openSecondaryPanel(selectedElement)
+			openSubmenuPanel(selectedElement, anchorRect)
 		}
+	}
+
+	function optionOpensSubmenu(element) {
+		return Array.isArray(element?.list) && !getDirectSelectOption(element)
+	}
+
+	function handleHoverOption(element, source, categoryText, anchorRect) {
+		const detailElement = getDirectSelectOption(element) || element
+
+		if (source === "secondary") {
+			openDetailLayerPanel(detailElement, anchorRect)
+			return
+		}
+
+		if (source === "primary" && optionOpensSubmenu(element)) {
+			if (selectedCategory !== element.text) {
+				openSubmenuPanel(element, anchorRect)
+			}
+			return
+		}
+
+		showActiveDetail(detailElement, source, categoryText, anchorRect)
+	}
+
+	function handleLeaveOption(element, source) {
+		if (source === "secondary") closeDetailLayerPanel()
 	}
 
 	function handleDelete() {
@@ -347,23 +420,57 @@ export default function ElementsMenu({
 
 	if (!shouldRenderMenu) return null
 
-	const secondaryPanel = shouldRenderSecondaryPanel && (
+	const flyoutPanel = activeFlyout && (
 		<MenuPanel
-			panelRef={secondaryPanelRef}
-			className={`secondaryMenuPanel secondaryMenuPanel-${secondaryPlacement} ${
-				isSecondaryPanelOpen ? "secondaryMenuPanelOpen" : "secondaryMenuPanelClosing"
-			}`}
-			menuTitle={selectedCategory}
+			panelRef={flyoutPanelRef}
+			className={[
+				"flyoutMenuPanel",
+				`flyoutMenuPanel-${flyoutPlacement}`,
+				activeFlyout.type === "submenu" ? "flyoutMenuPanel-submenu" : "",
+				activeFlyout.type === "detail" ? "flyoutMenuPanel-detail" : "",
+				isFlyoutPanelOpen ? "flyoutMenuPanelOpen" : "flyoutMenuPanelClosing",
+			]
+				.filter(Boolean)
+				.join(" ")}
+			menuTitle={activeFlyout.type === "submenu" ? activeFlyout.categoryText : undefined}
+			popover="manual"
+			style={flyoutPanelStyle || { left: 0, top: 0, visibility: "hidden" }}
 		>
-			<MenuList
-				hasSearch={selectedCategory === "Punctuation" ? false : secondHasSearch}
-				elementOptions={secondaryElementOptions}
-				categoryText={selectedCategory}
-				detailSource="secondary"
-				onHoverOption={showActiveDetail}
-				onLeaveOptions={clearActiveDetail}
-				onSelectOption={(selectedElement) => handleSelectOption(selectedElement, selectedCategory)}
-			/>
+			{activeFlyout.type === "submenu" && (
+				<MenuList
+					hasSearch={selectedCategory === "Punctuation" ? false : secondHasSearch}
+					elementOptions={activeFlyout.elementOptions}
+					categoryText={activeFlyout.categoryText}
+					detailSource="secondary"
+					onHoverOption={handleHoverOption}
+					onLeaveOption={handleLeaveOption}
+					onLeaveOptions={handleLeaveOptions}
+					onSelectOption={(selectedElement) =>
+						handleSelectOption(selectedElement, activeFlyout.categoryText)
+					}
+				/>
+			)}
+			{activeFlyout.type === "detail" && (
+				<ElementDetailPanelContent element={activeFlyout.element} />
+			)}
+		</MenuPanel>
+	)
+	const detailLayerPanel = activeDetailLayer && (
+		<MenuPanel
+			panelRef={detailLayerPanelRef}
+			className={[
+				"flyoutMenuPanel",
+				"flyoutMenuPanel-layer",
+				`flyoutMenuPanel-${detailLayerPlacement}`,
+				"flyoutMenuPanel-detail",
+				isDetailLayerOpen ? "flyoutMenuPanelOpen" : "flyoutMenuPanelClosing",
+			]
+				.filter(Boolean)
+				.join(" ")}
+			popover="manual"
+			style={detailLayerStyle || { left: 0, top: 0, visibility: "hidden" }}
+		>
+			<ElementDetailPanelContent element={activeDetailLayer.element} />
 		</MenuPanel>
 	)
 	const primaryPanel = (
@@ -374,8 +481,9 @@ export default function ElementsMenu({
 				categoryText={selectedCategory}
 				selectedOptionText={selectedCategory}
 				detailSource="primary"
-				onHoverOption={showActiveDetail}
-				onLeaveOptions={clearActiveDetail}
+				onHoverOption={handleHoverOption}
+				onLeaveOption={handleLeaveOption}
+				onLeaveOptions={handleLeaveOptions}
 				onSelectOption={handleSelectCategory}
 			/>
 		</MenuPanel>
@@ -389,26 +497,29 @@ export default function ElementsMenu({
 				className={`elementsMenuContainer ${
 					isModalOpen ? "elementsMenuOpen" : "elementsMenuClosing"
 				}`}
+				style={menuPanelStyle || { left: 0, top: 0, visibility: "hidden" }}
 			>
 				{primaryPanel}
-				{secondaryPanel}
 			</div>
-			{shouldRenderDetailPanel && activeDetail && (
-				<ElementDetailPanel
-					panelRef={detailPanelRef}
-					element={activeDetail.element}
-					isOpen={isDetailPanelOpen}
-					style={detailPanelStyle || { left: 0, top: 0, visibility: "hidden" }}
-				/>
-			)}
+			{flyoutPanel}
+			{detailLayerPanel}
 		</>,
 		document.body,
 	)
 }
 
-function MenuPanel({ children, hasDelete, onDelete, className = "", menuTitle, panelRef }) {
+function MenuPanel({
+	children,
+	hasDelete,
+	onDelete,
+	className = "",
+	menuTitle,
+	panelRef,
+	popover,
+	style,
+}) {
 	return (
-		<div ref={panelRef} className={`menuPanel ${className}`}>
+		<div ref={panelRef} className={`menuPanel ${className}`} popover={popover} style={style}>
 			{menuTitle && <div className="elementsMenuTitle">{menuTitle}</div>}
 			{children}
 			{hasDelete && (
@@ -424,6 +535,78 @@ function MenuPanel({ children, hasDelete, onDelete, className = "", menuTitle, p
 			)}
 		</div>
 	)
+}
+
+function getElementAnchorRect(element) {
+	const rect = element?.getBoundingClientRect?.()
+
+	if (!rect) return null
+
+	return {
+		top: rect.top,
+		right: rect.right,
+		bottom: rect.bottom,
+		left: rect.left,
+		width: rect.width,
+		height: rect.height,
+	}
+}
+
+function getDirectSelectOption(element) {
+	if (!element?.list) return element
+
+	if (element.list.length === 1 && element.list[0].text === element.text) {
+		return element.list[0]
+	}
+
+	return null
+}
+
+function getMenuAnchorGap(menu) {
+	const styles = window.getComputedStyle(menu)
+	return parseFloat(styles.getPropertyValue("--element-options-anchor-gap")) || 0
+}
+
+function getMenuPanelGap(menu) {
+	const styles = window.getComputedStyle(menu)
+	return parseFloat(styles.getPropertyValue("--element-options-panel-gap")) || 0
+}
+
+function getPrimaryMenuLayout(anchorRect, menuRect, anchorGap) {
+	const maxLeft = window.innerWidth - menuRect.width - MENU_VIEWPORT_PADDING
+	const maxTop = window.innerHeight - menuRect.height - MENU_VIEWPORT_PADDING
+	const anchorCenter = anchorRect.left + anchorRect.width / 2
+	const belowTop = anchorRect.bottom + anchorGap
+	const aboveTop = anchorRect.top - menuRect.height - anchorGap
+	const top = aboveTop >= MENU_VIEWPORT_PADDING ? aboveTop : belowTop
+	const left = anchorCenter - menuRect.width / 2
+
+	return {
+		left: Math.max(MENU_VIEWPORT_PADDING, Math.min(left, maxLeft)),
+		top: Math.max(MENU_VIEWPORT_PADDING, Math.min(top, maxTop)),
+	}
+}
+
+function getAnchoredPanelLayout(anchorRect, panelRect, panelGap) {
+	const maxLeft = window.innerWidth - panelRect.width - MENU_VIEWPORT_PADDING
+	const maxTop = window.innerHeight - panelRect.height - MENU_VIEWPORT_PADDING
+	const rightSideLeft = anchorRect.right + panelGap
+	const leftSideLeft = anchorRect.left - panelRect.width - panelGap
+	let left = rightSideLeft
+	let placement = "right"
+
+	if (left > maxLeft) {
+		left = leftSideLeft
+		placement = "left"
+	}
+
+	return {
+		placement,
+		style: {
+			left: Math.max(MENU_VIEWPORT_PADDING, Math.min(left, maxLeft)),
+			top: Math.max(MENU_VIEWPORT_PADDING, Math.min(anchorRect.top, maxTop)),
+		},
+	}
 }
 
 function isNativePopoverSupported(element) {

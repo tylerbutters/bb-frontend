@@ -1,0 +1,297 @@
+import { fireEvent, render, screen } from "@testing-library/react"
+import ElementsMenu from "./ElementsMenu"
+
+beforeAll(() => {
+	class MockIntersectionObserver {
+		observe() {}
+		unobserve() {}
+		disconnect() {}
+	}
+
+	global.IntersectionObserver = MockIntersectionObserver
+})
+
+afterEach(() => {
+	jest.useRealTimers()
+})
+
+function getMenuProps(
+	props = {},
+	anchorRef = { current: document.createElement("button") },
+) {
+	return {
+		anchorRef,
+		isModalOpen: true,
+		setIsModalOpen: jest.fn(),
+		onSelect: jest.fn(),
+		secondHasSearch: false,
+		elementOptions: [
+			{
+				text: "か",
+				list: [{ text: "ない" }, { text: "れる" }],
+			},
+		],
+		...props,
+	}
+}
+
+function renderOpenMenu(props = {}, anchorRect) {
+	const anchor = document.createElement("button")
+	const anchorRef = { current: anchor }
+	if (anchorRect) {
+		anchor.getBoundingClientRect = jest.fn(() => anchorRect)
+	}
+
+	return {
+		anchor,
+		anchorRef,
+		...render(<ElementsMenu {...getMenuProps(props, anchorRef)} />),
+	}
+}
+
+test("positions the primary menu from the opening anchor rect", () => {
+	renderOpenMenu(
+		{},
+		{
+			top: 220,
+			right: 180,
+			bottom: 250,
+			left: 120,
+			width: 60,
+			height: 30,
+		},
+	)
+
+	expect(document.querySelector(".elementsMenuContainer")).toHaveStyle({
+		left: "150px",
+	})
+})
+
+test("keeps the primary menu position after the anchor geometry changes", () => {
+	const openingRect = {
+		top: 220,
+		right: 180,
+		bottom: 250,
+		left: 120,
+		width: 60,
+		height: 30,
+	}
+	const changedRect = {
+		top: 220,
+		right: 700,
+		bottom: 250,
+		left: 400,
+		width: 300,
+		height: 30,
+	}
+	const { anchor, anchorRef, rerender } = renderOpenMenu({}, openingRect)
+
+	expect(document.querySelector(".elementsMenuContainer")).toHaveStyle({
+		left: "150px",
+	})
+
+	anchor.getBoundingClientRect.mockReturnValue(changedRect)
+	rerender(<ElementsMenu {...getMenuProps({}, anchorRef)} />)
+
+	expect(document.querySelector(".elementsMenuContainer")).toHaveStyle({
+		left: "150px",
+	})
+})
+
+test("opens a secondary menu from hover", () => {
+	renderOpenMenu()
+
+	fireEvent.mouseEnter(screen.getByRole("button", { name: "か" }))
+
+	expect(screen.getByRole("button", { name: "ない" })).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "れる" })).toBeInTheDocument()
+})
+
+test("positions a hover-opened secondary menu from the hovered option", () => {
+	renderOpenMenu()
+
+	const categoryButton = screen.getByRole("button", { name: "か" })
+	categoryButton.getBoundingClientRect = jest.fn(() => ({
+		top: 120,
+		right: 240,
+		bottom: 150,
+		left: 200,
+		width: 40,
+		height: 30,
+	}))
+
+	fireEvent.mouseEnter(categoryButton)
+
+	expect(document.querySelector(".flyoutMenuPanel")).toHaveStyle({
+		left: "240px",
+		top: "120px",
+	})
+})
+
+test("renders hover-opened secondary menus as submenu flyouts", () => {
+	renderOpenMenu()
+
+	fireEvent.mouseEnter(screen.getByRole("button", { name: "か" }))
+
+	expect(document.querySelector(".flyoutMenuPanel")).toHaveClass(
+		"flyoutMenuPanel-submenu",
+		"flyoutMenuPanelOpen",
+	)
+})
+
+test("opens element detail immediately from hover", () => {
+	renderOpenMenu({
+		elementOptions: [{ text: "ない", detailId: "verb-negative" }],
+	})
+
+	fireEvent.mouseEnter(screen.getByRole("button", { name: "ない" }))
+
+	expect(screen.getByText("Negative")).toBeInTheDocument()
+	expect(screen.getByText("To not do")).toBeInTheDocument()
+})
+
+test("opens detail for direct-select da category on hover", () => {
+	renderOpenMenu({
+		elementOptions: [
+			{
+				text: "だ",
+				list: [
+					{
+						elementType: "desu",
+						text: "だ",
+						stem: "だ",
+						detailId: "copula-non-past",
+					},
+				],
+			},
+		],
+	})
+
+	fireEvent.mouseEnter(screen.getByRole("button", { name: "だ" }))
+
+	expect(screen.getAllByRole("button", { name: "だ" })).toHaveLength(1)
+	expect(screen.getByText("Copula")).toBeInTheDocument()
+	expect(screen.getByText("Non-past")).toBeInTheDocument()
+	expect(screen.getByText("Is")).toBeInTheDocument()
+})
+
+test("positions element detail from the hovered option", () => {
+	renderOpenMenu({
+		elementOptions: [{ text: "ない", detailId: "verb-negative" }],
+	})
+
+	const detailButton = screen.getByRole("button", { name: "ない" })
+	detailButton.getBoundingClientRect = jest.fn(() => ({
+		top: 120,
+		right: 240,
+		bottom: 150,
+		left: 200,
+		width: 40,
+		height: 30,
+	}))
+
+	fireEvent.mouseEnter(detailButton)
+
+	expect(document.querySelector(".flyoutMenuPanel")).toHaveStyle({
+		left: "240px",
+		top: "120px",
+	})
+})
+
+test("keeps a hover-opened secondary menu after leaving the primary option", () => {
+	const onSelect = jest.fn()
+	renderOpenMenu({ onSelect })
+
+	const categoryButton = screen.getByRole("button", { name: "か" })
+	fireEvent.mouseEnter(categoryButton)
+	expect(screen.getByRole("button", { name: "ない" })).toBeInTheDocument()
+
+	fireEvent.mouseLeave(categoryButton)
+
+	fireEvent.click(screen.getByRole("button", { name: "ない" }))
+	expect(onSelect).toHaveBeenCalledWith({
+		text: "ない",
+		selectedCategoryText: "か",
+	})
+})
+
+test("shows detail in another layer when hovering an option in a secondary menu", () => {
+	const onSelect = jest.fn()
+	renderOpenMenu({
+		onSelect,
+		elementOptions: [
+			{
+				text: "か",
+				list: [{ text: "ない", detailId: "verb-negative" }, { text: "れる" }],
+			},
+		],
+	})
+
+	fireEvent.mouseEnter(screen.getByRole("button", { name: "か" }))
+
+	const secondaryOption = screen.getByRole("button", { name: "ない" })
+	secondaryOption.getBoundingClientRect = jest.fn(() => ({
+		top: 170,
+		right: 360,
+		bottom: 200,
+		left: 320,
+		width: 40,
+		height: 30,
+	}))
+	fireEvent.mouseEnter(secondaryOption)
+
+	expect(screen.getByText("Negative")).toBeInTheDocument()
+	expect(screen.getByText("To not do")).toBeInTheDocument()
+	const flyoutPanels = document.querySelectorAll(".flyoutMenuPanel")
+	expect(flyoutPanels).toHaveLength(2)
+	expect(flyoutPanels[0]).toHaveClass("flyoutMenuPanel-submenu")
+	expect(flyoutPanels[1]).toHaveClass("flyoutMenuPanel-layer", "flyoutMenuPanel-detail")
+	expect(flyoutPanels[1]).toHaveStyle({
+		left: "360px",
+		top: "170px",
+	})
+
+	fireEvent.click(secondaryOption)
+	expect(onSelect).toHaveBeenCalledWith({
+		text: "ない",
+		detailId: "verb-negative",
+		selectedCategoryText: "か",
+	})
+})
+
+test("keeps a click-opened secondary menu after leaving the primary option", () => {
+	renderOpenMenu()
+
+	const categoryButton = screen.getByRole("button", { name: "か" })
+	fireEvent.click(categoryButton)
+	expect(screen.getByRole("button", { name: "ない" })).toBeInTheDocument()
+
+	fireEvent.mouseLeave(categoryButton)
+
+	expect(screen.getByRole("button", { name: "ない" })).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "れる" })).toBeInTheDocument()
+})
+
+test("opens a secondary menu from hover by default", () => {
+	renderOpenMenu()
+
+	fireEvent.mouseEnter(screen.getByRole("button", { name: "か" }))
+
+	expect(screen.getByRole("button", { name: "ない" })).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "れる" })).toBeInTheDocument()
+})
+
+test("does not open a secondary menu for direct-select categories on hover", () => {
+	renderOpenMenu({
+		elementOptions: [
+			{
+				text: "いて",
+				list: [{ text: "いて", detailId: "verb-te-form" }],
+			},
+		],
+	})
+
+	fireEvent.mouseEnter(screen.getByRole("button", { name: "いて" }))
+
+	expect(screen.getAllByRole("button", { name: "いて" })).toHaveLength(1)
+})

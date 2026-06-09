@@ -15,7 +15,10 @@ function getGodanEnding(parentConjugation) {
 }
 
 function createGodanCategory(text, list) {
-	return { text, list }
+	const directOption = list?.length === 1 && list[0].text === text ? list[0] : null
+	const { text: _optionText, ...directOptionDetails } = directOption || {}
+
+	return { text, ...directOptionDetails, list }
 }
 
 function createGodanB2Category(text) {

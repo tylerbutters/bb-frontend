@@ -3,10 +3,8 @@
 	--element-options-panel-gap: 8px;
 	inset: auto;
 	position: fixed;
-	position-area: top;
-	position-try: flip-block;
 	z-index: 2000;
-	margin: 0 0 var(--element-options-anchor-gap);
+	margin: 0;
 	padding: 0;
 	overflow: visible;
 	border: 0;
@@ -71,19 +69,9 @@
 	cursor: pointer;
 }
 
-.elementsMenuButton:hover {
-	/* border-color: var(--color-grey-border); */
-	background: var(--color-grey-border);
-}
-
+.elementsMenuButton:hover,
 .selectedElementsMenuButton {
-	border: 1px solid var(--color-white-border);
-	background: var(--color-white-background);
-}
-
-.selectedElementsMenuButton:hover {
-	border: 1px solid var(--color-white-border);
-	background: var(--color-white-background);
+	background: var(--color-grey-border);
 }
 
 .elementsMenuTitle {
@@ -127,43 +115,56 @@
 	z-index: 999;
 }
 
-.secondaryMenuPanel {
+.flyoutMenuPanel {
+	inset: auto;
 	position: fixed;
-	top: 0;
+	z-index: 2001;
+	margin: 0;
+	padding: 0;
+	color: inherit;
+	box-shadow: 0 18px 30px var(--color-shadow);
+	will-change: opacity, transform;
 }
 
-.secondaryMenuPanelOpen {
-	animation: secondaryMenuPanelIn 300ms ease-in-out both;
+.flyoutMenuPanel:popover-open {
+	display: flex;
 }
 
-.secondaryMenuPanelClosing {
+.flyoutMenuPanelOpen {
+	animation: none;
+}
+
+.flyoutMenuPanelClosing {
 	pointer-events: none;
-	animation: secondaryMenuPanelOut 160ms ease-in-out both;
+	animation: flyoutMenuPanelOut 160ms ease-in-out both;
 }
 
-.secondaryMenuPanel-right {
-	left: calc(100% + var(--element-options-panel-gap));
+.flyoutMenuPanel-layer {
+	z-index: 2002;
+}
+
+.flyoutMenuPanel-right {
 	transform-origin: top left;
 }
 
-.secondaryMenuPanel-left {
-	right: calc(100% + var(--element-options-panel-gap));
+.flyoutMenuPanel-left {
 	transform-origin: top right;
 }
 
-@keyframes secondaryMenuPanelIn {
-	from {
-		transform: scale(0.95);
-		opacity: 0;
-	}
-
-	to {
-		transform: scale(1);
-		opacity: 1;
-	}
+.flyoutMenuPanel-detail {
+	width: min(340px, calc(100vw - 32px));
+	max-height: min(520px, calc(100vh - 32px));
+	overflow-x: hidden;
+	overflow-y: auto;
+	border-radius: 8px;
+	color: white;
 }
 
-@keyframes secondaryMenuPanelOut {
+.flyoutMenuPanel-detail:popover-open {
+	display: block;
+}
+
+@keyframes flyoutMenuPanelOut {
 	from {
 		transform: scale(1);
 		opacity: 1;

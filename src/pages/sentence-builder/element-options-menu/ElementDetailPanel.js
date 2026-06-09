@@ -61,10 +61,21 @@ export default function ElementDetailPanel({ element, isOpen, panelRef, style })
 			}`}
 			style={style}
 		>
+			<ElementDetailPanelContent detail={detail} />
+		</aside>
+	)
+}
+
+export function ElementDetailPanelContent({ detail: providedDetail, element }) {
+	const detail = providedDetail || getElementDetail(element)
+	if (!detail) return null
+
+	return (
+		<>
 			{detail.kind === "conjugation" && <ConjugationDetail detail={detail} />}
 			{detail.kind === "vocabulary" && <VocabularyDetail detail={detail} />}
 			{detail.kind === "particle" && <ParticleDetail detail={detail} />}
-		</aside>
+		</>
 	)
 }
 

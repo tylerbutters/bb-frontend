@@ -46,12 +46,33 @@ describe("getGodanConjugationOptions", () => {
 
 		expect(findCategory(options, "って")).toEqual({
 			text: "って",
+			conjugationType: "te",
+			detailId: "verb-te-form",
 			list: [{ text: "って", conjugationType: "te", detailId: "verb-te-form" }],
 		})
 		expect(findCategory(options, "った")).toEqual({
 			text: "った",
+			detailId: "verb-past",
 			list: [{ text: "った", detailId: "verb-past" }],
 		})
+	})
+
+	test("adds detail to godan categories that select directly instead of opening a submenu", () => {
+		const options = getGodanConjugationOptions({
+			elementType: "verb",
+			verbType: "godan",
+			ending: "く",
+		})
+
+		expect(findCategory(options, "く")).toEqual(
+			expect.objectContaining({ detailId: "verb-non-past" }),
+		)
+		expect(findCategory(options, "いて")).toEqual(
+			expect.objectContaining({ conjugationType: "te", detailId: "verb-te-form" }),
+		)
+		expect(findCategory(options, "いた")).toEqual(
+			expect.objectContaining({ detailId: "verb-past" }),
+		)
 	})
 
 	test("uses the base ending after a godan verb ending has shifted", () => {
@@ -73,6 +94,7 @@ describe("getGodanConjugationOptions", () => {
 		})
 		expect(findCategory(options, "った")).toEqual({
 			text: "った",
+			detailId: "verb-past",
 			list: [{ text: "った", detailId: "verb-past" }],
 		})
 	})
