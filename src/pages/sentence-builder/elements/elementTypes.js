@@ -101,6 +101,9 @@ export function getDefaultElementOptions() {
 		{ text: "Adverbs", list: adverbs },
 		{ text: "Counters", list: counters },
 		{ text: ELEMENT_TYPE_LABELS.punctuation, list: punctuation },
-		{ text: ELEMENT_TYPE_LABELS.desu, list: [{ elementType: "desu", text: "だ", stem: "だ" }] },
+		{
+			text: ELEMENT_TYPE_LABELS.desu,
+			list: [{ elementType: "desu", text: "だ", stem: "だ", detailId: "copula-non-past" }],
+		},
 	]
 }

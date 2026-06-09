@@ -16,7 +16,11 @@ describe("getGodanConjugationOptions", () => {
 			ending: "る",
 		})
 
-		expect(options[0]).toEqual({ text: "ない", replacesParent: true })
+		expect(options[0]).toEqual({
+			text: "ない",
+			replacesParent: true,
+			detailId: "verb-negative",
+		})
 	})
 
 	test("does not include nai inside aru B1 options", () => {
@@ -69,6 +73,20 @@ describe("getGodanConjugationOptions", () => {
 			text: "った",
 			list: [{ text: "った", detailId: "verb-past" }],
 		})
+	})
+
+	test("adds detail to the B2 stem option", () => {
+		const options = getGodanConjugationOptions({
+			elementType: "verb",
+			verbType: "godan-iku",
+			ending: "く",
+		})
+
+		expect(findCategory(options, "き").list).toEqual(
+			expect.arrayContaining([
+				{ text: "き", conjugationType: "aux", detailId: "verb-stem" },
+			]),
+		)
 	})
 })
 

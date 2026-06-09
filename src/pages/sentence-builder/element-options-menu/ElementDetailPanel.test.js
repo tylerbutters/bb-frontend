@@ -3,12 +3,16 @@ import ElementDetailPanel, { getElementDetail } from "./ElementDetailPanel"
 
 describe("getElementDetail", () => {
 	test("returns conjugation details for conjugation menu options", () => {
-		expect(getElementDetail({ text: "させる" })).toMatchObject({
+		expect(getElementDetail({ text: "させる", detailId: "verb-causative" })).toMatchObject({
 			kind: "conjugation",
 			type: "Verb Conjugation",
 			grammaticalName: "Causative",
 			englishTranslation: "To make / let / have somebody do something",
 		})
+	})
+
+	test("does not infer conjugation details from option text alone", () => {
+		expect(getElementDetail({ text: "させる" })).toBeNull()
 	})
 
 	test("returns conjugation details for negative te, tari, and zu options", () => {
@@ -26,6 +30,25 @@ describe("getElementDetail", () => {
 			kind: "conjugation",
 			grammaticalName: "Zu negative",
 			englishTranslation: "Without doing / not doing",
+		})
+	})
+
+	test("uses structured example data for negative te, tari, and zu details", () => {
+		const details = [
+			getElementDetail({ text: "ないで", detailId: "verb-negative-te-form" }),
+			getElementDetail({ text: "たり", detailId: "verb-tari-form" }),
+			getElementDetail({ text: "ず", detailId: "verb-zu-negative" }),
+		]
+
+		details.forEach((detail) => {
+			detail.constructions.forEach((construction) => {
+				construction.examples.forEach((example) => {
+					expect(example).toEqual({
+						base: expect.any(String),
+						conjugation: expect.any(String),
+					})
+				})
+			})
 		})
 	})
 
@@ -61,7 +84,9 @@ describe("getElementDetail", () => {
 	})
 
 	test("shows conjugation example arrows as right arrows", () => {
-		const { container } = render(<ElementDetailPanel element={{ text: "ない" }} isOpen />)
+		const { container } = render(
+			<ElementDetailPanel element={{ text: "ない", detailId: "verb-negative" }} isOpen />,
+		)
 
 		expect(container).toHaveTextContent("食べる → 食べない")
 		expect(container).not.toHaveTextContent("食べる => 食べない")
@@ -69,7 +94,9 @@ describe("getElementDetail", () => {
 	})
 
 	test("bolds only the changed endings in conjugation examples", () => {
-		const { container } = render(<ElementDetailPanel element={{ text: "ない" }} isOpen />)
+		const { container } = render(
+			<ElementDetailPanel element={{ text: "ない", detailId: "verb-negative" }} isOpen />,
+		)
 		const getEndingTexts = (exampleText) => {
 			const exampleLine = Array.from(
 				container.querySelectorAll(".elementDetailExamples > div"),
@@ -85,7 +112,7 @@ describe("getElementDetail", () => {
 	})
 
 	test("uses structured conjugation example data", () => {
-		const detail = getElementDetail({ text: "ない" })
+		const detail = getElementDetail({ text: "ない", detailId: "verb-negative" })
 		const godanConstruction = detail.constructions.find(
 			(construction) => construction.label === "Godan",
 		)

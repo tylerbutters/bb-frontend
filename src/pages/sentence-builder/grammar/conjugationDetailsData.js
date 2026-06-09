@@ -4,7 +4,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Non-past",
 		englishTranslation: "To do",
-		optionTexts: ["る", "くる", "する"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -38,11 +37,47 @@ export const conjugationDetails = [
 		],
 	},
 	{
+		id: "verb-stem",
+		type: "Verb Conjugation",
+		grammaticalName: "Stem / noun form",
+		englishTranslation: "Noun-like stem / before auxiliaries",
+		constructions: [
+			{
+				label: "Ichidan",
+				construction: "stem",
+				examples: [
+					{ base: "食べる", conjugation: "食べ" },
+				],
+			},
+			{
+				label: "Godan",
+				construction: "B2",
+				examples: [
+					{ base: "読む", conjugation: "読み" },
+					{ base: "書く", conjugation: "書き" },
+				],
+			},
+			{
+				label: "Suru",
+				construction: "し",
+				examples: [
+					{ base: "する", conjugation: "し" },
+				],
+			},
+			{
+				label: "Kuru",
+				construction: "き",
+				examples: [
+					{ base: "くる", conjugation: "き" },
+				],
+			},
+		],
+	},
+	{
 		id: "verb-negative",
 		type: "Verb Conjugation",
 		grammaticalName: "Negative",
 		englishTranslation: "To not do",
-		optionTexts: ["ない", "しない", "こない"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -80,27 +115,35 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Negative te form",
 		englishTranslation: "Without doing",
-		optionTexts: ["ないで", "しないで", "こないで"],
 		constructions: [
 			{
 				label: "Ichidan",
 				construction: "stem + ないで",
-				examples: ["食べる => 食べないで"],
+				examples: [
+					{ base: "食べる", conjugation: "食べないで" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B1 + ないで",
-				examples: ["読む => 読まないで", "書く => 書かないで"],
+				examples: [
+					{ base: "読む", conjugation: "読まないで" },
+					{ base: "書く", conjugation: "書かないで" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "しないで",
-				examples: ["する => しないで"],
+				examples: [
+					{ base: "する", conjugation: "しないで" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "こないで",
-				examples: ["くる => こないで"],
+				examples: [
+					{ base: "くる", conjugation: "こないで" },
+				],
 			},
 		],
 	},
@@ -109,27 +152,35 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Zu negative",
 		englishTranslation: "Without doing / not doing",
-		optionTexts: ["ず", "せず", "こず"],
 		constructions: [
 			{
 				label: "Ichidan",
 				construction: "stem + ず",
-				examples: ["食べる => 食べず"],
+				examples: [
+					{ base: "食べる", conjugation: "食べず" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "B1 + ず",
-				examples: ["読む => 読まず", "書く => 書かず"],
+				examples: [
+					{ base: "読む", conjugation: "読まず" },
+					{ base: "書く", conjugation: "書かず" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "せず",
-				examples: ["する => せず"],
+				examples: [
+					{ base: "する", conjugation: "せず" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "こず",
-				examples: ["くる => こず"],
+				examples: [
+					{ base: "くる", conjugation: "こず" },
+				],
 			},
 		],
 	},
@@ -138,7 +189,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Past",
 		englishTranslation: "Did",
-		optionTexts: ["た", "した", "きた"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -176,27 +226,35 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Tari form",
 		englishTranslation: "Do things like",
-		optionTexts: ["たり", "したり", "きたり"],
 		constructions: [
 			{
 				label: "Ichidan",
 				construction: "stem + たり",
-				examples: ["食べる => 食べたり"],
+				examples: [
+					{ base: "食べる", conjugation: "食べたり" },
+				],
 			},
 			{
 				label: "Godan",
 				construction: "Bta + り",
-				examples: ["読む => 読んだり", "書く => 書いたり"],
+				examples: [
+					{ base: "読む", conjugation: "読んだり" },
+					{ base: "書く", conjugation: "書いたり" },
+				],
 			},
 			{
 				label: "Suru",
 				construction: "したり",
-				examples: ["する => したり"],
+				examples: [
+					{ base: "する", conjugation: "したり" },
+				],
 			},
 			{
 				label: "Kuru",
 				construction: "きたり",
-				examples: ["くる => きたり"],
+				examples: [
+					{ base: "くる", conjugation: "きたり" },
+				],
 			},
 		],
 	},
@@ -205,7 +263,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Past negative",
 		englishTranslation: "Did not do",
-		optionTexts: ["なかった", "しなかった", "こなかった"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -243,7 +300,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Te form",
 		englishTranslation: "",
-		optionTexts: ["て", "して", "きて"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -281,7 +337,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Desire",
 		englishTranslation: "Want to do",
-		optionTexts: ["たい", "したい", "きたい"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -319,7 +374,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Volitional",
 		englishTranslation: "Let's do / will do",
-		optionTexts: ["よう", "う", "しよう", "こよう"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -357,7 +411,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Imperative / command",
 		englishTranslation: "Do it",
-		optionTexts: ["ろ", "れ", "しろ", "こい"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -395,7 +448,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Negative imperative",
 		englishTranslation: "Don't do it",
-		optionTexts: ["な", "するな", "くるな"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -433,7 +485,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Potential",
 		englishTranslation: "Can do",
-		optionTexts: ["られる", "できる", "こられる"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -471,7 +522,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Passive",
 		englishTranslation: "To be done / have something done to you",
-		optionTexts: ["れる", "される"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -509,7 +559,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Causative",
 		englishTranslation: "To make / let / have somebody do something",
-		optionTexts: ["させる", "せる", "こさせる"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -547,7 +596,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Conditional (ba)",
 		englishTranslation: "If",
-		optionTexts: ["れば", "ば", "すれば", "くれば"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -585,7 +633,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Conditional (tara)",
 		englishTranslation: "If / when",
-		optionTexts: ["たら", "したら", "きたら"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -623,7 +670,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "While doing",
 		englishTranslation: "While doing",
-		optionTexts: ["ながら"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -661,7 +707,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Too much",
 		englishTranslation: "Do too much",
-		optionTexts: ["すぎる"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -699,7 +744,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Easy to do",
 		englishTranslation: "Easy to do",
-		optionTexts: ["やすい"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -737,7 +781,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Hard to do",
 		englishTranslation: "Hard to do",
-		optionTexts: ["にくい"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -775,7 +818,6 @@ export const conjugationDetails = [
 		type: "Verb Conjugation",
 		grammaticalName: "Way of doing",
 		englishTranslation: "Way to do",
-		optionTexts: ["方"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -813,7 +855,6 @@ export const conjugationDetails = [
 		type: "Verb (polite)",
 		grammaticalName: "Non-past",
 		englishTranslation: "To do",
-		optionTexts: ["ます", "します", "きます"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -851,7 +892,6 @@ export const conjugationDetails = [
 		type: "Verb (polite)",
 		grammaticalName: "Negative",
 		englishTranslation: "To not do",
-		optionTexts: ["ません", "せん", "しません", "きません"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -889,7 +929,6 @@ export const conjugationDetails = [
 		type: "Verb (polite)",
 		grammaticalName: "Te form",
 		englishTranslation: "",
-		optionTexts: ["まして"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -927,7 +966,6 @@ export const conjugationDetails = [
 		type: "Verb (polite)",
 		grammaticalName: "Past",
 		englishTranslation: "Did",
-		optionTexts: ["ました"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -965,7 +1003,6 @@ export const conjugationDetails = [
 		type: "Verb (polite)",
 		grammaticalName: "Conditional",
 		englishTranslation: "If / when",
-		optionTexts: ["ましたら"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -1003,7 +1040,6 @@ export const conjugationDetails = [
 		type: "Verb (polite)",
 		grammaticalName: "Volitional",
 		englishTranslation: "Let's do / will do",
-		optionTexts: ["ましょう", "しょう"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -1041,7 +1077,6 @@ export const conjugationDetails = [
 		type: "I Adjective Conjugation",
 		grammaticalName: "Negative",
 		englishTranslation: "Not",
-		optionTexts: ["くない", "よくない"],
 		constructions: [
 			{
 				label: "I adjective",
@@ -1057,7 +1092,6 @@ export const conjugationDetails = [
 		type: "I Adjective Conjugation",
 		grammaticalName: "Conditional (ba)",
 		englishTranslation: "If",
-		optionTexts: ["ければ"],
 		constructions: [
 			{
 				label: "I adjective",
@@ -1073,7 +1107,6 @@ export const conjugationDetails = [
 		type: "I Adjective Conjugation",
 		grammaticalName: "I form",
 		englishTranslation: "Is",
-		optionTexts: ["い", "いい"],
 		constructions: [
 			{
 				label: "I adjective",
@@ -1089,7 +1122,6 @@ export const conjugationDetails = [
 		type: "I Adjective Conjugation",
 		grammaticalName: "Past",
 		englishTranslation: "Was",
-		optionTexts: ["かった", "よかった"],
 		constructions: [
 			{
 				label: "I adjective",
@@ -1105,7 +1137,6 @@ export const conjugationDetails = [
 		type: "I Adjective Conjugation",
 		grammaticalName: "Te form",
 		englishTranslation: "",
-		optionTexts: ["くて", "よくて"],
 		constructions: [
 			{
 				label: "I adjective",
@@ -1121,7 +1152,6 @@ export const conjugationDetails = [
 		type: "I Adjective Conjugation",
 		grammaticalName: "Adverbial",
 		englishTranslation: "",
-		optionTexts: ["く", "よく"],
 		constructions: [
 			{
 				label: "I adjective",
@@ -1137,7 +1167,6 @@ export const conjugationDetails = [
 		type: "Verb and I Adjective Conjugation",
 		grammaticalName: "Conjecture",
 		englishTranslation: "Seems like",
-		optionTexts: ["そう"],
 		constructions: [
 			{
 				label: "Ichidan",
@@ -1182,7 +1211,6 @@ export const conjugationDetails = [
 		type: "Copula",
 		grammaticalName: "Non-past",
 		englishTranslation: "Is",
-		optionTexts: ["だ"],
 		constructions: [
 			{
 				label: "Copula",
@@ -1198,7 +1226,6 @@ export const conjugationDetails = [
 		type: "Copula",
 		grammaticalName: "Conditional (tara)",
 		englishTranslation: "If",
-		optionTexts: ["だったら"],
 		constructions: [
 			{
 				label: "Copula",
@@ -1214,7 +1241,6 @@ export const conjugationDetails = [
 		type: "Copula",
 		grammaticalName: "Past",
 		englishTranslation: "Was",
-		optionTexts: ["だった"],
 		constructions: [
 			{
 				label: "Copula",
@@ -1230,7 +1256,6 @@ export const conjugationDetails = [
 		type: "Copula",
 		grammaticalName: "Te form",
 		englishTranslation: "",
-		optionTexts: ["で"],
 		constructions: [
 			{
 				label: "Copula",
@@ -1246,7 +1271,6 @@ export const conjugationDetails = [
 		type: "Copula (polite)",
 		grammaticalName: "Non-past",
 		englishTranslation: "Is",
-		optionTexts: ["です"],
 		constructions: [
 			{
 				label: "Copula",
@@ -1262,7 +1286,6 @@ export const conjugationDetails = [
 		type: "Copula (polite)",
 		grammaticalName: "Conditional (tara)",
 		englishTranslation: "If",
-		optionTexts: ["でしたら"],
 		constructions: [
 			{
 				label: "Copula",
@@ -1278,7 +1301,6 @@ export const conjugationDetails = [
 		type: "Copula (polite)",
 		grammaticalName: "Past",
 		englishTranslation: "Was",
-		optionTexts: ["でした"],
 		constructions: [
 			{
 				label: "Copula",
@@ -1294,7 +1316,6 @@ export const conjugationDetails = [
 		type: "Copula (polite)",
 		grammaticalName: "Te form",
 		englishTranslation: "",
-		optionTexts: ["でして"],
 		constructions: [
 			{
 				label: "Copula",
@@ -1311,21 +1332,9 @@ const conjugationDetailsById = new Map(
 	conjugationDetails.map((detail) => [detail.id, detail]),
 )
 
-const conjugationDetailIdsByText = new Map()
-conjugationDetails.forEach((detail) => {
-	detail.optionTexts.forEach((text) => {
-		if (!conjugationDetailIdsByText.has(text)) {
-			conjugationDetailIdsByText.set(text, detail.id)
-		}
-	})
-})
-
 export function getConjugationDetail(element) {
 	if (!element) return null
-	if (element.detailId) return conjugationDetailsById.get(element.detailId) || null
-	if (element.elementType && element.elementType !== "desu") return null
-	if (element.list && element.text !== "だ") return null
+	if (!element.detailId) return null
 
-	const detailId = conjugationDetailIdsByText.get(element.text)
-	return detailId ? conjugationDetailsById.get(detailId) || null : null
+	return conjugationDetailsById.get(element.detailId) || null
 }

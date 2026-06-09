@@ -20,9 +20,12 @@ export function getGodanConjugationOptions(parentConjugation) {
 
 	if (parentConjugation.verbType === "godan-aru") {
 		return [
-			{ text: "ない", replacesParent: true },
+			{ text: "ない", replacesParent: true, detailId: "verb-negative" },
 			createGodanCategory(B1, ARU_B1_OPTIONS),
-			createGodanCategory(B2, [...godanDefaults.B2, { text: B2, conjugationType: "aux" }]),
+			createGodanCategory(B2, [
+				...godanDefaults.B2,
+				{ text: B2, conjugationType: "aux", detailId: "verb-stem" },
+			]),
 			createGodanCategory(B3, [{ text: B3, detailId: "verb-non-past" }]),
 			createGodanCategory(B4, godanDefaults.B4),
 			createGodanCategory(B5, godanDefaults.B5),
@@ -34,8 +37,8 @@ export function getGodanConjugationOptions(parentConjugation) {
 	if (parentConjugation.verbType === "godan-haru") {
 		return [
 			createGodanCategory(B1, godanDefaults.B1),
-			createGodanCategory("い", [...godanDefaults.B2, { text: "い" }]),
-			createGodanCategory(B2, [{ text: B2, conjugationType: "aux" }]),
+			createGodanCategory("い", [...godanDefaults.B2, { text: "い", detailId: "verb-stem" }]),
+			createGodanCategory(B2, [{ text: B2, conjugationType: "aux", detailId: "verb-stem" }]),
 			createGodanCategory(B3, [{ text: B3, detailId: "verb-non-past" }]),
 			createGodanCategory(B4, godanDefaults.B4),
 			createGodanCategory(B5, godanDefaults.B5),
@@ -47,7 +50,10 @@ export function getGodanConjugationOptions(parentConjugation) {
 	if (parentConjugation.verbType === "godan-iku") {
 		return [
 			createGodanCategory(B1, godanDefaults.B1),
-			createGodanCategory(B2, [...godanDefaults.B2, { text: B2, conjugationType: "aux" }]),
+			createGodanCategory(B2, [
+				...godanDefaults.B2,
+				{ text: B2, conjugationType: "aux", detailId: "verb-stem" },
+			]),
 			createGodanCategory(B3, [{ text: B3, detailId: "verb-non-past" }]),
 			createGodanCategory(B4, godanDefaults.B4),
 			createGodanCategory(B5, godanDefaults.B5),
@@ -58,7 +64,10 @@ export function getGodanConjugationOptions(parentConjugation) {
 
 	return [
 		createGodanCategory(B1, godanDefaults.B1),
-		createGodanCategory(B2, [...godanDefaults.B2, { text: B2, conjugationType: "aux" }]),
+		createGodanCategory(B2, [
+			...godanDefaults.B2,
+			{ text: B2, conjugationType: "aux", detailId: "verb-stem" },
+		]),
 		createGodanCategory(B3, [{ text: B3, detailId: "verb-non-past" }]),
 		createGodanCategory(B4, godanDefaults.B4),
 		createGodanCategory(B5, godanDefaults.B5),
