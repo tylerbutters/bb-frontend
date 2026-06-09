@@ -1,18 +1,7 @@
 import verbs from "../jmdict/processed/verbs.json"
 import adjectives from "../jmdict/processed/adjectives.json"
 
-function textOptions(items, elementType) {
-	return items.map((item) => {
-		const option = typeof item === "string" ? { text: item } : { ...item }
-
-		return {
-			...option,
-			...(elementType && !option.elementType && { elementType }),
-		}
-	})
-}
-
-const rareruOptions = textOptions([
+const rareruOptions = [
 	{ text: "る", detailId: "verb-non-past" },
 	{ text: "ない", detailId: "verb-negative" },
 	{ text: "ないで", detailId: "verb-negative-te-form" },
@@ -23,9 +12,9 @@ const rareruOptions = textOptions([
 	{ text: "よう", detailId: "verb-volitional" },
 	{ text: "ます", detailId: "verb-polite-non-past" },
 	{ text: "ず", detailId: "verb-zu-negative" },
-])
+]
 
-const saseruOptions = textOptions([
+const saseruOptions = [
 	{ text: "る", detailId: "verb-non-past" },
 	{ text: "ない", detailId: "verb-negative" },
 	{ text: "ないで", detailId: "verb-negative-te-form" },
@@ -37,30 +26,30 @@ const saseruOptions = textOptions([
 	{ text: "よう", detailId: "verb-volitional" },
 	{ text: "られる", detailId: "verb-passive" },
 	{ text: "ず", detailId: "verb-zu-negative" },
-])
+]
 
-const masuOptions = textOptions([
+const masuOptions = [
 	{ text: "ます", detailId: "verb-polite-non-past" },
 	{ text: "せん", detailId: "verb-polite-negative" },
 	{ text: "した", detailId: "verb-polite-past" },
 	{ text: "して", detailId: "verb-polite-te-form" },
 	{ text: "しょう", detailId: "verb-polite-volitional" },
-])
+]
 
-const iadjOptions = textOptions([
+const iadjOptions = [
 	{ text: "い", detailId: "i-adjective-i-form" },
 	{ text: "くない", detailId: "i-adjective-negative" },
 	{ text: "かった", detailId: "i-adjective-past" },
 	{ text: "く", detailId: "i-adjective-adverbial" },
 	{ text: "くて", detailId: "i-adjective-te-form" },
-])
+]
 
-const kunaiOptions = textOptions([
+const kunaiOptions = [
 	{ text: "い", detailId: "i-adjective-i-form" },
 	{ text: "かった", detailId: "i-adjective-past" },
 	{ text: "く", detailId: "i-adjective-adverbial" },
 	{ text: "くて", detailId: "i-adjective-te-form" },
-])
+]
 
 export const godanRows = {
 	く: ["か", "き", "く", "け", "こ", "いて", "いた"],
@@ -75,50 +64,40 @@ export const godanRows = {
 }
 
 export const godanDefaults = {
-	B1: textOptions([
+	B1: [
 		{ text: "ない", detailId: "verb-negative" },
 		{ text: "れる", detailId: "verb-passive" },
 		{ text: "せる", detailId: "verb-causative" },
 		{ text: "ず", detailId: "verb-zu-negative" },
-	]),
-	B2: textOptions([
+	],
+	B2: [
 		{ text: "ます", detailId: "verb-polite-non-past" },
 		{ text: "たい", detailId: "verb-desire" },
-	]),
-	B4: textOptions([
+	],
+	B4: [
 		{ text: "ば", detailId: "verb-conditional-ba" },
 		{ text: "る", detailId: "verb-potential" },
 		{ text: "れ", detailId: "verb-imperative" },
-	]),
-	B5: textOptions([{ text: "う", detailId: "verb-volitional" }]),
+	],
+	B5: [{ text: "う", detailId: "verb-volitional" }],
 }
 
 export const auxiliaryDefinitions = [
-	...textOptions(
-		[
-			"始める",
-			"終わる",
-			"続ける",
-			{ text: "すぎる", detailId: "verb-too-much" },
-			"直す",
-			"切る",
-			"出す",
-			"合う",
-			"慣れる",
-			"忘れる",
-			"残す",
-			"疲れる",
-			"比べる",
-		],
-		"verb",
-	),
-	...textOptions(
-		[
-			{ text: "やすい", detailId: "verb-easy-to-do" },
-			{ text: "にくい", detailId: "verb-hard-to-do" },
-		],
-		"adjective",
-	),
+	{ text: "始める", elementType: "verb" },
+	{ text: "終わる", elementType: "verb" },
+	{ text: "続ける", elementType: "verb" },
+	{ text: "すぎる", elementType: "verb", detailId: "verb-too-much" },
+	{ text: "直す", elementType: "verb" },
+	{ text: "切る", elementType: "verb" },
+	{ text: "出す", elementType: "verb" },
+	{ text: "合う", elementType: "verb" },
+	{ text: "慣れる", elementType: "verb" },
+	{ text: "忘れる", elementType: "verb" },
+	{ text: "残す", elementType: "verb" },
+	{ text: "疲れる", elementType: "verb" },
+	{ text: "比べる", elementType: "verb" },
+	{ text: "やすい", elementType: "adjective", detailId: "verb-easy-to-do" },
+	{ text: "にくい", elementType: "adjective", detailId: "verb-hard-to-do" },
 ]
 
 function formatAuxiliaryDefinitions() {
@@ -140,11 +119,11 @@ function formatAuxiliaryDefinitions() {
 
 export const auxiliaries = formatAuxiliaryDefinitions()
 
-export const noDesu = textOptions(["の", "なの", "ん", "なん"])
+export const noDesu = [{ text: "の" }, { text: "なの" }, { text: "ん" }, { text: "なん" }]
 
 export const conjugations = {
 	// kuru
-	kuruDefault: textOptions([
+	kuruDefault: [
 		{ text: "きて", detailId: "verb-te-form" },
 		{ text: "きた", detailId: "verb-past" },
 		{ text: "きたり", detailId: "verb-tari-form" },
@@ -161,7 +140,7 @@ export const conjugations = {
 		{ text: "こさせる", detailId: "verb-causative" },
 		{ text: "こず", detailId: "verb-zu-negative" },
 		{ text: "き", detailId: "verb-stem" },
-	]),
+	],
 	き: {
 		stem: "き",
 		conjugationType: "aux",
@@ -220,7 +199,7 @@ export const conjugations = {
 	},
 
 	// suru
-	suruDefault: textOptions([
+	suruDefault: [
 		{ text: "される", detailId: "verb-passive" },
 		{ text: "させる", detailId: "verb-causative" },
 		{ text: "した", detailId: "verb-past" },
@@ -236,7 +215,7 @@ export const conjugations = {
 		{ text: "せず", detailId: "verb-zu-negative" },
 		{ text: "できる", detailId: "verb-potential" },
 		{ text: "し", detailId: "verb-stem" },
-	]),
+	],
 	する: {
 		stem: "する",
 	},
@@ -302,7 +281,7 @@ export const conjugations = {
 	},
 
 	// ichidan
-	ichidanDefault: textOptions([
+	ichidanDefault: [
 		{ text: "ない", detailId: "verb-negative" },
 		{ text: "ないで", detailId: "verb-negative-te-form" },
 		{ text: "たい", detailId: "verb-desire" },
@@ -317,8 +296,8 @@ export const conjugations = {
 		{ text: "ます", detailId: "verb-polite-non-past" },
 		{ text: "ず", detailId: "verb-zu-negative" },
 		{ text: "blank", detailId: "verb-stem" },
-	]),
-	kureruDefault: textOptions([
+	],
+	kureruDefault: [
 		{ text: "ない", detailId: "verb-negative" },
 		{ text: "たい", detailId: "verb-desire" },
 		{ text: "た", detailId: "verb-past" },
@@ -331,7 +310,7 @@ export const conjugations = {
 		{ text: "ます", detailId: "verb-polite-non-past" },
 		{ text: "ず", detailId: "verb-zu-negative" },
 		{ text: "blank", detailId: "verb-stem" },
-	]),
+	],
 	blank: {
 		// stem: "",
 		conjugationType: "aux",
@@ -404,13 +383,13 @@ export const conjugations = {
 	},
 
 	// ii
-	iiDefault: textOptions([
+	iiDefault: [
 		{ text: "いい", detailId: "i-adjective-i-form" },
 		{ text: "よくない", detailId: "i-adjective-negative" },
 		{ text: "よかった", detailId: "i-adjective-past" },
 		{ text: "よく", detailId: "i-adjective-adverbial" },
 		{ text: "よくて", detailId: "i-adjective-te-form" },
-	]),
+	],
 	いい: {
 		stem: "いい",
 	},
@@ -465,12 +444,12 @@ export const conjugations = {
 	},
 
 	// desu
-	desuDefault: textOptions([
+	desuDefault: [
 		{ text: "だった", detailId: "copula-past" },
 		{ text: "で", detailId: "copula-te-form" },
 		{ text: "です", detailId: "copula-polite-non-past" },
 		{ text: "だ", detailId: "copula-non-past" },
-	]),
+	],
 	だ: {
 		stem: "だ",
 	},
@@ -484,9 +463,9 @@ export const conjugations = {
 	です: {
 		stem: "で",
 		ending: "す",
-		conjugationOptions: textOptions([
+		conjugationOptions: [
 			{ text: "した", detailId: "copula-polite-past" },
 			{ text: "して", detailId: "copula-polite-te-form" },
-		]),
+		],
 	},
 }
