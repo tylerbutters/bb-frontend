@@ -1,4 +1,5 @@
-import { getElementDetail } from "./ElementDetailPanel"
+import { render, screen } from "@testing-library/react"
+import ElementDetailPanel, { getElementDetail } from "./ElementDetailPanel"
 
 describe("getElementDetail", () => {
 	test("returns conjugation details for conjugation menu options", () => {
@@ -57,5 +58,42 @@ describe("getElementDetail", () => {
 
 	test("returns no detail for unsupported options", () => {
 		expect(getElementDetail({ elementType: "punctuation", text: "。" })).toBeNull()
+	})
+
+	test("shows conjugation example arrows as right arrows", () => {
+		const { container } = render(<ElementDetailPanel element={{ text: "ない" }} isOpen />)
+
+		expect(container).toHaveTextContent("食べる → 食べない")
+		expect(container).not.toHaveTextContent("食べる => 食べない")
+		expect(screen.queryByText("(食べない)")).not.toBeInTheDocument()
+	})
+
+	test("bolds only the changed endings in conjugation examples", () => {
+		const { container } = render(<ElementDetailPanel element={{ text: "ない" }} isOpen />)
+		const getEndingTexts = (exampleText) => {
+			const exampleLine = Array.from(
+				container.querySelectorAll(".elementDetailExamples > div"),
+			).find((line) => line.textContent === exampleText)
+
+			return Array.from(
+				exampleLine?.querySelectorAll(".elementDetailConjugationEnding") || [],
+			).map((ending) => ending.textContent)
+		}
+
+		expect(getEndingTexts("食べる → 食べない")).toEqual(["る", "ない"])
+		expect(getEndingTexts("書く → 書かない")).toEqual(["く", "かない"])
+	})
+
+	test("uses structured conjugation example data", () => {
+		const detail = getElementDetail({ text: "ない" })
+		const godanConstruction = detail.constructions.find(
+			(construction) => construction.label === "Godan",
+		)
+
+		expect(godanConstruction.examples).toContainEqual({
+			base: "書く",
+			conjugation: "書かない",
+		})
+		expect(godanConstruction.examples).not.toContain("書く → 書かない")
 	})
 })

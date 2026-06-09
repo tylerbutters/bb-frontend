@@ -109,7 +109,7 @@ function ConjugationDetail({ detail }) {
 							</div>
 							<div className="elementDetailExamples">
 								{construction.examples.map((example) => (
-									<div key={example}>
+									<div key={getExampleKey(example)}>
 										<ExampleText example={example} />
 									</div>
 								))}
@@ -155,16 +155,95 @@ function ParticleDetail({ detail }) {
 }
 
 function ExampleText({ example }) {
-	const [japanese, translation] = String(example).split(/\s*=>\s*/)
+	if (isConjugationExample(example)) {
+		return (
+			<ConjugationExample
+				base={example.base}
+				conjugation={example.conjugation}
+			/>
+		)
+	}
 
-	if (!translation) return example
+	const translationExample = parseTranslationExample(String(example))
+	if (translationExample) {
+		return (
+			<>
+				{translationExample.japanese}{" "}
+				<span className="elementDetailExampleTranslation">
+					({translationExample.english})
+				</span>
+			</>
+		)
+	}
+
+	return String(example)
+}
+
+function ConjugationExample({ base, conjugation }) {
+	if (!base) return conjugation
+
+	const stemLength = getSharedPrefixLength(base, conjugation)
+	return (
+		<>
+			<ConjugationExampleWord text={base} stemLength={stemLength} />
+			{" → "}
+			<ConjugationExampleWord text={conjugation} stemLength={stemLength} />
+		</>
+	)
+}
+
+function ConjugationExampleWord({ text, stemLength }) {
+	const characters = Array.from(text)
+	const stem = characters.slice(0, stemLength).join("")
+	const ending = characters.slice(stemLength).join("")
+
+	if (!ending) return text
 
 	return (
 		<>
-			{japanese}{" "}
-			<span className="elementDetailExampleTranslation">({translation})</span>
+			{stem}
+			<strong className="elementDetailConjugationEnding">{ending}</strong>
 		</>
 	)
+}
+
+function getExampleKey(example) {
+	if (isConjugationExample(example)) {
+		return [example.base, example.conjugation].filter(Boolean).join(" → ")
+	}
+
+	return String(example)
+}
+
+function isConjugationExample(example) {
+	return Boolean(
+		example &&
+			typeof example === "object" &&
+			typeof example.conjugation === "string",
+	)
+}
+
+function parseTranslationExample(text) {
+	const [japanese, english, extra] = text.split(/\s*=>\s*/)
+	if (!japanese || !english || extra !== undefined) return null
+
+	return {
+		type: "translation",
+		japanese,
+		english,
+	}
+}
+
+function getSharedPrefixLength(base, conjugation) {
+	const baseCharacters = Array.from(base)
+	const conjugationCharacters = Array.from(conjugation)
+	const shortestLength = Math.min(baseCharacters.length, conjugationCharacters.length)
+
+	for (let index = 0; index < shortestLength; index += 1) {
+		if (baseCharacters[index] !== conjugationCharacters[index]) return index
+	}
+
+	return shortestLength
 }
 
 function getVocabularyDetail(element) {

@@ -23,7 +23,7 @@ const GAME_MODES = [
 		id: "fix sentence",
 		label: "Fix mistakes",
 		title: "Fix mistakes",
-		description: "Find and fix the mistake in the Japanese sentence.",
+		description: "Find and fix the mistakes in the Japanese sentence.",
 	},
 	{
 		id: "particles",
