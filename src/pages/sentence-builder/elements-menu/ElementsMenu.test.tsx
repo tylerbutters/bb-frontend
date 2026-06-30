@@ -1,7 +1,9 @@
-// @ts-nocheck
+import type { ComponentProps, RefObject } from "react"
 import { act, fireEvent, render, screen } from "@testing-library/react"
 import ElementsMenu from "./ElementsMenu"
 import { MENU_TRANSITION_MS } from "./menuEvents"
+
+type ElementsMenuTestProps = Partial<ComponentProps<typeof ElementsMenu>>
 
 beforeAll(() => {
 	class MockIntersectionObserver {
@@ -10,17 +12,38 @@ beforeAll(() => {
 		disconnect() {}
 	}
 
-	global.IntersectionObserver = MockIntersectionObserver
+	global.IntersectionObserver = MockIntersectionObserver as unknown as typeof IntersectionObserver
 })
 
 afterEach(() => {
 	jest.useRealTimers()
 })
 
+function createRect({
+	top = 0,
+	right = 0,
+	bottom = 0,
+	left = 0,
+	width = right - left,
+	height = bottom - top,
+}: Partial<DOMRect>): DOMRect {
+	return {
+		x: left,
+		y: top,
+		top,
+		right,
+		bottom,
+		left,
+		width,
+		height,
+		toJSON: () => ({}),
+	} as DOMRect
+}
+
 function getMenuProps(
-	props = {},
-	anchorRef = { current: document.createElement("button") },
-) {
+	props: ElementsMenuTestProps = {},
+	anchorRef: RefObject<HTMLElement | null> = { current: document.createElement("button") },
+): ComponentProps<typeof ElementsMenu> {
 	return {
 		anchorRef,
 		isModalOpen: true,
@@ -37,9 +60,9 @@ function getMenuProps(
 	}
 }
 
-function renderOpenMenu(props = {}, anchorRect) {
+function renderOpenMenu(props: ElementsMenuTestProps = {}, anchorRect?: DOMRect) {
 	const anchor = document.createElement("button")
-	const anchorRef = { current: anchor }
+	const anchorRef: RefObject<HTMLElement | null> = { current: anchor }
 	if (anchorRect) {
 		anchor.getBoundingClientRect = jest.fn(() => anchorRect)
 	}
@@ -54,14 +77,14 @@ function renderOpenMenu(props = {}, anchorRect) {
 test("positions the primary menu from the opening anchor rect", () => {
 	renderOpenMenu(
 		{},
-		{
+		createRect({
 			top: 220,
 			right: 180,
 			bottom: 250,
 			left: 120,
 			width: 60,
 			height: 30,
-		},
+		}),
 	)
 
 	expect(document.querySelector(".elementsMenuContainer")).toHaveStyle({
@@ -70,29 +93,29 @@ test("positions the primary menu from the opening anchor rect", () => {
 })
 
 test("keeps the primary menu position after the anchor geometry changes", () => {
-	const openingRect = {
+	const openingRect = createRect({
 		top: 220,
 		right: 180,
 		bottom: 250,
 		left: 120,
 		width: 60,
 		height: 30,
-	}
-	const changedRect = {
+	})
+	const changedRect = createRect({
 		top: 220,
 		right: 700,
 		bottom: 250,
 		left: 400,
 		width: 300,
 		height: 30,
-	}
+	})
 	const { anchor, anchorRef, rerender } = renderOpenMenu({}, openingRect)
 
 	expect(document.querySelector(".elementsMenuContainer")).toHaveStyle({
 		left: "150px",
 	})
 
-	anchor.getBoundingClientRect.mockReturnValue(changedRect)
+	;(anchor.getBoundingClientRect as jest.Mock).mockReturnValue(changedRect)
 	rerender(<ElementsMenu {...getMenuProps({}, anchorRef)} />)
 
 	expect(document.querySelector(".elementsMenuContainer")).toHaveStyle({
@@ -113,7 +136,7 @@ test("positions a hover-opened secondary menu from the hovered option", () => {
 	renderOpenMenu()
 
 	const categoryButton = screen.getByRole("button", { name: "か" })
-	categoryButton.getBoundingClientRect = jest.fn(() => ({
+	categoryButton.getBoundingClientRect = jest.fn(() => createRect({
 		top: 120,
 		right: 240,
 		bottom: 150,
@@ -182,7 +205,7 @@ test("positions element detail from the hovered option", () => {
 	})
 
 	const detailButton = screen.getByRole("button", { name: "ない" })
-	detailButton.getBoundingClientRect = jest.fn(() => ({
+	detailButton.getBoundingClientRect = jest.fn(() => createRect({
 		top: 120,
 		right: 240,
 		bottom: 150,
@@ -258,7 +281,7 @@ test("shows detail in another layer when hovering an option in a secondary menu"
 	fireEvent.mouseEnter(screen.getByRole("button", { name: "か" }))
 
 	const secondaryOption = screen.getByRole("button", { name: "ない" })
-	secondaryOption.getBoundingClientRect = jest.fn(() => ({
+	secondaryOption.getBoundingClientRect = jest.fn(() => createRect({
 		top: 170,
 		right: 360,
 		bottom: 200,

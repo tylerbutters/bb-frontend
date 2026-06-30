@@ -1,17 +1,19 @@
-// @ts-nocheck
 import { act, fireEvent, render, screen } from "@testing-library/react"
 import AnimatedWidth from "./AnimatedWidth"
 
-let originalRequestAnimationFrame
-let originalCancelAnimationFrame
-let originalResizeObserver
-let originalScrollWidth
+let originalRequestAnimationFrame: typeof window.requestAnimationFrame
+let originalCancelAnimationFrame: typeof window.cancelAnimationFrame
+let originalResizeObserver: typeof window.ResizeObserver
+let originalScrollWidth: PropertyDescriptor | undefined
 
 function getAnimatedWidthElement() {
-	return screen.getByTestId("animated-content").parentElement.parentElement
+	const element = screen.getByTestId("animated-content").parentElement?.parentElement
+	if (!element) throw new Error("Expected animated width wrapper to be rendered.")
+
+	return element
 }
 
-function fireWidthTransitionEnd(element, propertyName = "width") {
+function fireWidthTransitionEnd(element: Element, propertyName = "width") {
 	const event = new Event("transitionend", { bubbles: true })
 	Object.defineProperty(event, "propertyName", {
 		value: propertyName,
@@ -31,8 +33,9 @@ beforeEach(() => {
 	window.cancelAnimationFrame = (frameId) => window.clearTimeout(frameId)
 	window.ResizeObserver = class ResizeObserver {
 		observe() {}
+		unobserve() {}
 		disconnect() {}
-	}
+	} as unknown as typeof ResizeObserver
 
 	Object.defineProperty(HTMLElement.prototype, "scrollWidth", {
 		configurable: true,
@@ -52,7 +55,7 @@ afterEach(() => {
 	if (originalScrollWidth) {
 		Object.defineProperty(HTMLElement.prototype, "scrollWidth", originalScrollWidth)
 	} else {
-		delete HTMLElement.prototype.scrollWidth
+		Reflect.deleteProperty(HTMLElement.prototype, "scrollWidth")
 	}
 
 	jest.restoreAllMocks()

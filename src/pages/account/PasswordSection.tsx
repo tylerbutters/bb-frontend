@@ -1,12 +1,32 @@
 import { useEffect, useState } from "react"
+import type { FormEvent } from "react"
 import { Link } from "react-router-dom"
 import { Lock } from "lucide-react"
+import { getErrorMessage } from "../../api/errors"
 import { updateUser } from "../../api/users"
+import type { User } from "../../api/types"
 import InputBox from "../../components/InputBox"
 import "../auth/AuthPage.css"
 import AccountSectionHeader from "./AccountSectionHeader"
 
-export default function PasswordSection({ currentUser, onUserUpdate, resetMessage }) {
+type PasswordFormField = "currentPassword" | "password" | "confirmPassword"
+
+interface ResetMessage {
+	status?: string
+	message?: string
+}
+
+interface PasswordSectionProps {
+	currentUser: User
+	onUserUpdate: (user: User) => void
+	resetMessage?: ResetMessage | null
+}
+
+export default function PasswordSection({
+	currentUser,
+	onUserUpdate,
+	resetMessage,
+}: PasswordSectionProps) {
 	const [passwordForm, setPasswordForm] = useState({
 		currentPassword: "",
 		password: "",
@@ -27,7 +47,7 @@ export default function PasswordSection({ currentUser, onUserUpdate, resetMessag
 		})
 	}, [resetMessage])
 
-	function updatePasswordField(field, value) {
+	function updatePasswordField(field: PasswordFormField, value: string) {
 		setPasswordForm((prev) => ({
 			...prev,
 			[field]: value,
@@ -39,7 +59,7 @@ export default function PasswordSection({ currentUser, onUserUpdate, resetMessag
 		})
 	}
 
-	async function submitPassword(e) {
+	async function submitPassword(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
 
 		if (passwordForm.password !== passwordForm.confirmPassword) {
@@ -76,7 +96,7 @@ export default function PasswordSection({ currentUser, onUserUpdate, resetMessag
 		} catch (error) {
 			setFeedback({
 				status: "error",
-				message: error.message || "Password update failed.",
+				message: getErrorMessage(error, "Password update failed."),
 			})
 		}
 	}

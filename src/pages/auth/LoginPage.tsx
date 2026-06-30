@@ -1,12 +1,29 @@
 import { useEffect, useState } from "react"
+import type { FormEvent } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
+import { getErrorMessage } from "../../api/errors"
 import { login } from "../../api/auth"
+import type { User } from "../../api/types"
 import InputBox from "../../components/InputBox"
 import "./AuthPage.css"
 
-export default function LoginPage({ onLogin }) {
+type LoginFormField = "email" | "password"
+
+interface LoginRouteState {
+	email: string
+	status: string
+	message: string
+	messageType: string
+}
+
+interface LoginPageProps {
+	onLogin: (user: User) => void
+}
+
+export default function LoginPage({ onLogin }: LoginPageProps) {
 	const navigate = useNavigate()
 	const location = useLocation()
+	const routeState = location.state as LoginRouteState | null
 
 	const [loginForm, setLoginForm] = useState({
 		email: "",
@@ -17,11 +34,11 @@ export default function LoginPage({ onLogin }) {
 	const [loginMessageType, setLoginMessageType] = useState("error")
 
 	useEffect(() => {
-		if (!location.state) return
-		finishResetPassword(location.state)
-	}, [location.state])
+		if (!routeState) return
+		finishResetPassword(routeState)
+	}, [routeState])
 
-	function updateLoginField(field, value) {
+	function updateLoginField(field: LoginFormField, value: string) {
 		setLoginForm((prev) => ({
 			...prev,
 			[field]: value,
@@ -30,7 +47,7 @@ export default function LoginPage({ onLogin }) {
 		setLoginMessage("")
 	}
 
-	function finishResetPassword(payload) {
+	function finishResetPassword(payload: LoginRouteState) {
 		setLoginForm({
 			email: payload.email,
 			password: "",
@@ -40,7 +57,7 @@ export default function LoginPage({ onLogin }) {
 		setLoginMessageType(payload.messageType)
 	}
 
-	async function submitLogin(e) {
+	async function submitLogin(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
 		setLoginStatus("submitting")
 		setLoginMessage("")
@@ -52,7 +69,7 @@ export default function LoginPage({ onLogin }) {
 		} catch (error) {
 			setLoginStatus("error")
 			setLoginMessageType("error")
-			setLoginMessage(error.message || "Login failed.")
+			setLoginMessage(getErrorMessage(error, "Login failed."))
 		}
 	}
 

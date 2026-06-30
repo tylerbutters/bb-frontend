@@ -2,6 +2,7 @@ import "./Element.css"
 import Suffix from "../element-attachments/Suffix"
 import Prefix from "../element-attachments/Prefix"
 import JapaneseText from "../components/JapaneseText"
+import type { ElementComponentProps, MenuOption } from "../types"
 
 export default function Noun({
 	mouse,
@@ -10,8 +11,8 @@ export default function Noun({
 	allColors,
 	addButtonsDisabled,
 	affixesDisabled = addButtonsDisabled,
-}) {
-	function addElement(selectedElement) {
+}: ElementComponentProps) {
+	function addElement(selectedElement: MenuOption) {
 		switch (selectedElement?.elementType) {
 			case "prefix":
 				updateElement({ ...element, prefix: selectedElement })

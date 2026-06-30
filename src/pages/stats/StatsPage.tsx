@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
+import { getErrorMessage } from "../../api/errors"
 import { getUserGameHistory, getUserStats } from "../../api/users"
+import type { GameHistoryResponse, GameStats, StatsDifficulty, User } from "../../api/types"
 import {
 	emptyGameStatsResponse,
 	GAME_RECENT_FILTERS,
@@ -17,8 +19,9 @@ import { GameHistoryDrawer, useGameHistoryDrawer } from "./GameHistoryDrawer"
 import "../auth/AuthPage.css"
 import "./StatsPage.css"
 import { BarChart3, CheckCircle2, History, Percent, Trophy, XCircle } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
-function StatMetric({ icon: Icon, label, value }) {
+function StatMetric({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string | number }) {
 	return (
 		<div className="statsMetric">
 			<span className="statsMetricLabel">
@@ -30,7 +33,15 @@ function StatMetric({ icon: Icon, label, value }) {
 	)
 }
 
-function StatPanel({ title, stats, onHistoryClick }) {
+function StatPanel({
+	title,
+	stats,
+	onHistoryClick,
+}: {
+	title: string
+	stats?: GameStats | null
+	onHistoryClick: () => void
+}) {
 	const normalizedStats = normalizeGameStats(stats)
 
 	return (
@@ -61,15 +72,21 @@ function StatPanel({ title, stats, onHistoryClick }) {
 	)
 }
 
-function hasHistoryItems(history) {
+function hasHistoryItems(history?: GameHistoryResponse | null) {
 	return Array.isArray(history?.items) && history.items.length > 0
 }
 
-function isAuthenticationError(error) {
-	return error.status === 401
+function isAuthenticationError(error: unknown) {
+	return Boolean(error && typeof error === "object" && "status" in error && error.status === 401)
 }
 
-export default function StatsPage({ currentUser, onAuthExpired }) {
+export default function StatsPage({
+	currentUser,
+	onAuthExpired,
+}: {
+	currentUser?: User | null
+	onAuthExpired?: () => void
+}) {
 	const [stats, setStats] = useState(() =>
 		currentUser
 			? getLocalGameStats(currentUser.id, {
@@ -78,7 +95,7 @@ export default function StatsPage({ currentUser, onAuthExpired }) {
 			: emptyGameStatsResponse(),
 	)
 	const [recentStats, setRecentStats] = useState(() => getGameStatsGroupFromHistoryItems())
-	const [selectedDifficulty, setSelectedDifficulty] = useState("all")
+	const [selectedDifficulty, setSelectedDifficulty] = useState<StatsDifficulty>("all")
 	const [selectedRecentRange, setSelectedRecentRange] = useState("all")
 	const [status, setStatus] = useState("idle")
 	const [message, setMessage] = useState("")
@@ -125,9 +142,8 @@ export default function StatsPage({ currentUser, onAuthExpired }) {
 					return
 				}
 
-				console.log(error)
 				setStatus("error")
-				setMessage(error.message || "Could not load stats.")
+				setMessage(getErrorMessage(error, "Could not load stats."))
 			}
 		}
 
@@ -185,16 +201,18 @@ export default function StatsPage({ currentUser, onAuthExpired }) {
 					return
 				}
 
-				if (hasHistoryItems(localHistory) || error.status === 404) {
+				if (
+					hasHistoryItems(localHistory) ||
+					(error && typeof error === "object" && "status" in error && error.status === 404)
+				) {
 					setRecentStats(getGameStatsGroupFromHistoryItems(localHistory.items || []))
 					setRecentStatus("ready")
 					return
 				}
 
-				console.log(error)
 				setRecentStats(getGameStatsGroupFromHistoryItems())
 				setRecentStatus("error")
-				setRecentMessage(error.message || "Could not load recent stats.")
+				setRecentMessage(getErrorMessage(error, "Could not load recent stats."))
 			}
 		}
 

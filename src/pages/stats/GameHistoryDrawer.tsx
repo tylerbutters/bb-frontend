@@ -1,6 +1,9 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
+import type { TouchEvent, WheelEvent } from "react"
 import { Link } from "react-router-dom"
+import { getErrorMessage } from "../../api/errors"
 import { getUserGameHistory, getUserStats } from "../../api/users"
+import type { GameHistoryItem, GameHistoryResponse, GameStats, User } from "../../api/types"
 import {
 	emptyGameStatsResponse,
 	GAME_RECENT_FILTERS,
@@ -15,12 +18,24 @@ import {
 	parseGameRecentLimit,
 } from "../../gameStatsStorage"
 import { CheckCircle2, Percent, Trophy, X, XCircle } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 import "./GameHistoryDrawer.css"
 
 const HISTORY_PAGE_SIZE = 50
 const HISTORY_DRAWER_ANIMATION_MS = 180
 
-function normalizeHistoryItem(item) {
+interface HistoryFilter {
+	mode: string
+	label: string
+	difficulty: string
+	recentLimit?: string
+}
+
+type HistorySource = "backend" | "local"
+type HistoryStatus = "idle" | "loading" | "loadingMore" | "refreshing" | "ready" | "error"
+type StatsStatus = "idle" | "loading" | "refreshing" | "ready"
+
+function normalizeHistoryItem(item: GameHistoryItem): GameHistoryItem {
 	return {
 		id: item?.id || item?.challengeId || "",
 		challengeId: item?.challengeId || "",
@@ -35,7 +50,7 @@ function normalizeHistoryItem(item) {
 	}
 }
 
-function normalizeHistoryResponse(history) {
+function normalizeHistoryResponse(history?: GameHistoryResponse | null): Required<GameHistoryResponse> {
 	return {
 		items: (history?.items || []).map(normalizeHistoryItem),
 		hasMore: Boolean(history?.hasMore),
@@ -43,11 +58,15 @@ function normalizeHistoryResponse(history) {
 	}
 }
 
-function hasHistory(history) {
+function hasHistory(history?: GameHistoryResponse | null) {
 	return Array.isArray(history?.items) && history.items.length > 0
 }
 
-function getHistoryFilterKey({ mode = "all", difficulty = "all", recentLimit = "all" } = {}) {
+function getHistoryFilterKey({
+	mode = "all",
+	difficulty = "all",
+	recentLimit = "all",
+}: Partial<HistoryFilter> = {}) {
 	return [mode, difficulty, recentLimit || "all"].join(":")
 }
 
@@ -55,7 +74,7 @@ function emptyHistoryStats() {
 	return normalizeGameStats()
 }
 
-function formatHistoryDate(value) {
+function formatHistoryDate(value?: string) {
 	const date = new Date(value)
 	if (Number.isNaN(date.getTime())) return "Unknown date"
 
@@ -68,7 +87,15 @@ function formatHistoryDate(value) {
 	}).format(date)
 }
 
-function HistoryStatMetric({ icon: Icon, label, value }) {
+function HistoryStatMetric({
+	icon: Icon,
+	label,
+	value,
+}: {
+	icon: LucideIcon
+	label: string
+	value: string | number
+}) {
 	return (
 		<div className="statsMetric">
 			<span className="statsMetricLabel">
@@ -80,15 +107,15 @@ function HistoryStatMetric({ icon: Icon, label, value }) {
 	)
 }
 
-export function useGameHistoryDrawer(currentUser: any) {
-	const [historyFilter, setHistoryFilter] = useState(null)
-	const [historyItems, setHistoryItems] = useState([])
-	const [historyStatus, setHistoryStatus] = useState("idle")
+export function useGameHistoryDrawer(currentUser?: User | null) {
+	const [historyFilter, setHistoryFilter] = useState<HistoryFilter | null>(null)
+	const [historyItems, setHistoryItems] = useState<GameHistoryItem[]>([])
+	const [historyStatus, setHistoryStatus] = useState<HistoryStatus>("idle")
 	const [historyMessage, setHistoryMessage] = useState("")
 	const [historyHasMore, setHistoryHasMore] = useState(false)
-	const [historyNextOffset, setHistoryNextOffset] = useState(0)
-	const [historySource, setHistorySource] = useState("backend")
-	const [historyDataKey, setHistoryDataKey] = useState(null)
+	const [historyNextOffset, setHistoryNextOffset] = useState<number | null>(0)
+	const [historySource, setHistorySource] = useState<HistorySource>("backend")
+	const [historyDataKey, setHistoryDataKey] = useState<string | null>(null)
 	const [stats, setStats] = useState(() =>
 		currentUser
 			? getLocalGameStats(currentUser.id, {
@@ -96,26 +123,36 @@ export function useGameHistoryDrawer(currentUser: any) {
 				})
 			: emptyGameStatsResponse(),
 	)
-	const [statsStatus, setStatsStatus] = useState("idle")
+	const [statsStatus, setStatsStatus] = useState<StatsStatus>("idle")
 	const [isHistoryClosing, setIsHistoryClosing] = useState(false)
+	const historyStatusRef = useRef(historyStatus)
+	const statsStatusRef = useRef(statsStatus)
 	const isFreeStatsLimited = false
 	// TODO(premium): Re-enable free stats/history limits: currentUser?.plan !== "premium"
 
-	async function loadHistoryPage({
+	useEffect(() => {
+		historyStatusRef.current = historyStatus
+	}, [historyStatus])
+
+	useEffect(() => {
+		statsStatusRef.current = statsStatus
+	}, [statsStatus])
+
+	const loadHistoryPage = useCallback(async ({
 		filter = historyFilter,
 		offset = 0,
 		replace = false,
 		signal,
-		forceLocal = historySource === "local",
+		forceLocal = false,
 		background = false,
 	}: {
-		filter?: any
+		filter?: HistoryFilter | null
 		offset?: number
 		replace?: boolean
 		signal?: AbortSignal
 		forceLocal?: boolean
 		background?: boolean
-	} = {}) {
+	} = {}) => {
 		if (!currentUser || !filter) return
 
 		const filterKey = getHistoryFilterKey(filter)
@@ -130,12 +167,11 @@ export function useGameHistoryDrawer(currentUser: any) {
 			todayOnly: isFreeStatsLimited,
 		})
 
-		function applyHistory(nextHistory: any, source: string) {
+	function applyHistory(nextHistory: GameHistoryResponse, source: HistorySource) {
 			const normalizedHistory = normalizeHistoryResponse(nextHistory)
-			const nextItems = replace
-				? normalizedHistory.items
-				: [...historyItems, ...normalizedHistory.items]
-			setHistoryItems(nextItems)
+			setHistoryItems((currentItems) =>
+				replace ? normalizedHistory.items : [...currentItems, ...normalizedHistory.items],
+			)
 			setHistoryHasMore(recentLimit ? false : normalizedHistory.hasMore)
 			setHistoryNextOffset(
 				recentLimit
@@ -183,20 +219,19 @@ export function useGameHistoryDrawer(currentUser: any) {
 				return
 			}
 
-			console.log(error)
 			setHistoryStatus("error")
-			setHistoryMessage(error.message || "Could not load history.")
+			setHistoryMessage(getErrorMessage(error, "Could not load history."))
 			setHistoryHasMore(false)
 			setHistoryNextOffset(offset)
 		}
-	}
+	}, [currentUser, historyFilter, isFreeStatsLimited])
 
 	useEffect(() => {
 		if (!historyFilter || !currentUser) return
 		if (isHistoryClosing) return
 
 		const controller = new AbortController()
-		const isBackgroundRefresh = historyStatus === "refreshing"
+		const isBackgroundRefresh = historyStatusRef.current === "refreshing"
 		loadHistoryPage({
 			filter: historyFilter,
 			offset: 0,
@@ -209,14 +244,14 @@ export function useGameHistoryDrawer(currentUser: any) {
 		return () => {
 			controller.abort()
 		}
-	}, [currentUser, historyFilter, isFreeStatsLimited, isHistoryClosing])
+	}, [currentUser, historyFilter, isFreeStatsLimited, isHistoryClosing, loadHistoryPage])
 
 	useEffect(() => {
 		if (!historyFilter || !currentUser) return
 		if (isHistoryClosing) return
 
 		const controller = new AbortController()
-		const isBackgroundRefresh = statsStatus === "refreshing"
+		const isBackgroundRefresh = statsStatusRef.current === "refreshing"
 		const localStats = getLocalGameStats(currentUser.id, {
 			todayOnly: isFreeStatsLimited,
 		})
@@ -244,9 +279,6 @@ export function useGameHistoryDrawer(currentUser: any) {
 					return
 				}
 
-				if (error.status !== 404) {
-					console.log(error)
-				}
 				setStats(localStats)
 				setStatsStatus("ready")
 			}
@@ -269,7 +301,12 @@ export function useGameHistoryDrawer(currentUser: any) {
 		}
 	}, [isHistoryClosing])
 
-	function openHistory({ mode = "all", label, difficulty = "all", recentLimit = "all" }) {
+	function openHistory({
+		mode = "all",
+		label,
+		difficulty = "all",
+		recentLimit = "all",
+	}: Partial<HistoryFilter> & { label: string }) {
 		const nextFilter = {
 			mode,
 			label,
@@ -321,7 +358,7 @@ export function useGameHistoryDrawer(currentUser: any) {
 		setIsHistoryClosing(false)
 	}
 
-	function selectHistoryDifficulty(difficulty) {
+	function selectHistoryDifficulty(difficulty: string) {
 		if (!historyFilter || isHistoryClosing || historyFilter.difficulty === difficulty) return
 
 		setStats(emptyGameStatsResponse())
@@ -333,12 +370,12 @@ export function useGameHistoryDrawer(currentUser: any) {
 		setHistoryNextOffset(0)
 		setHistorySource("backend")
 		setHistoryDataKey(null)
-		setHistoryFilter((currentFilter) =>
+		setHistoryFilter((currentFilter: HistoryFilter | null) =>
 			currentFilter ? { ...currentFilter, difficulty } : currentFilter,
 		)
 	}
 
-	function selectRecentLimit(recentLimit) {
+	function selectRecentLimit(recentLimit: string) {
 		if (!historyFilter || isHistoryClosing || historyFilter.recentLimit === recentLimit) return
 
 		setStats(emptyGameStatsResponse())
@@ -350,7 +387,7 @@ export function useGameHistoryDrawer(currentUser: any) {
 		setHistoryNextOffset(0)
 		setHistorySource("backend")
 		setHistoryDataKey(null)
-		setHistoryFilter((currentFilter) =>
+		setHistoryFilter((currentFilter: HistoryFilter | null) =>
 			currentFilter ? { ...currentFilter, recentLimit } : currentFilter,
 		)
 	}
@@ -359,7 +396,7 @@ export function useGameHistoryDrawer(currentUser: any) {
 		if (parseGameRecentLimit(historyFilter?.recentLimit || "all")) return
 
 		loadHistoryPage({
-			offset: historyNextOffset,
+			offset: historyNextOffset || 0,
 			replace: false,
 			forceLocal: historySource === "local",
 		})
@@ -392,6 +429,25 @@ export function useGameHistoryDrawer(currentUser: any) {
 	}
 }
 
+interface GameHistoryDrawerProps {
+	filter?: HistoryFilter | null
+	recentFilters?: typeof GAME_RECENT_FILTERS
+	stats?: GameStats | null
+	isFreeStatsLimited?: boolean
+	statsStatus: StatsStatus
+	items: GameHistoryItem[]
+	status: HistoryStatus
+	message: string
+	hasMore: boolean
+	isClosing: boolean
+	requiresLogin?: boolean
+	onClose: () => void
+	onCloseAnimationEnd: () => void
+	onDifficultyChange: (difficulty: string) => void
+	onRecentLimitChange: (recentLimit: string) => void
+	onLoadMore: () => void
+}
+
 export function GameHistoryDrawer({
 	filter,
 	recentFilters = GAME_RECENT_FILTERS,
@@ -409,7 +465,7 @@ export function GameHistoryDrawer({
 	onDifficultyChange,
 	onRecentLimitChange,
 	onLoadMore,
-}) {
+}: GameHistoryDrawerProps) {
 	if (!filter) return null
 
 	const isLoading = status === "loading"
@@ -418,7 +474,7 @@ export function GameHistoryDrawer({
 	const normalizedStats =
 		isLoading || statsStatus === "loading" ? emptyHistoryStats() : normalizeGameStats(stats)
 
-	function preventFixedDrawerScroll(event) {
+	function preventFixedDrawerScroll(event: WheelEvent | TouchEvent) {
 		const scrollArea =
 			event.target instanceof Element ? event.target.closest(".statsHistoryScrollArea") : null
 
@@ -542,7 +598,7 @@ export function GameHistoryDrawer({
 
 					{!requiresLogin && !isLoading && (
 						<div className="statsHistoryList">
-							{items.map((item) => (
+							{items.map((item: GameHistoryItem) => (
 								<article className="statsHistoryItem" key={item.id || item.challengeId}>
 									<header className="statsHistoryItemHeader">
 										<div

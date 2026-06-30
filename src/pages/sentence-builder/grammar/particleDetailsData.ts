@@ -1,3 +1,5 @@
+import type { SentenceElement } from "../types"
+
 export const particleDetails = [
 	{
 		text: "から",
@@ -295,7 +297,7 @@ const particleDetailsByText = new Map(
 	particleDetails.map((detail) => [detail.text, detail]),
 )
 
-export function getParticleDetail(element) {
+export function getParticleDetail(element?: SentenceElement | null) {
 	if (element?.elementType !== "particle") return null
 	return particleDetailsByText.get(element.text) || null
 }

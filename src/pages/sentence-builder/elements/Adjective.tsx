@@ -1,6 +1,7 @@
 import "./Element.css"
 import Conjugation from "../element-attachments/Conjugation"
 import JapaneseText from "../components/JapaneseText"
+import type { ElementComponentProps } from "../types"
 
 export default function Adjective({
 	element,
@@ -10,7 +11,7 @@ export default function Adjective({
 	allColors,
 	addButtonsDisabled,
 	conjugationDisabled = addButtonsDisabled,
-}) {
+}: ElementComponentProps) {
 	return (
 		<div className="modalContainer">
 			<div className="baseElement">

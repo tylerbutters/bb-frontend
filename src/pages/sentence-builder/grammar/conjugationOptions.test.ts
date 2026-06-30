@@ -5,8 +5,9 @@ import {
 	getGodanConjugationOptions,
 	initializeNestedElement,
 } from "./conjugationOptions"
+import type { ConjugationOption } from "../types"
 
-function findCategory(options, text) {
+function findCategory(options: ConjugationOption[], text: string) {
 	return options.find((option) => option.text === text)
 }
 
@@ -31,7 +32,7 @@ describe("getGodanConjugationOptions", () => {
 			verbType: "godan-aru",
 			ending: "る",
 		})
-		const b1Options = findCategory(options, "ら").list.map((option) => option.text)
+		const b1Options = findCategory(options, "ら")?.list?.map((option) => option.text)
 
 		expect(b1Options).toEqual(["れる", "せる", "ず"])
 		expect(b1Options).not.toContain("ない")

@@ -4,23 +4,25 @@ import { Navigate } from "react-router-dom"
 import { legalDocuments } from "./legalDocuments"
 import "./LegalDocumentPage.css"
 
-function publicDocumentPath(path) {
+type LegalDocumentKey = keyof typeof legalDocuments
+
+function publicDocumentPath(path: string) {
 	return `${process.env.PUBLIC_URL || ""}${path}`
 }
 
-function slugify(text) {
+function slugify(text: string) {
 	return text
 		.toLowerCase()
 		.replace(/[^a-z0-9]+/g, "-")
 		.replace(/^-|-$/g, "")
 }
 
-function renderInlineText(text) {
+function renderInlineText(text: string): ReactNode[] {
 	const parts = text
 		.split(/(\*\*[^*]+\*\*|`[^`]+`|https?:\/\/[^\s)]+)/g)
 		.filter(Boolean)
 
-	return parts.map((part, index) => {
+	return parts.map((part: string, index: number) => {
 		if (part.startsWith("**") && part.endsWith("**")) {
 			return <strong key={index}>{part.slice(2, -2)}</strong>
 		}
@@ -41,11 +43,11 @@ function renderInlineText(text) {
 	})
 }
 
-function createBlocks(markdown) {
-	const blocks = []
+function createBlocks(markdown: string): LegalBlockData[] {
+	const blocks: LegalBlockData[] = []
 	const lines = markdown.trim().split("\n")
-	let paragraph = []
-	let list = []
+	let paragraph: string[] = []
+	let list: string[] = []
 
 	function flushParagraph() {
 		if (paragraph.length === 0) return
@@ -65,7 +67,7 @@ function createBlocks(markdown) {
 		list = []
 	}
 
-	lines.forEach((line) => {
+	lines.forEach((line: string) => {
 		const trimmedLine = line.trim()
 
 		if (!trimmedLine) {
@@ -78,9 +80,10 @@ function createBlocks(markdown) {
 		if (heading) {
 			flushParagraph()
 			flushList()
+			const level = heading[1].length as 1 | 2 | 3
 			blocks.push({
 				type: "heading",
-				level: heading[1].length,
+				level,
 				text: heading[2],
 			})
 			return
@@ -135,7 +138,7 @@ function LegalBlock({ block, documentKey }: { block: LegalBlockData; documentKey
 	return <p>{renderInlineText(block.text || "")}</p>
 }
 
-export default function LegalDocumentPage({ documentKey }) {
+export default function LegalDocumentPage({ documentKey }: { documentKey: LegalDocumentKey }) {
 	const document = legalDocuments[documentKey]
 	const [markdown, setMarkdown] = useState("")
 	const [status, setStatus] = useState("loading")

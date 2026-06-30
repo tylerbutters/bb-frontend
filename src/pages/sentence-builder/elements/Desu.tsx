@@ -1,5 +1,6 @@
 import Conjugation from "../element-attachments/Conjugation"
 import NoDesu from "../element-attachments/NoDesu"
+import type { ElementComponentProps, SentenceElement } from "../types"
 import "./Element.css"
 
 export default function Desu({
@@ -11,8 +12,8 @@ export default function Desu({
 	addButtonsDisabled,
 	conjugationDisabled = addButtonsDisabled,
 	affixesDisabled = addButtonsDisabled,
-}) {
-	function addNoDesu(newElement) {
+}: ElementComponentProps) {
+	function addNoDesu(newElement: SentenceElement) {
 		updateElement({
 			...element,
 			noDesu: newElement,

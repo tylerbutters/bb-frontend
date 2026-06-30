@@ -1,20 +1,42 @@
 import { act, render, screen } from "@testing-library/react"
 import { useRef, useState } from "react"
 import { MENU_CLOSE_EVENT } from "../elements-menu/menuEvents"
+import type { SentenceElement } from "../types"
 import useSentenceDragDrop from "./useSentenceDragDrop"
 
-function mockRect(node, rect) {
-	node.getBoundingClientRect = jest.fn(() => ({
-		left: rect.left,
-		top: rect.top,
-		width: rect.width,
-		height: rect.height,
-		right: rect.left + rect.width,
-		bottom: rect.top + rect.height,
-	}))
+interface MockRect {
+	left: number
+	top: number
+	width: number
+	height: number
 }
 
-function pointerEvent(type, init) {
+type TestPointerEventInit = MouseEventInit & {
+	pointerId: number
+}
+
+interface DragDropHarnessProps {
+	initialElements: SentenceElement[]
+}
+
+function mockRect(node: HTMLElement, rect: MockRect) {
+	node.getBoundingClientRect = jest.fn(
+		() =>
+			({
+				x: rect.left,
+				y: rect.top,
+				left: rect.left,
+				top: rect.top,
+				width: rect.width,
+				height: rect.height,
+				right: rect.left + rect.width,
+				bottom: rect.top + rect.height,
+				toJSON: () => ({}),
+			}) as DOMRect,
+	)
+}
+
+function pointerEvent(type: string, init: TestPointerEventInit) {
 	const event = new MouseEvent(type, init)
 	Object.defineProperty(event, "pointerId", {
 		value: init.pointerId,
@@ -22,9 +44,9 @@ function pointerEvent(type, init) {
 	return event
 }
 
-function DragDropHarness({ initialElements }) {
-	const [elements, setElements] = useState(initialElements)
-	const containerRef = useRef(null)
+function DragDropHarness({ initialElements }: DragDropHarnessProps) {
+	const [elements, setElements] = useState<SentenceElement[]>(initialElements)
+	const containerRef = useRef<HTMLDivElement | null>(null)
 	const {
 		dragState,
 		getDragPreviewTransform,

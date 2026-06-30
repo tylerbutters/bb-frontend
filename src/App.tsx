@@ -14,13 +14,15 @@ import AppNavbar from "./components/AppNavbar"
 import AppFooter from "./components/AppFooter"
 import LegalDocumentPage from "./pages/legal/LegalDocumentPage"
 import { logout } from "./api/auth"
+import type { User } from "./api/types"
 import ToastViewport from "./components/ToastViewport"
 
 const CURRENT_USER_STORAGE_KEY = "bbCurrentUser"
 
-function readStoredUser() {
+function readStoredUser(): User | null {
 	try {
-		return JSON.parse(window.localStorage.getItem(CURRENT_USER_STORAGE_KEY))
+		const storedUser = window.localStorage.getItem(CURRENT_USER_STORAGE_KEY)
+		return storedUser ? (JSON.parse(storedUser) as User) : null
 	} catch {
 		return null
 	}
@@ -29,12 +31,12 @@ function readStoredUser() {
 export default function App() {
 	const [currentUser, setCurrentUser] = useState(readStoredUser)
 
-	function handleLogin(user) {
+	function handleLogin(user: User) {
 		setCurrentUser(user)
 		window.localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(user))
 	}
 
-	function handleUserUpdate(user) {
+	function handleUserUpdate(user: User) {
 		setCurrentUser(user)
 		window.localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(user))
 	}

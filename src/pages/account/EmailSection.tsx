@@ -1,13 +1,29 @@
 import { useEffect, useState } from "react"
+import type { FormEvent } from "react"
 import { useLocation } from "react-router-dom"
 import { Mail } from "lucide-react"
+import { getErrorMessage } from "../../api/errors"
 import { requestEmailChange } from "../../api/users"
+import type { User } from "../../api/types"
 import InputBox from "../../components/InputBox"
 import "../auth/AuthPage.css"
 import AccountSectionHeader from "./AccountSectionHeader"
 
-export default function EmailSection({ currentUser, onUserUpdate }) {
+interface EmailSectionProps {
+	currentUser: User
+	onUserUpdate: (user: User) => void
+}
+
+interface EmailRouteState {
+	emailState?: {
+		status: string
+		message: string
+	}
+}
+
+export default function EmailSection({ currentUser, onUserUpdate }: EmailSectionProps) {
 	const location = useLocation()
+	const routeState = location.state as EmailRouteState | null
 
 	const [newEmail, setNewEmail] = useState(currentUser?.email || "")
 	const [feedback, setFeedback] = useState({
@@ -16,18 +32,18 @@ export default function EmailSection({ currentUser, onUserUpdate }) {
 	})
 
 	useEffect(() => {
-		if (!location.state?.emailState) return
+		if (!routeState?.emailState) return
 		setFeedback({
-			status: location.state.emailState.status,
-			message: location.state.emailState.message,
+			status: routeState.emailState.status,
+			message: routeState.emailState.message,
 		})
-	}, [location.state?.emailState])
+	}, [routeState?.emailState])
 
 	useEffect(() => {
 		setNewEmail(currentUser?.email || "")
 	}, [currentUser?.email])
 
-	async function submitEmail(e) {
+	async function submitEmail(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
 
 		setFeedback({
@@ -45,12 +61,12 @@ export default function EmailSection({ currentUser, onUserUpdate }) {
 		} catch (error) {
 			setFeedback({
 				status: "error",
-				message: error.message || "Email update failed.",
+				message: getErrorMessage(error, "Email update failed."),
 			})
 		}
 	}
 
-	function updateEmail(value) {
+	function updateEmail(value: string) {
 		setNewEmail(value)
 		setFeedback({
 			status: "idle",

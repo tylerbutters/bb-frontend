@@ -1,6 +1,6 @@
 import { particles } from "./particleData"
 
-function getParticleTextsForElementType(elementType) {
+function getParticleTextsForElementType(elementType: string) {
 	return particles
 		.filter((particle) => particle.attachesTo.includes(elementType))
 		.map((particle) => particle.text)

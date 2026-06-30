@@ -1,12 +1,22 @@
 import { useEffect, useState } from "react"
+import type { FormEvent } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { getErrorMessage } from "../../api/errors"
 import { confirmSignup, requestSignupConfirmation } from "../../api/users"
+import type { User } from "../../api/types"
 import InputBox from "../../components/InputBox"
 import "./AuthPage.css"
 
 const RESEND_CODE_COOLDOWN_SECONDS = 30
 
-export default function SignupPage({ onSignup }) {
+type SignupFormField = "email" | "password"
+type SignupAction = "request" | "confirm" | "resend" | null
+
+interface SignupPageProps {
+	onSignup: (user: User) => void
+}
+
+export default function SignupPage({ onSignup }: SignupPageProps) {
 	const navigate = useNavigate()
 	const [signupStep, setSignupStep] = useState("details")
 	const [signupForm, setSignupForm] = useState({
@@ -15,7 +25,7 @@ export default function SignupPage({ onSignup }) {
 	})
 	const [confirmationCode, setConfirmationCode] = useState("")
 	const [signupStatus, setSignupStatus] = useState("idle")
-	const [signupAction, setSignupAction] = useState(null)
+	const [signupAction, setSignupAction] = useState<SignupAction>(null)
 	const [signupMessage, setSignupMessage] = useState("")
 	const [signupMessageType, setSignupMessageType] = useState("error")
 	const [resendCooldown, setResendCooldown] = useState(0)
@@ -35,7 +45,7 @@ export default function SignupPage({ onSignup }) {
 	const isResendingSignupCode = signupStatus === "submitting" && signupAction === "resend"
 	const isResendDisabled = resendCooldown > 0 || isResendingSignupCode || isConfirmingSignup
 
-	function updateSignupField(field, value) {
+	function updateSignupField(field: SignupFormField, value: string) {
 		setSignupForm((prev) => ({
 			...prev,
 			[field]: value,
@@ -45,7 +55,7 @@ export default function SignupPage({ onSignup }) {
 		setSignupMessage("")
 	}
 
-	function updateConfirmationCode(value) {
+	function updateConfirmationCode(value: string) {
 		setConfirmationCode(value)
 		setSignupStatus("idle")
 		setSignupAction(null)
@@ -61,7 +71,7 @@ export default function SignupPage({ onSignup }) {
 		setResendCooldown(0)
 	}
 
-	async function submitSignupRequest(e) {
+	async function submitSignupRequest(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
 		setSignupStatus("submitting")
 		setSignupAction("request")
@@ -83,11 +93,11 @@ export default function SignupPage({ onSignup }) {
 			setSignupStatus("error")
 			setSignupAction(null)
 			setSignupMessageType("error")
-			setSignupMessage(error.message || "Could not send confirmation code.")
+			setSignupMessage(getErrorMessage(error, "Could not send confirmation code."))
 		}
 	}
 
-	async function submitSignupConfirm(e) {
+	async function submitSignupConfirm(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
 		setSignupStatus("submitting")
 		setSignupAction("confirm")
@@ -104,7 +114,7 @@ export default function SignupPage({ onSignup }) {
 			setSignupStatus("error")
 			setSignupAction(null)
 			setSignupMessageType("error")
-			setSignupMessage(error.message || "Sign up failed.")
+			setSignupMessage(getErrorMessage(error, "Sign up failed."))
 		}
 	}
 
@@ -130,7 +140,7 @@ export default function SignupPage({ onSignup }) {
 			setSignupStatus("error")
 			setSignupAction(null)
 			setSignupMessageType("error")
-			setSignupMessage(error.message || "Could not send confirmation code.")
+			setSignupMessage(getErrorMessage(error, "Could not send confirmation code."))
 		}
 	}
 

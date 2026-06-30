@@ -27,6 +27,9 @@ export interface SentenceElement {
 	number?: string | number | null
 	conjugation?: ConjugationOption | null
 	conjugationOptions?: ConjugationOption[]
+	prefix?: MenuOption | null
+	suffix?: MenuOption | null
+	noDesu?: SentenceElement | null
 	particle?: SentenceElement | null
 	sentenceElementId?: number
 	isGeneratedPromptElement?: boolean
@@ -61,6 +64,19 @@ export interface ElementColorSet {
 	desu: ElementTypeColor
 	punctuation: ElementTypeColor
 	default: ElementTypeColor
+}
+
+export interface ElementComponentProps {
+	element: SentenceElement
+	updateElement: (element: SentenceElement) => void
+	deleteElement: () => void
+	mouse: MousePosition
+	allColors: ElementColorSet
+	addButtonsDisabled?: boolean
+	affixesDisabled?: boolean
+	conjugationDisabled?: boolean
+	counterDisabled?: boolean
+	elementOptions?: MenuOption[]
 }
 
 export interface MenuOption {

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
+import { getErrorMessage } from "./api/errors"
 import { getUserGameQuota } from "./api/users"
 import type { GameQuota, User } from "./api/types"
 
@@ -6,7 +7,20 @@ interface UseGameQuotaOptions {
 	onAuthExpired?: () => void
 }
 
-function normalizeQuota(quota: GameQuota | null | undefined, currentUser?: User | null) {
+interface LocalChallengeCheck {
+	serverQuota?: GameQuota | null
+}
+
+interface ApiErrorLike {
+	status?: number
+	data?: {
+		error?: {
+			code?: string
+		}
+	}
+}
+
+function normalizeQuota(quota: GameQuota | null | undefined, currentUser?: User | null): GameQuota | null {
 	if (!quota) return null
 
 	const plan = quota?.plan || currentUser?.plan || "free"
@@ -31,12 +45,12 @@ function normalizeQuota(quota: GameQuota | null | undefined, currentUser?: User 
 }
 
 export function useGameQuota(currentUser?: User | null, { onAuthExpired }: UseGameQuotaOptions = {}) {
-	const [quota, setQuota] = useState(null)
+	const [quota, setQuota] = useState<GameQuota | null>(null)
 	const [status, setStatus] = useState("idle")
 	const [message, setMessage] = useState("")
 
 	const applyQuota = useCallback(
-		(nextQuota) => {
+		(nextQuota: GameQuota | null | undefined) => {
 			if (!currentUser) {
 				setQuota(null)
 				return
@@ -48,7 +62,7 @@ export function useGameQuota(currentUser?: User | null, { onAuthExpired }: UseGa
 	)
 
 	const recordLocalChallengeCheck = useCallback(
-		(challenge) => {
+		(challenge: LocalChallengeCheck) => {
 			if (!currentUser || !challenge?.serverQuota) {
 				return null
 			}
@@ -61,7 +75,7 @@ export function useGameQuota(currentUser?: User | null, { onAuthExpired }: UseGa
 	)
 
 	const refreshQuota = useCallback(
-	async ({ signal }: { signal?: AbortSignal } = {}) => {
+		async ({ signal }: { signal?: AbortSignal } = {}) => {
 			if (!currentUser) {
 				setQuota(null)
 				setStatus("idle")
@@ -81,16 +95,14 @@ export function useGameQuota(currentUser?: User | null, { onAuthExpired }: UseGa
 				setStatus("ready")
 				return normalizedQuota
 			} catch (error) {
-				if (error.name === "AbortError") return null
+				if (error instanceof Error && error.name === "AbortError") return null
 
 				if (isAuthenticationRequiredError(error)) {
 					onAuthExpired?.()
-				} else {
-					console.log(error)
 				}
 
 				setStatus("error")
-				setMessage(error.message || "Could not load game limit.")
+				setMessage(getErrorMessage(error, "Could not load game limit."))
 				setQuota(null)
 				return null
 			}
@@ -124,6 +136,7 @@ export function useGameQuota(currentUser?: User | null, { onAuthExpired }: UseGa
 	}
 }
 
-function isAuthenticationRequiredError(error) {
-	return error?.status === 401 || error?.data?.error?.code === "AUTHENTICATION_REQUIRED"
+function isAuthenticationRequiredError(error: unknown) {
+	const apiError = error as ApiErrorLike
+	return apiError?.status === 401 || apiError?.data?.error?.code === "AUTHENTICATION_REQUIRED"
 }

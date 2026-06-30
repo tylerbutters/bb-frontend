@@ -1,11 +1,21 @@
 import { useState } from "react"
 import { Navigate } from "react-router-dom"
 import { Trash2 } from "lucide-react"
+import { getErrorMessage } from "../../api/errors"
 import { deleteUser } from "../../api/users"
+import type { User } from "../../api/types"
 import "../auth/AuthPage.css"
 import AccountSectionHeader from "./AccountSectionHeader"
 
-export default function DeleteAccountSection({ currentUser, onAccountDelete }) {
+interface DeleteAccountSectionProps {
+	currentUser: User
+	onAccountDelete: () => void
+}
+
+export default function DeleteAccountSection({
+	currentUser,
+	onAccountDelete,
+}: DeleteAccountSectionProps) {
 	const [isDeleteConfirming, setIsDeleteConfirming] = useState(false)
 	const [isAccountDeleted, setIsAccountDeleted] = useState(false)
 	const [deleteStatus, setDeleteStatus] = useState("idle")
@@ -38,7 +48,7 @@ export default function DeleteAccountSection({ currentUser, onAccountDelete }) {
 			onAccountDelete()
 		} catch (error) {
 			setDeleteStatus("error")
-			setDeleteMessage(error.message || "Account delete failed.")
+			setDeleteMessage(getErrorMessage(error, "Account delete failed."))
 		}
 	}
 

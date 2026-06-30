@@ -1,6 +1,6 @@
-// @ts-nocheck
 import { fireEvent, render, screen } from "@testing-library/react"
 import Counter from "./Counter"
+import type { SentenceElement } from "../types"
 
 const allColors = {
 	counter: {
@@ -8,7 +8,7 @@ const allColors = {
 	},
 }
 
-function renderCounter(props = {}) {
+function renderCounter(props: { element?: Partial<SentenceElement> } = {}) {
 	const updateElement = jest.fn()
 	const element = {
 		elementType: "counter",
@@ -23,7 +23,6 @@ function renderCounter(props = {}) {
 			element={element}
 			updateElement={updateElement}
 			allColors={allColors}
-			mouse={{ x: 0, y: 0 }}
 		/>,
 	)
 

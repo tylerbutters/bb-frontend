@@ -1,10 +1,22 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react"
+import type { MouseEvent } from "react"
 import ElementsMenu from "../elements-menu/ElementsMenu"
 import "./Element.css"
 import Particle from "../element-attachments/Particle"
 import AnimatedWidth from "./AnimatedWidth"
 import { ELEMENT_TYPE_COLORS, getElementTypeColors, getElementTypeComponent } from "./elementTypes"
 import { particles } from "../grammar/particleData"
+import type { ElementComponentProps, MenuOption, MousePosition, SentenceElement } from "../types"
+
+export interface ElementProps {
+	element: SentenceElement
+	mouse: MousePosition
+	updateElement: (element: SentenceElement) => void
+	deleteElement: () => void
+	defaultElements: MenuOption[]
+	addButtonsDisabled?: boolean
+	generatedElementMode?: string | null
+}
 
 export default function Element({
 	element,
@@ -14,10 +26,10 @@ export default function Element({
 	defaultElements,
 	addButtonsDisabled = false,
 	generatedElementMode,
-}) {
+}: ElementProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [isClosing, setIsClosing] = useState(false)
-	const elementContainerRef = useRef(null)
+	const elementContainerRef = useRef<HTMLDivElement | null>(null)
 	const ElementComponent = getElementTypeComponent(element?.elementType)
 	const elementColors = getElementTypeColors(element?.elementType)
 	const isGeneratedPromptElement = Boolean(element?.isGeneratedPromptElement)
@@ -65,7 +77,7 @@ export default function Element({
 			.join(":")
 	}
 
-	function updateBaseElement(newElement) {
+	function updateBaseElement(newElement: SentenceElement) {
 		const nextElement =
 			newElement.sentenceElementId === element.sentenceElementId
 				? newElement
@@ -80,14 +92,14 @@ export default function Element({
 		})
 	}
 
-	function addParticle(selectedElement) {
+	function addParticle(selectedElement: MenuOption) {
 		updateElement({ ...element, particle: selectedElement })
 	}
 
 	function renderElement() {
 		if (!ElementComponent) return null
 
-		const props = {
+		const props: ElementComponentProps = {
 			element,
 			updateElement: updateBaseElement,
 			deleteElement: () => setIsClosing(true),
@@ -103,10 +115,15 @@ export default function Element({
 		return <ElementComponent {...props} />
 	}
 
-	function openMenuFromElementContainer(e) {
+	function openMenuFromElementContainer(e: MouseEvent<HTMLDivElement>) {
 		if (!canEditBaseElement) return
 		//doesn't open if child elements are clicked
-		if (e.target.closest(".baseInsideElement, .addButton, input, button")) return
+		if (
+			e.target instanceof HTMLElement &&
+			e.target.closest(".baseInsideElement, .addButton, input, button")
+		) {
+			return
+		}
 		setIsModalOpen(true)
 	}
 
@@ -132,7 +149,7 @@ export default function Element({
 					}`}
 					style={{
 						backgroundColor: elementColors.primary,
-						borderColor: isModalOpen && "white",
+						borderColor: isModalOpen ? "white" : undefined,
 					}}
 					onClick={openMenuFromElementContainer}
 				>

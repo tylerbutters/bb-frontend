@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { fireEvent, render, screen } from "@testing-library/react"
 import MenuList from "./MenuList"
 
@@ -9,7 +8,7 @@ beforeAll(() => {
 		disconnect() {}
 	}
 
-	global.IntersectionObserver = MockIntersectionObserver
+	global.IntersectionObserver = MockIntersectionObserver as unknown as typeof IntersectionObserver
 })
 
 test("stores typed search text instead of the change event", () => {

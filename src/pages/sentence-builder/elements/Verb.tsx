@@ -1,5 +1,6 @@
 import Conjugation from "../element-attachments/Conjugation"
 import JapaneseText from "../components/JapaneseText"
+import type { ElementComponentProps } from "../types"
 import "./Element.css"
 
 export default function Verb({
@@ -10,7 +11,7 @@ export default function Verb({
 	allColors,
 	addButtonsDisabled,
 	conjugationDisabled = addButtonsDisabled,
-}) {
+}: ElementComponentProps) {
 	const hasConjugation = element.conjugation && Object.keys(element.conjugation).length > 0
 	const shouldRenderStem = !element.conjugation?.replacesParent
 

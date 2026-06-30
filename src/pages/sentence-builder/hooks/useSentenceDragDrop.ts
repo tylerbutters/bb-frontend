@@ -1,22 +1,63 @@
 import { useCallback, useEffect, useRef, useState } from "react"
+import type { Dispatch, PointerEvent as ReactPointerEvent, RefObject, SetStateAction } from "react"
 import { flushSync } from "react-dom"
 import { MENU_CLOSE_EVENT } from "../elements-menu/menuEvents"
+import type { SentenceElement } from "../types"
 
 const DRAG_DROP_TRANSITION_MS = 180
 const DRAG_START_THRESHOLD = 4
 const DRAG_BLOCKED_TARGET_SELECTOR =
 	".baseInsideElement, .addButton, input, button, .elementsMenuContainer, .flyoutMenuPanel, .menuPanel"
 
-export default function useSentenceDragDrop({ elements, setElements, containerRef, scale }) {
-	const elementDragRefs = useRef(new Map())
-	const dragStartRef = useRef(null)
-	const dragPreviewRef = useRef(null)
-	const dropTimeoutRef = useRef(null)
+interface DragStart {
+	elementId: number
+	pointerId: number
+	originalIndex: number
+	startX: number
+	startY: number
+	offsetX: number
+	offsetY: number
+	width: number
+	height: number
+}
+
+interface DragPreview {
+	elementId: number
+	insertIndex: number
+	width: number
+}
+
+export interface ElementDragState extends DragPreview {
+	originalIndex: number
+	x: number
+	y: number
+	height: number
+	isDropping?: boolean
+}
+
+interface UseSentenceDragDropOptions {
+	elements: SentenceElement[]
+	setElements: Dispatch<SetStateAction<SentenceElement[]>>
+	containerRef: RefObject<HTMLElement | null>
+	scale: number
+}
+
+export default function useSentenceDragDrop({
+	elements,
+	setElements,
+	containerRef,
+	scale,
+}: UseSentenceDragDropOptions) {
+	const elementDragRefs = useRef(new Map<number, HTMLElement>())
+	const dragStartRef = useRef<DragStart | null>(null)
+	const dragPreviewRef = useRef<DragPreview | null>(null)
+	const dropTimeoutRef = useRef<number | null>(null)
 	const isDraggingElement = useRef(false)
 	const suppressElementClick = useRef(false)
-	const [dragState, setDragState] = useState(null)
+	const [dragState, setDragState] = useState<ElementDragState | null>(null)
 
-	const setElementDragNode = useCallback((elementId, node) => {
+	const setElementDragNode = useCallback((elementId: number | undefined, node: HTMLElement | null) => {
+		if (elementId == null) return
 		if (node) {
 			elementDragRefs.current.set(elementId, node)
 		} else {
@@ -25,9 +66,9 @@ export default function useSentenceDragDrop({ elements, setElements, containerRe
 	}, [])
 
 	const moveElementToIndex = useCallback(
-		(draggedId, insertIndex) => {
-			setElements((prev) => {
-				const draggedIndex = prev.findIndex((element) => element.sentenceElementId === draggedId)
+		(draggedId: number, insertIndex: number) => {
+			setElements((prev: SentenceElement[]) => {
+				const draggedIndex = prev.findIndex((element: SentenceElement) => element.sentenceElementId === draggedId)
 				if (draggedIndex === -1) return prev
 
 				const nextElements = [...prev]
@@ -36,7 +77,7 @@ export default function useSentenceDragDrop({ elements, setElements, containerRe
 
 				nextElements.splice(boundedIndex, 0, draggedElement)
 				const didOrderChange = nextElements.some(
-					(element, index) => element.sentenceElementId !== prev[index].sentenceElementId,
+					(element: SentenceElement, index: number) => element.sentenceElementId !== prev[index].sentenceElementId,
 				)
 				if (!didOrderChange) return prev
 
@@ -47,10 +88,10 @@ export default function useSentenceDragDrop({ elements, setElements, containerRe
 	)
 
 	const getDragInsertIndex = useCallback(
-		(pointerX, draggedId) => {
+		(pointerX: number, draggedId: number) => {
 			const orderedRects = elements
-				.filter((element) => element.sentenceElementId !== draggedId)
-				.map((element) => {
+				.filter((element: SentenceElement) => element.sentenceElementId !== draggedId)
+				.map((element: SentenceElement) => {
 					const node = elementDragRefs.current.get(element.sentenceElementId)
 					return node
 						? {
@@ -59,24 +100,30 @@ export default function useSentenceDragDrop({ elements, setElements, containerRe
 							}
 						: null
 				})
-				.filter(Boolean)
+				.filter((rect): rect is { elementId: number | undefined; centerX: number } => Boolean(rect))
 
-			const targetIndex = orderedRects.findIndex((rect) => pointerX < rect.centerX)
+			const targetIndex = orderedRects.findIndex((rect: { centerX: number }) => pointerX < rect.centerX)
 			return targetIndex === -1 ? orderedRects.length : targetIndex
 		},
 		[elements],
 	)
 
 	const startElementPointerDrag = useCallback(
-		(e, elementId) => {
-			if (e.target.closest(DRAG_BLOCKED_TARGET_SELECTOR)) return
+		(e: ReactPointerEvent<HTMLElement>, elementId: number | undefined) => {
+			if (elementId == null) return
+			if (
+				e.target instanceof Element &&
+				e.target.closest(DRAG_BLOCKED_TARGET_SELECTOR)
+			) {
+				return
+			}
 
 			e.preventDefault()
 			const rect = e.currentTarget.getBoundingClientRect()
 			dragStartRef.current = {
 				elementId,
 				pointerId: e.pointerId,
-				originalIndex: elements.findIndex((element) => element.sentenceElementId === elementId),
+				originalIndex: elements.findIndex((element: SentenceElement) => element.sentenceElementId === elementId),
 				startX: e.clientX,
 				startY: e.clientY,
 				offsetX: e.clientX - rect.left,
@@ -89,7 +136,7 @@ export default function useSentenceDragDrop({ elements, setElements, containerRe
 	)
 
 	const getDragPreviewTransform = useCallback(
-		(elementId, index) => {
+		(elementId: number | undefined, index: number) => {
 			if (!dragState || dragState.elementId === elementId) return undefined
 			if (dragState.isDropping) return undefined
 
@@ -109,7 +156,7 @@ export default function useSentenceDragDrop({ elements, setElements, containerRe
 	)
 
 	const getSentenceLocalPosition = useCallback(
-		(viewportLeft, viewportTop) => {
+		(viewportLeft: number, viewportTop: number) => {
 			const containerRect = containerRef.current?.getBoundingClientRect()
 			if (!containerRect) {
 				return {
@@ -137,7 +184,7 @@ export default function useSentenceDragDrop({ elements, setElements, containerRe
 	}, [])
 
 	useEffect(() => {
-		function moveDraggedElement(e) {
+		function moveDraggedElement(e: PointerEvent) {
 			const dragStart = dragStartRef.current
 			if (!dragStart) return
 

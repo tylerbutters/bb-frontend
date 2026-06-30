@@ -1,9 +1,11 @@
-// @ts-nocheck
 import { API_BASE_URL } from "./client"
 import { checkGameAnswer } from "./games"
 
+let fetchMock: jest.Mock
+
 beforeEach(() => {
-	global.fetch = jest.fn()
+	fetchMock = jest.fn()
+	global.fetch = fetchMock as unknown as typeof fetch
 })
 
 afterEach(() => {
@@ -11,7 +13,7 @@ afterEach(() => {
 })
 
 test("checkGameAnswer sends difficulty with challenge checks", async () => {
-	global.fetch.mockResolvedValue({
+	fetchMock.mockResolvedValue({
 		ok: true,
 		json: jest.fn().mockResolvedValue({
 			correct: true,
@@ -50,7 +52,7 @@ test("checkGameAnswer sends difficulty with challenge checks", async () => {
 })
 
 test("checkGameAnswer retries without difficulty against stale backends", async () => {
-	global.fetch
+	fetchMock
 		.mockResolvedValueOnce({
 			ok: false,
 			status: 400,
@@ -83,14 +85,14 @@ test("checkGameAnswer retries without difficulty against stale backends", async 
 	})
 
 	expect(global.fetch).toHaveBeenCalledTimes(2)
-	expect(JSON.parse(global.fetch.mock.calls[0][1].body)).toEqual({
+	expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
 		mode: "translate",
 		difficulty: "easy",
 		prompt: "I eat rice.",
 		answer: "。",
 		challengeId: "1e5eb8e7-f91a-4c61-8f37-62b1a27ddf95",
 	})
-	expect(JSON.parse(global.fetch.mock.calls[1][1].body)).toEqual({
+	expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toEqual({
 		mode: "translate",
 		prompt: "I eat rice.",
 		answer: "。",

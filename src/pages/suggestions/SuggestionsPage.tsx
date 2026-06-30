@@ -1,4 +1,6 @@
 import { useState } from "react"
+import type { FormEvent } from "react"
+import { getErrorMessage } from "../../api/errors"
 import { sendSuggestion } from "../../api/suggestions"
 import "../auth/AuthPage.css"
 import "./SuggestionsPage.css"
@@ -9,13 +11,13 @@ export default function SuggestionsPage() {
 	const [message, setMessage] = useState("")
 	const isSubmitting = status === "submitting"
 
-	function updateSuggestion(value) {
+	function updateSuggestion(value: string) {
 		setSuggestion(value)
 		setStatus("idle")
 		setMessage("")
 	}
 
-	async function submitSuggestion(e) {
+	async function submitSuggestion(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
 		const trimmedSuggestion = suggestion.trim()
 
@@ -35,7 +37,7 @@ export default function SuggestionsPage() {
 			setMessage(result.message || "Thanks for the suggestion.")
 		} catch (error) {
 			setStatus("error")
-			setMessage(error.message || "Could not send suggestion.")
+			setMessage(getErrorMessage(error, "Could not send suggestion."))
 		}
 	}
 

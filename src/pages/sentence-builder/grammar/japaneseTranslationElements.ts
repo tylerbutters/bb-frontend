@@ -129,6 +129,14 @@ const CONJUGATION_TYPE_OPTIONS = {
 	te: ["て", "して", "きて", "くて"],
 	want: ["たい", "したい", "きたい"],
 }
+const baseVerbConjugationTypesByName = BASE_VERB_CONJUGATION_TYPES as Record<
+	string,
+	Record<string, string | undefined> | undefined
+>
+const conjugationTypeOptionsByName = CONJUGATION_TYPE_OPTIONS as Record<
+	string,
+	string[] | undefined
+>
 const PROMPT_CONJUGATION_TYPES = new Set([
 	...Object.keys(BASE_VERB_CONJUGATION_TYPES),
 	...Object.keys(CONJUGATION_TYPE_OPTIONS),
@@ -338,11 +346,14 @@ function resolveGodanConjugationTypeTexts(element: SentenceElement, type: string
 }
 
 function resolveBaseVerbConjugationTypeText(element: SentenceElement, type: string) {
-	return BASE_VERB_CONJUGATION_TYPES[type]?.[element?.verbType]
+	const optionsByVerbType = baseVerbConjugationTypesByName[type]
+	if (!optionsByVerbType || !element.verbType) return undefined
+
+	return optionsByVerbType[element.verbType]
 }
 
 function resolveConjugationOptionTypeText(element: SentenceElement, type: string) {
-	const candidates = CONJUGATION_TYPE_OPTIONS[type] || []
+	const candidates = conjugationTypeOptionsByName[type] || []
 	return getConjugationOptionsForElement(element).find((option) => candidates.includes(option.text))
 		?.text
 }
@@ -476,7 +487,7 @@ function applyPromptForm(element: SentenceElement, form: PromptForm | undefined)
 	}
 }
 
-function canAttachPromptParticle(element) {
+function canAttachPromptParticle(element: SentenceElement) {
 	return ["noun", "counter"].includes(element?.elementType)
 }
 
@@ -485,16 +496,16 @@ export function japaneseTranslationToElements(
 ): SentenceElement[] {
 	if (!Array.isArray(japaneseTranslation)) return []
 	// alert(JSON.stringify(japaneseTranslation))
-		return japaneseTranslation
-			.map((word) => {
-				const match = lookupTranslationElement(word)
-				if (!match) return null
+	return japaneseTranslation
+		.map((word) => {
+			const match = lookupTranslationElement(word)
+			if (!match) return null
 
-				const elementWithPromptSurface = applyPromptSurface(match, word)
-				const elementWithForm = applyPromptForm(elementWithPromptSurface, word.form)
-				const elementWithConjugation = applyPromptConjugation(elementWithForm, word.conjugation)
+			const elementWithPromptSurface = applyPromptSurface(match, word)
+			const elementWithForm = applyPromptForm(elementWithPromptSurface, word.form)
+			const elementWithConjugation = applyPromptConjugation(elementWithForm, word.conjugation)
 
-				return normalizeElement(attachParticle(elementWithConjugation, word.particle))
+			return normalizeElement(attachParticle(elementWithConjugation, word.particle))
 		})
-		.filter(Boolean)
+		.filter((element): element is SentenceElement => Boolean(element))
 }

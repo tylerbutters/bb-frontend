@@ -50,7 +50,6 @@ export default function SentenceText({ addedElements, showTranslation = true }: 
 		}
 
 		const result = await translateJapanese(sentence, { signal })
-		console.log(result)
 		if (signal.aborted) return
 		setTranslation(result)
 	}
@@ -73,9 +72,6 @@ export async function translateJapanese(text: string, options: RequestOptions = 
 	try {
 		return await requestJapaneseTranslation(text, options)
 	} catch (error) {
-		if ((error as { name?: string }).name !== "AbortError") {
-			console.log(error)
-		}
 		return null
 	}
 }

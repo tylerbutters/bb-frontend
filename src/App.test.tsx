@@ -1,7 +1,13 @@
-// @ts-nocheck
 import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import { API_BASE_URL } from "./api/client"
 import App from "./App"
+
+let fetchMock: jest.Mock
+
+interface MockFetchResponse {
+	ok: boolean
+	json: jest.Mock<Promise<unknown>, []>
+}
 
 beforeAll(() => {
 	class MockIntersectionObserver {
@@ -10,8 +16,8 @@ beforeAll(() => {
 		disconnect() {}
 	}
 
-	global.IntersectionObserver = MockIntersectionObserver
-	global.ResizeObserver = MockIntersectionObserver
+	global.IntersectionObserver = MockIntersectionObserver as unknown as typeof IntersectionObserver
+	global.ResizeObserver = MockIntersectionObserver as unknown as typeof ResizeObserver
 })
 
 const defaultStatsResponse = {
@@ -189,6 +195,22 @@ const defaultQuotaResponse = {
 const firstChallengeId = "1e5eb8e7-f91a-4c61-8f37-62b1a27ddf95"
 const secondChallengeId = "2e5eb8e7-f91a-4c61-8f37-62b1a27ddf95"
 
+function getDefaultGameQuotaRequestCount() {
+	return fetchMock.mock.calls.filter(([url]) => url === `${API_BASE_URL}/users/1/game-quota`)
+		.length
+}
+
+async function waitForDefaultGameQuotaLoad(previousRequestCount = 0) {
+	await waitFor(() => {
+		expect(getDefaultGameQuotaRequestCount()).toBeGreaterThan(previousRequestCount)
+	})
+
+	await act(async () => {
+		await Promise.resolve()
+		await Promise.resolve()
+	})
+}
+
 async function loginDefaultUser() {
 	fireEvent.click(screen.getByRole("link", { name: "Login" }))
 	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
@@ -200,6 +222,7 @@ async function loginDefaultUser() {
 		expect(window.location.pathname).toBe("/")
 		expect(screen.getByRole("tab", { name: "Build" })).toBeInTheDocument()
 	})
+	await waitForDefaultGameQuotaLoad()
 }
 
 function choosePunctuation(mark = "。") {
@@ -208,7 +231,9 @@ function choosePunctuation(mark = "。") {
 }
 
 function expectLoggedOutChallengeCheckBlocked() {
-	const blocker = screen.getByText("Sign up to check challenge answers.").closest(".gameQuotaBlocker")
+	const blocker = screen
+		.getByText("Sign up to check challenge answers.")
+		.closest(".gameQuotaBlocker") as HTMLElement
 
 	expect(blocker).not.toBeNull()
 	expect(within(blocker).getByRole("link", { name: "Sign up" })).toHaveAttribute("href", "/signup")
@@ -222,7 +247,7 @@ beforeEach(() => {
 		id: 1,
 		email: "tyler@example.com",
 	}
-	global.fetch = jest.fn((url, options = {}) => {
+	fetchMock = jest.fn((url, options = {}) => {
 		if (url === `${API_BASE_URL}/users/signup-confirmation/request`) {
 			return Promise.resolve({
 				ok: true,
@@ -412,6 +437,7 @@ beforeEach(() => {
 			json: jest.fn().mockResolvedValue({ translation: "." }),
 		})
 	})
+	global.fetch = fetchMock as unknown as typeof fetch
 })
 
 afterEach(() => {
@@ -438,7 +464,7 @@ test("renders the initial add button", () => {
 })
 
 test("shows a top toast when a prompt API server error needs global attention", async () => {
-	global.fetch.mockImplementation((url) => {
+	fetchMock.mockImplementation((url) => {
 		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
 			return Promise.resolve({
 				ok: false,
@@ -510,7 +536,7 @@ test("sends an anonymous suggestion", async () => {
 		expect(screen.getByText("Thanks for the suggestion.")).toBeInTheDocument()
 	})
 
-	const suggestionRequest = global.fetch.mock.calls.find(
+	const suggestionRequest = fetchMock.mock.calls.find(
 		([url]) => url === `${API_BASE_URL}/suggestions`,
 	)
 	expect(JSON.parse(suggestionRequest[1].body)).toEqual({
@@ -558,7 +584,7 @@ test("opens the sign up page, confirms the email code, and creates an account", 
 		screen.getByText("Confirmation code sent. Check your email to finish creating your account."),
 	).toBeInTheDocument()
 
-	const signupRequest = global.fetch.mock.calls.find(
+	const signupRequest = fetchMock.mock.calls.find(
 		([url]) => url === `${API_BASE_URL}/users/signup-confirmation/request`,
 	)
 	expect(signupRequest[1]).toMatchObject({
@@ -581,7 +607,7 @@ test("opens the sign up page, confirms the email code, and creates an account", 
 	})
 	expect(window.location.pathname).toBe("/")
 
-	const confirmSignupRequest = global.fetch.mock.calls.find(
+	const confirmSignupRequest = fetchMock.mock.calls.find(
 		([url]) => url === `${API_BASE_URL}/users/signup-confirmation/confirm`,
 	)
 	expect(confirmSignupRequest[1]).toMatchObject({
@@ -658,7 +684,7 @@ test("requests a reset code and resets the password from the login page", async 
 		screen.getByText("If an account exists for that email, a reset code has been sent."),
 	).toBeInTheDocument()
 	const resetRequestCalls = () =>
-		global.fetch.mock.calls.filter(
+		fetchMock.mock.calls.filter(
 			([url]) => url === `${API_BASE_URL}/login/password-reset/request`,
 		)
 
@@ -707,7 +733,7 @@ test("requests a reset code and resets the password from the login page", async 
 		email: "tyler@example.com",
 	})
 
-	const confirmResetRequest = global.fetch.mock.calls.find(
+	const confirmResetRequest = fetchMock.mock.calls.find(
 		([url]) => url === `${API_BASE_URL}/login/password-reset/confirm`,
 	)
 	expect(JSON.parse(confirmResetRequest[1].body)).toEqual({
@@ -747,7 +773,7 @@ test("logs in and replaces auth links with the user name", async () => {
 	expect(screen.queryByRole("link", { name: "Account" })).not.toBeInTheDocument()
 	expect(window.localStorage.getItem("bbCurrentUser")).toBeNull()
 
-	const loginRequest = global.fetch.mock.calls.find(([url]) => url === `${API_BASE_URL}/login`)
+	const loginRequest = fetchMock.mock.calls.find(([url]) => url === `${API_BASE_URL}/login`)
 	expect(loginRequest[1]).toMatchObject({
 		method: "POST",
 		headers: {
@@ -763,15 +789,7 @@ test("logs in and replaces auth links with the user name", async () => {
 test("opens account from the user menu and updates account details", async () => {
 	render(<App />)
 
-	fireEvent.click(screen.getByRole("link", { name: "Login" }))
-	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
-	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
-	fireEvent.click(screen.getByRole("button", { name: "Login" }))
-
-	await waitFor(() => {
-		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
-	})
-
+	await loginDefaultUser()
 	fireEvent.click(screen.getByRole("link", { name: "Account" }))
 
 	expect(window.location.pathname).toBe("/account")
@@ -816,10 +834,10 @@ test("opens account from the user menu and updates account details", async () =>
 		expect(within(passwordSection).getByText("Account updated.")).toBeInTheDocument()
 	})
 
-	const accountRequests = global.fetch.mock.calls.filter(
+	const accountRequests = fetchMock.mock.calls.filter(
 		([url, options]) => url === `${API_BASE_URL}/users/1` && options.method === "PATCH",
 	)
-	const emailChangeRequests = global.fetch.mock.calls.filter(
+	const emailChangeRequests = fetchMock.mock.calls.filter(
 		([url, options]) =>
 			url === `${API_BASE_URL}/users/1/email-change/request` && options.method === "POST",
 	)
@@ -845,22 +863,16 @@ test("opens account from the user menu and updates account details", async () =>
 		email: "tyler@example.com",
 	})
 
+	const quotaRequestCount = getDefaultGameQuotaRequestCount()
 	fireEvent.click(screen.getByRole("link", { name: "Bunsho Builder" }))
+	await waitForDefaultGameQuotaLoad(quotaRequestCount)
 	expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
 })
 
 test("deletes an account from the account page", async () => {
 	render(<App />)
 
-	fireEvent.click(screen.getByRole("link", { name: "Login" }))
-	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
-	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
-	fireEvent.click(screen.getByRole("button", { name: "Login" }))
-
-	await waitFor(() => {
-		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
-	})
-
+	await loginDefaultUser()
 	fireEvent.click(screen.getByRole("link", { name: "Account" }))
 	fireEvent.click(screen.getByRole("button", { name: "Delete account" }))
 
@@ -877,7 +889,7 @@ test("deletes an account from the account page", async () => {
 		expect(window.location.pathname).toBe("/login")
 	})
 
-	const deleteRequest = global.fetch.mock.calls.find(
+	const deleteRequest = fetchMock.mock.calls.find(
 		([url, options]) => url === `${API_BASE_URL}/users/1` && options.method === "DELETE",
 	)
 	expect(deleteRequest[1]).toMatchObject({
@@ -891,15 +903,7 @@ test("deletes an account from the account page", async () => {
 test("opens stats from the top nav", async () => {
 	render(<App />)
 
-	fireEvent.click(screen.getByRole("link", { name: "Login" }))
-	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
-	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
-	fireEvent.click(screen.getByRole("button", { name: "Login" }))
-
-	await waitFor(() => {
-		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
-	})
-
+	await loginDefaultUser()
 	fireEvent.click(screen.getByRole("link", { name: "Stats" }))
 
 	await waitFor(() => {
@@ -964,7 +968,7 @@ test("opens stats from the top nav", async () => {
 	expect(screen.getByLabelText("Translate stats")).toHaveTextContent("100%")
 	expect(screen.getByLabelText("Particles stats")).toHaveTextContent("0%")
 
-	const recentStatsRequest = global.fetch.mock.calls
+	const recentStatsRequest = fetchMock.mock.calls
 		.filter(([url]) => String(url).startsWith(`${API_BASE_URL}/users/1/game-history`))
 		.at(-1)
 	const recentStatsParams = new URL(String(recentStatsRequest[0]), "http://localhost").searchParams
@@ -978,7 +982,7 @@ test("opens stats from the top nav", async () => {
 		expect(allGamesPanel).toHaveTextContent(/Total games\s*6/)
 	})
 
-	const statsRequest = global.fetch.mock.calls.find(
+	const statsRequest = fetchMock.mock.calls.find(
 		([url]) => url === `${API_BASE_URL}/users/1/stats`,
 	)
 	expect(statsRequest[1]).toMatchObject({
@@ -989,15 +993,7 @@ test("opens stats from the top nav", async () => {
 test("opens paginated game history from a stats panel", async () => {
 	render(<App />)
 
-	fireEvent.click(screen.getByRole("link", { name: "Login" }))
-	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
-	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
-	fireEvent.click(screen.getByRole("button", { name: "Login" }))
-
-	await waitFor(() => {
-		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
-	})
-
+	await loginDefaultUser()
 	fireEvent.click(screen.getByRole("link", { name: "Stats" }))
 	await waitFor(() => {
 		expect(screen.getByRole("heading", { name: "Stats" })).toBeInTheDocument()
@@ -1031,7 +1027,7 @@ test("opens paginated game history from a stats panel", async () => {
 	expect(within(drawer).getAllByText("Correct").length).toBeGreaterThan(0)
 	expect(within(drawer).queryByText("Good.")).not.toBeInTheDocument()
 
-	const firstHistoryRequest = global.fetch.mock.calls.find(([url]) =>
+	const firstHistoryRequest = fetchMock.mock.calls.find(([url]) =>
 		String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
 	)
 	const firstHistoryParams = new URL(String(firstHistoryRequest[0]), "http://localhost")
@@ -1054,7 +1050,7 @@ test("opens paginated game history from a stats panel", async () => {
 	expect(historyStats).toHaveTextContent(/Accuracy\s*100%/)
 	expect(within(drawer).queryByRole("button", { name: "Load more" })).not.toBeInTheDocument()
 
-	const recentHistoryRequests = global.fetch.mock.calls.filter(([url]) =>
+	const recentHistoryRequests = fetchMock.mock.calls.filter(([url]) =>
 		String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
 	)
 	const recentHistoryParams = new URL(
@@ -1079,7 +1075,7 @@ test("opens paginated game history from a stats panel", async () => {
 	expect(within(drawer).getAllByText("Incorrect").length).toBeGreaterThan(0)
 	expect(within(drawer).getByText("Use お茶.")).toBeInTheDocument()
 
-	const historyRequests = global.fetch.mock.calls.filter(([url]) =>
+	const historyRequests = fetchMock.mock.calls.filter(([url]) =>
 		String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
 	)
 	const secondHistoryParams = new URL(String(historyRequests[3][0]), "http://localhost")
@@ -1096,7 +1092,7 @@ test("opens paginated game history from a stats panel", async () => {
 	)
 	expect(within(drawer).queryByText("Nice.")).not.toBeInTheDocument()
 
-	const updatedHistoryRequests = global.fetch.mock.calls.filter(([url]) =>
+	const updatedHistoryRequests = fetchMock.mock.calls.filter(([url]) =>
 		String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
 	)
 	const difficultySwitchParams = new URL(String(updatedHistoryRequests[4][0]), "http://localhost")
@@ -1116,17 +1112,17 @@ test("opens paginated game history from a stats panel", async () => {
 })
 
 test("opens game history with empty metrics and a loading spinner", async () => {
-	let resolveHistory
-	let resolveDrawerStats
+	let resolveHistory: (response: MockFetchResponse) => void = () => {}
+	let resolveDrawerStats: (response: MockFetchResponse) => void = () => {}
 	let statsRequestCount = 0
-	const pendingHistory = new Promise((resolve) => {
-		resolveHistory = resolve
+	const pendingHistory = new Promise<MockFetchResponse>((resolve) => {
+		resolveHistory = (response) => resolve(response)
 	})
-	const pendingDrawerStats = new Promise((resolve) => {
-		resolveDrawerStats = resolve
+	const pendingDrawerStats = new Promise<MockFetchResponse>((resolve) => {
+		resolveDrawerStats = (response) => resolve(response)
 	})
 
-	global.fetch.mockImplementation((url) => {
+	fetchMock.mockImplementation((url) => {
 		if (url === `${API_BASE_URL}/login`) {
 			return Promise.resolve({
 				ok: true,
@@ -1233,18 +1229,18 @@ test("opens game history with empty metrics and a loading spinner", async () => 
 })
 
 test("reopens populated game history while refreshing it in the background", async () => {
-	let resolveRefreshHistory
-	let resolveRefreshStats
+	let resolveRefreshHistory: (response: MockFetchResponse) => void = () => {}
+	let resolveRefreshStats: (response: MockFetchResponse) => void = () => {}
 	let statsRequestCount = 0
 	let historyRequestCount = 0
-	const refreshHistory = new Promise((resolve) => {
-		resolveRefreshHistory = resolve
+	const refreshHistory = new Promise<MockFetchResponse>((resolve) => {
+		resolveRefreshHistory = (response) => resolve(response)
 	})
-	const refreshStats = new Promise((resolve) => {
-		resolveRefreshStats = resolve
+	const refreshStats = new Promise<MockFetchResponse>((resolve) => {
+		resolveRefreshStats = (response) => resolve(response)
 	})
 
-	global.fetch.mockImplementation((url) => {
+	fetchMock.mockImplementation((url) => {
 		if (url === `${API_BASE_URL}/login`) {
 			return Promise.resolve({
 				ok: true,
@@ -1414,7 +1410,7 @@ test("opens a sign-up prompt in game history from the sentence builder when logg
 	expect(within(drawer).queryByRole("group", { name: "Translate history stats" })).not.toBeInTheDocument()
 	expect(within(drawer).queryByRole("tab", { name: "all" })).not.toBeInTheDocument()
 	expect(
-		global.fetch.mock.calls.some(([url]) =>
+		fetchMock.mock.calls.some(([url]) =>
 			String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
 		),
 	).toBe(false)
@@ -1459,7 +1455,7 @@ test("opens game history from the sentence builder prompt panel", async () => {
 	expect(within(drawer).getByText("ご飯を食べます。")).toBeInTheDocument()
 	expect(within(drawer).queryByText("Good.")).not.toBeInTheDocument()
 
-	const historyRequest = global.fetch.mock.calls.find(([url]) =>
+	const historyRequest = fetchMock.mock.calls.find(([url]) =>
 		String(url).startsWith(`${API_BASE_URL}/users/1/game-history`),
 	)
 	const historyParams = new URL(String(historyRequest[0]), "http://localhost").searchParams
@@ -1482,7 +1478,7 @@ test("opens game history from the sentence builder prompt panel", async () => {
 })
 
 test("shows zero-backgrounded stats panels when stats have not been created yet", async () => {
-	global.fetch.mockImplementation((url, options = {}) => {
+	fetchMock.mockImplementation((url, options = {}) => {
 		if (url === `${API_BASE_URL}/login`) {
 			return Promise.resolve({
 				ok: true,
@@ -1549,7 +1545,7 @@ test("shows zero-backgrounded stats panels when stats have not been created yet"
 	expect(screen.getByLabelText("Word order stats")).toHaveTextContent("0%")
 
 	await waitFor(() => {
-		const statsRequest = global.fetch.mock.calls.find(
+		const statsRequest = fetchMock.mock.calls.find(
 			([url]) => url === `${API_BASE_URL}/users/1/stats`,
 		)
 		expect(statsRequest).toBeTruthy()
@@ -1560,7 +1556,7 @@ test("shows zero-backgrounded stats panels when stats have not been created yet"
 test("shows locally recorded stats when backend stats are unavailable", async () => {
 	const challengeId = "1e5eb8e7-f91a-4c61-8f37-62b1a27ddf95"
 
-	global.fetch.mockImplementation((url) => {
+	fetchMock.mockImplementation((url) => {
 		if (url === `${API_BASE_URL}/login`) {
 			return Promise.resolve({
 				ok: true,
@@ -1633,7 +1629,7 @@ test("shows locally recorded stats when backend stats are unavailable", async ()
 	expect(screen.queryByText("Good.")).not.toBeInTheDocument()
 	fireEvent.click(screen.getByRole("button", { name: "Check again" }))
 	await waitFor(() => {
-		const checkRequests = global.fetch.mock.calls.filter(
+		const checkRequests = fetchMock.mock.calls.filter(
 			([url]) => url === `${API_BASE_URL}/games/check`,
 		)
 		expect(checkRequests).toHaveLength(2)
@@ -1673,7 +1669,7 @@ test("shows locally recorded stats when backend stats are unavailable", async ()
 	expect(within(drawer).getAllByText("I eat rice.")).toHaveLength(1)
 
 	await waitFor(() => {
-		const statsRequest = global.fetch.mock.calls.find(
+		const statsRequest = fetchMock.mock.calls.find(
 			([url]) => url === `${API_BASE_URL}/users/1/stats`,
 		)
 		expect(statsRequest).toBeTruthy()
@@ -1700,7 +1696,7 @@ test("clears stale login state when stats auth has expired", async () => {
 			email: "tyler@example.com",
 		}),
 	)
-	global.fetch.mockImplementation((url) => {
+	fetchMock.mockImplementation((url) => {
 		if (url === `${API_BASE_URL}/users/1/stats`) {
 			return Promise.resolve({
 				ok: false,
@@ -1758,7 +1754,7 @@ test("shows a contained admin access message for non-admin users", () => {
 	expect(screen.getByText("Admin access required")).toBeInTheDocument()
 	expect(screen.getByText("403")).toBeInTheDocument()
 	expect(
-		global.fetch.mock.calls.some(([url]) => String(url).includes("/admin")),
+		fetchMock.mock.calls.some(([url]) => String(url).includes("/admin")),
 	).toBe(false)
 })
 
@@ -1781,7 +1777,7 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 		updatedAt: "2026-01-02T00:00:00.000Z",
 	}
 
-	global.fetch.mockImplementation((url) => {
+	fetchMock.mockImplementation((url) => {
 		const requestUrl = String(url)
 
 		if (requestUrl.startsWith(`${API_BASE_URL}/admin/users?`)) {
@@ -1939,9 +1935,9 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 
 	expect(statsModeSelect).toHaveValue("conjugations")
 	expect(within(stats).queryByText("2")).not.toBeInTheDocument()
-	const failedMetric = within(stats).getByText("Incorrect").closest(".statsMetric")
+	const failedMetric = within(stats).getByText("Incorrect").closest(".statsMetric") as HTMLElement
 	expect(within(failedMetric).getByText("1")).toBeInTheDocument()
-	const wonMetric = within(stats).getByText("Correct").closest(".statsMetric")
+	const wonMetric = within(stats).getByText("Correct").closest(".statsMetric") as HTMLElement
 	expect(within(wonMetric).getByText("0")).toBeInTheDocument()
 
 	const history = screen.getByLabelText("Selected user game history")
@@ -1953,7 +1949,7 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 
 	await waitFor(() => {
 		expect(
-			global.fetch.mock.calls.some(([url]) =>
+			fetchMock.mock.calls.some(([url]) =>
 				String(url).includes(
 					`${API_BASE_URL}/admin/users/2/game-history?mode=conjugations&difficulty=hard&limit=10&offset=0`,
 				),
@@ -1967,7 +1963,7 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 	expect(within(history).getByText("Correct")).toBeInTheDocument()
 	expect(screen.queryByText("Hidden for correct answers.")).not.toBeInTheDocument()
 
-	const searchRequest = global.fetch.mock.calls.find(([url]) =>
+	const searchRequest = fetchMock.mock.calls.find(([url]) =>
 		String(url).includes(`${API_BASE_URL}/admin/users?query=tyler`),
 	)
 	expect(searchRequest).toBeTruthy()
@@ -1983,7 +1979,7 @@ test("shows admin API errors without crashing", async () => {
 			role: "admin",
 		}),
 	)
-	global.fetch.mockImplementation((url) => {
+	fetchMock.mockImplementation((url) => {
 		if (String(url).startsWith(`${API_BASE_URL}/admin/users?`)) {
 			return Promise.resolve({
 				ok: false,
@@ -2084,7 +2080,7 @@ test("does not show the free challenge limit intro while premium is disabled", a
 })
 
 test("blocks challenge checks when the daily quota is exhausted", async () => {
-	global.fetch.mockImplementation((url) => {
+	fetchMock.mockImplementation((url) => {
 		if (url === `${API_BASE_URL}/login`) {
 			return Promise.resolve({
 				ok: true,
@@ -2156,7 +2152,7 @@ test("blocks challenge checks when the daily quota is exhausted", async () => {
 })
 
 test("shows the daily quota blocker when prompt loading returns a quota error", async () => {
-	global.fetch.mockImplementation((url) => {
+	fetchMock.mockImplementation((url) => {
 		if (url === `${API_BASE_URL}/login`) {
 			return Promise.resolve({
 				ok: true,
@@ -2237,7 +2233,7 @@ test("clears stale login state when quota loading is rejected", async () => {
 		}),
 	)
 
-	global.fetch.mockImplementation((url) => {
+	fetchMock.mockImplementation((url) => {
 		if (url === `${API_BASE_URL}/users/1/game-quota`) {
 			return Promise.resolve({
 				ok: false,
@@ -2298,7 +2294,7 @@ test("clears stale login state when a challenge check requires auth", async () =
 		}),
 	)
 
-	global.fetch.mockImplementation((url) => {
+	fetchMock.mockImplementation((url) => {
 		if (url === `${API_BASE_URL}/users/1/game-quota`) {
 			return Promise.resolve({
 				ok: true,
@@ -2376,7 +2372,7 @@ test("clears stale login state when a challenge check requires auth", async () =
 test("does not apply the old 3-check local fallback limit", async () => {
 	let promptIndex = 0
 
-	global.fetch.mockImplementation((url) => {
+	fetchMock.mockImplementation((url) => {
 		if (url === `${API_BASE_URL}/login`) {
 			return Promise.resolve({
 				ok: true,
@@ -2523,7 +2519,7 @@ test("checks the sandbox sentence and shows feedback", async () => {
 		}),
 	)
 
-	global.fetch.mockImplementation((url) => {
+	fetchMock.mockImplementation((url) => {
 		if (url === `${API_BASE_URL}/users/1/game-quota`) {
 			return Promise.resolve({
 				ok: true,
@@ -2579,13 +2575,13 @@ test("checks the sandbox sentence and shows feedback", async () => {
 	expect(screen.queryByRole("button", { name: "Show feedback" })).not.toBeInTheDocument()
 	expect(screen.queryByRole("button", { name: "Hide feedback" })).not.toBeInTheDocument()
 
-	const sandboxCheckRequest = global.fetch.mock.calls.find(
+	const sandboxCheckRequest = fetchMock.mock.calls.find(
 		([url]) => url === `${API_BASE_URL}/games/sandbox/check-japanese`,
 	)
 	expect(JSON.parse(sandboxCheckRequest[1].body)).toEqual({
 		answer: "。",
 	})
-	expect(global.fetch.mock.calls.some(([url]) => url === `${API_BASE_URL}/games/check`)).toBe(false)
+	expect(fetchMock.mock.calls.some(([url]) => url === `${API_BASE_URL}/games/check`)).toBe(false)
 	expect(screen.queryByRole("button", { name: "Next" })).not.toBeInTheDocument()
 })
 
@@ -2599,12 +2595,12 @@ test("shows a loading spinner while checking a sandbox sentence", async () => {
 		}),
 	)
 
-	let resolveCheck
-	const checkResponse = new Promise((resolve) => {
-		resolveCheck = resolve
+	let resolveCheck: (response: MockFetchResponse) => void = () => {}
+	const checkResponse = new Promise<MockFetchResponse>((resolve) => {
+		resolveCheck = (response) => resolve(response)
 	})
 
-	global.fetch.mockImplementation((url) => {
+	fetchMock.mockImplementation((url) => {
 		if (url === `${API_BASE_URL}/users/1/game-quota`) {
 			return Promise.resolve({
 				ok: true,
@@ -2652,7 +2648,7 @@ test("shows a loading spinner while checking a sandbox sentence", async () => {
 })
 
 test("populates conjugation game elements from Japanese translation prompt data", async () => {
-	global.fetch.mockImplementation((url, options = {}) => {
+	fetchMock.mockImplementation((url, options = {}) => {
 		const requestUrl = String(url)
 		if (requestUrl.startsWith(`${API_BASE_URL}/games/prompt`)) {
 			return Promise.resolve({
@@ -2699,7 +2695,7 @@ test("populates conjugation game elements from Japanese translation prompt data"
 })
 
 test("does not restore generated elements when switching to translate or sandbox", async () => {
-	global.fetch.mockImplementation((url, options = {}) => {
+	fetchMock.mockImplementation((url, options = {}) => {
 		const requestUrl = String(url)
 		if (requestUrl.startsWith(`${API_BASE_URL}/games/prompt`)) {
 			const mode = new URL(requestUrl, "http://localhost").searchParams.get("mode")
@@ -2771,7 +2767,7 @@ test("does not restore generated elements when switching to translate or sandbox
 })
 
 test("populates particle game elements without preselected particles", async () => {
-	global.fetch.mockImplementation((url, options = {}) => {
+	fetchMock.mockImplementation((url, options = {}) => {
 		const requestUrl = String(url)
 		if (requestUrl.startsWith(`${API_BASE_URL}/games/prompt`)) {
 			return Promise.resolve({
@@ -2814,7 +2810,7 @@ test("populates particle game elements without preselected particles", async () 
 })
 
 test("locks generated prompt elements from word replacement and deletion", async () => {
-	global.fetch.mockImplementation((url, options = {}) => {
+	fetchMock.mockImplementation((url, options = {}) => {
 		const requestUrl = String(url)
 		if (requestUrl.startsWith(`${API_BASE_URL}/games/prompt`)) {
 			return Promise.resolve({
@@ -2863,7 +2859,7 @@ test("locks generated prompt elements from word replacement and deletion", async
 })
 
 test("populates reorder game elements in the generated scrambled order", async () => {
-	global.fetch.mockImplementation((url, options = {}) => {
+	fetchMock.mockImplementation((url, options = {}) => {
 		const requestUrl = String(url)
 		if (requestUrl.startsWith(`${API_BASE_URL}/games/prompt`)) {
 			return Promise.resolve({
@@ -2906,7 +2902,7 @@ test("populates reorder game elements in the generated scrambled order", async (
 })
 
 test("populates fix sentence game elements with one mistake", async () => {
-	global.fetch.mockImplementation((url, options = {}) => {
+	fetchMock.mockImplementation((url, options = {}) => {
 		const requestUrl = String(url)
 		if (requestUrl.startsWith(`${API_BASE_URL}/games/prompt`)) {
 			return Promise.resolve({
@@ -2949,7 +2945,7 @@ test("populates fix sentence game elements with one mistake", async () => {
 })
 
 test("changing translate difficulty regenerates the prompt and clears sentence elements", async () => {
-	global.fetch.mockImplementation((url, options = {}) => {
+	fetchMock.mockImplementation((url, options = {}) => {
 		const requestUrl = String(url)
 		if (requestUrl.startsWith(`${API_BASE_URL}/games/prompt`)) {
 			const difficulty = new URL(requestUrl, "http://localhost").searchParams.get("difficulty")
@@ -2987,7 +2983,7 @@ test("changing translate difficulty regenerates the prompt and clears sentence e
 	})
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
 	expect(
-		global.fetch.mock.calls.some(([url]) => {
+		fetchMock.mock.calls.some(([url]) => {
 			const requestUrl = String(url)
 			if (!requestUrl.startsWith(`${API_BASE_URL}/games/prompt`)) return false
 
@@ -2998,7 +2994,7 @@ test("changing translate difficulty regenerates the prompt and clears sentence e
 })
 
 test("regenerates the translate prompt and clears sentence elements", async () => {
-	global.fetch.mockImplementation((url, options = {}) => {
+	fetchMock.mockImplementation((url, options = {}) => {
 		if (url === `${API_BASE_URL}/login`) {
 			return Promise.resolve({
 				ok: true,
@@ -3019,7 +3015,7 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 		}
 
 		if (String(url).startsWith(`${API_BASE_URL}/games/prompt`)) {
-			const promptRequestCount = global.fetch.mock.calls.filter(([requestUrl]) =>
+			const promptRequestCount = fetchMock.mock.calls.filter(([requestUrl]) =>
 				String(requestUrl).startsWith(`${API_BASE_URL}/games/prompt`),
 			).length
 
@@ -3068,7 +3064,7 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 		expect(screen.getByText("Not quite.")).toBeInTheDocument()
 		expect(screen.getByText("Use a full Japanese sentence.")).toBeInTheDocument()
 	})
-	const checkRequest = global.fetch.mock.calls.find(
+	const checkRequest = fetchMock.mock.calls.find(
 		([url]) => url === `${API_BASE_URL}/games/check`,
 	)
 	expect(JSON.parse(checkRequest[1].body)).toEqual({
@@ -3085,7 +3081,7 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 		expect(screen.getByText("I drink tea.")).toBeInTheDocument()
 	})
 	expect(screen.queryByText("。")).not.toBeInTheDocument()
-	const promptRequests = global.fetch.mock.calls.filter(([url]) =>
+	const promptRequests = fetchMock.mock.calls.filter(([url]) =>
 		String(url).startsWith(`${API_BASE_URL}/games/prompt`),
 	)
 	expect(promptRequests).toHaveLength(2)
@@ -3095,7 +3091,7 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 test("sends the same challenge ID for repeated checks on one prompt", async () => {
 	const challengeId = "1e5eb8e7-f91a-4c61-8f37-62b1a27ddf95"
 
-	global.fetch.mockImplementation((url) => {
+	fetchMock.mockImplementation((url) => {
 		if (url === `${API_BASE_URL}/login`) {
 			return Promise.resolve({
 				ok: true,
@@ -3163,13 +3159,13 @@ test("sends the same challenge ID for repeated checks on one prompt", async () =
 
 	fireEvent.click(screen.getByRole("button", { name: "Check again" }))
 	await waitFor(() => {
-		const checkRequests = global.fetch.mock.calls.filter(
+		const checkRequests = fetchMock.mock.calls.filter(
 			([url]) => url === `${API_BASE_URL}/games/check`,
 		)
 		expect(checkRequests).toHaveLength(2)
 	})
 
-	const checkBodies = global.fetch.mock.calls
+	const checkBodies = fetchMock.mock.calls
 		.filter(([url]) => url === `${API_BASE_URL}/games/check`)
 		.map(([, options]) => JSON.parse(options.body))
 	expect(checkBodies).toEqual([
@@ -3191,7 +3187,7 @@ test("sends the same challenge ID for repeated checks on one prompt", async () =
 })
 
 test("shows challenge feedback returned by the answer check", async () => {
-	global.fetch.mockImplementation((url) => {
+	fetchMock.mockImplementation((url) => {
 		if (url === `${API_BASE_URL}/login`) {
 			return Promise.resolve({
 				ok: true,
@@ -3258,7 +3254,7 @@ test("shows challenge feedback returned by the answer check", async () => {
 	expect(screen.getByRole("button", { name: "Check again" })).toBeEnabled()
 	expect(screen.queryByRole("status", { name: "Loading feedback" })).not.toBeInTheDocument()
 
-	const checkRequest = global.fetch.mock.calls.find(
+	const checkRequest = fetchMock.mock.calls.find(
 		([url]) => url === `${API_BASE_URL}/games/check`,
 	)
 	expect(JSON.parse(checkRequest[1].body)).toEqual({
@@ -3268,7 +3264,7 @@ test("shows challenge feedback returned by the answer check", async () => {
 		answer: "。",
 		challengeId: firstChallengeId,
 	})
-	expect(global.fetch.mock.calls.some(([url]) => url === `${API_BASE_URL}/games/feedback`)).toBe(
+	expect(fetchMock.mock.calls.some(([url]) => url === `${API_BASE_URL}/games/feedback`)).toBe(
 		false,
 	)
 })
@@ -3276,7 +3272,7 @@ test("shows challenge feedback returned by the answer check", async () => {
 test("calls prompt and check endpoints with a random real mode for shuffle", async () => {
 	jest.spyOn(Math, "random").mockReturnValue(0.6)
 
-	global.fetch.mockImplementation((url, options = {}) => {
+	fetchMock.mockImplementation((url, options = {}) => {
 		if (url === `${API_BASE_URL}/login`) {
 			return Promise.resolve({
 				ok: true,
@@ -3347,13 +3343,13 @@ test("calls prompt and check endpoints with a random real mode for shuffle", asy
 	})
 	expect(screen.queryByText("Good.")).not.toBeInTheDocument()
 
-	const promptRequest = global.fetch.mock.calls.find(([url]) =>
+	const promptRequest = fetchMock.mock.calls.find(([url]) =>
 		String(url).startsWith(`${API_BASE_URL}/games/prompt`),
 	)
 	const promptParams = new URL(String(promptRequest[0]), "http://localhost").searchParams
 	expect(promptParams.get("mode")).toBe("particles")
 
-	const checkRequest = global.fetch.mock.calls.find(
+	const checkRequest = fetchMock.mock.calls.find(
 		([url]) => url === `${API_BASE_URL}/games/check`,
 	)
 	expect(JSON.parse(checkRequest[1].body)).toEqual({

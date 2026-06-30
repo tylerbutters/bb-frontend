@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react"
+import type { FormEvent } from "react"
 import { confirmPasswordReset, requestPasswordReset } from "../../api/auth"
+import { getErrorMessage } from "../../api/errors"
 import InputBox from "../../components/InputBox"
 import "./AuthPage.css"
 import { useLocation, useNavigate } from "react-router-dom"
 
 const RESEND_CODE_COOLDOWN_SECONDS = 30
+type ResetPage = "requestReset" | "confirmReset"
+type ResetFormField = "email" | "code" | "password" | "confirmPassword"
 
 export default function ForgotPasswordPage() {
 	const navigate = useNavigate()
 	const location = useLocation()
 	const prevPage = location.state?.from
 
-	const [currentPage, setCurrentPage] = useState("requestReset")
+	const [currentPage, setCurrentPage] = useState<ResetPage>("requestReset")
 
 	const [isRequestingReset, setIsRequestingReset] = useState(false)
 	const [isConfirmingReset, setIsConfirmingReset] = useState(false)
@@ -48,7 +52,7 @@ export default function ForgotPasswordPage() {
 
 	const isResendDisabled = resendCooldown > 0 || isResendingCode || isConfirmingReset
 
-	function updateResetField(field, value) {
+	function updateResetField(field: ResetFormField, value: string) {
 		setResetForm((prev) => ({
 			...prev,
 			[field]: value,
@@ -62,7 +66,7 @@ export default function ForgotPasswordPage() {
 		setConfirmResetMessage({ text: "", type: "error" })
 	}
 
-	async function submitPasswordResetRequest(e) {
+	async function submitPasswordResetRequest(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
 
 		setIsRequestingReset(true)
@@ -80,7 +84,7 @@ export default function ForgotPasswordPage() {
 			setCurrentPage("confirmReset")
 		} catch (error) {
 			setRequestResetMessage({
-				text: error.message || "Could not send reset code.",
+				text: getErrorMessage(error, "Could not send reset code."),
 				type: "error",
 			})
 		} finally {
@@ -88,7 +92,7 @@ export default function ForgotPasswordPage() {
 		}
 	}
 
-	async function submitPasswordResetConfirm(e) {
+	async function submitPasswordResetConfirm(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
 
 		if (resetForm.password !== resetForm.confirmPassword) {
@@ -122,7 +126,7 @@ export default function ForgotPasswordPage() {
 			}
 		} catch (error) {
 			setConfirmResetMessage({
-				text: error.message || "Password reset failed.",
+				text: getErrorMessage(error, "Password reset failed."),
 				type: "error",
 			})
 		} finally {
@@ -152,7 +156,7 @@ export default function ForgotPasswordPage() {
 			setResendCooldown(RESEND_CODE_COOLDOWN_SECONDS)
 		} catch (error) {
 			setConfirmResetMessage({
-				text: error.message || "Could not resend reset code.",
+				text: getErrorMessage(error, "Could not resend reset code."),
 				type: "error",
 			})
 		} finally {

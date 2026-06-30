@@ -1,10 +1,44 @@
 import { useEffect, useState } from "react"
 import { generateGamePrompt } from "../../../api/games"
+import type { GamePromptData, GameQuota, PromptDifficulty } from "../../../api/types"
 import "./GamePrompt.css"
 import { History, RotateCcw } from "lucide-react"
 
-const PROMPT_DIFFICULTIES = ["easy", "medium", "hard"]
+const PROMPT_DIFFICULTIES: PromptDifficulty[] = ["easy", "medium", "hard"]
 const SHUFFLE_GAME_MODES = ["translate", "conjugations", "fix sentence", "particles", "reorder"]
+
+type PromptStatus = "idle" | "loading" | "ready" | "error"
+
+interface GamePromptProps {
+	isVisible: boolean
+	gameMode: string
+	isQuotaExhausted: boolean
+	isHistoryOpen: boolean
+	requestKey: number
+	onGameQuotaChange?: (quota: GameQuota) => void
+	onOpenHistory?: (() => void) | null
+	onRegenerate: () => void
+	onPromptChange?: ({
+		prompt,
+		status,
+		promptData,
+	}: {
+		prompt: string
+		status: PromptStatus
+		promptData: GamePromptData | null
+	}) => void
+}
+
+interface GamePromptApiError {
+	data?: {
+		error?: {
+			code?: string
+			details?: {
+				quota?: GameQuota
+			}
+		}
+	}
+}
 
 export default function GamePrompt({
 	isVisible,
@@ -16,9 +50,9 @@ export default function GamePrompt({
 	onOpenHistory,
 	onRegenerate,
 	onPromptChange,
-}) {
+}: GamePromptProps) {
 	const [prompt, setPrompt] = useState("")
-	const [status, setStatus] = useState("idle")
+	const [status, setStatus] = useState<PromptStatus>("idle")
 	const [errorCode, setErrorCode] = useState("")
 	const [difficulty, setDifficulty] = useState(PROMPT_DIFFICULTIES[0])
 	const hasPromptGenerator = hasGamePromptGenerator(gameMode)
@@ -70,9 +104,9 @@ export default function GamePrompt({
 				})
 			} catch (error) {
 				if (controller.signal.aborted) return
-				console.log(error)
-				const nextErrorCode = error.data?.error?.code || ""
-				const quota = error.data?.error?.details?.quota
+				const apiError = getGamePromptApiError(error)
+				const nextErrorCode = apiError.data?.error?.code || ""
+				const quota = apiError.data?.error?.details?.quota
 				if (nextErrorCode === "DAILY_GAME_LIMIT_REACHED" && quota) {
 					onGameQuotaChange?.(quota)
 				}
@@ -99,7 +133,7 @@ export default function GamePrompt({
 		requestKey,
 	])
 
-	function selectDifficulty(nextDifficulty) {
+	function selectDifficulty(nextDifficulty: PromptDifficulty) {
 		if (nextDifficulty === difficulty) return
 		setDifficulty(nextDifficulty)
 		onRegenerate()
@@ -161,11 +195,15 @@ export default function GamePrompt({
 	)
 }
 
-function hasGamePromptGenerator(gameMode) {
+function getGamePromptApiError(error: unknown): GamePromptApiError {
+	return error && typeof error === "object" ? (error as GamePromptApiError) : {}
+}
+
+function hasGamePromptGenerator(gameMode: string) {
 	return Boolean(gameMode && gameMode !== "sandbox")
 }
 
-function resolvePromptRequestMode(gameMode) {
+function resolvePromptRequestMode(gameMode: string) {
 	if (gameMode !== "shuffle") return gameMode
 
 	const index = Math.floor(Math.random() * SHUFFLE_GAME_MODES.length)

@@ -1,9 +1,12 @@
-// @ts-nocheck
 import { ApiError, API_BASE_URL, apiRequest } from "./client"
 import { API_ERROR_TOAST_EVENT } from "./apiErrorToasts"
+import type { ApiErrorToast } from "./apiErrorToasts"
+
+let fetchMock: jest.Mock
 
 beforeEach(() => {
-	global.fetch = jest.fn()
+	fetchMock = jest.fn()
+	global.fetch = fetchMock as unknown as typeof fetch
 })
 
 afterEach(() => {
@@ -11,8 +14,10 @@ afterEach(() => {
 })
 
 function collectApiErrorToasts() {
-	const toasts = []
-	const listener = (event) => toasts.push(event.detail)
+	const toasts: ApiErrorToast[] = []
+	const listener = (event: Event) => {
+		toasts.push((event as CustomEvent<ApiErrorToast>).detail)
+	}
 	window.addEventListener(API_ERROR_TOAST_EVENT, listener)
 
 	return {
@@ -22,7 +27,7 @@ function collectApiErrorToasts() {
 }
 
 test("apiRequest sends JSON requests against the API base URL", async () => {
-	global.fetch.mockResolvedValue({
+	fetchMock.mockResolvedValue({
 		ok: true,
 		json: jest.fn().mockResolvedValue({ user: { id: 1 } }),
 	})
@@ -54,7 +59,7 @@ test("apiRequest sends JSON requests against the API base URL", async () => {
 
 test("apiRequest preserves fetch signals", async () => {
 	const controller = new AbortController()
-	global.fetch.mockResolvedValue({
+	fetchMock.mockResolvedValue({
 		ok: true,
 		json: jest.fn().mockResolvedValue({ prompt: "I eat rice." }),
 	})
@@ -76,7 +81,7 @@ test("apiRequest preserves fetch signals", async () => {
 })
 
 test("apiRequest throws ApiError with server error details", async () => {
-	global.fetch.mockResolvedValue({
+	fetchMock.mockResolvedValue({
 		ok: false,
 		status: 422,
 		json: jest.fn().mockResolvedValue({
@@ -109,7 +114,7 @@ test("apiRequest throws ApiError with server error details", async () => {
 
 test("apiRequest dispatches toasts for server API errors", async () => {
 	const toastCollector = collectApiErrorToasts()
-	global.fetch.mockResolvedValue({
+	fetchMock.mockResolvedValue({
 		ok: false,
 		status: 502,
 		json: jest.fn().mockResolvedValue({
@@ -135,7 +140,7 @@ test("apiRequest dispatches toasts for server API errors", async () => {
 
 test("apiRequest dispatches toasts for network API errors", async () => {
 	const toastCollector = collectApiErrorToasts()
-	global.fetch.mockRejectedValue(new TypeError("Failed to fetch"))
+	fetchMock.mockRejectedValue(new TypeError("Failed to fetch"))
 
 	try {
 		await expect(apiRequest("/games/prompt")).rejects.toThrow("Failed to fetch")
@@ -152,7 +157,7 @@ test("apiRequest dispatches toasts for network API errors", async () => {
 
 test("apiRequest does not dispatch toasts for handled form API errors", async () => {
 	const toastCollector = collectApiErrorToasts()
-	global.fetch.mockResolvedValue({
+	fetchMock.mockResolvedValue({
 		ok: false,
 		status: 422,
 		json: jest.fn().mockResolvedValue({

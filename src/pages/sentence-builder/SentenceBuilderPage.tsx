@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
+import type { GamePromptData, User } from "../../api/types"
 import { useGameQuota } from "../../useGameQuota"
 import GameControls from "./games/GameControls"
 import GameModeSelector from "./games/GameModeSelector"
@@ -9,7 +10,7 @@ import { GameHistoryDrawer, useGameHistoryDrawer } from "../stats/GameHistoryDra
 import "./GameQuota.css"
 
 const PROMPT_ELEMENT_GAME_MODES = new Set(["conjugations", "fix sentence", "particles", "reorder"])
-const GAME_HISTORY_LABELS = {
+const GAME_HISTORY_LABELS: Record<string, string> = {
 	translate: "Translate",
 	conjugations: "Conjugate",
 	"fix sentence": "Fix mistakes",
@@ -17,13 +18,21 @@ const GAME_HISTORY_LABELS = {
 	reorder: "Word order",
 }
 
-export default function SentenceBuilderPage({ currentUser, onAuthExpired }) {
+type PromptStatus = "idle" | "loading" | "ready" | "error"
+
+export default function SentenceBuilderPage({
+	currentUser,
+	onAuthExpired,
+}: {
+	currentUser?: User | null
+	onAuthExpired?: () => void
+}) {
 	const [selectedGameMode, setSelectedGameMode] = useState("sandbox")
 	const [workspaceResetCount, setWorkspaceResetCount] = useState(0)
 	const [sentenceClearRequestCount, setSentenceClearRequestCount] = useState(0)
 	const [gamePrompt, setGamePrompt] = useState("")
-	const [gamePromptData, setGamePromptData] = useState(null)
-	const [gamePromptStatus, setGamePromptStatus] = useState("idle")
+	const [gamePromptData, setGamePromptData] = useState<GamePromptData | null>(null)
+	const [gamePromptStatus, setGamePromptStatus] = useState<PromptStatus>("idle")
 	const [japaneseSentence, setJapaneseSentence] = useState("")
 	const [hasSentenceElements, setHasSentenceElements] = useState(false)
 	const gameHistory = useGameHistoryDrawer(currentUser)
@@ -60,12 +69,12 @@ export default function SentenceBuilderPage({ currentUser, onAuthExpired }) {
 		}
 	}, [])
 
-	const handleSentenceChange = useCallback(({ sentence, hasElements }) => {
+	const handleSentenceChange = useCallback(({ sentence, hasElements }: { sentence: string; hasElements: boolean }) => {
 		setJapaneseSentence(sentence)
 		setHasSentenceElements(hasElements)
 	}, [])
 
-	const handlePromptChange = useCallback(({ prompt, status, promptData }) => {
+	const handlePromptChange = useCallback(({ prompt, status, promptData }: { prompt: string; status: PromptStatus; promptData: GamePromptData | null }) => {
 		setGamePrompt(prompt)
 		setGamePromptData(promptData || null)
 		setGamePromptStatus(status)
@@ -94,7 +103,7 @@ export default function SentenceBuilderPage({ currentUser, onAuthExpired }) {
 		resetSentence()
 	}
 
-	function selectGameMode(gameMode) {
+	function selectGameMode(gameMode: string) {
 		if (gameMode !== selectedGameMode) {
 			gameHistory.closeHistory()
 		}
@@ -190,7 +199,7 @@ export default function SentenceBuilderPage({ currentUser, onAuthExpired }) {
 	)
 }
 
-function shouldPopulatePromptElements(gameMode, promptData) {
+function shouldPopulatePromptElements(gameMode: string, promptData?: GamePromptData | null) {
 	const generatedGameMode = promptData?.mode
 	if (!generatedGameMode) return false
 	if (gameMode !== "shuffle" && generatedGameMode !== gameMode) return false
@@ -202,6 +211,9 @@ function shouldPopulatePromptElements(gameMode, promptData) {
 export function getGeneratedPromptWorkspacePermissions({
 	generatedElementMode,
 	hasGeneratedPromptElements,
+}: {
+	generatedElementMode?: string | null
+	hasGeneratedPromptElements: boolean
 }) {
 	const canFreelyEditGeneratedSentence = generatedElementMode === "fix sentence"
 
@@ -212,7 +224,7 @@ export function getGeneratedPromptWorkspacePermissions({
 	}
 }
 
-function resolveHistoryGameMode(selectedGameMode, generatedGameMode) {
+function resolveHistoryGameMode(selectedGameMode: string, generatedGameMode?: string | null) {
 	if (selectedGameMode === "sandbox") return null
 	if (selectedGameMode === "shuffle") return generatedGameMode || null
 

@@ -49,6 +49,10 @@ export default function GameModeSelector({
 	selectedGameMode,
 	generatedGameMode,
 	onSelectGameMode,
+}: {
+	selectedGameMode: string
+	generatedGameMode?: string
+	onSelectGameMode: (gameMode: string) => void
 }) {
 	const displayGameMode =
 		selectedGameMode === "shuffle" && generatedGameMode ? generatedGameMode : selectedGameMode

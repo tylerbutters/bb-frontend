@@ -8,6 +8,8 @@ export interface User {
 	email: string
 	role?: UserRole
 	plan?: UserPlan
+	createdAt?: string
+	updatedAt?: string
 	[key: string]: unknown
 }
 

@@ -8,8 +8,8 @@ const LOCKED_ELEMENT_SELECTOR =
 
 export default function useNestedElementPointerGuard() {
 	useEffect(() => {
-		let pressedElement
-		let hoveredElement
+		let pressedElement: Element | null = null
+		let hoveredElement: Element | null = null
 
 		function clearPressedElement() {
 			pressedElement?.classList.remove("pressedElement")
@@ -21,9 +21,10 @@ export default function useNestedElementPointerGuard() {
 			hoveredElement = null
 		}
 
-		function handlePointerDown(e) {
+		function handlePointerDown(e: PointerEvent) {
 			clearPressedElement()
 
+			if (!(e.target instanceof Element)) return
 			if (e.target.closest(NESTED_CONTROL_SELECTOR)) return
 
 			pressedElement = e.target.closest(ELEMENT_POINTER_SELECTOR)
@@ -34,7 +35,8 @@ export default function useNestedElementPointerGuard() {
 			pressedElement?.classList.add("pressedElement")
 		}
 
-		function handlePointerOver(e) {
+		function handlePointerOver(e: PointerEvent) {
+			if (!(e.target instanceof Element)) return
 			if (e.target.closest(ELEMENT_MENU_SELECTOR)) return
 
 			const element = e.target.closest(ELEMENT_POINTER_SELECTOR)
@@ -52,8 +54,11 @@ export default function useNestedElementPointerGuard() {
 			}
 		}
 
-		function handlePointerOut(e) {
-			if (hoveredElement && !hoveredElement.contains(e.relatedTarget)) {
+		function handlePointerOut(e: PointerEvent) {
+			if (
+				hoveredElement &&
+				(!(e.relatedTarget instanceof Node) || !hoveredElement.contains(e.relatedTarget))
+			) {
 				clearHoveredElement()
 			}
 		}

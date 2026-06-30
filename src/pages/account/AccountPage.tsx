@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Navigate, useLocation, useNavigate } from "react-router-dom"
 import { LogOut } from "lucide-react"
+import type { User } from "../../api/types"
 import "../auth/AuthPage.css"
 import "./AccountPage.css"
 import EmailSection from "./EmailSection"
@@ -8,20 +9,39 @@ import PasswordSection from "./PasswordSection"
 import DeleteAccountSection from "./DeleteAccountSection"
 import AccountSectionHeader from "./AccountSectionHeader"
 
-export default function AccountPage({ currentUser, onAccountDelete, onLogout, onUserUpdate }) {
+interface AccountPageProps {
+	currentUser?: User | null
+	onAccountDelete: () => void
+	onLogout: () => void
+	onUserUpdate: (user: User) => void
+}
+
+interface AccountRouteState {
+	status?: string
+	messageType?: string
+	message?: string
+}
+
+export default function AccountPage({
+	currentUser,
+	onAccountDelete,
+	onLogout,
+	onUserUpdate,
+}: AccountPageProps) {
 	const navigate = useNavigate()
 	const location = useLocation()
+	const routeState = location.state as AccountRouteState | null
 
-	const [resetMessage, setResetMessage] = useState(null)
+	const [resetMessage, setResetMessage] = useState<AccountRouteState | null>(null)
 
 	useEffect(() => {
-		if (!location.state) return
+		if (!routeState) return
 
-		if (location.state.status && location.state.message) {
+		if (routeState.status && routeState.message) {
 			setResetMessage({
-				status: location.state.status,
-				messageType: location.state.messageType,
-				message: location.state.message,
+				status: routeState.status,
+				messageType: routeState.messageType,
+				message: routeState.message,
 			})
 		}
 
@@ -29,7 +49,7 @@ export default function AccountPage({ currentUser, onAccountDelete, onLogout, on
 			replace: true,
 			state: null,
 		})
-	}, [location.state, location.pathname, navigate])
+	}, [location.pathname, navigate, routeState])
 
 	if (!currentUser) {
 		return <Navigate to="/login" replace />

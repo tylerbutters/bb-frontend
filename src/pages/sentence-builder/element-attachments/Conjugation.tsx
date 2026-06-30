@@ -279,7 +279,7 @@ export default function Conjugation({
 					<Verb
 						element={currentConjugation}
 						allColors={allColors}
-						updateElement={(updatedChild) => updateCurrentConjugation(updatedChild)}
+							updateElement={(updatedChild: ConjugationElement) => updateCurrentConjugation(updatedChild)}
 						deleteElement={clearCurrentConjugation}
 						mouse={mouse}
 						addButtonsDisabled={addButtonsDisabled}
@@ -315,7 +315,7 @@ export default function Conjugation({
 					<Adjective
 						element={currentConjugation}
 						allColors={allColors}
-						updateElement={(updatedChild) => updateCurrentConjugation(updatedChild)}
+							updateElement={(updatedChild: ConjugationElement) => updateCurrentConjugation(updatedChild)}
 						deleteElement={clearCurrentConjugation}
 						mouse={mouse}
 						addButtonsDisabled={addButtonsDisabled}

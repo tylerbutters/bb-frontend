@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import { checkGameAnswer, checkSandboxSentence } from "../../../api/games"
+import type { GameCheckResult, GameQuota, PromptDifficulty, User } from "../../../api/types"
 import { recordLocalGameResult } from "../../../gameStatsStorage"
 import "./GameControls.css"
 
@@ -14,7 +15,49 @@ function readShowFeedbackByDefault() {
 	}
 }
 
-function writeShowFeedbackByDefault(value) {
+type CheckStatus = "idle" | "checking" | "ready" | "error"
+type PromptStatus = "idle" | "loading" | "ready" | "error"
+
+interface LocalGameQuotaUse {
+	challengeId?: string
+	gameMode: string
+	difficulty?: PromptDifficulty | string
+	prompt: string
+	serverQuota: GameQuota | null
+}
+
+interface GameControlsProps {
+	isVisible: boolean
+	gameMode: string
+	challengeId?: string
+	difficulty?: PromptDifficulty | string
+	currentUser?: User | null
+	gameQuota?: GameQuota | null
+	prompt: string
+	promptStatus: PromptStatus
+	answer: string
+	canClearSentence: boolean
+	onGameQuotaChange?: (quota: GameQuota) => void
+	onLocalGameQuotaUse?: (challenge: LocalGameQuotaUse) => void
+	onAuthExpired?: () => void
+	onClearSentence?: () => void
+	onNext: () => void
+}
+
+interface GameApiError {
+	status?: number
+	message?: string
+	data?: {
+		error?: {
+			code?: string
+			details?: {
+				quota?: GameQuota
+			}
+		}
+	}
+}
+
+function writeShowFeedbackByDefault(value: boolean) {
 	try {
 		window.localStorage.setItem(SHOW_FEEDBACK_BY_DEFAULT_STORAGE_KEY, String(value))
 	} catch {}
@@ -36,10 +79,11 @@ export default function GameControls({
 	onAuthExpired,
 	onClearSentence,
 	onNext,
-}) {
-	const [checkStatus, setCheckStatus] = useState("idle")
-	const [feedback, setFeedback] = useState(null)
+}: GameControlsProps) {
+	const [checkStatus, setCheckStatus] = useState<CheckStatus>("idle")
+	const [feedback, setFeedback] = useState<GameCheckResult | null>(null)
 	const [showFeedbackByDefault, setShowFeedbackByDefault] = useState(readShowFeedbackByDefault)
+	const showFeedbackByDefaultRef = useRef(showFeedbackByDefault)
 	const [isFeedbackExpanded, setIsFeedbackExpanded] = useState(showFeedbackByDefault)
 	const hasAnswerChecker = hasGameAnswerChecker(gameMode)
 	const isSandboxCheck = gameMode === "sandbox"
@@ -59,8 +103,12 @@ export default function GameControls({
 		isQuotaExhausted
 
 	useEffect(() => {
+		showFeedbackByDefaultRef.current = showFeedbackByDefault
+	}, [showFeedbackByDefault])
+
+	useEffect(() => {
 		setFeedback(null)
-		setIsFeedbackExpanded(showFeedbackByDefault)
+		setIsFeedbackExpanded(showFeedbackByDefaultRef.current)
 		setCheckStatus("idle")
 	}, [answer, challengeId, difficulty, gameMode, isVisible, prompt])
 
@@ -110,18 +158,17 @@ export default function GameControls({
 			setIsFeedbackExpanded(showFeedbackByDefault)
 			setCheckStatus("ready")
 		} catch (error) {
-			if (isAuthenticationRequiredError(error) && onAuthExpired) {
+			const apiError = getGameApiError(error)
+			if (isAuthenticationRequiredError(apiError) && onAuthExpired) {
 				onAuthExpired?.()
 				setCheckStatus("idle")
 				return
 			}
 
-			console.log(error)
-
-			const quota = error.data?.error?.details?.quota
+			const quota = apiError.data?.error?.details?.quota
 			if (quota) onGameQuotaChange?.(quota)
 
-			const errorCode = error.data?.error?.code
+			const errorCode = apiError.data?.error?.code
 			if (errorCode === "DAILY_GAME_LIMIT_REACHED") {
 				if (quota) {
 					setFeedback(null)
@@ -130,10 +177,11 @@ export default function GameControls({
 				}
 			}
 
-			const errorFeedback = gameCheckErrorFeedback(error)
+			const errorFeedback = gameCheckErrorFeedback(apiError)
 			setFeedback({
 				correct: false,
 				feedback: errorFeedback,
+				quota: null,
 			})
 			setIsFeedbackExpanded(showFeedbackByDefault)
 			setCheckStatus("error")
@@ -259,11 +307,15 @@ export default function GameControls({
 	)
 }
 
-function hasGameAnswerChecker(gameMode) {
+function hasGameAnswerChecker(gameMode: string) {
 	return Boolean(gameMode)
 }
 
-function gameCheckErrorFeedback(error) {
+function getGameApiError(error: unknown): GameApiError {
+	return error && typeof error === "object" ? (error as GameApiError) : {}
+}
+
+function gameCheckErrorFeedback(error: GameApiError) {
 	const errorCode = error?.data?.error?.code
 
 	if (isAuthenticationRequiredError(error)) {
@@ -285,7 +337,7 @@ function gameCheckErrorFeedback(error) {
 	return "Could not check the sentence right now. Try again in a moment."
 }
 
-function isAuthenticationRequiredError(error) {
+function isAuthenticationRequiredError(error: GameApiError) {
 	const errorCode = error?.data?.error?.code
 
 	return (

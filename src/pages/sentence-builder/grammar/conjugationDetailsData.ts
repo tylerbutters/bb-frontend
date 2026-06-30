@@ -1,3 +1,5 @@
+import type { ConjugationOption } from "../types"
+
 export const conjugationDetails = [
 	{
 		id: "verb-non-past",
@@ -1332,7 +1334,7 @@ const conjugationDetailsById = new Map(
 	conjugationDetails.map((detail) => [detail.id, detail]),
 )
 
-export function getConjugationDetail(element) {
+export function getConjugationDetail(element?: ConjugationOption | null) {
 	if (!element) return null
 	if (!element.detailId) return null
 

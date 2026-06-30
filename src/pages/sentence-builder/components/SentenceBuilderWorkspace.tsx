@@ -8,12 +8,30 @@ import normalizeElement from "../grammar/normalizeElement"
 import useNestedElementPointerGuard from "../hooks/useNestedElementPointerGuard"
 import useSentenceDragDrop from "../hooks/useSentenceDragDrop"
 import { MENU_OPEN_EVENT } from "../elements-menu/menuEvents"
+import type { MenuOption, MousePosition, SentenceElement } from "../types"
 
 const SENTENCE_ELEMENTS_VIEWPORT_PADDING = 100
 const ELEMENT_MENU_SELECTOR = ".elementsMenuContainer,.flyoutMenuPanel,.menuPanel"
 const INACTIVE_MENU_MOUSE = {
 	x: Number.NEGATIVE_INFINITY,
 	y: Number.NEGATIVE_INFINITY,
+}
+
+interface SentenceBuilderWorkspaceProps {
+	generatedElements?: SentenceElement[]
+	showTranslation: boolean
+	resetKey: number
+	clearKey: number
+	generatedElementMode?: string | null
+	canAddElements?: boolean
+	canDragGeneratedElements?: boolean
+	onSentenceChange?: ({
+		sentence,
+		hasElements,
+	}: {
+		sentence: string
+		hasElements: boolean
+	}) => void
 }
 
 export default function SentenceBuilderWorkspace({
@@ -25,16 +43,16 @@ export default function SentenceBuilderWorkspace({
 	canAddElements = true,
 	canDragGeneratedElements = false,
 	onSentenceChange,
-}) {
+}: SentenceBuilderWorkspaceProps) {
 	const nextElementId = useRef(0)
-	const sentenceElementsContainerRef = useRef(null)
+	const sentenceElementsContainerRef = useRef<HTMLDivElement | null>(null)
 	const sentenceElementsScaleRef = useRef(1)
-	const scaleFrameRef = useRef(null)
-	const scaleTimeoutRef = useRef(null)
+	const scaleFrameRef = useRef<number | null>(null)
+	const scaleTimeoutRef = useRef<number | null>(null)
 	const resetKeyRef = useRef(resetKey)
 	const clearKeyRef = useRef(clearKey)
-	const [mouse, setMouse] = useState({ x: 0, y: 0 })
-	const [addedElements, setAddedElements] = useState([])
+	const [mouse, setMouse] = useState<MousePosition>({ x: 0, y: 0 })
+	const [addedElements, setAddedElements] = useState<SentenceElement[]>([])
 	const [sentenceElementsScale, setSentenceElementsScale] = useState(1)
 	const sentenceString = textPartsToString(elementsToTextParts(addedElements))
 	const defaultElements = useMemo(() => getDefaultElementOptions(), [])
@@ -68,7 +86,7 @@ export default function SentenceBuilderWorkspace({
 		if (!generatedElements.length) return
 
 		setAddedElements(
-			generatedElements.map((element) =>
+			generatedElements.map((element: SentenceElement) =>
 				createSentenceElement({
 					...element,
 					isGeneratedPromptElement: true,
@@ -85,9 +103,9 @@ export default function SentenceBuilderWorkspace({
 	}, [addedElements.length, onSentenceChange, sentenceString])
 
 	useEffect(() => {
-		function handleMove(e) {
+		function handleMove(e: MouseEvent) {
 			if (
-				e.target?.closest?.(ELEMENT_MENU_SELECTOR) ||
+				(e.target instanceof HTMLElement && e.target.closest(ELEMENT_MENU_SELECTOR)) ||
 				document.querySelector(".elementsMenuContainer")
 			) {
 				setMouse(INACTIVE_MENU_MOUSE)
@@ -149,14 +167,14 @@ export default function SentenceBuilderWorkspace({
 		}
 	}, [addedElements])
 
-	function createSentenceElement(selectedElement) {
+	function createSentenceElement(selectedElement: SentenceElement | MenuOption): SentenceElement {
 		return {
-			...normalizeElement(selectedElement),
+			...normalizeElement(selectedElement as SentenceElement),
 			sentenceElementId: nextElementId.current++,
 		}
 	}
 
-	function addElement(index, selectedElement) {
+	function addElement(index: number, selectedElement: SentenceElement | MenuOption) {
 		setAddedElements((prev) => {
 			const copy = [...prev]
 			copy.splice(index, 0, createSentenceElement(selectedElement))
@@ -164,7 +182,7 @@ export default function SentenceBuilderWorkspace({
 		})
 	}
 
-	function updateElement(elementId, newElement) {
+	function updateElement(elementId: number | undefined, newElement: SentenceElement | MenuOption) {
 		setAddedElements((prev) => {
 			return prev.map((element) => {
 				if (element.sentenceElementId !== elementId) return element
@@ -177,7 +195,7 @@ export default function SentenceBuilderWorkspace({
 		})
 	}
 
-	function deleteElement(elementId) {
+	function deleteElement(elementId: number | undefined) {
 		setAddedElements((prev) => prev.filter((element) => element.sentenceElementId !== elementId))
 	}
 

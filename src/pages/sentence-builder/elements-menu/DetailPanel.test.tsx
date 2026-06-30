@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { render, screen } from "@testing-library/react"
 import { DetailPanelContent, getElementDetail } from "./DetailPanel"
 
@@ -42,8 +41,8 @@ describe("getElementDetail", () => {
 		]
 
 		details.forEach((detail) => {
-			detail.constructions.forEach((construction) => {
-				construction.examples.forEach((example) => {
+			detail.constructions.forEach((construction: any) => {
+				construction.examples.forEach((example: any) => {
 					expect(example).toEqual({
 						base: expect.any(String),
 						conjugation: expect.any(String),
@@ -98,7 +97,7 @@ describe("getElementDetail", () => {
 		const { container } = render(
 			<DetailPanelContent element={{ text: "ない", detailId: "verb-negative" }} />,
 		)
-		const getEndingTexts = (exampleText) => {
+		const getEndingTexts = (exampleText: string) => {
 			const exampleLine = Array.from(
 				container.querySelectorAll(".elementDetailExamples > div"),
 			).find((line) => line.textContent === exampleText)
@@ -115,7 +114,7 @@ describe("getElementDetail", () => {
 	test("uses structured conjugation example data", () => {
 		const detail = getElementDetail({ text: "ない", detailId: "verb-negative" })
 		const godanConstruction = detail.constructions.find(
-			(construction) => construction.label === "Godan",
+			(construction: any) => construction.label === "Godan",
 		)
 
 		expect(godanConstruction.examples).toContainEqual({

@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
+import type { FormEvent } from "react"
 import { Link, Navigate } from "react-router-dom"
 import { Search } from "lucide-react"
 import { getAdminUser, getAdminUserGameHistory, getAdminUsers } from "../../api/admin"
-import type { User } from "../../api/types"
+import type { GameHistoryItem, GameHistoryResponse, GameStats, User, UserId } from "../../api/types"
 import {
 	emptyGameStatsResponse,
 	GAME_RECENT_FILTERS,
@@ -22,11 +23,11 @@ const USER_PAGE_SIZE = 25
 const HISTORY_PAGE_SIZE = 50
 const MODE_FILTERS = [{ mode: "all", label: "All games" }, ...TRACKED_GAME_MODES]
 
-function isAuthenticationError(error: any) {
-	return error.status === 401
+function isAuthenticationError(error: unknown) {
+	return Boolean(error && typeof error === "object" && "status" in error && error.status === 401)
 }
 
-function normalizeHistoryItem(item) {
+function normalizeHistoryItem(item: GameHistoryItem): GameHistoryItem {
 	return {
 		id: item?.id || item?.challengeId || "",
 		challengeId: item?.challengeId || "",
@@ -41,7 +42,7 @@ function normalizeHistoryItem(item) {
 	}
 }
 
-function normalizeHistoryResponse(history) {
+function normalizeHistoryResponse(history?: GameHistoryResponse | null): Required<GameHistoryResponse> {
 	return {
 		items: (history?.items || []).map(normalizeHistoryItem),
 		hasMore: Boolean(history?.hasMore),
@@ -49,7 +50,7 @@ function normalizeHistoryResponse(history) {
 	}
 }
 
-function formatDate(value) {
+function formatDate(value?: string) {
 	const date = new Date(value)
 	if (Number.isNaN(date.getTime())) return "Unknown date"
 
@@ -62,11 +63,12 @@ function formatDate(value) {
 	}).format(date)
 }
 
-function formatValue(value) {
-	return value || "None"
+function formatValue(value: unknown): string {
+	if (value === null || value === undefined || value === "") return "None"
+	return String(value)
 }
 
-function StatMetric({ label, value }) {
+function StatMetric({ label, value }: { label: string; value: string | number }) {
 	return (
 		<div className="statsMetric">
 			<span>{label}</span>
@@ -75,7 +77,7 @@ function StatMetric({ label, value }) {
 	)
 }
 
-function StatsSummary({ stats }) {
+function StatsSummary({ stats }: { stats?: GameStats | null }) {
 	const normalizedStats = normalizeGameStats(stats)
 
 	return (
@@ -91,26 +93,26 @@ function StatsSummary({ stats }) {
 export default function AdminPage({ currentUser, onAuthExpired }: { currentUser?: User | null; onAuthExpired?: () => void }) {
 	const [searchInput, setSearchInput] = useState("")
 	const [searchQuery, setSearchQuery] = useState("")
-	const [users, setUsers] = useState([])
+	const [users, setUsers] = useState<User[]>([])
 	const [usersStatus, setUsersStatus] = useState("idle")
 	const [usersMessage, setUsersMessage] = useState("")
 	const [usersHasMore, setUsersHasMore] = useState(false)
 	const [usersNextOffset, setUsersNextOffset] = useState(0)
-	const [selectedUserId, setSelectedUserId] = useState(null)
-	const [selectedUser, setSelectedUser] = useState(null)
+	const [selectedUserId, setSelectedUserId] = useState<UserId | null>(null)
+	const [selectedUser, setSelectedUser] = useState<User | null>(null)
 	const [stats, setStats] = useState(() => emptyGameStatsResponse())
 	const [statsMode, setStatsMode] = useState("all")
 	const [statsDifficulty, setStatsDifficulty] = useState("all")
 	const [statsRecentRange, setStatsRecentRange] = useState("all")
 	const [profileStatus, setProfileStatus] = useState("idle")
 	const [profileMessage, setProfileMessage] = useState("")
-	const [historyItems, setHistoryItems] = useState([])
+	const [historyItems, setHistoryItems] = useState<GameHistoryItem[]>([])
 	const [historyStatus, setHistoryStatus] = useState("idle")
 	const [historyMessage, setHistoryMessage] = useState("")
 	const [historyHasMore, setHistoryHasMore] = useState(false)
-	const [historyNextOffset, setHistoryNextOffset] = useState(0)
+	const [historyNextOffset, setHistoryNextOffset] = useState<number | null>(0)
 
-	function handleApiError(error: any, setStatus: (status: string) => void, setMessage: (message: string) => void, fallbackMessage: string) {
+	const handleApiError = useCallback((error: any, setStatus: (status: string) => void, setMessage: (message: string) => void, fallbackMessage: string) => {
 		if (error.name === "AbortError") return
 
 		if (isAuthenticationError(error)) {
@@ -118,12 +120,11 @@ export default function AdminPage({ currentUser, onAuthExpired }: { currentUser?
 			return
 		}
 
-		console.log(error)
 		setStatus("error")
 		setMessage(error.message || fallbackMessage)
-	}
+	}, [onAuthExpired])
 
-	async function loadUsersPage({ offset = 0, replace = false, signal }: { offset?: number; replace?: boolean; signal?: AbortSignal } = {}) {
+	const loadUsersPage = useCallback(async ({ offset = 0, replace = false, signal }: { offset?: number; replace?: boolean; signal?: AbortSignal } = {}) => {
 		if (!currentUser || currentUser.role !== "admin") return
 
 		setUsersStatus(replace ? "loading" : "loadingMore")
@@ -146,9 +147,9 @@ export default function AdminPage({ currentUser, onAuthExpired }: { currentUser?
 		} catch (error) {
 			handleApiError(error, setUsersStatus, setUsersMessage, "Could not load users.")
 		}
-	}
+	}, [currentUser, handleApiError, searchQuery])
 
-	async function loadHistoryPage({ offset = 0, replace = false, signal }: { offset?: number; replace?: boolean; signal?: AbortSignal } = {}) {
+	const loadHistoryPage = useCallback(async ({ offset = 0, replace = false, signal }: { offset?: number; replace?: boolean; signal?: AbortSignal } = {}) => {
 		if (!selectedUserId) return
 
 		setHistoryStatus(replace ? "loading" : "loadingMore")
@@ -184,7 +185,7 @@ export default function AdminPage({ currentUser, onAuthExpired }: { currentUser?
 		} catch (error) {
 			handleApiError(error, setHistoryStatus, setHistoryMessage, "Could not load history.")
 		}
-	}
+	}, [handleApiError, selectedUserId, statsDifficulty, statsMode, statsRecentRange])
 
 	useEffect(() => {
 		if (!currentUser || currentUser.role !== "admin") return
@@ -199,7 +200,7 @@ export default function AdminPage({ currentUser, onAuthExpired }: { currentUser?
 		return () => {
 			controller.abort()
 		}
-	}, [currentUser, searchQuery])
+	}, [currentUser, loadUsersPage])
 
 	useEffect(() => {
 		if (!selectedUserId) {
@@ -234,7 +235,7 @@ export default function AdminPage({ currentUser, onAuthExpired }: { currentUser?
 		return () => {
 			controller.abort()
 		}
-	}, [selectedUserId, onAuthExpired])
+	}, [handleApiError, selectedUserId])
 
 	useEffect(() => {
 		if (!selectedUserId) {
@@ -256,7 +257,7 @@ export default function AdminPage({ currentUser, onAuthExpired }: { currentUser?
 		return () => {
 			controller.abort()
 		}
-	}, [selectedUserId, statsMode, statsDifficulty, statsRecentRange])
+	}, [loadHistoryPage, selectedUserId])
 
 	if (!currentUser) {
 		return <Navigate to="/login" replace />
@@ -279,7 +280,7 @@ export default function AdminPage({ currentUser, onAuthExpired }: { currentUser?
 		)
 	}
 
-	function submitSearch(event) {
+	function submitSearch(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault()
 		setSelectedUserId(null)
 		setSearchQuery(searchInput.trim())
@@ -288,7 +289,7 @@ export default function AdminPage({ currentUser, onAuthExpired }: { currentUser?
 		setUsersNextOffset(0)
 	}
 
-	function selectUser(user) {
+	function selectUser(user: User) {
 		setSelectedUserId(user.id)
 		setSelectedUser(user)
 		setStats(emptyGameStatsResponse())
@@ -559,7 +560,7 @@ export default function AdminPage({ currentUser, onAuthExpired }: { currentUser?
 									disabled={isHistoryLoadingMore}
 									onClick={() =>
 										loadHistoryPage({
-											offset: historyNextOffset,
+											offset: historyNextOffset || 0,
 											replace: false,
 										})
 									}

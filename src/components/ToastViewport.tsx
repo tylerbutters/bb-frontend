@@ -4,17 +4,18 @@ import {
 	API_ERROR_TOAST_DURATION_MS,
 	subscribeToApiErrorToasts,
 } from "../api/apiErrorToasts"
+import type { ApiErrorToast } from "../api/apiErrorToasts"
 import "./ToastViewport.css"
 
 const MAX_VISIBLE_TOASTS = 3
 const TOAST_EXIT_ANIMATION_MS = 180
 
 export default function ToastViewport() {
-	const [toasts, setToasts] = useState([])
-	const dismissTimersRef = useRef(new Map())
-	const removeTimersRef = useRef(new Map())
+	const [toasts, setToasts] = useState<ApiErrorToast[]>([])
+	const dismissTimersRef = useRef(new Map<string, number>())
+	const removeTimersRef = useRef(new Map<string, number>())
 
-	const dismissToast = useCallback((toastId) => {
+	const dismissToast = useCallback((toastId: string) => {
 		const dismissTimerId = dismissTimersRef.current.get(toastId)
 		if (dismissTimerId) {
 			window.clearTimeout(dismissTimerId)

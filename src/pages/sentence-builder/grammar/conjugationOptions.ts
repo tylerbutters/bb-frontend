@@ -21,6 +21,20 @@ interface GodanRow {
 	past: string
 }
 
+const godanRowsByEnding = godanRows as Record<string, GodanRow | undefined>
+const followUpOptionsByName = followUpOptionsByKey as Record<
+	string,
+	ConjugationOption[] | undefined
+>
+const conjugationFormsByText = conjugationFormByText as Record<
+	string,
+	ConjugationOption | undefined
+>
+const baseOptionsByType = baseOptionsByParentType as Record<
+	string,
+	ConjugationOption[] | undefined
+>
+
 function getGodanEnding(parentConjugation: ConjugatableElement) {
 	return parentConjugation.verbType === "godan-haru"
 		? "る"
@@ -66,7 +80,7 @@ function createStandardGodanCategories(row: GodanRow) {
 }
 
 export function getGodanConjugationOptions(parentConjugation: ConjugatableElement): ConjugationOption[] {
-	const row = godanRows[getGodanEnding(parentConjugation)]
+	const row = godanRowsByEnding[getGodanEnding(parentConjugation)]
 	if (!row) return []
 
 	if (parentConjugation.verbType === "godan-aru") {
@@ -126,12 +140,12 @@ function hydrateConjugationForm(form?: ConjugationOption | null): ConjugationOpt
 	// Callers need ready-to-render options, not the compact data-table key.
 	return {
 		...conjugationForm,
-		conjugationOptions: followUpOptionsByKey[followUpOptionsKey] || [],
+		conjugationOptions: followUpOptionsByName[followUpOptionsKey] || [],
 	}
 }
 
 export function getConjugationForm(text: string): ConjugationOption | null {
-	return hydrateConjugationForm(conjugationFormByText[text])
+	return hydrateConjugationForm(conjugationFormsByText[text])
 }
 
 export function getFollowUpConjugationOptions(conjugation?: ConjugatableElement | null): ConjugationOption[] {
@@ -155,10 +169,10 @@ export function getBaseConjugationOptions(parentConjugation?: ConjugatableElemen
 			return getGodanConjugationOptions(parentConjugation)
 		}
 
-		return baseOptionsByParentType[parentConjugation.verbType] || []
+		return baseOptionsByType[parentConjugation.verbType] || []
 	}
 
-	if (parentConjugation.elementType === "desu") return baseOptionsByParentType.desu
+	if (parentConjugation.elementType === "desu") return baseOptionsByType.desu || []
 
 	return null
 }

@@ -1,7 +1,12 @@
 import { Link, useLocation } from "react-router-dom"
+import type { User } from "../api/types"
 import "./AppNavbar.css"
 
-export default function AppNavbar({ currentUser }) {
+interface AppNavbarProps {
+	currentUser?: User | null
+}
+
+export default function AppNavbar({ currentUser }: AppNavbarProps) {
 	const location = useLocation()
 	const isAuthPage = location.pathname === "/login" || location.pathname === "/signup"
 

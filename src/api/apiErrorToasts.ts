@@ -26,6 +26,7 @@ export interface ApiErrorToast {
 	id: string
 	type: "error"
 	message: string
+	isExiting?: boolean
 }
 
 interface ApiErrorLike {
