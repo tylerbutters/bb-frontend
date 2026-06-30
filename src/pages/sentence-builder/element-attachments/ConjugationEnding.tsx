@@ -1,5 +1,5 @@
 import { useRef, useState } from "react"
-import ElementsMenu from "../elements-menu/TypedElementsMenu"
+import ElementsMenu from "../elements-menu/ElementsMenu"
 import "../elements/Element.css"
 import {
 	createConjugationFromForm,

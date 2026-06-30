@@ -23,6 +23,7 @@ interface NormalizedGameStats {
 	correct: number
 	incorrect: number
 	accuracy: number
+	[key: string]: unknown
 }
 
 type StatsLike = {
@@ -35,15 +36,18 @@ type StatsLike = {
 interface NormalizedGameStatsItem extends NormalizedGameStats {
 	mode: TrackedGameMode
 	label: string
+	[key: string]: unknown
 }
 
 interface NormalizedGameStatsGroup {
 	total: NormalizedGameStats
 	games: NormalizedGameStatsItem[]
+	[key: string]: unknown
 }
 
 interface NormalizedGameStatsResponse extends NormalizedGameStatsGroup {
 	byDifficulty: Record<string, NormalizedGameStatsGroup>
+	[key: string]: unknown
 }
 
 interface StatsAccumulator {

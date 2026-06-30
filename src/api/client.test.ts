@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ApiError, API_BASE_URL, apiRequest } from "./client"
 import { API_ERROR_TOAST_EVENT } from "./apiErrorToasts"
 

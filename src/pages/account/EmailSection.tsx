@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
-import { Mail, Save } from "lucide-react"
+import { Mail } from "lucide-react"
 import { requestEmailChange } from "../../api/users"
 import InputBox from "../../components/InputBox"
 import "../auth/AuthPage.css"

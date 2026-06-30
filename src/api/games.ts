@@ -97,7 +97,7 @@ function isUnsupportedDifficultyFieldError(error: unknown) {
 export async function checkSandboxSentence({
 	answer,
 	signal,
-}: CheckSandboxSentenceInput): Promise<Omit<GameCheckResult, "quota">> {
+}: CheckSandboxSentenceInput): Promise<GameCheckResult> {
 	const data = await apiRequest<GameCheckResponse>("/games/sandbox/check-japanese", {
 		method: "POST",
 		signal,
@@ -109,6 +109,7 @@ export async function checkSandboxSentence({
 	return {
 		correct: Boolean(data.correct),
 		feedback: data.feedback || "",
+		quota: null,
 	}
 }
 

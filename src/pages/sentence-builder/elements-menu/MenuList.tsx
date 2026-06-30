@@ -1,27 +1,37 @@
 import { useEffect, useMemo, useRef, useState } from "react"
+import type { FocusEvent, MouseEvent } from "react"
 import JapaneseText from "../components/JapaneseText"
 import { filterElementOptions } from "./optionSearch"
+import type { AnchorRect } from "./anchoredPopover"
+import type { ElementOption, MenuOption } from "../types"
 import "./MenuList.css"
 
 const PAGE_SIZE = 50
 const SEARCH_LIST_STYLE = { height: 300, width: 250 }
 
 export default function MenuList({
-	hasSearch,
+	hasSearch = false,
 	elementOptions = [],
 	isOptionClickable = () => true,
 	onSelectOption,
 	onHoverOption,
 	selectedOptionText,
+}: {
+	hasSearch?: boolean
+	elementOptions?: MenuOption[]
+	isOptionClickable?: (option: MenuOption) => boolean
+	onSelectOption?: (option: MenuOption) => void
+	onHoverOption?: (option: MenuOption, anchorRect: AnchorRect) => void
+	selectedOptionText?: string
 }) {
 	const [searchText, setSearchText] = useState("")
 	const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
-	const loadMoreRef = useRef(null)
+	const loadMoreRef = useRef<HTMLDivElement | null>(null)
 	const listStyle = hasSearch ? SEARCH_LIST_STYLE : undefined
 	const filteredOptions = useMemo(() => {
 		if (!hasSearch) return elementOptions
 		if (!searchText) return []
-		return filterElementOptions(elementOptions, searchText)
+		return filterElementOptions(elementOptions as ElementOption[], searchText)
 	}, [elementOptions, hasSearch, searchText])
 
 	const visibleOptions = useMemo(() => {
@@ -90,8 +100,14 @@ function MenuOptionButton({
 	isSelected,
 	onHoverOption,
 	onSelectOption,
+}: {
+	element: MenuOption
+	isClickable: boolean
+	isSelected: boolean
+	onHoverOption?: (option: MenuOption, anchorRect: AnchorRect) => void
+	onSelectOption?: (option: MenuOption) => void
 }) {
-	function showDetail(e) {
+	function showDetail(e: FocusEvent<HTMLButtonElement> | MouseEvent<HTMLButtonElement>) {
 		onHoverOption?.(element, getOptionAnchorRect(e))
 	}
 
@@ -125,11 +141,11 @@ function MenuOptionButton({
 	)
 }
 
-function getVisibleMeaningsText(element) {
+function getVisibleMeaningsText(element: MenuOption) {
 	return element?.meanings?.slice(0, 3).join("; ")
 }
 
-function getMenuOptionKey(element, index) {
+function getMenuOptionKey(element: MenuOption, index: number) {
 	const optionParts = [
 		element?.detailId,
 		element?.elementType,
@@ -140,7 +156,7 @@ function getMenuOptionKey(element, index) {
 	return optionParts.length > 0 ? `${optionParts.join(":")}:${index}` : index
 }
 
-function getOptionAnchorRect(e) {
+function getOptionAnchorRect(e: FocusEvent<HTMLButtonElement> | MouseEvent<HTMLButtonElement>): AnchorRect {
 	const rect = e.currentTarget.getBoundingClientRect()
 
 	return {

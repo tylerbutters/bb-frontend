@@ -80,7 +80,7 @@ function HistoryStatMetric({ icon: Icon, label, value }) {
 	)
 }
 
-export function useGameHistoryDrawer(currentUser) {
+export function useGameHistoryDrawer(currentUser: any) {
 	const [historyFilter, setHistoryFilter] = useState(null)
 	const [historyItems, setHistoryItems] = useState([])
 	const [historyStatus, setHistoryStatus] = useState("idle")
@@ -108,6 +108,13 @@ export function useGameHistoryDrawer(currentUser) {
 		signal,
 		forceLocal = historySource === "local",
 		background = false,
+	}: {
+		filter?: any
+		offset?: number
+		replace?: boolean
+		signal?: AbortSignal
+		forceLocal?: boolean
+		background?: boolean
 	} = {}) {
 		if (!currentUser || !filter) return
 
@@ -123,7 +130,7 @@ export function useGameHistoryDrawer(currentUser) {
 			todayOnly: isFreeStatsLimited,
 		})
 
-		function applyHistory(nextHistory, source) {
+		function applyHistory(nextHistory: any, source: string) {
 			const normalizedHistory = normalizeHistoryResponse(nextHistory)
 			const nextItems = replace
 				? normalizedHistory.items
@@ -163,7 +170,7 @@ export function useGameHistoryDrawer(currentUser) {
 			}
 
 			applyHistory(normalizedRemoteHistory, "backend")
-		} catch (error) {
+		} catch (error: any) {
 			if (error.name === "AbortError") return
 
 			if (background) {
@@ -229,7 +236,7 @@ export function useGameHistoryDrawer(currentUser) {
 				const normalizedStats = normalizeGameStatsResponse(nextStats, localStats)
 				setStats(hasRecordedStats(normalizedStats) ? normalizedStats : localStats)
 				setStatsStatus("ready")
-			} catch (error) {
+			} catch (error: any) {
 				if (error.name === "AbortError") return
 
 				if (isBackgroundRefresh) {

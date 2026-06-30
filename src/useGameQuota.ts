@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useState } from "react"
 import { getUserGameQuota } from "./api/users"
+import type { GameQuota, User } from "./api/types"
 
-function normalizeQuota(quota, currentUser) {
+interface UseGameQuotaOptions {
+	onAuthExpired?: () => void
+}
+
+function normalizeQuota(quota: GameQuota | null | undefined, currentUser?: User | null) {
 	if (!quota) return null
 
 	const plan = quota?.plan || currentUser?.plan || "free"
@@ -25,7 +30,7 @@ function normalizeQuota(quota, currentUser) {
 	}
 }
 
-export function useGameQuota(currentUser, { onAuthExpired } = {}) {
+export function useGameQuota(currentUser?: User | null, { onAuthExpired }: UseGameQuotaOptions = {}) {
 	const [quota, setQuota] = useState(null)
 	const [status, setStatus] = useState("idle")
 	const [message, setMessage] = useState("")
@@ -56,7 +61,7 @@ export function useGameQuota(currentUser, { onAuthExpired } = {}) {
 	)
 
 	const refreshQuota = useCallback(
-		async ({ signal } = {}) => {
+	async ({ signal }: { signal?: AbortSignal } = {}) => {
 			if (!currentUser) {
 				setQuota(null)
 				setStatus("idle")

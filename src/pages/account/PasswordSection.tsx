@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { Lock, Save } from "lucide-react"
+import { Lock } from "lucide-react"
 import { updateUser } from "../../api/users"
 import InputBox from "../../components/InputBox"
 import "../auth/AuthPage.css"

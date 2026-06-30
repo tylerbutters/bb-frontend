@@ -6,6 +6,7 @@ import {
 	useRef,
 	useState,
 } from "react"
+import type { CSSProperties, ReactNode, RefObject } from "react"
 import { createPortal } from "react-dom"
 import "./ElementsMenu.css"
 import { DetailPanelContent, getElementDetail } from "./DetailPanel"
@@ -24,8 +25,33 @@ import {
 	MENU_OPEN_EVENT,
 	MENU_TRANSITION_MS,
 } from "./menuEvents"
+import type { AnchorRect, PanelStyle } from "./anchoredPopover"
+import type { MenuOption } from "../types"
 
 const PUNCTUATION_CATEGORY_TEXT = "Punctuation"
+
+interface ElementsMenuProps {
+	anchorRef: RefObject<HTMLElement | null>
+	isModalOpen: boolean
+	setIsModalOpen: (isOpen: boolean) => void
+	onSelect: (option: MenuOption) => void
+	elementOptions?: MenuOption[]
+	deleteElement?: () => void
+	hasSearch?: boolean
+	secondHasSearch?: boolean
+	hasDelete?: boolean
+	menuTitle?: string
+}
+
+interface ActiveMenu {
+	type: "submenu" | "detail"
+	categoryText?: string
+	elementOptions?: MenuOption[]
+	element?: MenuOption
+	detail?: any
+	optionText?: string
+	anchorRect?: AnchorRect | null
+}
 
 export default function ElementsMenu({
 	anchorRef,
@@ -36,10 +62,10 @@ export default function ElementsMenu({
 	deleteElement,
 	hasSearch = false,
 	secondHasSearch = true,
-	hasDelete,
-	menuTitle,
-}) {
-	const modalRef = useRef(null)
+	hasDelete = false,
+	menuTitle = "",
+}: ElementsMenuProps) {
+	const modalRef = useRef<HTMLDivElement | null>(null)
 	const detailLayer = useAnchoredPanel({
 		isEnabled: isModalOpen,
 		menuRef: modalRef,
@@ -70,12 +96,12 @@ export default function ElementsMenu({
 	const activeSecondaryMenu = secondaryLayer.active
 	const selectedPrimaryOptionText = getSelectedPrimaryOptionText(activeSecondaryMenu)
 
-	function openSecondaryMenu(nextSecondaryMenu) {
+	function openSecondaryMenu(nextSecondaryMenu: ActiveMenu) {
 		detailLayer.reset()
 		secondaryLayer.open(nextSecondaryMenu)
 	}
 
-	function openSubmenuPanel(option, anchorRect) {
+	function openSubmenuPanel(option: MenuOption, anchorRect: AnchorRect) {
 		openSecondaryMenu({
 			type: "submenu",
 			categoryText: option.text,
@@ -84,7 +110,7 @@ export default function ElementsMenu({
 		})
 	}
 
-	function openNestedDetailPanel(detailOption, anchorRect, optionText) {
+	function openNestedDetailPanel(detailOption: MenuOption, anchorRect: AnchorRect, optionText?: string) {
 		const detail = getElementDetail(detailOption)
 		if (!detail) {
 			detailLayer.close()
@@ -98,7 +124,7 @@ export default function ElementsMenu({
 		detailLayer.open({ element: detailOption, detail, optionText, anchorRect })
 	}
 
-	function openPrimaryDetailPanel(detailOption, anchorRect, optionText) {
+	function openPrimaryDetailPanel(detailOption: MenuOption, anchorRect: AnchorRect, optionText?: string) {
 		const detail = getElementDetail(detailOption)
 		if (!detail) {
 			secondaryLayer.close()
@@ -118,12 +144,12 @@ export default function ElementsMenu({
 		})
 	}
 
-	function selectOption(option, categoryText) {
+	function selectOption(option: MenuOption, categoryText?: string) {
 		onSelect(addCategoryText(option, categoryText))
 		closeMenu()
 	}
 
-	function handleSelectPrimaryOption(option) {
+	function handleSelectPrimaryOption(option: MenuOption) {
 		const selectableOption = getSelectableOption(option)
 
 		if (selectableOption) {
@@ -131,7 +157,7 @@ export default function ElementsMenu({
 		}
 	}
 
-	function handleHoverPrimaryOption(option, anchorRect) {
+	function handleHoverPrimaryOption(option: MenuOption, anchorRect: AnchorRect) {
 		const detailOption = getDetailOption(option)
 
 		if (optionOpensSubmenu(option)) {
@@ -144,13 +170,13 @@ export default function ElementsMenu({
 		openPrimaryDetailPanel(detailOption, anchorRect, option.text)
 	}
 
-	function handleHoverSecondaryOption(option, anchorRect) {
+	function handleHoverSecondaryOption(option: MenuOption, anchorRect: AnchorRect) {
 		openNestedDetailPanel(getDetailOption(option), anchorRect, option.text)
 	}
 
 	function handleDelete() {
 		closeMenu()
-		deleteElement()
+		deleteElement?.()
 	}
 
 	if (!shouldRenderMenu) return null
@@ -195,7 +221,7 @@ function PrimaryMenuLayer({
 	onDelete,
 	onHoverOption,
 	onSelectOption,
-}) {
+}: any) {
 	return (
 		<MenuLayer
 			layerRef={layerRef}
@@ -225,7 +251,7 @@ function SecondaryMenuLayers({
 	secondHasSearch,
 	onHoverSecondaryOption,
 	onSelectSecondaryOption,
-}) {
+}: any) {
 	if (!activeMenu) return null
 
 	const { detail: detailLayer, secondary: secondaryLayer } = layers
@@ -268,7 +294,7 @@ function SubmenuFlyout({
 	secondHasSearch,
 	onHoverSecondaryOption,
 	onSelectSecondaryOption,
-}) {
+}: any) {
 	const hasSearch =
 		activeMenu.categoryText !== PUNCTUATION_CATEGORY_TEXT && secondHasSearch
 
@@ -293,7 +319,7 @@ function SubmenuFlyout({
 	)
 }
 
-function DetailFlyout({ activeDetail, isLayer = false, isMenuOpen, layer }) {
+function DetailFlyout({ activeDetail, isLayer = false, isMenuOpen, layer }: any) {
 	if (!activeDetail) return null
 
 	return (
@@ -319,7 +345,7 @@ function AnchoredMenuLayer({
 	isOpen,
 	layer,
 	menuType,
-}) {
+}: any) {
 	return (
 		<MenuLayer
 			layerRef={layer.ref}
@@ -341,6 +367,11 @@ function MenuLayer({
 	className,
 	layerRef,
 	style,
+}: {
+	children: ReactNode
+	className: string
+	layerRef: RefObject<HTMLDivElement | null>
+	style?: CSSProperties
 }) {
 	return (
 		<div
@@ -356,9 +387,14 @@ function MenuLayer({
 
 function MenuSurface({
 	children,
-	hasDelete,
+	hasDelete = false,
 	onDelete,
-	menuTitle,
+	menuTitle = "",
+}: {
+	children: ReactNode
+	hasDelete?: boolean
+	onDelete?: () => void
+	menuTitle?: string
 }) {
 	return (
 		<div className="menuPanel">
@@ -388,11 +424,11 @@ function useMenuLifecycle({
 	resetSecondaryLayer,
 	secondaryLayerRef,
 	setIsModalOpen,
-}) {
+}: any) {
 	const menuIdRef = useRef(Symbol("elements-menu"))
 	const [shouldRenderMenu, setShouldRenderMenu] = useState(isModalOpen)
-	const [menuAnchorRect, setMenuAnchorRect] = useState()
-	const [menuPanelStyle, setMenuPanelStyle] = useState()
+	const [menuAnchorRect, setMenuAnchorRect] = useState<AnchorRect | null>()
+	const [menuPanelStyle, setMenuPanelStyle] = useState<PanelStyle | undefined>()
 
 	const closeMenu = useCallback(() => {
 		setIsModalOpen(false)
@@ -444,8 +480,9 @@ function useMenuLifecycle({
 	}, [isModalOpen, menuAnchorRect, modalRef, shouldRenderMenu])
 
 	useEffect(() => {
-		function handleOtherMenuOpen(e) {
-			if (e.detail === menuIdRef.current) return
+		function handleOtherMenuOpen(e: Event) {
+			const menuEvent = e as CustomEvent<symbol>
+			if (menuEvent.detail === menuIdRef.current) return
 			closeMenu()
 		}
 
@@ -461,16 +498,17 @@ function useMenuLifecycle({
 	useEffect(() => {
 		if (!isModalOpen) return undefined
 
-		function handlePointerDown(e) {
-			if (anchorRef?.current?.contains(e.target)) return
-			if (modalRef.current?.contains(e.target)) return
-			if (secondaryLayerRef.current?.contains(e.target)) return
-			if (detailLayerRef.current?.contains(e.target)) return
+		function handlePointerDown(e: MouseEvent) {
+			const target = e.target as Node
+			if (anchorRef?.current?.contains(target)) return
+			if (modalRef.current?.contains(target)) return
+			if (secondaryLayerRef.current?.contains(target)) return
+			if (detailLayerRef.current?.contains(target)) return
 
 			closeMenu()
 		}
 
-		function handleKeyDown(e) {
+		function handleKeyDown(e: KeyboardEvent) {
 			if (e.key === "Escape") {
 				closeMenu()
 			}
@@ -492,7 +530,7 @@ function useMenuLifecycle({
 	}
 }
 
-function isSameLayerDetail(activeDetail, detailOption, optionText, anchorRect) {
+function isSameLayerDetail(activeDetail: any, detailOption: MenuOption, optionText?: string, anchorRect?: AnchorRect) {
 	return (
 		activeDetail?.element === detailOption &&
 		activeDetail.optionText === optionText &&
@@ -500,7 +538,7 @@ function isSameLayerDetail(activeDetail, detailOption, optionText, anchorRect) {
 	)
 }
 
-function isSamePrimaryDetail(activeSecondaryMenu, detailOption, optionText) {
+function isSamePrimaryDetail(activeSecondaryMenu: any, detailOption: MenuOption, optionText?: string) {
 	return (
 		activeSecondaryMenu?.type === "detail" &&
 		activeSecondaryMenu.element === detailOption &&
@@ -508,20 +546,20 @@ function isSamePrimaryDetail(activeSecondaryMenu, detailOption, optionText) {
 	)
 }
 
-function getSelectedPrimaryOptionText(activeSecondaryMenu) {
+function getSelectedPrimaryOptionText(activeSecondaryMenu: any) {
 	if (activeSecondaryMenu?.type === "detail") return activeSecondaryMenu.optionText
 	if (activeSecondaryMenu?.type === "submenu") return activeSecondaryMenu.categoryText
 	return undefined
 }
 
-function isActiveSubmenu(activeSecondaryMenu, categoryText) {
+function isActiveSubmenu(activeSecondaryMenu: any, categoryText?: string) {
 	return (
 		activeSecondaryMenu?.type === "submenu" &&
 		activeSecondaryMenu.categoryText === categoryText
 	)
 }
 
-function addCategoryText(option, categoryText) {
+function addCategoryText(option: MenuOption, categoryText?: string) {
 	if (!categoryText) return option
 
 	return {
@@ -530,30 +568,30 @@ function addCategoryText(option, categoryText) {
 	}
 }
 
-function isPrimaryOptionClickable(option) {
+function isPrimaryOptionClickable(option: MenuOption) {
 	return !optionOpensSubmenu(option)
 }
 
-function normalizeElementMenuOptions(elementOptions = []) {
+function normalizeElementMenuOptions(elementOptions: MenuOption[] = []) {
 	return elementOptions.map(normalizeElementMenuOption)
 }
 
-function getSelectableOption(option) {
+function getSelectableOption(option?: MenuOption | null) {
 	if (!option) return null
 	if (option.selectOption) return option.selectOption
 	if (!option.list) return option
 	return null
 }
 
-function getDetailOption(option) {
+function getDetailOption(option: MenuOption) {
 	return getSelectableOption(option) || option
 }
 
-function optionOpensSubmenu(option) {
+function optionOpensSubmenu(option?: MenuOption | null) {
 	return Array.isArray(option?.list) && !getSelectableOption(option)
 }
 
-function normalizeElementMenuOption(option) {
+function normalizeElementMenuOption(option: MenuOption): MenuOption {
 	if (!option || typeof option !== "object") return option
 
 	const normalizedOption = {
@@ -574,11 +612,11 @@ function normalizeElementMenuOption(option) {
 	return normalizedOption
 }
 
-function hasImplicitDirectSelectOption(option) {
+function hasImplicitDirectSelectOption(option: MenuOption) {
 	return option.list?.length === 1 && option.list[0]?.text === option.text
 }
 
-function getMenuLayerClassName({ placement, type, isLayer = false, isOpen }) {
+function getMenuLayerClassName({ placement, type, isLayer = false, isOpen }: any) {
 	return joinClassNames(
 		"flyoutMenuPanel",
 		isOpen ? "flyoutMenuPanelOpen" : "flyoutMenuPanelClosing",
@@ -589,6 +627,6 @@ function getMenuLayerClassName({ placement, type, isLayer = false, isOpen }) {
 	)
 }
 
-function joinClassNames(...classNames) {
+function joinClassNames(...classNames: Array<string | false | undefined>) {
 	return classNames.filter(Boolean).join(" ")
 }

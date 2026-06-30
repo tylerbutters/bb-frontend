@@ -38,7 +38,6 @@ export default function Desu({
 						mouse={mouse}
 						color={allColors.desu.secondary}
 						allColors={allColors}
-						hasDelete={true}
 						addButtonsDisabled={addButtonsDisabled}
 						disabled={conjugationDisabled}
 					/>

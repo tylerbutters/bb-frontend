@@ -178,11 +178,11 @@ function ExampleText({ example }) {
 		)
 	}
 
-	return String(example)
+	return <>{String(example)}</>
 }
 
 function ConjugationExample({ base, conjugation }) {
-	if (!base) return conjugation
+	if (!base) return <>{conjugation}</>
 
 	const stemLength = getSharedPrefixLength(base, conjugation)
 	return (
@@ -199,7 +199,7 @@ function ConjugationExampleWord({ text, stemLength }) {
 	const stem = characters.slice(0, stemLength).join("")
 	const ending = characters.slice(stemLength).join("")
 
-	if (!ending) return text
+	if (!ending) return <>{text}</>
 
 	return (
 		<>

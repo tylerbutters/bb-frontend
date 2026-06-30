@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Link, Navigate } from "react-router-dom"
 import { Search } from "lucide-react"
 import { getAdminUser, getAdminUserGameHistory, getAdminUsers } from "../../api/admin"
+import type { User } from "../../api/types"
 import {
 	emptyGameStatsResponse,
 	GAME_RECENT_FILTERS,
@@ -21,7 +22,7 @@ const USER_PAGE_SIZE = 25
 const HISTORY_PAGE_SIZE = 50
 const MODE_FILTERS = [{ mode: "all", label: "All games" }, ...TRACKED_GAME_MODES]
 
-function isAuthenticationError(error) {
+function isAuthenticationError(error: any) {
 	return error.status === 401
 }
 
@@ -87,7 +88,7 @@ function StatsSummary({ stats }) {
 	)
 }
 
-export default function AdminPage({ currentUser, onAuthExpired }) {
+export default function AdminPage({ currentUser, onAuthExpired }: { currentUser?: User | null; onAuthExpired?: () => void }) {
 	const [searchInput, setSearchInput] = useState("")
 	const [searchQuery, setSearchQuery] = useState("")
 	const [users, setUsers] = useState([])
@@ -109,7 +110,7 @@ export default function AdminPage({ currentUser, onAuthExpired }) {
 	const [historyHasMore, setHistoryHasMore] = useState(false)
 	const [historyNextOffset, setHistoryNextOffset] = useState(0)
 
-	function handleApiError(error, setStatus, setMessage, fallbackMessage) {
+	function handleApiError(error: any, setStatus: (status: string) => void, setMessage: (message: string) => void, fallbackMessage: string) {
 		if (error.name === "AbortError") return
 
 		if (isAuthenticationError(error)) {
@@ -122,7 +123,7 @@ export default function AdminPage({ currentUser, onAuthExpired }) {
 		setMessage(error.message || fallbackMessage)
 	}
 
-	async function loadUsersPage({ offset = 0, replace = false, signal } = {}) {
+	async function loadUsersPage({ offset = 0, replace = false, signal }: { offset?: number; replace?: boolean; signal?: AbortSignal } = {}) {
 		if (!currentUser || currentUser.role !== "admin") return
 
 		setUsersStatus(replace ? "loading" : "loadingMore")
@@ -147,7 +148,7 @@ export default function AdminPage({ currentUser, onAuthExpired }) {
 		}
 	}
 
-	async function loadHistoryPage({ offset = 0, replace = false, signal } = {}) {
+	async function loadHistoryPage({ offset = 0, replace = false, signal }: { offset?: number; replace?: boolean; signal?: AbortSignal } = {}) {
 		if (!selectedUserId) return
 
 		setHistoryStatus(replace ? "loading" : "loadingMore")

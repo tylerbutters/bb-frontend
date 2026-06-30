@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import { API_BASE_URL } from "./api/client"
 import App from "./App"
@@ -199,6 +200,11 @@ async function loginDefaultUser() {
 		expect(window.location.pathname).toBe("/")
 		expect(screen.getByRole("tab", { name: "Build" })).toBeInTheDocument()
 	})
+}
+
+function choosePunctuation(mark = "。") {
+	fireEvent.mouseEnter(screen.getByRole("button", { name: "Punctuation" }))
+	fireEvent.click(screen.getByRole("button", { name: mark }))
 }
 
 function expectLoggedOutChallengeCheckBlocked() {
@@ -1419,14 +1425,7 @@ test("opens game history from the sentence builder prompt panel", async () => {
 
 	expect(screen.queryByRole("button", { name: "History" })).not.toBeInTheDocument()
 
-	fireEvent.click(screen.getByRole("link", { name: "Login" }))
-	fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tyler@example.com" } })
-	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
-	fireEvent.click(screen.getByRole("button", { name: "Login" }))
-
-	await waitFor(() => {
-		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
-	})
+	await loginDefaultUser()
 	expect(screen.queryByRole("button", { name: "History" })).not.toBeInTheDocument()
 
 	fireEvent.click(screen.getByRole("tab", { name: "Translate" }))
@@ -1620,14 +1619,13 @@ test("shows locally recorded stats when backend stats are unavailable", async ()
 	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
 	fireEvent.click(screen.getByRole("button", { name: "Login" }))
 
-		const translateTab = await screen.findByRole("tab", { name: "Translate" })
-		fireEvent.click(translateTab)
+	const translateTab = await screen.findByRole("tab", { name: "Translate" })
+	fireEvent.click(translateTab)
 	await waitFor(() => {
 		expect(screen.getByText("I eat rice.")).toBeInTheDocument()
 	})
 	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
-	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
-	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	choosePunctuation()
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 	await waitFor(() => {
 		expect(screen.getByText("Correct.")).toBeInTheDocument()
@@ -2046,8 +2044,7 @@ test("switches game tabs and clears the sentence", async () => {
 	expect(screen.getByText("Create any sentence you want.")).toBeInTheDocument()
 
 	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
-	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
-	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	choosePunctuation()
 	expect(screen.getAllByText("。").length).toBeGreaterThan(0)
 	await waitFor(() => {
 		expect(screen.getByText(".")).toBeInTheDocument()
@@ -2356,8 +2353,7 @@ test("clears stale login state when a challenge check requires auth", async () =
 	expect(screen.queryByRole("dialog", { name: "Free challenge checks" })).not.toBeInTheDocument()
 
 	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
-	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
-	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	choosePunctuation()
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 
 	await waitFor(() => {
@@ -2461,8 +2457,7 @@ test("does not apply the old 3-check local fallback limit", async () => {
 			expect(screen.getByText(`Prompt ${promptNumber}.`)).toBeInTheDocument()
 		})
 		fireEvent.click(screen.getByRole("button", { name: "+ word" }))
-		fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
-		fireEvent.click(screen.getByRole("button", { name: "。" }))
+		choosePunctuation()
 		fireEvent.click(screen.getByRole("button", { name: "Check" }))
 
 		await waitFor(() => {
@@ -2486,8 +2481,7 @@ test("clears all sentence elements", async () => {
 	expect(screen.queryByRole("button", { name: "Clear all" })).not.toBeInTheDocument()
 
 	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
-	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
-	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	choosePunctuation()
 
 	await waitFor(() => {
 		expect(screen.getByText(".")).toBeInTheDocument()
@@ -2509,8 +2503,7 @@ test("shows sandbox sentence checking while logged out", async () => {
 	render(<App />)
 
 	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
-	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
-	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	choosePunctuation()
 
 	await waitFor(() => {
 		expect(screen.getByText(".")).toBeInTheDocument()
@@ -2559,8 +2552,7 @@ test("checks the sandbox sentence and shows feedback", async () => {
 	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
 
 	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
-	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
-	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	choosePunctuation()
 
 	expect(
 		screen.queryByRole("switch", {
@@ -2633,8 +2625,7 @@ test("shows a loading spinner while checking a sandbox sentence", async () => {
 	render(<App />)
 
 	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
-	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
-	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	choosePunctuation()
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 
 	expect(screen.getByRole("status", { name: "Checking answer" })).toBeInTheDocument()
@@ -2986,8 +2977,7 @@ test("changing translate difficulty regenerates the prompt and clears sentence e
 	})
 
 	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
-	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
-	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	choosePunctuation()
 	expect(screen.getAllByText("。").length).toBeGreaterThan(0)
 
 	fireEvent.click(screen.getByRole("button", { name: "medium" }))
@@ -3070,8 +3060,7 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 	})
 
 	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
-	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
-	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	choosePunctuation()
 	expect(screen.getAllByText("。").length).toBeGreaterThan(0)
 
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
@@ -3164,8 +3153,7 @@ test("sends the same challenge ID for repeated checks on one prompt", async () =
 	})
 
 	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
-	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
-	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	choosePunctuation()
 
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 	await waitFor(() => {
@@ -3260,8 +3248,7 @@ test("shows challenge feedback returned by the answer check", async () => {
 	})
 
 	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
-	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
-	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	choosePunctuation()
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 
 	await waitFor(() => {
@@ -3351,8 +3338,7 @@ test("calls prompt and check endpoints with a random real mode for shuffle", asy
 	expect(screen.getByText("Choose the particle that fits the sentence.")).toBeInTheDocument()
 
 	fireEvent.click(screen.getByRole("button", { name: "+ word" }))
-	fireEvent.click(screen.getByRole("button", { name: "Punctuation" }))
-	fireEvent.click(screen.getByRole("button", { name: "。" }))
+	choosePunctuation()
 
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 

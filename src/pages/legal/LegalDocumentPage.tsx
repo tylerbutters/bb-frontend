@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import type { ElementType, ReactNode } from "react"
 import { Navigate } from "react-router-dom"
 import { legalDocuments } from "./legalDocuments"
 import "./LegalDocumentPage.css"
@@ -101,11 +102,18 @@ function createBlocks(markdown) {
 	return blocks
 }
 
-function LegalBlock({ block, documentKey }) {
+interface LegalBlockData {
+	type: "paragraph" | "list" | "heading"
+	text?: string
+	items?: string[]
+	level?: 1 | 2 | 3
+}
+
+function LegalBlock({ block, documentKey }: { block: LegalBlockData; documentKey: string }) {
 	if (block.type === "list") {
 		return (
 			<ul className="legalList">
-				{block.items.map((item, index) => (
+				{(block.items || []).map((item, index) => (
 					<li key={index}>{renderInlineText(item)}</li>
 				))}
 			</ul>
@@ -113,17 +121,18 @@ function LegalBlock({ block, documentKey }) {
 	}
 
 	if (block.type === "heading") {
-		const Heading = `h${block.level}`
-		const headingId = block.level === 1 ? `${documentKey}-heading` : slugify(block.text)
+		const Heading = `h${block.level || 2}` as ElementType<{ children: ReactNode; id: string; className: string }>
+		const headingText = block.text || ""
+		const headingId = block.level === 1 ? `${documentKey}-heading` : slugify(headingText)
 
 		return (
 			<Heading id={headingId} className="legalHeading">
-				{renderInlineText(block.text)}
+				{renderInlineText(headingText)}
 			</Heading>
 		)
 	}
 
-	return <p>{renderInlineText(block.text)}</p>
+	return <p>{renderInlineText(block.text || "")}</p>
 }
 
 export default function LegalDocumentPage({ documentKey }) {

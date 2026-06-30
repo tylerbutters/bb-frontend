@@ -1,14 +1,46 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react"
+import type { RefObject } from "react"
 
 const MENU_VIEWPORT_PADDING = 16
 
-export const HIDDEN_PANEL_STYLE = { left: 0, top: 0, visibility: "hidden" }
+export interface PanelStyle {
+	left: number
+	top: number
+	visibility?: "hidden"
+}
 
-export function useAnchoredPanel({ isEnabled, menuRef, onCloseComplete }) {
-	const ref = useRef(null)
-	const [active, setActive] = useState(null)
+export interface AnchorRect {
+	top: number
+	right: number
+	bottom: number
+	left: number
+	width: number
+	height: number
+}
+
+interface AnchoredPanelState {
+	anchorRect?: AnchorRect | null
+	[key: string]: any
+}
+
+interface UseAnchoredPanelOptions {
+	isEnabled: boolean
+	menuRef: RefObject<HTMLElement | null>
+	onCloseComplete?: () => void
+}
+
+type PopoverElement = HTMLElement & {
+	showPopover?: () => void
+	hidePopover?: () => void
+}
+
+export const HIDDEN_PANEL_STYLE: PanelStyle = { left: 0, top: 0, visibility: "hidden" }
+
+export function useAnchoredPanel({ isEnabled, menuRef, onCloseComplete }: UseAnchoredPanelOptions) {
+	const ref = useRef<HTMLDivElement | null>(null)
+	const [active, setActive] = useState<AnchoredPanelState | null>(null)
 	const [placement, setPlacement] = useState("right")
-	const [style, setStyle] = useState()
+	const [style, setStyle] = useState<PanelStyle | undefined>()
 
 	const reset = useCallback(() => {
 		hideNativePopover(ref.current)
@@ -24,7 +56,7 @@ export function useAnchoredPanel({ isEnabled, menuRef, onCloseComplete }) {
 		onCloseComplete?.()
 	}, [active, onCloseComplete, reset])
 
-	const open = useCallback((nextActive) => {
+	const open = useCallback((nextActive: AnchoredPanelState) => {
 		setActive(nextActive)
 		setPlacement("right")
 		setStyle(undefined)
@@ -76,7 +108,7 @@ export function useAnchoredPanel({ isEnabled, menuRef, onCloseComplete }) {
 	)
 }
 
-export function getElementAnchorRect(element) {
+export function getElementAnchorRect(element?: HTMLElement | null): AnchorRect | null {
 	const rect = element?.getBoundingClientRect?.()
 
 	if (!rect) return null
@@ -91,12 +123,12 @@ export function getElementAnchorRect(element) {
 	}
 }
 
-export function getMenuAnchorGap(menu) {
+export function getMenuAnchorGap(menu: Element) {
 	const styles = window.getComputedStyle(menu)
 	return parseFloat(styles.getPropertyValue("--element-options-anchor-gap")) || 0
 }
 
-export function getPrimaryMenuLayout(anchorRect, menuRect, anchorGap) {
+export function getPrimaryMenuLayout(anchorRect: AnchorRect, menuRect: DOMRect, anchorGap: number): PanelStyle {
 	const maxLeft = window.innerWidth - menuRect.width - MENU_VIEWPORT_PADDING
 	const maxTop = window.innerHeight - menuRect.height - MENU_VIEWPORT_PADDING
 	const anchorCenter = anchorRect.left + anchorRect.width / 2
@@ -111,32 +143,32 @@ export function getPrimaryMenuLayout(anchorRect, menuRect, anchorGap) {
 	}
 }
 
-export function showNativePopover(element) {
+export function showNativePopover(element?: HTMLElement | null) {
 	if (!isNativePopoverSupported(element) || isNativePopoverOpen(element)) return
 
 	try {
-		element.showPopover()
+		;(element as PopoverElement).showPopover?.()
 	} catch {
 		// React state still controls whether the menu is rendered.
 	}
 }
 
-export function hideNativePopover(element) {
+export function hideNativePopover(element?: HTMLElement | null) {
 	if (!isNativePopoverSupported(element) || !isNativePopoverOpen(element)) return
 
 	try {
-		element.hidePopover()
+		;(element as PopoverElement).hidePopover?.()
 	} catch {
 		// The element may already be hidden or unmounted.
 	}
 }
 
-function getMenuPanelGap(menu) {
+function getMenuPanelGap(menu: Element) {
 	const styles = window.getComputedStyle(menu)
 	return parseFloat(styles.getPropertyValue("--element-options-panel-gap")) || 0
 }
 
-function getAnchoredPanelLayout(anchorRect, panelRect, panelGap) {
+function getAnchoredPanelLayout(anchorRect: AnchorRect, panelRect: DOMRect, panelGap: number) {
 	const maxLeft = window.innerWidth - panelRect.width - MENU_VIEWPORT_PADDING
 	const maxTop = window.innerHeight - panelRect.height - MENU_VIEWPORT_PADDING
 	const rightSideLeft = anchorRect.right + panelGap
@@ -158,15 +190,16 @@ function getAnchoredPanelLayout(anchorRect, panelRect, panelGap) {
 	}
 }
 
-function clampToViewport(value, maxValue) {
+function clampToViewport(value: number, maxValue: number) {
 	return Math.max(MENU_VIEWPORT_PADDING, Math.min(value, maxValue))
 }
 
-function isNativePopoverSupported(element) {
-	return Boolean(element?.showPopover && element?.hidePopover)
+function isNativePopoverSupported(element?: HTMLElement | null) {
+	const popoverElement = element as PopoverElement | null | undefined
+	return Boolean(popoverElement?.showPopover && popoverElement?.hidePopover)
 }
 
-function isNativePopoverOpen(element) {
+function isNativePopoverOpen(element?: HTMLElement | null) {
 	try {
 		return Boolean(element?.matches?.(":popover-open"))
 	} catch {

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { Plus } from "lucide-react"
-import ElementsMenu from "../elements-menu/TypedElementsMenu"
+import ElementsMenu from "../elements-menu/ElementsMenu"
 import type { MenuOption, MousePosition } from "../types"
 import "./AddButton.css"
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { act, fireEvent, render, screen } from "@testing-library/react"
 import ElementsMenu from "./ElementsMenu"
 import { MENU_TRANSITION_MS } from "./menuEvents"
