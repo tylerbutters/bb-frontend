@@ -38,7 +38,7 @@ const baseOptionsByType = baseOptionsByParentType as Record<
 function getGodanEnding(parentConjugation: ConjugatableElement) {
 	return parentConjugation.verbType === "godan-haru"
 		? "る"
-		: parentConjugation.baseEnding || parentConjugation.ending
+		: parentConjugation.baseEnding || parentConjugation.ending || ""
 }
 
 function createGodanCategory(text: string, list: ConjugationOption[]): ConjugationOption {
@@ -169,7 +169,9 @@ export function getBaseConjugationOptions(parentConjugation?: ConjugatableElemen
 			return getGodanConjugationOptions(parentConjugation)
 		}
 
-		return baseOptionsByType[parentConjugation.verbType] || []
+		return parentConjugation.verbType
+			? baseOptionsByType[parentConjugation.verbType] || []
+			: []
 	}
 
 	if (parentConjugation.elementType === "desu") return baseOptionsByType.desu || []

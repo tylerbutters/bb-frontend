@@ -1,4 +1,5 @@
 import { japaneseTranslationToElements } from "./japaneseTranslationElements"
+import type { ConjugationOption } from "../types"
 
 describe("japaneseTranslationToElements", () => {
 	test("looks up Japanese words and attaches noun particles", () => {
@@ -91,7 +92,9 @@ describe("japaneseTranslationToElements", () => {
 				}),
 			}),
 		)
-		expect(element.conjugation.conjugation.ending).toBeUndefined()
+		const conjugation = element.conjugation as ConjugationOption
+		const nestedConjugation = conjugation.conjugation as ConjugationOption
+		expect(nestedConjugation.ending).toBeUndefined()
 	})
 
 	test("resolves prompt godan category conjugations without adding empty endings", () => {
@@ -116,7 +119,8 @@ describe("japaneseTranslationToElements", () => {
 				},
 			}),
 		)
-		expect(element.conjugation.ending).toBeUndefined()
+		const conjugation = element.conjugation as ConjugationOption
+		expect(conjugation.ending).toBeUndefined()
 		expect(element.baseEnding).toBe("む")
 	})
 
@@ -177,13 +181,13 @@ describe("japaneseTranslationToElements", () => {
 			},
 		])
 
-		expect(elements.map((element) => element.conjugation.stem)).toEqual([
+		expect(elements.map((element) => (element.conjugation as ConjugationOption).stem)).toEqual([
 			"した",
 			"た",
 			"った",
 			"んだ",
 		])
-		expect(elements.map((element) => element.conjugation.ending)).toEqual([
+		expect(elements.map((element) => (element.conjugation as ConjugationOption).ending)).toEqual([
 			undefined,
 			undefined,
 			undefined,

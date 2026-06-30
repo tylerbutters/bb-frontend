@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
+import { getErrorMessage } from "../../api/errors"
 import { confirmEmailChange } from "../../api/users"
 import "./AuthPage.css"
 
@@ -26,6 +27,7 @@ export default function ConfirmEmailChangePage() {
 			})
 			return
 		}
+		const emailChangeToken = token
 
 		// Remove the token from the URL immediately after reading it.
 		navigate("/confirm-email-change", {
@@ -34,7 +36,7 @@ export default function ConfirmEmailChangePage() {
 
 		async function confirmChange() {
 			try {
-				const response = await confirmEmailChange({ token })
+				const response = await confirmEmailChange({ token: emailChangeToken })
 
 				navigate("/account", {
 					replace: true,
@@ -50,7 +52,7 @@ export default function ConfirmEmailChangePage() {
 			} catch (error) {
 				setFeedback({
 					status: "error",
-					message: error.message || "Email change link is invalid or expired.",
+					message: getErrorMessage(error, "Email change link is invalid or expired."),
 				})
 			}
 		}

@@ -107,7 +107,7 @@ describe("getGodanConjugationOptions", () => {
 			ending: "く",
 		})
 
-		expect(findCategory(options, "き").list).toEqual(
+		expect(findCategory(options, "き")?.list).toEqual(
 			expect.arrayContaining([
 				{ text: "き", conjugationType: "aux", detailId: "verb-stem" },
 			]),

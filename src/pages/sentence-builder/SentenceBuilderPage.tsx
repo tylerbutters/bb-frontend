@@ -37,7 +37,7 @@ export default function SentenceBuilderPage({
 	const [hasSentenceElements, setHasSentenceElements] = useState(false)
 	const gameHistory = useGameHistoryDrawer(currentUser)
 	const gameQuota = useGameQuota(currentUser, { onAuthExpired })
-	const isGame = selectedGameMode && selectedGameMode !== "sandbox"
+	const isGame = selectedGameMode !== "sandbox"
 	const isFreeQuotaExhausted = Boolean(
 		currentUser && gameQuota.quota?.plan !== "premium" && gameQuota.quota?.remaining === 0,
 	)
@@ -51,7 +51,7 @@ export default function SentenceBuilderPage({
 	const generatedPromptElements = useMemo(() => {
 		if (!shouldPopulatePromptElements(selectedGameMode, gamePromptData)) return []
 
-		return japaneseTranslationToElements(gamePromptData.japaneseTranslation)
+		return japaneseTranslationToElements(gamePromptData?.japaneseTranslation || [])
 	}, [gamePromptData, selectedGameMode])
 	const hasGeneratedPromptElements = generatedPromptElements.length > 0
 	const generatedPromptWorkspacePermissions = getGeneratedPromptWorkspacePermissions({

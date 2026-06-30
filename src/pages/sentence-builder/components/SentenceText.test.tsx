@@ -135,7 +135,7 @@ describe("sentence text conversion", () => {
 describe("translateJapanese", () => {
 	afterEach(() => {
 		jest.restoreAllMocks()
-		delete global.fetch
+		delete (global as Partial<typeof globalThis>).fetch
 	})
 
 	test("returns joined translated text from the translation API response", async () => {
@@ -162,7 +162,7 @@ describe("translateJapanese", () => {
 describe("SentenceText", () => {
 	afterEach(() => {
 		jest.restoreAllMocks()
-		delete global.fetch
+		delete (global as Partial<typeof globalThis>).fetch
 	})
 
 	test("renders Japanese text with furigana and the translated sentence", async () => {

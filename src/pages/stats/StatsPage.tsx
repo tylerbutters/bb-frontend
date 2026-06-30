@@ -73,7 +73,7 @@ function StatPanel({
 }
 
 function hasHistoryItems(history?: GameHistoryResponse | null) {
-	return Array.isArray(history?.items) && history.items.length > 0
+	return Boolean(history?.items?.length)
 }
 
 function isAuthenticationError(error: unknown) {
@@ -111,9 +111,10 @@ export default function StatsPage({
 
 	useEffect(() => {
 		if (!currentUser) return
+		const userId = currentUser.id
 
 		const controller = new AbortController()
-		const localStats = getLocalGameStats(currentUser.id, {
+		const localStats = getLocalGameStats(userId, {
 			todayOnly: isFreeStatsLimited,
 		})
 		setStats(localStats)
@@ -123,20 +124,20 @@ export default function StatsPage({
 			setMessage("")
 
 			try {
-				const nextStats = await getUserStats(currentUser.id, { signal: controller.signal })
+				const nextStats = await getUserStats(userId, { signal: controller.signal })
 				if (controller.signal.aborted) return
 				const normalizedStats = normalizeGameStatsResponse(nextStats, localStats)
 				setStats(hasRecordedStats(normalizedStats) ? normalizedStats : localStats)
 				setStatus("ready")
 			} catch (error) {
-				if (error.name === "AbortError") return
+				if (error instanceof Error && error.name === "AbortError") return
 
 				if (isAuthenticationError(error)) {
 					onAuthExpired?.()
 					return
 				}
 
-				if (error.status === 404) {
+				if (error && typeof error === "object" && "status" in error && error.status === 404) {
 					setStats(localStats)
 					setStatus("ready")
 					return
@@ -156,6 +157,7 @@ export default function StatsPage({
 
 	useEffect(() => {
 		if (!currentUser) return
+		const userId = currentUser.id
 
 		if (!selectedRecentLimit) {
 			setRecentStatus("idle")
@@ -171,7 +173,7 @@ export default function StatsPage({
 			limit: selectedRecentLimit,
 			offset: 0,
 		}
-		const localHistory = getLocalGameHistory(currentUser.id, query, {
+		const localHistory = getLocalGameHistory(userId, query, {
 			todayOnly: isFreeStatsLimited,
 		})
 
@@ -181,7 +183,7 @@ export default function StatsPage({
 			setRecentStats(getGameStatsGroupFromHistoryItems())
 
 			try {
-				const remoteHistory = await getUserGameHistory(currentUser.id, {
+				const remoteHistory = await getUserGameHistory(userId, {
 					...query,
 					signal: controller.signal,
 				})
@@ -194,7 +196,7 @@ export default function StatsPage({
 				setRecentStats(getGameStatsGroupFromHistoryItems(history.items || []))
 				setRecentStatus("ready")
 			} catch (error) {
-				if (error.name === "AbortError") return
+				if (error instanceof Error && error.name === "AbortError") return
 
 				if (isAuthenticationError(error)) {
 					onAuthExpired?.()

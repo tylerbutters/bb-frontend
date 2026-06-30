@@ -48,12 +48,14 @@ export default function Element({
 	const canEditAffixes = !isGeneratedPromptElement
 	const canEditCounter = !isGeneratedPromptElement
 	const particleOptions = useMemo(() => {
+		const elementType = element.elementType
+		const adjectiveType = element.adjectiveType
 		const availableParticles = particles.filter((particle) =>
-			particle.attachesTo.includes(element.elementType),
+			elementType ? particle.attachesTo.includes(elementType) : false,
 		)
-		if (element.adjectiveType) {
+		if (adjectiveType) {
 			availableParticles.push(
-				...particles.filter((particle) => particle.attachesTo.includes(element.adjectiveType)),
+				...particles.filter((particle) => particle.attachesTo.includes(adjectiveType)),
 			)
 		}
 		return availableParticles?.map((particle) => ({ elementType: "particle", text: particle.text }))

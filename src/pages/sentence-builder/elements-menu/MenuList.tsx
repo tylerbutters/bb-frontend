@@ -132,7 +132,7 @@ function MenuOptionButton({
 				<JapaneseText text={element?.text} reading={element?.textKana} />
 			</div>
 
-			{element?.meanings?.length > 0 && (
+			{Boolean(element?.meanings?.length) && (
 				<span className="elementsMenuButtonMeanings">
 					{getVisibleMeaningsText(element)}
 				</span>

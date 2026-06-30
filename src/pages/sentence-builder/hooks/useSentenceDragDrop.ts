@@ -92,6 +92,7 @@ export default function useSentenceDragDrop({
 			const orderedRects = elements
 				.filter((element: SentenceElement) => element.sentenceElementId !== draggedId)
 				.map((element: SentenceElement) => {
+					if (element.sentenceElementId == null) return null
 					const node = elementDragRefs.current.get(element.sentenceElementId)
 					return node
 						? {
@@ -100,7 +101,7 @@ export default function useSentenceDragDrop({
 							}
 						: null
 				})
-				.filter((rect): rect is { elementId: number | undefined; centerX: number } => Boolean(rect))
+				.filter((rect): rect is { elementId: number; centerX: number } => Boolean(rect))
 
 			const targetIndex = orderedRects.findIndex((rect: { centerX: number }) => pointerX < rect.centerX)
 			return targetIndex === -1 ? orderedRects.length : targetIndex

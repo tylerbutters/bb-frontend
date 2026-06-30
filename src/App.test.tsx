@@ -858,7 +858,9 @@ test("opens account from the user menu and updates account details", async () =>
 	expect(screen.getByLabelText("Current password")).toHaveValue("")
 	expect(screen.getByLabelText("New password")).toHaveValue("")
 	expect(screen.getByLabelText("Confirm new password")).toHaveValue("")
-	expect(JSON.parse(window.localStorage.getItem("bbCurrentUser"))).toEqual({
+	const storedUser = window.localStorage.getItem("bbCurrentUser")
+	expect(storedUser).not.toBeNull()
+	expect(JSON.parse(storedUser as string)).toEqual({
 		id: 1,
 		email: "tyler@example.com",
 	})
@@ -1101,7 +1103,8 @@ test("opens paginated game history from a stats panel", async () => {
 	expect(difficultySwitchParams.get("difficulty")).toBe("medium")
 	expect(difficultySwitchParams.get("offset")).toBe("0")
 
-	fireEvent.mouseDown(drawer.parentElement)
+	expect(drawer.parentElement).not.toBeNull()
+	fireEvent.mouseDown(drawer.parentElement as HTMLElement)
 	expect(screen.getByLabelText("Translate history drawer")).toBeInTheDocument()
 
 	fireEvent.click(within(drawer).getByRole("button", { name: "Close" }))
@@ -2851,7 +2854,7 @@ test("locks generated prompt elements from word replacement and deletion", async
 		.find(Boolean)
 
 	expect(generatedElementContainer).toBeTruthy()
-	fireEvent.click(generatedElementContainer)
+	fireEvent.click(generatedElementContainer as Element)
 
 	expect(screen.queryByText("Word")).not.toBeInTheDocument()
 	expect(screen.queryByRole("button", { name: "Delete" })).not.toBeInTheDocument()

@@ -45,7 +45,7 @@ interface ElementsMenuProps {
 
 interface ActiveMenu {
 	type: "submenu" | "detail"
-	categoryText?: string
+	categoryText?: string | null
 	elementOptions?: MenuOption[]
 	element?: MenuOption
 	detail?: any
@@ -104,7 +104,7 @@ export default function ElementsMenu({
 	function openSubmenuPanel(option: MenuOption, anchorRect: AnchorRect) {
 		openSecondaryMenu({
 			type: "submenu",
-			categoryText: option.text,
+			categoryText: option.text || undefined,
 			elementOptions: option.list,
 			anchorRect,
 		})
@@ -161,17 +161,17 @@ export default function ElementsMenu({
 		const detailOption = getDetailOption(option)
 
 		if (optionOpensSubmenu(option)) {
-			if (!isActiveSubmenu(activeSecondaryMenu, option.text)) {
+			if (!isActiveSubmenu(activeSecondaryMenu, option.text || undefined)) {
 				openSubmenuPanel(option, anchorRect)
 			}
 			return
 		}
 
-		openPrimaryDetailPanel(detailOption, anchorRect, option.text)
+		openPrimaryDetailPanel(detailOption, anchorRect, option.text || undefined)
 	}
 
 	function handleHoverSecondaryOption(option: MenuOption, anchorRect: AnchorRect) {
-		openNestedDetailPanel(getDetailOption(option), anchorRect, option.text)
+		openNestedDetailPanel(getDetailOption(option), anchorRect, option.text || undefined)
 	}
 
 	function handleDelete() {
@@ -606,7 +606,7 @@ function normalizeElementMenuOption(option: MenuOption): MenuOption {
 		// Older menu data used a one-item child list to mean "select this child
 		// directly". Normalize that shape once so the click/hover handlers can
 		// read the intent without repeating list-length checks.
-		normalizedOption.selectOption = normalizedOption.list[0]
+		normalizedOption.selectOption = normalizedOption.list?.[0]
 	}
 
 	return normalizedOption

@@ -299,5 +299,6 @@ const particleDetailsByText = new Map(
 
 export function getParticleDetail(element?: SentenceElement | null) {
 	if (element?.elementType !== "particle") return null
+	if (!element.text) return null
 	return particleDetailsByText.get(element.text) || null
 }

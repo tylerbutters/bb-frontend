@@ -57,7 +57,7 @@ export default function Conjugation({
 }: ConjugationProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const elementRef = useRef<HTMLDivElement | null>(null)
-	const currentConjugation = parentConjugation?.conjugation
+	const currentConjugation = (parentConjugation.conjugation || {}) as ConjugationElement
 	const conjugationOptions = getConjugationOptionsForParent(
 		parentConjugation as SentenceElement & ConjugationOption,
 	)
@@ -192,8 +192,6 @@ export default function Conjugation({
 	}
 
 	function renderNextConjugation() {
-		if (!currentConjugation) return null
-
 		if (Object.keys(currentConjugation.conjugation || {}).length !== 0) {
 			return (
 				<Conjugation
@@ -279,7 +277,7 @@ export default function Conjugation({
 					<Verb
 						element={currentConjugation}
 						allColors={allColors}
-							updateElement={(updatedChild: ConjugationElement) => updateCurrentConjugation(updatedChild)}
+						updateElement={(updatedChild: ConjugationElement) => updateCurrentConjugation(updatedChild)}
 						deleteElement={clearCurrentConjugation}
 						mouse={mouse}
 						addButtonsDisabled={addButtonsDisabled}
@@ -315,7 +313,7 @@ export default function Conjugation({
 					<Adjective
 						element={currentConjugation}
 						allColors={allColors}
-							updateElement={(updatedChild: ConjugationElement) => updateCurrentConjugation(updatedChild)}
+						updateElement={(updatedChild: ConjugationElement) => updateCurrentConjugation(updatedChild)}
 						deleteElement={clearCurrentConjugation}
 						mouse={mouse}
 						addButtonsDisabled={addButtonsDisabled}
@@ -344,7 +342,7 @@ export default function Conjugation({
 				className={`baseInsideElement conjugationElement ${
 					disabled ? "baseInsideElementLocked" : ""
 				}`}
-				style={{ backgroundColor: color, borderColor: isModalOpen && "white" }}
+				style={{ backgroundColor: color, borderColor: isModalOpen ? "white" : undefined }}
 				onClick={openConjugationMenu}
 			>
 				<div className="insideElementText">

@@ -237,7 +237,9 @@ test("keeps primary detail open after leaving the hovered option", () => {
 	expect(detailButton).toHaveClass("selectedElementsMenuButton")
 
 	fireEvent.mouseLeave(detailButton)
-	fireEvent.mouseLeave(document.querySelector(".menuListItemContainer"))
+	const primaryMenuItem = document.querySelector(".menuListItemContainer")
+	expect(primaryMenuItem).not.toBeNull()
+	fireEvent.mouseLeave(primaryMenuItem as Element)
 
 	expect(screen.getByText("Negative")).toBeInTheDocument()
 	expect(detailButton).toHaveClass("selectedElementsMenuButton")
@@ -329,7 +331,9 @@ test("keeps secondary detail open after leaving the hovered submenu option", () 
 	expect(secondaryOption).toHaveClass("selectedElementsMenuButton")
 
 	fireEvent.mouseLeave(secondaryOption)
-	fireEvent.mouseLeave(document.querySelector(".flyoutMenuPanel-submenu .menuListItemContainer"))
+	const secondaryMenuItem = document.querySelector(".flyoutMenuPanel-submenu .menuListItemContainer")
+	expect(secondaryMenuItem).not.toBeNull()
+	fireEvent.mouseLeave(secondaryMenuItem as Element)
 
 	expect(screen.getByText("Negative")).toBeInTheDocument()
 	expect(secondaryOption).toHaveClass("selectedElementsMenuButton")

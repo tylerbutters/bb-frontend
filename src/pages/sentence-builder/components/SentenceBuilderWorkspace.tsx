@@ -130,10 +130,11 @@ export default function SentenceBuilderWorkspace({
 	useLayoutEffect(() => {
 		const container = sentenceElementsContainerRef.current
 		if (!container) return
+		const containerElement = container
 
 		function updateScale() {
 			const availableWidth = Math.max(window.innerWidth - SENTENCE_ELEMENTS_VIEWPORT_PADDING * 2, 1)
-			const contentWidth = Math.max(container.scrollWidth, 1)
+			const contentWidth = Math.max(containerElement.scrollWidth, 1)
 			const nextScale = Math.min(1, availableWidth / contentWidth)
 
 			if (Math.abs(sentenceElementsScaleRef.current - nextScale) < 0.005) return
@@ -210,10 +211,15 @@ export default function SentenceBuilderWorkspace({
 				style={{ transform: `scale(${sentenceElementsScale})` }}
 			>
 				{addedElements.map((element, index) => {
-					const isDraggingThis = dragState?.elementId === element.sentenceElementId
-					const isDroppingThis = isDraggingThis && dragState?.isDropping
-					const unscaledDragWidth = dragState?.width / sentenceElementsScale
-					const unscaledDragHeight = dragState?.height / sentenceElementsScale
+					const activeDragState = dragState
+					const isDraggingThis = activeDragState?.elementId === element.sentenceElementId
+					const isDroppingThis = Boolean(isDraggingThis && activeDragState?.isDropping)
+					const unscaledDragWidth = isDraggingThis
+						? activeDragState!.width / sentenceElementsScale
+						: undefined
+					const unscaledDragHeight = isDraggingThis
+						? activeDragState!.height / sentenceElementsScale
+						: undefined
 					const canDragElement =
 						!element.isGeneratedPromptElement || canDragGeneratedElements
 
@@ -264,8 +270,8 @@ export default function SentenceBuilderWorkspace({
 										isDraggingThis
 											? {
 													position: "fixed",
-													left: dragState.x,
-													top: dragState.y,
+													left: activeDragState!.x,
+													top: activeDragState!.y,
 													width: unscaledDragWidth,
 													zIndex: 2000,
 													pointerEvents: "none",

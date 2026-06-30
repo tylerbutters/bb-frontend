@@ -1,5 +1,6 @@
 import verbs from "../jmdict/processed/verbs.json"
 import adjectives from "../jmdict/processed/adjectives.json"
+import type { MenuOption } from "../types"
 
 const rareruOptions = [
 	{ text: "る", detailId: "verb-non-past" },
@@ -115,9 +116,9 @@ export const auxiliaryDefinitions = [
 	{ text: "にくい", elementType: "adjective", detailId: "verb-hard-to-do" },
 ]
 
-function formatAuxiliaryDefinitions() {
+function formatAuxiliaryDefinitions(): MenuOption[] {
 	return auxiliaryDefinitions
-		.map((aux) => {
+		.map((aux): MenuOption | null => {
 			if (aux.elementType === "verb") {
 				const verb = verbs.find((verb) => verb.text === aux.text || verb.textKana === aux.text)
 				return verb ? { ...verb, detailId: aux.detailId } : null
@@ -129,7 +130,7 @@ function formatAuxiliaryDefinitions() {
 			}
 			return null
 		})
-		.filter(Boolean)
+		.filter((element): element is MenuOption => Boolean(element))
 }
 
 export const auxiliaries = formatAuxiliaryDefinitions()

@@ -166,7 +166,7 @@ export default function GamePrompt({
 						}`}
 						aria-label="History"
 						aria-pressed={isHistoryOpen}
-						onClick={onOpenHistory}
+						onClick={onOpenHistory || undefined}
 					>
 						<History size={20} />
 					</button>

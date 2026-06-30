@@ -56,9 +56,10 @@ describe("Element", () => {
 		const { container } = renderElement({ generatedElementMode: "fix sentence" })
 		const conjugationElement = getConjugationElement(container)
 
+		expect(conjugationElement).not.toBeNull()
 		expect(conjugationElement).not.toHaveClass("baseInsideElementLocked")
 
-		fireEvent.click(conjugationElement)
+		fireEvent.click(conjugationElement as Element)
 
 		expect(screen.getByText("Conjugation")).toBeInTheDocument()
 	})
@@ -67,9 +68,10 @@ describe("Element", () => {
 		const { container } = renderElement({ generatedElementMode: "particles" })
 		const conjugationElement = getConjugationElement(container)
 
+		expect(conjugationElement).not.toBeNull()
 		expect(conjugationElement).toHaveClass("baseInsideElementLocked")
 
-		fireEvent.click(conjugationElement)
+		fireEvent.click(conjugationElement as Element)
 
 		expect(screen.queryByText("Conjugation")).not.toBeInTheDocument()
 	})
@@ -77,7 +79,9 @@ describe("Element", () => {
 	test("allows deleting generated fix sentence words", () => {
 		const { container } = renderElement({ generatedElementMode: "fix sentence" })
 
-		fireEvent.click(getBaseElementContainer(container))
+		const baseElementContainer = getBaseElementContainer(container)
+		expect(baseElementContainer).not.toBeNull()
+		fireEvent.click(baseElementContainer as Element)
 
 		expect(screen.getByText("Word")).toBeInTheDocument()
 		expect(screen.getByText("Delete")).toBeInTheDocument()

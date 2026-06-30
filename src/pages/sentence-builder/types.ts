@@ -1,13 +1,13 @@
 export interface ConjugationOption {
-	text?: string
-	stem?: string
-	ending?: string
-	baseEnding?: string
+	text?: string | null
+	stem?: string | null
+	ending?: string | null
+	baseEnding?: string | null
 	conjugationType?: string
 	detailId?: string
 	followUpOptionsKey?: string
 	replacesParent?: boolean
-	conjugation?: ConjugationOption | Record<string, never>
+	conjugation?: ConjugationOption | Record<string, never> | null
 	conjugationOptions?: ConjugationOption[]
 	list?: ConjugationOption[]
 	[key: string]: unknown
@@ -15,13 +15,13 @@ export interface ConjugationOption {
 
 export interface SentenceElement {
 	elementType?: string
-	text?: string
-	textKana?: string
+	text?: string | null
+	textKana?: string | null
 	meanings?: string[]
-	stem?: string
-	stemKana?: string
-	ending?: string
-	baseEnding?: string
+	stem?: string | null
+	stemKana?: string | null
+	ending?: string | null
+	baseEnding?: string | null
 	adjectiveType?: string
 	verbType?: string
 	number?: string | number | null
@@ -85,14 +85,14 @@ export interface MenuOption {
 	conjugationType?: string
 	detailId?: string
 	elementType?: string
-	ending?: string
+	ending?: string | null
 	list?: MenuOption[]
 	meanings?: string[]
 	replacesParent?: boolean
 	selectOption?: MenuOption
 	selectedCategoryText?: string
-	stem?: string
-	text?: string
-	textKana?: string
+	stem?: string | null
+	text?: string | null
+	textKana?: string | null
 	[key: string]: unknown
 }

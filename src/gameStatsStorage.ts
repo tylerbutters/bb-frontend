@@ -138,6 +138,7 @@ function utcDayRange(date = new Date()) {
 }
 
 function isFromCurrentUtcDay(value: string | undefined, now = new Date()) {
+	if (!value) return false
 	const time = Date.parse(value)
 	if (!time) return false
 
@@ -462,8 +463,8 @@ export function getLocalGameHistory(
 		.filter((item) => mode === "all" || item.mode === mode)
 		.filter((item) => difficulty === "all" || item.difficulty === difficulty)
 		.sort((firstItem, secondItem) => {
-			const firstTime = Date.parse(firstItem.createdAt) || 0
-			const secondTime = Date.parse(secondItem.createdAt) || 0
+			const firstTime = Date.parse(firstItem.createdAt || "") || 0
+			const secondTime = Date.parse(secondItem.createdAt || "") || 0
 			return secondTime - firstTime
 		})
 	const pageItems = items.slice(normalizedOffset, normalizedOffset + normalizedLimit)

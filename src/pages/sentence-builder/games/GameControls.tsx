@@ -143,8 +143,8 @@ export default function GameControls({
 					serverQuota: nextFeedback.quota,
 				})
 			}
-			if (!isSandboxCheck) {
-				recordLocalGameResult(currentUser?.id, {
+			if (!isSandboxCheck && currentUser?.id != null) {
+				recordLocalGameResult(currentUser.id, {
 					challengeId,
 					mode: gameMode,
 					difficulty,
@@ -330,7 +330,7 @@ function gameCheckErrorFeedback(error: GameApiError) {
 		return "The AI checker is unavailable right now. Try again in a moment."
 	}
 
-	if (error?.status >= 500) {
+	if ((error.status ?? 0) >= 500) {
 		return "The checker is unavailable right now. Try again in a moment."
 	}
 

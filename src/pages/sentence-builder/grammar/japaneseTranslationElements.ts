@@ -167,7 +167,7 @@ function matchesTranslationWord(element: SentenceElement, word: PromptTranslatio
 }
 
 function getInflectableEndingLength(element: SentenceElement) {
-	if (!["verb", "adjective"].includes(element?.elementType)) return 0
+	if (element.elementType !== "verb" && element.elementType !== "adjective") return 0
 	if (!element.ending) return 0
 
 	return element.ending.length
@@ -321,7 +321,7 @@ function resolveGodanConjugationTypeTexts(element: SentenceElement, type: string
 	if (type === "past") {
 		const godanOptions = getGodanConjugationOptions(element)
 		const pastCategory = godanOptions[godanOptions.length - 1]
-		return pastCategory ? [pastCategory.text] : []
+		return pastCategory?.text ? [pastCategory.text] : []
 	}
 
 	const optionText = {
@@ -338,11 +338,11 @@ function resolveGodanConjugationTypeTexts(element: SentenceElement, type: string
 	if (optionText === "__te__") {
 		const godanOptions = getGodanConjugationOptions(element)
 		const teCategory = godanOptions[godanOptions.length - 2]
-		return teCategory ? [teCategory.text] : []
+		return teCategory?.text ? [teCategory.text] : []
 	}
 
 	const category = getGodanCategoryByListText(element, optionText)
-	return category ? [category.text, optionText] : []
+	return category?.text ? [category.text, optionText] : []
 }
 
 function resolveBaseVerbConjugationTypeText(element: SentenceElement, type: string) {
@@ -354,8 +354,9 @@ function resolveBaseVerbConjugationTypeText(element: SentenceElement, type: stri
 
 function resolveConjugationOptionTypeText(element: SentenceElement, type: string) {
 	const candidates = conjugationTypeOptionsByName[type] || []
-	return getConjugationOptionsForElement(element).find((option) => candidates.includes(option.text))
-		?.text
+	return getConjugationOptionsForElement(element).find(
+		(option) => Boolean(option.text && candidates.includes(option.text)),
+	)?.text
 }
 
 function resolvePromptConjugationStepTexts(
@@ -488,7 +489,7 @@ function applyPromptForm(element: SentenceElement, form: PromptForm | undefined)
 }
 
 function canAttachPromptParticle(element: SentenceElement) {
-	return ["noun", "counter"].includes(element?.elementType)
+	return Boolean(element.elementType && ["noun", "counter"].includes(element.elementType))
 }
 
 export function japaneseTranslationToElements(

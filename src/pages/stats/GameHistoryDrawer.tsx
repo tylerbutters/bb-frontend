@@ -59,7 +59,7 @@ function normalizeHistoryResponse(history?: GameHistoryResponse | null): Require
 }
 
 function hasHistory(history?: GameHistoryResponse | null) {
-	return Array.isArray(history?.items) && history.items.length > 0
+	return Boolean(history?.items?.length)
 }
 
 function getHistoryFilterKey({
@@ -75,6 +75,7 @@ function emptyHistoryStats() {
 }
 
 function formatHistoryDate(value?: string) {
+	if (!value) return "Unknown date"
 	const date = new Date(value)
 	if (Number.isNaN(date.getTime())) return "Unknown date"
 
@@ -251,8 +252,9 @@ export function useGameHistoryDrawer(currentUser?: User | null) {
 		if (isHistoryClosing) return
 
 		const controller = new AbortController()
+		const userId = currentUser.id
 		const isBackgroundRefresh = statsStatusRef.current === "refreshing"
-		const localStats = getLocalGameStats(currentUser.id, {
+		const localStats = getLocalGameStats(userId, {
 			todayOnly: isFreeStatsLimited,
 		})
 		if (!isBackgroundRefresh) {
@@ -263,7 +265,7 @@ export function useGameHistoryDrawer(currentUser?: User | null) {
 			setStatsStatus(isBackgroundRefresh ? "refreshing" : "loading")
 
 			try {
-				const nextStats = await getUserStats(currentUser.id, {
+				const nextStats = await getUserStats(userId, {
 					signal: controller.signal,
 				})
 				if (controller.signal.aborted) return

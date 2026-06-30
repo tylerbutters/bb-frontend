@@ -51,6 +51,7 @@ function normalizeHistoryResponse(history?: GameHistoryResponse | null): Require
 }
 
 function formatDate(value?: string) {
+	if (!value) return "Unknown date"
 	const date = new Date(value)
 	if (Number.isNaN(date.getTime())) return "Unknown date"
 
@@ -211,12 +212,13 @@ export default function AdminPage({ currentUser, onAuthExpired }: { currentUser?
 		}
 
 		const controller = new AbortController()
+		const userId = selectedUserId
 		setProfileStatus("loading")
 		setProfileMessage("")
 
 		async function loadProfile() {
 			try {
-				const result = await getAdminUser(selectedUserId, {
+				const result = await getAdminUser(userId, {
 					signal: controller.signal,
 				})
 				if (controller.signal.aborted) return
