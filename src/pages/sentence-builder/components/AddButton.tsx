@@ -1,7 +1,18 @@
 import { useEffect, useRef, useState } from "react"
 import { Plus } from "lucide-react"
-import ElementsMenu from "../elements-menu/ElementsMenu"
+import ElementsMenu from "../elements-menu/TypedElementsMenu"
+import type { MenuOption, MousePosition } from "../types"
 import "./AddButton.css"
+
+interface AddButtonProps {
+	locked?: boolean
+	mouse: MousePosition
+	elementOptions?: MenuOption[]
+	addElement: (element: MenuOption) => void
+	hasSearch?: boolean
+	text?: string
+	disabled?: boolean
+}
 
 export default function AddButton({
 	locked,
@@ -11,11 +22,10 @@ export default function AddButton({
 	hasSearch,
 	text,
 	disabled = false,
-}) {
+}: AddButtonProps) {
 	const EDGE_SIZE = 50
-	const ref = useRef(null)
+	const ref = useRef<HTMLButtonElement | null>(null)
 	const buttonText = text || getOptionsButtonText(elementOptions)
-	// const visibleWidth = getVisibleButtonWidth(buttonText)
 
 	const [isVisible, setIsVisible] = useState(false)
 	const [isModalOpen, setIsModalOpen] = useState(false)
@@ -36,7 +46,7 @@ export default function AddButton({
 			mouse.y >= rect.top - EDGE_SIZE &&
 			mouse.y <= rect.bottom + EDGE_SIZE
 
-		setIsVisible(near || isModalOpen || locked)
+		setIsVisible(Boolean(near || isModalOpen || locked))
 	}, [disabled, mouse, isModalOpen, locked])
 
 	return (
@@ -74,7 +84,7 @@ export default function AddButton({
 	)
 }
 
-function getOptionsButtonText(elementOptions = []) {
+function getOptionsButtonText(elementOptions: MenuOption[] = []) {
 	if (elementOptions.some((option) => Array.isArray(option?.list))) return "word"
 
 	const optionTypes = [
@@ -86,10 +96,6 @@ function getOptionsButtonText(elementOptions = []) {
 
 	return "word"
 }
-
-// function getVisibleButtonWidth(text = "") {
-// 	return Math.max(45, Math.min(84, text.length * 6 + 22))
-// }
 
 function formatMenuTitle(text = "") {
 	if (!text) return ""

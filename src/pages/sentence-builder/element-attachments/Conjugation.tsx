@@ -1,5 +1,6 @@
+import type { MouseEvent } from "react"
 import { useMemo, useRef, useState } from "react"
-import ElementsMenu from "../elements-menu/ElementsMenu"
+import ElementsMenu from "../elements-menu/TypedElementsMenu"
 import "../elements/Element.css"
 import AddButton from "../components/AddButton"
 import verbs from "../jmdict/processed/verbs.json"
@@ -16,6 +17,33 @@ import {
 } from "../grammar/conjugationOptions"
 import { auxiliaries } from "../grammar/conjugationData"
 import { particles } from "../grammar/particleData"
+import type {
+	ConjugationOption,
+	ElementColorSet,
+	MenuOption,
+	MousePosition,
+	SentenceElement,
+} from "../types"
+
+type EmptyConjugation = Record<string, never>
+
+type ConjugationElement = Omit<SentenceElement, "conjugation" | "particle"> &
+	MenuOption & {
+		conjugation?: ConjugationElement | EmptyConjugation | null
+		middleParticle?: MenuOption | null
+		particle?: MenuOption | null
+	}
+
+interface ConjugationProps {
+	parentConjugation: ConjugationElement
+	updateConjugation: (conjugation: ConjugationElement) => void
+	deleteElement?: () => void
+	mouse: MousePosition
+	color: string
+	allColors: ElementColorSet
+	addButtonsDisabled?: boolean
+	disabled?: boolean
+}
 
 export default function Conjugation({
 	parentConjugation,
@@ -26,22 +54,27 @@ export default function Conjugation({
 	allColors,
 	addButtonsDisabled,
 	disabled = false,
-}) {
+}: ConjugationProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const elementRef = useRef(null)
+	const elementRef = useRef<HTMLDivElement | null>(null)
 	const currentConjugation = parentConjugation?.conjugation
-	const conjugationOptions = getConjugationOptionsForParent(parentConjugation)
-	const particleOptions = useMemo(
-		() => particles.filter((particle) => particle.attachesTo.includes("te")),
+	const conjugationOptions = getConjugationOptionsForParent(
+		parentConjugation as SentenceElement & ConjugationOption,
+	)
+	const particleOptions = useMemo<MenuOption[]>(
+		() =>
+			particles
+				.filter((particle) => particle.attachesTo.includes("te"))
+				.map((particle) => ({ ...particle })),
 		[],
 	)
 
-	function addParticle(selectedElement) {
+	function addParticle(selectedElement: MenuOption) {
 		if (disabled) return
 		updateCurrentConjugation({ middleParticle: selectedElement })
 	}
 
-	function updateCurrentConjugation(updates) {
+	function updateCurrentConjugation(updates: Partial<ConjugationElement>) {
 		if (disabled) return
 		updateConjugation({
 			...parentConjugation,
@@ -60,26 +93,27 @@ export default function Conjugation({
 		})
 	}
 
-	function openConjugationMenu(e) {
+	function openConjugationMenu(e: MouseEvent<HTMLDivElement>) {
 		if (disabled) return
-		if (e.target.closest(".addButton, input, button")) return
+		const target = e.target as HTMLElement
+		if (target.closest(".addButton, input, button")) return
 
-		const clickedInsideChildElement = e.target.closest(".baseInsideElement")
+		const clickedInsideChildElement = target.closest(".baseInsideElement")
 		if (clickedInsideChildElement && clickedInsideChildElement !== e.currentTarget) return
 
 		setIsModalOpen(true)
 	}
 
-	function getConjugationUpdate(selectedConjugation) {
+	function getConjugationUpdate(selectedConjugation: MenuOption) {
 		if (disabled) return
 
-		//changing element
+		// Changing an already nested verb or adjective swaps the nested element itself.
 		if (currentConjugation.elementType && selectedConjugation.elementType) {
 			updateCurrentConjugation(initializeNestedElement(selectedConjugation))
 			return
 		}
 
-		//adding element
+		// Adding a verb or adjective starts a new nested conjugation chain.
 		if (selectedConjugation.elementType) {
 			updateCurrentConjugation({
 				conjugation: initializeNestedElement(selectedConjugation),
@@ -87,7 +121,7 @@ export default function Conjugation({
 			return
 		}
 
-		let conjugationForm = getConjugationForm(selectedConjugation.text)
+		let conjugationForm = getConjugationForm(selectedConjugation.text || "")
 
 		if (selectedConjugation.replacesParent) {
 			if (!conjugationForm) {
@@ -105,18 +139,20 @@ export default function Conjugation({
 			return
 		}
 
-		if (parentConjugation.verbType?.includes("godan")) {
+		if (isGodanVerb(parentConjugation)) {
 			const selectedCategory =
 				findGodanConjugationCategory(
-					parentConjugation,
-					selectedConjugation.selectedCategoryText,
-				) || findGodanConjugationCategory(parentConjugation, selectedConjugation.text)
+					parentConjugation as SentenceElement & ConjugationOption,
+					selectedConjugation.selectedCategoryText || "",
+				) ||
+				findGodanConjugationCategory(
+					parentConjugation as SentenceElement & ConjugationOption,
+					selectedConjugation.text || "",
+				)
 			if (!selectedCategory) return
 			const singleCharacterConjugation = selectedConjugation.text === selectedCategory.text
 
 			if (singleCharacterConjugation) {
-				//only change the ending of the verb
-
 				updateConjugation({
 					...parentConjugation,
 					baseEnding: parentConjugation.baseEnding || parentConjugation.ending,
@@ -132,7 +168,6 @@ export default function Conjugation({
 					alert("Haven't made this conjugation yet")
 					return
 				}
-				//change the ending of verb and add conjugation
 				updateConjugation({
 					...parentConjugation,
 					baseEnding: parentConjugation.baseEnding || parentConjugation.ending,
@@ -145,12 +180,10 @@ export default function Conjugation({
 				alert("Haven't made this conjugation yet")
 				return
 			}
-			//if its ichidan ru
 			if (selectedConjugation.text === "る") {
 				conjugationForm = {}
 			}
 
-			// //if its an te verb or b2
 			updateConjugation({
 				...parentConjugation,
 				conjugation: createConjugationFromForm(conjugationForm),
@@ -208,7 +241,7 @@ export default function Conjugation({
 					conjugation={currentConjugation}
 					updateConjugation={(nextConjugation) => {
 						updateCurrentConjugation({
-							conjugation: nextConjugation,
+							conjugation: nextConjugation as ConjugationElement,
 						})
 					}}
 					disabled={disabled}
@@ -220,7 +253,6 @@ export default function Conjugation({
 	}
 
 	if (currentConjugation?.elementType === "verb") {
-		// alert(JSON.stringify(currentConjugation))
 		return (
 			<div className="modalContainer">
 				{!disabled && (
@@ -317,7 +349,7 @@ export default function Conjugation({
 			>
 				<div className="insideElementText">
 					{!currentConjugation.replacesParent &&
-						parentConjugation.verbType?.includes("godan") &&
+						isGodanVerb(parentConjugation) &&
 						parentConjugation.ending !== currentConjugation?.stem &&
 						parentConjugation.ending}
 					{!currentConjugation?.stem && !currentConjugation?.ending && (
@@ -343,4 +375,8 @@ export default function Conjugation({
 			</div>
 		</div>
 	)
+}
+
+function isGodanVerb(element: ConjugationElement) {
+	return typeof element.verbType === "string" && element.verbType.includes("godan")
 }

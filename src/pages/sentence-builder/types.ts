@@ -41,3 +41,42 @@ export interface ParticleOption {
 	text: string
 	attachesTo: string[]
 }
+
+export interface MousePosition {
+	x: number
+	y: number
+}
+
+export interface ElementTypeColor {
+	primary: string
+	secondary: string
+}
+
+export interface ElementColorSet {
+	noun: ElementTypeColor
+	adjective: ElementTypeColor
+	verb: ElementTypeColor
+	adverb: ElementTypeColor
+	counter: ElementTypeColor
+	desu: ElementTypeColor
+	punctuation: ElementTypeColor
+	default: ElementTypeColor
+}
+
+export interface MenuOption {
+	attachesTo?: string[]
+	conjugationOptions?: MenuOption[]
+	conjugationType?: string
+	detailId?: string
+	elementType?: string
+	ending?: string
+	list?: MenuOption[]
+	meanings?: string[]
+	replacesParent?: boolean
+	selectOption?: MenuOption
+	selectedCategoryText?: string
+	stem?: string
+	text?: string
+	textKana?: string
+	[key: string]: unknown
+}

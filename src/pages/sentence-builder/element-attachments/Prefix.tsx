@@ -1,13 +1,23 @@
 import { useRef, useState } from "react"
 import "../elements/Element.css"
-import ElementsMenu from "../elements-menu/ElementsMenu"
+import ElementsMenu from "../elements-menu/TypedElementsMenu"
 import prefixes from "../jmdict/processed/prefixes.json"
 import AddButton from "../components/AddButton"
 import JapaneseText from "../components/JapaneseText"
+import type { MenuOption, MousePosition } from "../types"
 
-export default function Prefix({ element, updateElement, deleteElement, mouse, color, disabled }) {
-	const [isModalOpen, setIsModalOpen] = useState()
-	const elementRef = useRef(null)
+interface PrefixProps {
+	element?: MenuOption | null
+	updateElement: (element: MenuOption) => void
+	deleteElement: () => void
+	mouse: MousePosition
+	color: string
+	disabled?: boolean
+}
+
+export default function Prefix({ element, updateElement, deleteElement, mouse, color, disabled }: PrefixProps) {
+	const [isModalOpen, setIsModalOpen] = useState(false)
+	const elementRef = useRef<HTMLDivElement | null>(null)
 	const prefixOptions = prefixes
 
 	return (

@@ -1,12 +1,22 @@
 import { useRef, useState } from "react"
 import "../elements/Element.css"
-import ElementsMenu from "../elements-menu/ElementsMenu"
+import ElementsMenu from "../elements-menu/TypedElementsMenu"
 import AddButton from "../components/AddButton"
 import { noDesu } from "../grammar/conjugationData"
+import type { MenuOption, MousePosition } from "../types"
 
-export default function NoDesu({ element, updateElement, deleteElement, mouse, color, disabled }) {
-	const [isModalOpen, setIsModalOpen] = useState()
-	const elementRef = useRef(null)
+interface NoDesuProps {
+	element?: MenuOption | null
+	updateElement: (element: MenuOption) => void
+	deleteElement: () => void
+	mouse: MousePosition
+	color: string
+	disabled?: boolean
+}
+
+export default function NoDesu({ element, updateElement, deleteElement, mouse, color, disabled }: NoDesuProps) {
+	const [isModalOpen, setIsModalOpen] = useState(false)
+	const elementRef = useRef<HTMLDivElement | null>(null)
 
 	return (
 		<div className="modalContainer">

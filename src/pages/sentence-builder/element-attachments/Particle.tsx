@@ -1,7 +1,17 @@
 import { useRef, useState } from "react"
-import ElementsMenu from "../elements-menu/ElementsMenu"
+import ElementsMenu from "../elements-menu/TypedElementsMenu"
 import "../elements/Element.css"
 import AddButton from "../components/AddButton"
+import type { MenuOption, MousePosition } from "../types"
+
+interface ParticleProps {
+	element?: MenuOption | null
+	elementOptions?: MenuOption[]
+	updateElement: (element: MenuOption) => void
+	deleteElement: () => void
+	mouse: MousePosition
+	disabled?: boolean
+}
 
 export default function Particle({
 	element,
@@ -10,9 +20,9 @@ export default function Particle({
 	deleteElement,
 	mouse,
 	disabled,
-}) {
-	const [isModalOpen, setIsModalOpen] = useState()
-	const elementRef = useRef(null)
+}: ParticleProps) {
+	const [isModalOpen, setIsModalOpen] = useState(false)
+	const elementRef = useRef<HTMLDivElement | null>(null)
 
 	return (
 		<div className="modalContainer">

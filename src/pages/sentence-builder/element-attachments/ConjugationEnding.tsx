@@ -1,29 +1,42 @@
 import { useRef, useState } from "react"
-import ElementsMenu from "../elements-menu/ElementsMenu"
+import ElementsMenu from "../elements-menu/TypedElementsMenu"
 import "../elements/Element.css"
 import {
 	createConjugationFromForm,
 	getConjugationForm,
 	getFollowUpConjugationOptions,
 } from "../grammar/conjugationOptions"
+import type { ConjugationOption, MenuOption } from "../types"
 
-export function getConjugationEndingUpdate(selectedConjugation) {
-	const conjugationForm = getConjugationForm(selectedConjugation.text)
+interface ConjugationEndingProps {
+	conjugation: ConjugationOption
+	updateConjugation: (conjugation: ConjugationOption) => void
+	color: string
+	disabled?: boolean
+}
+
+export function getConjugationEndingUpdate(selectedConjugation: MenuOption) {
+	const conjugationForm = getConjugationForm(selectedConjugation.text || "")
 	if (!conjugationForm) return {}
 
 	return createConjugationFromForm(conjugationForm)
 }
 
-export function getConjugationEndingOptions(conjugation) {
+export function getConjugationEndingOptions(conjugation: ConjugationOption) {
 	return getFollowUpConjugationOptions(conjugation)
 }
 
-export default function ConjugationEnding({ conjugation, updateConjugation, color, disabled }) {
+export default function ConjugationEnding({
+	conjugation,
+	updateConjugation,
+	color,
+	disabled,
+}: ConjugationEndingProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const elementRef = useRef(null)
+	const elementRef = useRef<HTMLDivElement | null>(null)
 	const conjugationOptions = getConjugationEndingOptions(conjugation)
 
-	function onSelect(selectedConjugation) {
+	function onSelect(selectedConjugation: MenuOption) {
 		if (disabled) return
 		updateConjugation(getConjugationEndingUpdate(selectedConjugation))
 	}
