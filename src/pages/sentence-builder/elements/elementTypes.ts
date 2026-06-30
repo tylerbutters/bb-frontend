@@ -85,12 +85,23 @@ const ELEMENT_TYPE_COMPONENTS = {
 	counter: Counter,
 }
 
-export function getElementTypeColors(elementType) {
-	return ELEMENT_TYPE_COLORS[elementType] || ELEMENT_TYPE_COLORS.default
+type ElementType = keyof typeof ELEMENT_TYPE_COLORS
+type ElementTypeWithComponent = keyof typeof ELEMENT_TYPE_COMPONENTS
+
+function isKnownElementType(elementType: unknown): elementType is ElementType {
+	return typeof elementType === "string" && elementType in ELEMENT_TYPE_COLORS
 }
 
-export function getElementTypeComponent(elementType) {
-	return ELEMENT_TYPE_COMPONENTS[elementType] || null
+function hasElementTypeComponent(elementType: unknown): elementType is ElementTypeWithComponent {
+	return typeof elementType === "string" && elementType in ELEMENT_TYPE_COMPONENTS
+}
+
+export function getElementTypeColors(elementType: unknown) {
+	return isKnownElementType(elementType) ? ELEMENT_TYPE_COLORS[elementType] : ELEMENT_TYPE_COLORS.default
+}
+
+export function getElementTypeComponent(elementType: unknown) {
+	return hasElementTypeComponent(elementType) ? ELEMENT_TYPE_COMPONENTS[elementType] : null
 }
 
 export function getDefaultElementOptions() {

@@ -1,15 +1,23 @@
+import type { ReactNode, TransitionEvent } from "react"
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
 
 const WIDTH_TRANSITION_MS = 300
 
-export default function AnimatedWidth({ measureKey, isClosing, onCloseComplete, children }) {
+interface AnimatedWidthProps {
+	measureKey: unknown
+	isClosing: boolean
+	onCloseComplete: () => void
+	children: ReactNode
+}
+
+export default function AnimatedWidth({ measureKey, isClosing, onCloseComplete, children }: AnimatedWidthProps) {
 	const [width, setWidth] = useState(0)
 	const [isAnimatingWidth, setIsAnimatingWidth] = useState(true)
-	const contentRef = useRef(null)
+	const contentRef = useRef<HTMLDivElement | null>(null)
 	const hasMeasuredRef = useRef(false)
 	const isOpeningRef = useRef(false)
 	const hasClosedRef = useRef(false)
-	const openingTimeoutRef = useRef(null)
+	const openingTimeoutRef = useRef<number | null>(null)
 
 	useLayoutEffect(() => {
 		if (!contentRef.current) return
@@ -73,7 +81,7 @@ export default function AnimatedWidth({ measureKey, isClosing, onCloseComplete, 
 				overflow: isAnimatingWidth ? "hidden" : "visible",
 				transition: isAnimatingWidth ? "width 0.3s ease" : "none",
 			}}
-			onTransitionEnd={(e) => {
+			onTransitionEnd={(e: TransitionEvent<HTMLDivElement>) => {
 				if (e.propertyName !== "width") return
 
 				if (hasClosedRef.current) return

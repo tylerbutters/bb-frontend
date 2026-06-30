@@ -1,6 +1,34 @@
 import { useState } from "react"
+import type {
+	ChangeEvent,
+	CSSProperties,
+	FocusEventHandler,
+	HTMLInputTypeAttribute,
+	InputHTMLAttributes,
+	KeyboardEventHandler,
+} from "react"
 import "./InputBox.css"
 import { Eye, EyeOff } from "lucide-react"
+
+interface InputBoxProps {
+	autoComplete?: string
+	className?: string
+	fieldClassName?: string
+	id?: string
+	inputMode?: InputHTMLAttributes<HTMLInputElement>["inputMode"]
+	isPassword?: boolean
+	label?: string
+	name?: string
+	onChange: (value: string, event: ChangeEvent<HTMLInputElement>) => void
+	onFocus?: FocusEventHandler<HTMLInputElement>
+	onKeyDown?: KeyboardEventHandler<HTMLInputElement>
+	pattern?: string
+	placeholder?: string
+	required?: boolean
+	style?: CSSProperties
+	type?: HTMLInputTypeAttribute
+	value?: string | number
+}
 
 export default function InputBox({
 	autoComplete,
@@ -20,7 +48,7 @@ export default function InputBox({
 	style,
 	type = "text",
 	value,
-}) {
+}: InputBoxProps) {
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 	const inputType = isPassword ? (isPasswordVisible ? "text" : "password") : type
 	const inputStyle = isPassword ? { ...style, paddingRight: 40 } : style
