@@ -212,7 +212,7 @@ function DetailConstruction({
 			</div>
 			<div className="elementDetailExamples">
 				{examples.map((example) => (
-					<div key={getExampleKey(example)}>
+					<div key={getExampleKey(example)} data-testid="element-detail-example">
 						<ExampleText example={example} />
 					</div>
 				))}
@@ -269,7 +269,12 @@ function ConjugationExampleWord({ text, stemLength }: { text: string; stemLength
 	return (
 		<>
 			{stem}
-			<strong className="elementDetailConjugationEnding">{ending}</strong>
+			<strong
+				className="elementDetailConjugationEnding"
+				data-testid="element-detail-conjugation-ending"
+			>
+				{ending}
+			</strong>
 		</>
 	)
 }

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react"
+import { render, screen, within } from "@testing-library/react"
 import { DetailPanelContent, getElementDetail } from "./DetailPanel"
 import type { ElementDetail } from "./DetailPanel"
 
@@ -104,17 +104,16 @@ describe("getElementDetail", () => {
 	})
 
 	test("bolds only the changed endings in conjugation examples", () => {
-		const { container } = render(
-			<DetailPanelContent element={{ text: "ない", detailId: "verb-negative" }} />,
-		)
+		render(<DetailPanelContent element={{ text: "ない", detailId: "verb-negative" }} />)
 		const getEndingTexts = (exampleText: string) => {
-			const exampleLine = Array.from(
-				container.querySelectorAll(".elementDetailExamples > div"),
-			).find((line) => line.textContent === exampleText)
+			const exampleLine = screen
+				.getAllByTestId("element-detail-example")
+				.find((line) => line.textContent === exampleText)
+			if (!exampleLine) throw new Error(`Expected detail example: ${exampleText}`)
 
-			return Array.from(
-				exampleLine?.querySelectorAll(".elementDetailConjugationEnding") || [],
-			).map((ending) => ending.textContent)
+			return within(exampleLine)
+				.getAllByTestId("element-detail-conjugation-ending")
+				.map((ending) => ending.textContent)
 		}
 
 		expect(getEndingTexts("食べる → 食べない")).toEqual(["る", "ない"])

@@ -7,10 +7,7 @@ let originalResizeObserver: typeof window.ResizeObserver
 let originalScrollWidth: PropertyDescriptor | undefined
 
 function getAnimatedWidthElement() {
-	const element = screen.getByTestId("animated-content").parentElement?.parentElement
-	if (!element) throw new Error("Expected animated width wrapper to be rendered.")
-
-	return element
+	return screen.getByTestId("animated-width")
 }
 
 function fireWidthTransitionEnd(element: Element, propertyName = "width") {

@@ -75,6 +75,7 @@ export default function AnimatedWidth({ measureKey, isClosing, onCloseComplete, 
 
 	return (
 		<div
+			data-testid="animated-width"
 			style={{
 				width,
 				borderRadius: 10,

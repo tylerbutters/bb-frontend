@@ -74,6 +74,34 @@ function renderOpenMenu(props: ElementsMenuTestProps = {}, anchorRect?: DOMRect)
 	}
 }
 
+function getPrimaryMenuLayer() {
+	return screen.getByTestId("elements-menu-primary")
+}
+
+function queryPrimaryMenuLayer() {
+	return screen.queryByTestId("elements-menu-primary")
+}
+
+function getSubmenuFlyout() {
+	return screen.getByTestId("elements-menu-submenu-flyout")
+}
+
+function getPrimaryDetailFlyout() {
+	return screen.getByTestId("elements-menu-detail-flyout")
+}
+
+function getDetailLayerFlyout() {
+	return screen.getByTestId("elements-menu-detail-layer-flyout")
+}
+
+function getMountedFlyouts() {
+	return [
+		screen.queryByTestId("elements-menu-submenu-flyout"),
+		screen.queryByTestId("elements-menu-detail-flyout"),
+		screen.queryByTestId("elements-menu-detail-layer-flyout"),
+	].filter((panel): panel is HTMLElement => Boolean(panel))
+}
+
 test("positions the primary menu from the opening anchor rect", () => {
 	renderOpenMenu(
 		{},
@@ -87,7 +115,7 @@ test("positions the primary menu from the opening anchor rect", () => {
 		}),
 	)
 
-	expect(document.querySelector(".elementsMenuContainer")).toHaveStyle({
+	expect(getPrimaryMenuLayer()).toHaveStyle({
 		left: "150px",
 	})
 })
@@ -111,14 +139,14 @@ test("keeps the primary menu position after the anchor geometry changes", () => 
 	})
 	const { anchor, anchorRef, rerender } = renderOpenMenu({}, openingRect)
 
-	expect(document.querySelector(".elementsMenuContainer")).toHaveStyle({
+	expect(getPrimaryMenuLayer()).toHaveStyle({
 		left: "150px",
 	})
 
 	;(anchor.getBoundingClientRect as jest.Mock).mockReturnValue(changedRect)
 	rerender(<ElementsMenu {...getMenuProps({}, anchorRef)} />)
 
-	expect(document.querySelector(".elementsMenuContainer")).toHaveStyle({
+	expect(getPrimaryMenuLayer()).toHaveStyle({
 		left: "150px",
 	})
 })
@@ -147,7 +175,7 @@ test("positions a hover-opened secondary menu from the hovered option", () => {
 
 	fireEvent.mouseEnter(categoryButton)
 
-	expect(document.querySelector(".flyoutMenuPanel")).toHaveStyle({
+	expect(getSubmenuFlyout()).toHaveStyle({
 		left: "240px",
 		top: "120px",
 	})
@@ -158,7 +186,7 @@ test("renders hover-opened secondary menus as submenu flyouts", () => {
 
 	fireEvent.mouseEnter(screen.getByRole("button", { name: "か" }))
 
-	expect(document.querySelector(".flyoutMenuPanel")).toHaveClass(
+	expect(getSubmenuFlyout()).toHaveClass(
 		"flyoutMenuPanel-submenu",
 	)
 })
@@ -216,7 +244,7 @@ test("positions element detail from the hovered option", () => {
 
 	fireEvent.mouseEnter(detailButton)
 
-	expect(document.querySelector(".flyoutMenuPanel")).toHaveStyle({
+	expect(getPrimaryDetailFlyout()).toHaveStyle({
 		left: "240px",
 		top: "120px",
 	})
@@ -237,9 +265,7 @@ test("keeps primary detail open after leaving the hovered option", () => {
 	expect(detailButton).toHaveClass("selectedElementsMenuButton")
 
 	fireEvent.mouseLeave(detailButton)
-	const primaryMenuItem = document.querySelector(".menuListItemContainer")
-	expect(primaryMenuItem).not.toBeNull()
-	fireEvent.mouseLeave(primaryMenuItem as Element)
+	fireEvent.mouseLeave(getPrimaryMenuLayer())
 
 	expect(screen.getByText("Negative")).toBeInTheDocument()
 	expect(detailButton).toHaveClass("selectedElementsMenuButton")
@@ -295,11 +321,10 @@ test("shows detail in another layer when hovering an option in a secondary menu"
 
 	expect(screen.getByText("Negative")).toBeInTheDocument()
 	expect(screen.getByText("To not do")).toBeInTheDocument()
-	const flyoutPanels = document.querySelectorAll(".flyoutMenuPanel")
-	expect(flyoutPanels).toHaveLength(2)
-	expect(flyoutPanels[0]).toHaveClass("flyoutMenuPanel-submenu")
-	expect(flyoutPanels[1]).toHaveClass("flyoutMenuPanel-layer", "flyoutMenuPanel-detail")
-	expect(flyoutPanels[1]).toHaveStyle({
+	expect(getMountedFlyouts()).toHaveLength(2)
+	expect(getSubmenuFlyout()).toHaveClass("flyoutMenuPanel-submenu")
+	expect(getDetailLayerFlyout()).toHaveClass("flyoutMenuPanel-layer", "flyoutMenuPanel-detail")
+	expect(getDetailLayerFlyout()).toHaveStyle({
 		left: "360px",
 		top: "170px",
 	})
@@ -331,9 +356,7 @@ test("keeps secondary detail open after leaving the hovered submenu option", () 
 	expect(secondaryOption).toHaveClass("selectedElementsMenuButton")
 
 	fireEvent.mouseLeave(secondaryOption)
-	const secondaryMenuItem = document.querySelector(".flyoutMenuPanel-submenu .menuListItemContainer")
-	expect(secondaryMenuItem).not.toBeNull()
-	fireEvent.mouseLeave(secondaryMenuItem as Element)
+	fireEvent.mouseLeave(getSubmenuFlyout())
 
 	expect(screen.getByText("Negative")).toBeInTheDocument()
 	expect(secondaryOption).toHaveClass("selectedElementsMenuButton")
@@ -342,7 +365,7 @@ test("keeps secondary detail open after leaving the hovered submenu option", () 
 
 	expect(screen.queryByText("Negative")).not.toBeInTheDocument()
 	expect(secondaryOption).not.toHaveClass("selectedElementsMenuButton")
-	expect(document.querySelectorAll(".flyoutMenuPanel")).toHaveLength(1)
+	expect(getMountedFlyouts()).toHaveLength(1)
 })
 
 test("does not toggle a hover-opened secondary menu when clicking the primary option", () => {
@@ -381,7 +404,7 @@ test("keeps flyout panels mounted with closing animation while the menu closes",
 	fireEvent.mouseEnter(screen.getByRole("button", { name: "か" }))
 	fireEvent.mouseEnter(screen.getByRole("button", { name: "ない" }))
 
-	expect(document.querySelectorAll(".flyoutMenuPanel")).toHaveLength(2)
+	expect(getMountedFlyouts()).toHaveLength(2)
 
 	rerender(
 		<ElementsMenu
@@ -389,10 +412,10 @@ test("keeps flyout panels mounted with closing animation while the menu closes",
 		/>,
 	)
 
-	expect(document.querySelector(".elementsMenuContainer")).toHaveClass(
+	expect(getPrimaryMenuLayer()).toHaveClass(
 		"elementsMenuClosing",
 	)
-	document.querySelectorAll(".flyoutMenuPanel").forEach((panel) => {
+	getMountedFlyouts().forEach((panel) => {
 		expect(panel).toHaveClass("flyoutMenuPanelClosing")
 	})
 
@@ -400,8 +423,8 @@ test("keeps flyout panels mounted with closing animation while the menu closes",
 		jest.advanceTimersByTime(MENU_TRANSITION_MS)
 	})
 
-	expect(document.querySelector(".elementsMenuContainer")).not.toBeInTheDocument()
-	expect(document.querySelector(".flyoutMenuPanel")).not.toBeInTheDocument()
+	expect(queryPrimaryMenuLayer()).not.toBeInTheDocument()
+	expect(getMountedFlyouts()).toHaveLength(0)
 })
 
 test("opens a secondary menu from hover by default", () => {

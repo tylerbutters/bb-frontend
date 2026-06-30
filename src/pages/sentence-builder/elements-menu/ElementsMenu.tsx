@@ -259,6 +259,7 @@ function PrimaryMenuLayer({
 				isOpen ? "elementsMenuOpen" : "elementsMenuClosing"
 			}`}
 			style={style}
+			testId="elements-menu-primary"
 		>
 			<MenuSurface hasDelete={hasDelete} onDelete={onDelete} menuTitle={menuTitle}>
 				<MenuList
@@ -423,6 +424,7 @@ function AnchoredMenuLayer({
 				isOpen,
 			})}
 			style={layer.style || HIDDEN_PANEL_STYLE}
+			testId={getMenuLayerTestId(menuType, isLayer)}
 		>
 			{children}
 		</MenuLayer>
@@ -434,16 +436,19 @@ function MenuLayer({
 	className,
 	layerRef,
 	style,
+	testId,
 }: {
 	children: ReactNode
 	className: string
 	layerRef: RefObject<HTMLDivElement | null>
 	style?: CSSProperties
+	testId: string
 }) {
 	return (
 		<div
 			ref={layerRef}
 			className={className}
+			data-testid={testId}
 			popover="manual"
 			style={style || HIDDEN_PANEL_STYLE}
 		>
@@ -722,6 +727,11 @@ function getMenuLayerClassName({
 		type === "submenu" && "flyoutMenuPanel-submenu",
 		type === "detail" && "flyoutMenuPanel-detail",
 	)
+}
+
+function getMenuLayerTestId(menuType: MenuLayerType, isLayer: boolean) {
+	if (menuType === "submenu") return "elements-menu-submenu-flyout"
+	return isLayer ? "elements-menu-detail-layer-flyout" : "elements-menu-detail-flyout"
 }
 
 function joinClassNames(...classNames: Array<string | false | undefined>) {

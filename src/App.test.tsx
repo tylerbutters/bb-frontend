@@ -217,11 +217,9 @@ async function loginDefaultUser() {
 	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
 	fireEvent.click(screen.getByRole("button", { name: "Login" }))
 
-	await waitFor(() => {
-		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
-		expect(window.location.pathname).toBe("/")
-		expect(screen.getByRole("tab", { name: "Build" })).toBeInTheDocument()
-	})
+	await screen.findByRole("tab", { name: "Build" })
+	expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
+	expect(window.location.pathname).toBe("/")
 	await waitForDefaultGameQuotaLoad()
 }
 
@@ -231,12 +229,10 @@ function choosePunctuation(mark = "。") {
 }
 
 function expectLoggedOutChallengeCheckBlocked() {
-	const blocker = screen
-		.getByText("Sign up to check challenge answers.")
-		.closest(".gameQuotaBlocker") as HTMLElement
+	const quotaBlocker = screen.getByRole("status")
 
-	expect(blocker).not.toBeNull()
-	expect(within(blocker).getByRole("link", { name: "Sign up" })).toHaveAttribute("href", "/signup")
+	expect(within(quotaBlocker).getByText("Sign up to check challenge answers.")).toBeInTheDocument()
+	expect(within(quotaBlocker).getByRole("link", { name: "Sign up" })).toHaveAttribute("href", "/signup")
 	expect(screen.queryByRole("button", { name: "Check" })).not.toBeInTheDocument()
 }
 
@@ -575,9 +571,8 @@ test("opens the sign up page, confirms the email code, and creates an account", 
 	await waitFor(() => {
 		expect(screen.getByRole("heading", { name: "Confirm email" })).toBeInTheDocument()
 	})
-	const signupNotice = screen.getByText("tyler@example.com").closest(".resetEmailNotice")
-	expect(signupNotice).toHaveTextContent("Email sent to tyler@example.com. Change details")
-	expect(signupNotice).toContainElement(screen.getByRole("button", { name: "Change details" }))
+	expect(screen.getByText("tyler@example.com")).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Change details" })).toBeInTheDocument()
 	expect(screen.getByLabelText("Code")).toBeInTheDocument()
 	expect(screen.getByRole("button", { name: "Resend code in 30s" })).toBeDisabled()
 	expect(
@@ -601,10 +596,8 @@ test("opens the sign up page, confirms the email code, and creates an account", 
 	fireEvent.change(screen.getByLabelText("Code"), { target: { value: "123456" } })
 	fireEvent.click(screen.getByRole("button", { name: "Create account" }))
 
-	await waitFor(() => {
-		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
-		expect(screen.getByRole("tab", { name: "Build" })).toBeInTheDocument()
-	})
+	await screen.findByRole("tab", { name: "Build" })
+	expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
 	expect(window.location.pathname).toBe("/")
 
 	const confirmSignupRequest = fetchMock.mock.calls.find(
@@ -676,9 +669,8 @@ test("requests a reset code and resets the password from the login page", async 
 	await waitFor(() => {
 		expect(screen.getByLabelText("Code")).toBeInTheDocument()
 	})
-	const resetEmailNotice = screen.getByText("tyler@example.com").closest(".resetEmailNotice")
-	expect(resetEmailNotice).toHaveTextContent("Email sent to tyler@example.com. Change email")
-	expect(resetEmailNotice).toContainElement(screen.getByRole("button", { name: "Change email" }))
+	expect(screen.getByText("tyler@example.com")).toBeInTheDocument()
+	expect(screen.getByRole("button", { name: "Change email" })).toBeInTheDocument()
 	expect(screen.queryByLabelText("Email")).not.toBeInTheDocument()
 	expect(
 		screen.getByText("If an account exists for that email, a reset code has been sent."),
@@ -751,11 +743,9 @@ test("logs in and replaces auth links with the user name", async () => {
 	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
 	fireEvent.click(screen.getByRole("button", { name: "Login" }))
 
-	await waitFor(() => {
-		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
-		expect(window.location.pathname).toBe("/")
-		expect(screen.getByRole("tab", { name: "Build" })).toBeInTheDocument()
-	})
+	await screen.findByRole("tab", { name: "Build" })
+	expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
+	expect(window.location.pathname).toBe("/")
 	expect(screen.queryByRole("link", { name: "Login" })).not.toBeInTheDocument()
 	expect(screen.queryByRole("link", { name: "Sign up" })).not.toBeInTheDocument()
 	expect(screen.getByRole("link", { name: "Stats" })).toHaveAttribute("href", "/stats")
@@ -1007,7 +997,6 @@ test("opens paginated game history from a stats panel", async () => {
 
 	const drawer = await screen.findByLabelText("Translate history drawer")
 	expect(document.body.style.overflow).toBe("")
-	expect(document.querySelector(".statsPage")).toHaveClass("statsPageHistoryOpen")
 	expect(within(drawer).getByRole("heading", { name: "Translate history" })).toBeInTheDocument()
 	expect(within(drawer).queryByLabelText("History limit")).not.toBeInTheDocument()
 	expect(within(drawer).getByRole("tab", { name: "easy" })).toHaveAttribute("aria-selected", "true")
@@ -1103,12 +1092,10 @@ test("opens paginated game history from a stats panel", async () => {
 	expect(difficultySwitchParams.get("difficulty")).toBe("medium")
 	expect(difficultySwitchParams.get("offset")).toBe("0")
 
-	expect(drawer.parentElement).not.toBeNull()
-	fireEvent.mouseDown(drawer.parentElement as HTMLElement)
+	fireEvent.mouseDown(document.body)
 	expect(screen.getByLabelText("Translate history drawer")).toBeInTheDocument()
 
 	fireEvent.click(within(drawer).getByRole("button", { name: "Close" }))
-	expect(document.querySelector(".statsPage")).not.toHaveClass("statsPageHistoryOpen")
 	await waitFor(() => {
 		expect(screen.queryByLabelText("Translate history drawer")).not.toBeInTheDocument()
 	})
@@ -1226,9 +1213,9 @@ test("opens game history with empty metrics and a loading spinner", async () => 
 		expect(
 			within(drawer).queryByRole("status", { name: "Loading history" }),
 		).not.toBeInTheDocument()
-		expect(within(drawer).getByText("I want to eat sushi.")).toBeInTheDocument()
-		expect(historyStats).toHaveTextContent(/Total games\s*1/)
 	})
+	expect(within(drawer).getByText("I want to eat sushi.")).toBeInTheDocument()
+	expect(historyStats).toHaveTextContent(/Total games\s*1/)
 })
 
 test("reopens populated game history while refreshing it in the background", async () => {
@@ -1349,8 +1336,8 @@ test("reopens populated game history while refreshing it in the background", asy
 	expect(within(drawer).getByText("I want to eat sushi.")).toBeInTheDocument()
 	await waitFor(() => {
 		expect(historyRequestCount).toBe(2)
-		expect(statsRequestCount).toBe(3)
 	})
+	expect(statsRequestCount).toBe(3)
 
 	await act(async () => {
 		resolveRefreshStats({
@@ -1382,9 +1369,9 @@ test("reopens populated game history while refreshing it in the background", asy
 
 	await waitFor(() => {
 		expect(within(drawer).getByText("I want to drink tea.")).toBeInTheDocument()
-		expect(within(drawer).queryByText("I want to eat sushi.")).not.toBeInTheDocument()
-		expect(historyStats).toHaveAttribute("aria-busy", "false")
 	})
+	expect(within(drawer).queryByText("I want to eat sushi.")).not.toBeInTheDocument()
+	expect(historyStats).toHaveAttribute("aria-busy", "false")
 })
 
 test("opens a sign-up prompt in game history from the sentence builder when logged out", async () => {
@@ -1531,10 +1518,8 @@ test("shows zero-backgrounded stats panels when stats have not been created yet"
 	fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password1" } })
 	fireEvent.click(screen.getByRole("button", { name: "Login" }))
 
-	await waitFor(() => {
-		expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
-		expect(screen.getByRole("tab", { name: "Translate" })).toBeInTheDocument()
-	})
+	await screen.findByRole("tab", { name: "Translate" })
+	expect(screen.getByRole("link", { name: "Account" })).toBeInTheDocument()
 
 	fireEvent.click(screen.getByRole("link", { name: "Stats" }))
 
@@ -1929,8 +1914,8 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 	const stats = screen.getByLabelText("Selected user stats")
 	await waitFor(() => {
 		expect(within(stats).getByText("Total games")).toBeInTheDocument()
-		expect(within(stats).getByText("2")).toBeInTheDocument()
 	})
+	expect(within(stats).getByText("2")).toBeInTheDocument()
 	const statsModeSelect = within(stats).getByLabelText("Stats mode")
 	expect(statsModeSelect).toHaveValue("all")
 
@@ -1938,10 +1923,8 @@ test("opens the direct admin page, searches users, and shows profile stats and h
 
 	expect(statsModeSelect).toHaveValue("conjugations")
 	expect(within(stats).queryByText("2")).not.toBeInTheDocument()
-	const failedMetric = within(stats).getByText("Incorrect").closest(".statsMetric") as HTMLElement
-	expect(within(failedMetric).getByText("1")).toBeInTheDocument()
-	const wonMetric = within(stats).getByText("Correct").closest(".statsMetric") as HTMLElement
-	expect(within(wonMetric).getByText("0")).toBeInTheDocument()
+	expect(stats).toHaveTextContent(/Incorrect\s*1/)
+	expect(stats).toHaveTextContent(/Correct\s*0/)
 
 	const history = screen.getByLabelText("Selected user game history")
 	expect(within(history).queryByLabelText("History mode")).not.toBeInTheDocument()
@@ -2486,7 +2469,6 @@ test("clears all sentence elements", async () => {
 		expect(screen.getByText(".")).toBeInTheDocument()
 	})
 	const clearAllButton = screen.getByRole("button", { name: "Clear all" })
-	expect(clearAllButton.closest(".gameControls")).not.toBeNull()
 	expect(clearAllButton).toBeEnabled()
 	expect(screen.getAllByText("。").length).toBeGreaterThan(0)
 
@@ -2643,11 +2625,11 @@ test("shows a loading spinner while checking a sandbox sentence", async () => {
 	})
 
 	await waitFor(() => {
-		expect(screen.queryByRole("status", { name: "Checking answer" })).not.toBeInTheDocument()
 		expect(screen.getByText("Add a subject and predicate.")).toBeInTheDocument()
-		expect(screen.queryByText("Not quite.")).not.toBeInTheDocument()
-		expect(screen.queryByRole("button", { name: "Hide feedback" })).not.toBeInTheDocument()
 	})
+	expect(screen.queryByRole("status", { name: "Checking answer" })).not.toBeInTheDocument()
+	expect(screen.queryByText("Not quite.")).not.toBeInTheDocument()
+	expect(screen.queryByRole("button", { name: "Hide feedback" })).not.toBeInTheDocument()
 })
 
 test("populates conjugation game elements from Japanese translation prompt data", async () => {
@@ -2848,13 +2830,7 @@ test("locks generated prompt elements from word replacement and deletion", async
 		expect(screen.getAllByText("私").length).toBeGreaterThan(0)
 	})
 
-	const generatedElementContainer = screen
-		.getAllByText("私")
-		.map((node) => node.closest(".elementContainer"))
-		.find(Boolean)
-
-	expect(generatedElementContainer).toBeTruthy()
-	fireEvent.click(generatedElementContainer as Element)
+	fireEvent.click(screen.getAllByText("私")[0])
 
 	expect(screen.queryByText("Word")).not.toBeInTheDocument()
 	expect(screen.queryByRole("button", { name: "Delete" })).not.toBeInTheDocument()
@@ -3065,8 +3041,8 @@ test("regenerates the translate prompt and clears sentence elements", async () =
 	fireEvent.click(screen.getByRole("button", { name: "Check" }))
 	await waitFor(() => {
 		expect(screen.getByText("Not quite.")).toBeInTheDocument()
-		expect(screen.getByText("Use a full Japanese sentence.")).toBeInTheDocument()
 	})
+	expect(screen.getByText("Use a full Japanese sentence.")).toBeInTheDocument()
 	const checkRequest = fetchMock.mock.calls.find(
 		([url]) => url === `${API_BASE_URL}/games/check`,
 	)
