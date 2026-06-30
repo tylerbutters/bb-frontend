@@ -3,6 +3,7 @@ import type { ReactNode } from "react"
 import JapaneseText from "../components/JapaneseText"
 import { getConjugationDetail } from "../grammar/conjugationDetailsData"
 import { getParticleDetail } from "../grammar/particleDetailsData"
+import type { MenuOption } from "../types"
 import "./DetailPanel.css"
 
 const VOCABULARY_TYPES = new Set([
@@ -26,7 +27,48 @@ const VOCABULARY_TYPE_LABELS: Record<string, string> = {
 	desu: "Copula",
 }
 
-export function getElementDetail(element: any): any {
+interface ConjugationExampleData {
+	base?: string
+	conjugation: string
+}
+
+type DetailExample = string | ConjugationExampleData
+
+interface DetailConstructionData {
+	label: string
+	construction?: string
+	meaning?: string
+	examples: DetailExample[]
+}
+
+interface ConjugationDetailData {
+	kind: "conjugation"
+	type: string
+	grammaticalName: string
+	englishTranslation?: string
+	constructions: DetailConstructionData[]
+}
+
+interface ParticleDetailData {
+	kind: "particle"
+	type: string
+	text: string
+	englishTranslation?: string
+	uses: DetailConstructionData[]
+}
+
+interface VocabularyDetailData {
+	kind: "vocabulary"
+	type: string
+	word: string
+	kana: string
+	romaji: string
+	translations: string[]
+}
+
+export type ElementDetail = ConjugationDetailData | ParticleDetailData | VocabularyDetailData
+
+export function getElementDetail(element?: MenuOption | null): ElementDetail | null {
 	const conjugationDetail = getConjugationDetail(element)
 	if (conjugationDetail) {
 		return {
@@ -49,7 +91,13 @@ export function getElementDetail(element: any): any {
 	return null
 }
 
-export function DetailPanelContent({ detail: providedDetail, element }: { detail?: any; element?: any }) {
+export function DetailPanelContent({
+	detail: providedDetail,
+	element,
+}: {
+	detail?: ElementDetail | null
+	element?: MenuOption | null
+}) {
 	const detail = providedDetail || getElementDetail(element)
 	if (!detail) return null
 
@@ -62,7 +110,7 @@ export function DetailPanelContent({ detail: providedDetail, element }: { detail
 	)
 }
 
-function VocabularyDetail({ detail }: { detail: any }) {
+function VocabularyDetail({ detail }: { detail: VocabularyDetailData }) {
 	return (
 		<div className="elementDetailContent">
 			<DetailHeader
@@ -77,7 +125,7 @@ function VocabularyDetail({ detail }: { detail: any }) {
 	)
 }
 
-function ConjugationDetail({ detail }: { detail: any }) {
+function ConjugationDetail({ detail }: { detail: ConjugationDetailData }) {
 	return (
 		<div className="elementDetailContent">
 			<DetailHeader
@@ -88,11 +136,11 @@ function ConjugationDetail({ detail }: { detail: any }) {
 
 			<div className="elementDetailSection">
 				<div className="elementDetailConstructions">
-					{detail.constructions.map((construction: any) => (
+					{detail.constructions.map((construction) => (
 						<DetailConstruction
 							key={`${construction.label}:${construction.construction}`}
 							label={construction.label}
-							body={construction.construction}
+							body={construction.construction || ""}
 							examples={construction.examples}
 						/>
 					))}
@@ -102,7 +150,7 @@ function ConjugationDetail({ detail }: { detail: any }) {
 	)
 }
 
-function ParticleDetail({ detail }: { detail: any }) {
+function ParticleDetail({ detail }: { detail: ParticleDetailData }) {
 	return (
 		<div className="elementDetailContent">
 			<DetailHeader
@@ -113,11 +161,11 @@ function ParticleDetail({ detail }: { detail: any }) {
 
 			<div className="elementDetailSection">
 				<div className="elementDetailConstructions">
-					{detail.uses.map((particleUse: any) => (
+					{detail.uses.map((particleUse) => (
 						<DetailConstruction
 							key={particleUse.label}
 							label={particleUse.label}
-							body={particleUse.meaning}
+							body={particleUse.meaning || ""}
 							examples={particleUse.examples}
 						/>
 					))}
@@ -154,7 +202,7 @@ function DetailConstruction({
 }: {
 	label: string
 	body: string
-	examples: any[]
+	examples: DetailExample[]
 }) {
 	return (
 		<div className="elementDetailConstruction">
@@ -163,7 +211,7 @@ function DetailConstruction({
 				{body}
 			</div>
 			<div className="elementDetailExamples">
-				{examples.map((example: any) => (
+				{examples.map((example) => (
 					<div key={getExampleKey(example)}>
 						<ExampleText example={example} />
 					</div>
@@ -173,7 +221,7 @@ function DetailConstruction({
 	)
 }
 
-function ExampleText({ example }: { example: any }) {
+function ExampleText({ example }: { example: DetailExample }) {
 	if (isConjugationExample(example)) {
 		return (
 			<ConjugationExample
@@ -226,7 +274,7 @@ function ConjugationExampleWord({ text, stemLength }: { text: string; stemLength
 	)
 }
 
-function getExampleKey(example: any) {
+function getExampleKey(example: DetailExample) {
 	if (isConjugationExample(example)) {
 		return [example.base, example.conjugation].filter(Boolean).join(" → ")
 	}
@@ -234,7 +282,7 @@ function getExampleKey(example: any) {
 	return String(example)
 }
 
-function isConjugationExample(example: any) {
+function isConjugationExample(example: DetailExample): example is ConjugationExampleData {
 	return Boolean(
 		example &&
 			typeof example === "object" &&
@@ -264,8 +312,8 @@ function getSharedPrefixLength(base: string, conjugation: string) {
 	return shortestLength
 }
 
-function getVocabularyDetail(element: any) {
-	if (!element || !VOCABULARY_TYPES.has(element.elementType)) return null
+function getVocabularyDetail(element?: MenuOption | null): VocabularyDetailData | null {
+	if (!element || !element.elementType || !VOCABULARY_TYPES.has(element.elementType)) return null
 	if (!element.text || !element.meanings?.length) return null
 
 	const kana = element.textKana || element.text

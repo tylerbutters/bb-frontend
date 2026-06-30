@@ -207,8 +207,8 @@ export function useGameHistoryDrawer(currentUser?: User | null) {
 			}
 
 			applyHistory(normalizedRemoteHistory, "backend")
-		} catch (error: any) {
-			if (error.name === "AbortError") return
+		} catch (error) {
+			if (error instanceof Error && error.name === "AbortError") return
 
 			if (background) {
 				setHistoryStatus("ready")
@@ -273,8 +273,8 @@ export function useGameHistoryDrawer(currentUser?: User | null) {
 				const normalizedStats = normalizeGameStatsResponse(nextStats, localStats)
 				setStats(hasRecordedStats(normalizedStats) ? normalizedStats : localStats)
 				setStatsStatus("ready")
-			} catch (error: any) {
-				if (error.name === "AbortError") return
+			} catch (error) {
+				if (error instanceof Error && error.name === "AbortError") return
 
 				if (isBackgroundRefresh) {
 					setStatsStatus("ready")

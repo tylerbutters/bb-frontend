@@ -18,9 +18,8 @@ export interface AnchorRect {
 	height: number
 }
 
-interface AnchoredPanelState {
+export interface AnchoredPanelState {
 	anchorRect?: AnchorRect | null
-	[key: string]: any
 }
 
 interface UseAnchoredPanelOptions {
@@ -34,11 +33,25 @@ type PopoverElement = HTMLElement & {
 	hidePopover?: () => void
 }
 
+export interface AnchoredPanelController<TActive extends AnchoredPanelState = AnchoredPanelState> {
+	active: TActive | null
+	close: () => void
+	open: (nextActive: TActive) => void
+	placement: string
+	ref: RefObject<HTMLDivElement | null>
+	reset: () => void
+	style?: PanelStyle
+}
+
 export const HIDDEN_PANEL_STYLE: PanelStyle = { left: 0, top: 0, visibility: "hidden" }
 
-export function useAnchoredPanel({ isEnabled, menuRef, onCloseComplete }: UseAnchoredPanelOptions) {
+export function useAnchoredPanel<TActive extends AnchoredPanelState = AnchoredPanelState>({
+	isEnabled,
+	menuRef,
+	onCloseComplete,
+}: UseAnchoredPanelOptions): AnchoredPanelController<TActive> {
 	const ref = useRef<HTMLDivElement | null>(null)
-	const [active, setActive] = useState<AnchoredPanelState | null>(null)
+	const [active, setActive] = useState<TActive | null>(null)
 	const [placement, setPlacement] = useState("right")
 	const [style, setStyle] = useState<PanelStyle | undefined>()
 
@@ -56,7 +69,7 @@ export function useAnchoredPanel({ isEnabled, menuRef, onCloseComplete }: UseAnc
 		onCloseComplete?.()
 	}, [active, onCloseComplete, reset])
 
-	const open = useCallback((nextActive: AnchoredPanelState) => {
+	const open = useCallback((nextActive: TActive) => {
 		setActive(nextActive)
 		setPlacement("right")
 		setStyle(undefined)

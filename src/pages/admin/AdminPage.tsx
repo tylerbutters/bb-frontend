@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react"
 import type { FormEvent } from "react"
 import { Link, Navigate } from "react-router-dom"
 import { Search } from "lucide-react"
+import { getErrorMessage } from "../../api/errors"
 import { getAdminUser, getAdminUserGameHistory, getAdminUsers } from "../../api/admin"
 import type { GameHistoryItem, GameHistoryResponse, GameStats, User, UserId } from "../../api/types"
 import {
@@ -113,8 +114,8 @@ export default function AdminPage({ currentUser, onAuthExpired }: { currentUser?
 	const [historyHasMore, setHistoryHasMore] = useState(false)
 	const [historyNextOffset, setHistoryNextOffset] = useState<number | null>(0)
 
-	const handleApiError = useCallback((error: any, setStatus: (status: string) => void, setMessage: (message: string) => void, fallbackMessage: string) => {
-		if (error.name === "AbortError") return
+	const handleApiError = useCallback((error: unknown, setStatus: (status: string) => void, setMessage: (message: string) => void, fallbackMessage: string) => {
+		if (error instanceof Error && error.name === "AbortError") return
 
 		if (isAuthenticationError(error)) {
 			onAuthExpired?.()
@@ -122,7 +123,7 @@ export default function AdminPage({ currentUser, onAuthExpired }: { currentUser?
 		}
 
 		setStatus("error")
-		setMessage(error.message || fallbackMessage)
+		setMessage(getErrorMessage(error, fallbackMessage))
 	}, [onAuthExpired])
 
 	const loadUsersPage = useCallback(async ({ offset = 0, replace = false, signal }: { offset?: number; replace?: boolean; signal?: AbortSignal } = {}) => {

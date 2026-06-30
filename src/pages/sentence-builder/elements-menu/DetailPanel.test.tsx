@@ -1,5 +1,15 @@
 import { render, screen } from "@testing-library/react"
 import { DetailPanelContent, getElementDetail } from "./DetailPanel"
+import type { ElementDetail } from "./DetailPanel"
+
+function expectConjugationDetail(detail: ElementDetail | null) {
+	expect(detail).toMatchObject({ kind: "conjugation" })
+	if (!detail || detail.kind !== "conjugation") {
+		throw new Error("Expected a conjugation detail")
+	}
+
+	return detail
+}
 
 describe("getElementDetail", () => {
 	test("returns conjugation details for conjugation menu options", () => {
@@ -38,11 +48,11 @@ describe("getElementDetail", () => {
 			getElementDetail({ text: "ないで", detailId: "verb-negative-te-form" }),
 			getElementDetail({ text: "たり", detailId: "verb-tari-form" }),
 			getElementDetail({ text: "ず", detailId: "verb-zu-negative" }),
-		]
+		].map(expectConjugationDetail)
 
 		details.forEach((detail) => {
-			detail.constructions.forEach((construction: any) => {
-				construction.examples.forEach((example: any) => {
+			detail.constructions.forEach((construction) => {
+				construction.examples.forEach((example) => {
 					expect(example).toEqual({
 						base: expect.any(String),
 						conjugation: expect.any(String),
@@ -112,15 +122,18 @@ describe("getElementDetail", () => {
 	})
 
 	test("uses structured conjugation example data", () => {
-		const detail = getElementDetail({ text: "ない", detailId: "verb-negative" })
+		const detail = expectConjugationDetail(
+			getElementDetail({ text: "ない", detailId: "verb-negative" }),
+		)
 		const godanConstruction = detail.constructions.find(
-			(construction: any) => construction.label === "Godan",
+			(construction) => construction.label === "Godan",
 		)
 
-		expect(godanConstruction.examples).toContainEqual({
+		expect(godanConstruction).toBeDefined()
+		expect(godanConstruction?.examples).toContainEqual({
 			base: "書く",
 			conjugation: "書かない",
 		})
-		expect(godanConstruction.examples).not.toContain("書く → 書かない")
+		expect(godanConstruction?.examples).not.toContain("書く → 書かない")
 	})
 })
