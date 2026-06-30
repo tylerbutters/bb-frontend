@@ -5,42 +5,55 @@ import {
 	godanDefaults,
 	godanRows,
 } from "./conjugationData"
+import type { ConjugationOption, SentenceElement } from "../types"
 
 const ARU_B1_OPTIONS = godanDefaults.b1.filter((option) => option.text !== "ない")
 
-function getGodanEnding(parentConjugation) {
+type ConjugatableElement = SentenceElement & ConjugationOption
+
+interface GodanRow {
+	b1: string
+	b2: string
+	b3: string
+	b4: string
+	b5: string
+	te: string
+	past: string
+}
+
+function getGodanEnding(parentConjugation: ConjugatableElement) {
 	return parentConjugation.verbType === "godan-haru"
 		? "る"
 		: parentConjugation.baseEnding || parentConjugation.ending
 }
 
-function createGodanCategory(text, list) {
+function createGodanCategory(text: string, list: ConjugationOption[]): ConjugationOption {
 	const directOption = list?.length === 1 && list[0].text === text ? list[0] : null
 	const { text: _optionText, ...directOptionDetails } = directOption || {}
 
 	return { text, ...directOptionDetails, list }
 }
 
-function createGodanB2Category(text) {
+function createGodanB2Category(text: string) {
 	return createGodanCategory(text, [
 		...godanDefaults.b2,
 		{ text, conjugationType: "aux", detailId: "verb-stem" },
 	])
 }
 
-function createGodanB3Category(text) {
+function createGodanB3Category(text: string) {
 	return createGodanCategory(text, [{ text, detailId: "verb-non-past" }])
 }
 
-function createGodanTeCategory(text) {
+function createGodanTeCategory(text: string) {
 	return createGodanCategory(text, [{ text, conjugationType: "te", detailId: "verb-te-form" }])
 }
 
-function createGodanPastCategory(text) {
+function createGodanPastCategory(text: string) {
 	return createGodanCategory(text, [{ text, detailId: "verb-past" }])
 }
 
-function createStandardGodanCategories(row) {
+function createStandardGodanCategories(row: GodanRow) {
 	return [
 		createGodanCategory(row.b1, godanDefaults.b1),
 		createGodanB2Category(row.b2),
@@ -52,7 +65,7 @@ function createStandardGodanCategories(row) {
 	]
 }
 
-export function getGodanConjugationOptions(parentConjugation) {
+export function getGodanConjugationOptions(parentConjugation: ConjugatableElement): ConjugationOption[] {
 	const row = godanRows[getGodanEnding(parentConjugation)]
 	if (!row) return []
 
@@ -97,14 +110,14 @@ export function getGodanConjugationOptions(parentConjugation) {
 	return createStandardGodanCategories(row)
 }
 
-export function findGodanConjugationCategory(parentConjugation, text) {
+export function findGodanConjugationCategory(parentConjugation: ConjugatableElement, text: string) {
 	return getGodanConjugationOptions(parentConjugation).find(
 		(category) =>
 			category.text === text || category.list?.some((conjugation) => conjugation.text === text),
 	)
 }
 
-function hydrateConjugationForm(form) {
+function hydrateConjugationForm(form?: ConjugationOption | null): ConjugationOption | null {
 	if (!form) return null
 
 	const { followUpOptionsKey, ...conjugationForm } = form
@@ -117,18 +130,18 @@ function hydrateConjugationForm(form) {
 	}
 }
 
-export function getConjugationForm(text) {
+export function getConjugationForm(text: string): ConjugationOption | null {
 	return hydrateConjugationForm(conjugationFormByText[text])
 }
 
-export function getFollowUpConjugationOptions(conjugation) {
+export function getFollowUpConjugationOptions(conjugation?: ConjugatableElement | null): ConjugationOption[] {
 	if (conjugation?.conjugationOptions) return conjugation.conjugationOptions
 
 	const conjugationText = `${conjugation?.stem || ""}${conjugation?.ending || ""}`
 	return getConjugationForm(conjugationText)?.conjugationOptions || []
 }
 
-export function getBaseConjugationOptions(parentConjugation) {
+export function getBaseConjugationOptions(parentConjugation?: ConjugatableElement | null) {
 	if (!parentConjugation) return []
 
 	if (parentConjugation.elementType === "adjective") {
@@ -150,12 +163,12 @@ export function getBaseConjugationOptions(parentConjugation) {
 	return null
 }
 
-export function getConjugationOptionsForParent(parentConjugation) {
+export function getConjugationOptionsForParent(parentConjugation: ConjugatableElement) {
 	const baseOptions = getBaseConjugationOptions(parentConjugation)
 	return baseOptions || getFollowUpConjugationOptions(parentConjugation)
 }
 
-export function initializeNestedElement(element) {
+export function initializeNestedElement(element: SentenceElement): SentenceElement {
 	if (element.elementType === "verb" && !element.conjugation) {
 		return {
 			...element,
@@ -190,7 +203,7 @@ export function initializeNestedElement(element) {
 	return element
 }
 
-export function createConjugationFromForm(conjugationForm = {}) {
+export function createConjugationFromForm(conjugationForm: ConjugationOption = {}): ConjugationOption {
 	return {
 		conjugationType: conjugationForm.conjugationType,
 		stem: conjugationForm.stem || "",

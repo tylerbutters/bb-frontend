@@ -1,31 +1,32 @@
 import { toRomaji } from "wanakana"
+import type { ElementOption } from "../types"
 
 // Search values are derived from dictionary entries, so cache them per element
 // instead of rebuilding romaji and meaning aliases on every keystroke.
-const SEARCH_VALUES_CACHE = new WeakMap()
+const SEARCH_VALUES_CACHE = new WeakMap<object, string[]>()
 
-function normalizeSearchValue(value) {
+function normalizeSearchValue(value: unknown) {
 	return String(value || "")
 		.trim()
 		.toLowerCase()
 }
 
-function uniqueSearchValues(values) {
+function uniqueSearchValues(values: string[]) {
 	return Array.from(new Set(values.filter(Boolean)))
 }
 
-function removeParentheticalNotes(value) {
+function removeParentheticalNotes(value: string) {
 	return value
 		.replace(/\s*\([^)]*\)/g, " ")
 		.replace(/\s+/g, " ")
 		.trim()
 }
 
-function removeLeadingInfinitiveMarker(value) {
+function removeLeadingInfinitiveMarker(value: string) {
 	return value.replace(/^to\s+/, "")
 }
 
-function getMeaningSearchValues(meaning) {
+function getMeaningSearchValues(meaning: string) {
 	const normalizedMeaning = normalizeSearchValue(meaning)
 	const meaningWithoutNotes = removeParentheticalNotes(normalizedMeaning)
 	const meaningWithoutInfinitive = removeLeadingInfinitiveMarker(meaningWithoutNotes)
@@ -40,7 +41,7 @@ function getMeaningSearchValues(meaning) {
 	])
 }
 
-function getRomajiSearchValues(value) {
+function getRomajiSearchValues(value: unknown) {
 	const romaji = toRomaji(String(value || ""))
 	const shortVowels = romaji.replace(/([aeiou])\1+/g, "$1")
 
@@ -49,7 +50,7 @@ function getRomajiSearchValues(value) {
 	return romaji === shortVowels ? [romaji] : [romaji, shortVowels]
 }
 
-function getOptionSearchValues(element) {
+function getOptionSearchValues(element: ElementOption) {
 	if (!element || typeof element !== "object") return []
 
 	const cachedSearchValues = SEARCH_VALUES_CACHE.get(element)
@@ -67,15 +68,21 @@ function getOptionSearchValues(element) {
 	return searchValues
 }
 
-function startsWithSearchWord(value, query) {
+function startsWithSearchWord(value: string, query: string) {
 	return value.split(/[^a-z0-9]+/).some((word) => word.startsWith(query))
 }
 
-function hasExactSearchWord(value, query) {
+function hasExactSearchWord(value: string, query: string) {
 	return value.split(/[^a-z0-9]+/).some((word) => word === query)
 }
 
-function createSearchScore(rank, value, valueIndex) {
+interface SearchScore {
+	rank: number
+	length: number
+	valueIndex: number
+}
+
+function createSearchScore(rank: number, value: string, valueIndex: number): SearchScore {
 	return {
 		rank,
 		length: value.length,
@@ -83,13 +90,13 @@ function createSearchScore(rank, value, valueIndex) {
 	}
 }
 
-function getBetterScore(first, second) {
+function getBetterScore(first: SearchScore, second: SearchScore) {
 	if (first.rank !== second.rank) return first.rank < second.rank ? first : second
 	if (first.length !== second.length) return first.length < second.length ? first : second
 	return first.valueIndex < second.valueIndex ? first : second
 }
 
-function getValueSearchScore(value, query, valueIndex) {
+function getValueSearchScore(value: string, query: string, valueIndex: number): SearchScore {
 	// Lower rank numbers are better. Exact matches need to beat longer prefix
 	// matches, so "kare" finds 彼 before words like かれる or かれら.
 	if (value === query) return createSearchScore(0, value, valueIndex)
@@ -105,7 +112,7 @@ function getValueSearchScore(value, query, valueIndex) {
 	}
 }
 
-function getSearchScore(element, query) {
+function getSearchScore(element: ElementOption, query: string) {
 	const searchValues = getOptionSearchValues(element)
 
 	return searchValues.reduce((bestScore, value, valueIndex) => {
@@ -118,7 +125,10 @@ function getSearchScore(element, query) {
 	})
 }
 
-export function filterElementOptions(elementOptions = [], searchText = "") {
+export function filterElementOptions<Element extends ElementOption>(
+	elementOptions: Element[] = [],
+	searchText = "",
+): Element[] {
 	const query = normalizeSearchValue(searchText)
 	if (!query) return []
 

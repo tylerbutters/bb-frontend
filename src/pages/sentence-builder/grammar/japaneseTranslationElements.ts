@@ -10,8 +10,44 @@ import {
 	getGodanConjugationOptions,
 } from "./conjugationOptions"
 import normalizeElement from "./normalizeElement"
+import type { ConjugationOption, SentenceElement } from "../types"
 
-const dictionaryGroups = {
+type DictionaryGroupName = "nouns" | "verbs" | "adjectives" | "adverbs" | "counters"
+
+interface PromptConjugationStep {
+	text?: unknown
+	type?: unknown
+	conjugation?: PromptConjugationInput
+}
+
+type PromptConjugationInput =
+	| string
+	| number
+	| PromptConjugationStep
+	| PromptConjugationInput[]
+	| null
+	| undefined
+
+interface PromptForm {
+	conjugation?: PromptConjugationInput
+	conjugations?: string[]
+	[key: string]: unknown
+}
+
+interface PromptTranslationWord {
+	kanji?: unknown
+	kana?: unknown
+	particle?: unknown
+	form?: PromptForm
+	conjugation?: PromptConjugationInput
+}
+
+interface PromptConjugationTextStep {
+	text?: string
+	type?: string
+}
+
+const dictionaryGroups: Record<DictionaryGroupName, SentenceElement[]> = {
 	nouns,
 	verbs,
 	adjectives,
@@ -19,8 +55,20 @@ const dictionaryGroups = {
 	counters,
 }
 
-const DEFAULT_LOOKUP_ORDER = ["verbs", "adjectives", "adverbs", "counters", "nouns"]
-const PARTICLE_LOOKUP_ORDER = ["nouns", "verbs", "adjectives", "adverbs", "counters"]
+const DEFAULT_LOOKUP_ORDER: DictionaryGroupName[] = [
+	"verbs",
+	"adjectives",
+	"adverbs",
+	"counters",
+	"nouns",
+]
+const PARTICLE_LOOKUP_ORDER: DictionaryGroupName[] = [
+	"nouns",
+	"verbs",
+	"adjectives",
+	"adverbs",
+	"counters",
+]
 const BASE_VERB_CONJUGATION_TYPES = {
 	causative: {
 		ichidan: "させる",
@@ -86,11 +134,15 @@ const PROMPT_CONJUGATION_TYPES = new Set([
 	...Object.keys(CONJUGATION_TYPE_OPTIONS),
 ])
 
-function normalizeValue(value) {
+function normalizeValue(value: unknown) {
 	return String(value || "").trim()
 }
 
-function matchesTranslationWord(element, word) {
+function isPromptConjugationStep(value: unknown): value is PromptConjugationStep {
+	return Boolean(value && typeof value === "object" && !Array.isArray(value))
+}
+
+function matchesTranslationWord(element: SentenceElement, word: PromptTranslationWord) {
 	const kanji = normalizeValue(word?.kanji)
 	const kana = normalizeValue(word?.kana)
 
@@ -106,14 +158,14 @@ function matchesTranslationWord(element, word) {
 	return false
 }
 
-function getInflectableEndingLength(element) {
+function getInflectableEndingLength(element: SentenceElement) {
 	if (!["verb", "adjective"].includes(element?.elementType)) return 0
 	if (!element.ending) return 0
 
 	return element.ending.length
 }
 
-function applyPromptSurface(element, word) {
+function applyPromptSurface(element: SentenceElement, word: PromptTranslationWord): SentenceElement {
 	const kanji = normalizeValue(word?.kanji)
 	const kana = normalizeValue(word?.kana)
 
@@ -137,7 +189,7 @@ function applyPromptSurface(element, word) {
 	}
 }
 
-function lookupTranslationElement(word) {
+function lookupTranslationElement(word: PromptTranslationWord) {
 	const lookupOrder = word?.particle ? PARTICLE_LOOKUP_ORDER : DEFAULT_LOOKUP_ORDER
 
 	for (const groupName of lookupOrder) {
@@ -151,7 +203,7 @@ function lookupTranslationElement(word) {
 	return null
 }
 
-function attachParticle(element, particleText) {
+function attachParticle(element: SentenceElement, particleText: unknown): SentenceElement {
 	const particle = normalizeValue(particleText)
 	if (!particle || !canAttachPromptParticle(element)) return element
 
@@ -164,16 +216,17 @@ function attachParticle(element, particleText) {
 	}
 }
 
-function cloneConjugation(conjugation) {
+function cloneConjugation(conjugation: unknown): unknown {
 	if (!conjugation || typeof conjugation !== "object") return conjugation
 
+	const conjugationDetails = conjugation as ConjugationOption
 	return {
-		...conjugation,
-		conjugation: cloneConjugation(conjugation.conjugation),
+		...conjugationDetails,
+		conjugation: cloneConjugation(conjugationDetails.conjugation),
 	}
 }
 
-function createPromptConjugation(conjugationText) {
+function createPromptConjugation(conjugationText: string): ConjugationOption {
 	const conjugationForm = getConjugationForm(conjugationText)
 
 	if (!conjugationForm) {
@@ -189,7 +242,10 @@ function createPromptConjugation(conjugationText) {
 	}
 }
 
-function appendConjugationChain(conjugation, conjugationTexts) {
+function appendConjugationChain(
+	conjugation: ConjugationOption,
+	conjugationTexts: string[],
+): ConjugationOption {
 	if (!conjugationTexts.length) return conjugation
 
 	return {
@@ -198,14 +254,14 @@ function appendConjugationChain(conjugation, conjugationTexts) {
 	}
 }
 
-function resolveConjugationChain(conjugationTexts = []) {
+function resolveConjugationChain(conjugationTexts: string[] = []): ConjugationOption | Record<string, never> {
 	const [conjugationText, ...remainingTexts] = conjugationTexts
 	if (!conjugationText) return {}
 
 	return appendConjugationChain(createPromptConjugation(conjugationText), remainingTexts)
 }
 
-function resolveGodanConjugation(element, conjugationTexts) {
+function resolveGodanConjugation(element: SentenceElement, conjugationTexts: string[]) {
 	const [conjugationText, ...remainingTexts] = conjugationTexts
 	const selectedCategory = findGodanConjugationCategory(element, conjugationText)
 	if (!selectedCategory) return null
@@ -239,21 +295,21 @@ function resolveGodanConjugation(element, conjugationTexts) {
 	}
 }
 
-function isGodanVerb(element) {
+function isGodanVerb(element: SentenceElement) {
 	return element?.elementType === "verb" && element.verbType?.includes("godan")
 }
 
-function getConjugationOptionsForElement(element) {
+function getConjugationOptionsForElement(element: SentenceElement) {
 	return getFollowUpConjugationOptions(element)
 }
 
-function getGodanCategoryByListText(element, text) {
+function getGodanCategoryByListText(element: SentenceElement, text: string) {
 	return getGodanConjugationOptions(element).find((category) =>
 		category.list?.some((conjugation) => conjugation.text === text),
 	)
 }
 
-function resolveGodanConjugationTypeTexts(element, type) {
+function resolveGodanConjugationTypeTexts(element: SentenceElement, type: string) {
 	if (type === "past") {
 		const godanOptions = getGodanConjugationOptions(element)
 		const pastCategory = godanOptions[godanOptions.length - 1]
@@ -281,17 +337,20 @@ function resolveGodanConjugationTypeTexts(element, type) {
 	return category ? [category.text, optionText] : []
 }
 
-function resolveBaseVerbConjugationTypeText(element, type) {
+function resolveBaseVerbConjugationTypeText(element: SentenceElement, type: string) {
 	return BASE_VERB_CONJUGATION_TYPES[type]?.[element?.verbType]
 }
 
-function resolveConjugationOptionTypeText(element, type) {
+function resolveConjugationOptionTypeText(element: SentenceElement, type: string) {
 	const candidates = CONJUGATION_TYPE_OPTIONS[type] || []
 	return getConjugationOptionsForElement(element).find((option) => candidates.includes(option.text))
 		?.text
 }
 
-function resolvePromptConjugationStepTexts(element, step) {
+function resolvePromptConjugationStepTexts(
+	element: SentenceElement,
+	step: PromptConjugationTextStep,
+) {
 	const directText = normalizeValue(step.text)
 	if (directText) return [directText]
 
@@ -307,7 +366,7 @@ function resolvePromptConjugationStepTexts(element, step) {
 	return text ? [text] : [type]
 }
 
-function getParentAfterConjugationText(parent, conjugationText) {
+function getParentAfterConjugationText(parent: SentenceElement, conjugationText: string) {
 	if (isGodanVerb(parent)) {
 		const selectedCategory = findGodanConjugationCategory(parent, conjugationText)
 		if (selectedCategory?.text === conjugationText) {
@@ -321,29 +380,31 @@ function getParentAfterConjugationText(parent, conjugationText) {
 	return createPromptConjugation(conjugationText)
 }
 
-function getParentAfterConjugationTexts(parent, conjugationTexts) {
+function getParentAfterConjugationTexts(parent: SentenceElement, conjugationTexts: string[]) {
 	return conjugationTexts.reduce(getParentAfterConjugationText, parent)
 }
 
-function applyPromptConjugations(element, conjugationTexts) {
+function applyPromptConjugations(element: SentenceElement, conjugationTexts: unknown): SentenceElement {
 	if (!Array.isArray(conjugationTexts) || conjugationTexts.length === 0) return element
+	const conjugationTextList = conjugationTexts.map(normalizeValue).filter(Boolean)
+	if (conjugationTextList.length === 0) return element
 
 	if (element.verbType?.includes("godan")) {
-		const godanElement = resolveGodanConjugation(element, conjugationTexts)
+		const godanElement = resolveGodanConjugation(element, conjugationTextList)
 		if (godanElement) return godanElement
 	}
 
 	return {
 		...element,
-		conjugation: resolveConjugationChain(conjugationTexts),
+		conjugation: resolveConjugationChain(conjugationTextList),
 	}
 }
 
-function getPromptConjugationSteps(promptConjugation) {
+function getPromptConjugationSteps(promptConjugation: PromptConjugationInput): PromptConjugationTextStep[] {
 	if (Array.isArray(promptConjugation)) {
 		return promptConjugation
 			.map((conjugationStep) => {
-				if (typeof conjugationStep === "object" && conjugationStep !== null) {
+				if (isPromptConjugationStep(conjugationStep)) {
 					const text = normalizeValue(conjugationStep.text)
 					const type = normalizeValue(conjugationStep.type)
 					return text ? { text } : type ? { type } : null
@@ -354,10 +415,11 @@ function getPromptConjugationSteps(promptConjugation) {
 
 				return PROMPT_CONJUGATION_TYPES.has(value) ? { type: value } : { text: value }
 			})
-			.filter(Boolean)
+			.filter(Boolean) as PromptConjugationTextStep[]
 	}
 
 	if (!promptConjugation || typeof promptConjugation !== "object") return []
+	if (!isPromptConjugationStep(promptConjugation)) return []
 
 	const text = normalizeValue(promptConjugation.text)
 	const type = normalizeValue(promptConjugation.type)
@@ -367,7 +429,10 @@ function getPromptConjugationSteps(promptConjugation) {
 	return [step, ...getPromptConjugationSteps(promptConjugation.conjugation)]
 }
 
-function getPromptConjugationTexts(element, promptConjugation) {
+function getPromptConjugationTexts(
+	element: SentenceElement,
+	promptConjugation: PromptConjugationInput,
+) {
 	const steps = getPromptConjugationSteps(promptConjugation)
 	let parent = element
 
@@ -379,25 +444,35 @@ function getPromptConjugationTexts(element, promptConjugation) {
 	})
 }
 
-function applyPromptConjugation(element, promptConjugation) {
+function applyPromptConjugation(
+	element: SentenceElement,
+	promptConjugation: PromptConjugationInput,
+) {
 	return applyPromptConjugations(element, getPromptConjugationTexts(element, promptConjugation))
 }
 
-function applyPromptForm(element, form) {
+function applyPromptForm(element: SentenceElement, form: PromptForm | undefined): SentenceElement {
 	if (!form || typeof form !== "object") return element
 
 	if (Array.isArray(form.conjugations)) {
 		return applyPromptConjugations(element, form.conjugations)
 	}
 
-	if (Array.isArray(form.conjugation) || form.conjugation?.text || form.conjugation?.type) {
+	if (
+		Array.isArray(form.conjugation) ||
+		(isPromptConjugationStep(form.conjugation) &&
+			(form.conjugation.text || form.conjugation.type))
+	) {
 		return applyPromptConjugation(element, form.conjugation)
 	}
 
 	return {
 		...element,
 		...form,
-		conjugation: cloneConjugation(form.conjugation ?? element.conjugation),
+		conjugation: cloneConjugation(form.conjugation ?? element.conjugation) as
+			| ConjugationOption
+			| null
+			| undefined,
 	}
 }
 
@@ -405,7 +480,9 @@ function canAttachPromptParticle(element) {
 	return ["noun", "counter"].includes(element?.elementType)
 }
 
-export function japaneseTranslationToElements(japaneseTranslation = []) {
+export function japaneseTranslationToElements(
+	japaneseTranslation: PromptTranslationWord[] = [],
+): SentenceElement[] {
 	if (!Array.isArray(japaneseTranslation)) return []
 	// alert(JSON.stringify(japaneseTranslation))
 		return japaneseTranslation

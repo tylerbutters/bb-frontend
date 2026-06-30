@@ -1,4 +1,6 @@
-export default function normalizeElement(element) {
+import type { SentenceElement } from "../types"
+
+export default function normalizeElement(element: SentenceElement): SentenceElement {
 	if (element.elementType === "verb" && !element.conjugation) {
 		return {
 			...element,
@@ -32,7 +34,7 @@ export default function normalizeElement(element) {
 
 	if (
 		element.elementType === "counter" &&
-		(element.number == null || element.number.length === 0)
+		(element.number == null || String(element.number).length === 0)
 	) {
 		return {
 			...element,

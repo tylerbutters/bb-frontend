@@ -1,4 +1,6 @@
-export const particles = [
+import type { ParticleOption } from "../types"
+
+export const particles: ParticleOption[] = [
 	{
 		text: "から",
 		attachesTo: ["noun", "verb", "te", "ii", "i-type", "desu"],
