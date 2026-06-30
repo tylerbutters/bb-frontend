@@ -1,14 +1,96 @@
+import type {
+	GameHistoryItem,
+	GameHistoryQuery,
+	GameHistoryResponse,
+	GameStatsGroup,
+	GameStatsResponse,
+	PromptDifficulty,
+	StatsDifficulty,
+	UserId,
+} from "./api/types"
+
 const STORAGE_KEY_PREFIX = "bbLocalGameResults"
 
-export const TRACKED_GAME_MODES = [
+type TrackedGameMode = "translate" | "conjugations" | "fix sentence" | "particles" | "reorder"
+
+interface TrackedGameModeConfig {
+	mode: TrackedGameMode
+	label: string
+}
+
+interface NormalizedGameStats {
+	totalGames: number
+	correct: number
+	incorrect: number
+	accuracy: number
+}
+
+type StatsLike = {
+	totalGames?: unknown
+	correct?: unknown
+	incorrect?: unknown
+	accuracy?: unknown
+}
+
+interface NormalizedGameStatsItem extends NormalizedGameStats {
+	mode: TrackedGameMode
+	label: string
+}
+
+interface NormalizedGameStatsGroup {
+	total: NormalizedGameStats
+	games: NormalizedGameStatsItem[]
+}
+
+interface NormalizedGameStatsResponse extends NormalizedGameStatsGroup {
+	byDifficulty: Record<string, NormalizedGameStatsGroup>
+}
+
+interface StatsAccumulator {
+	totalGames: number
+	correct: number
+	incorrect: number
+}
+
+type StatsByMode = Map<string, StatsAccumulator>
+
+interface LocalGameResult {
+	challengeId: string
+	mode: TrackedGameMode
+	difficulty: PromptDifficulty
+	prompt: string
+	answer: string
+	correct: boolean
+	feedback: string
+	recordedAt: string
+}
+
+type StoredResults = Record<string, LocalGameResult>
+
+interface TodayFilterOptions {
+	todayOnly?: boolean
+	now?: Date
+}
+
+interface RecordLocalGameResultInput {
+	challengeId?: string
+	mode?: string
+	difficulty?: string
+	prompt?: string
+	answer?: string
+	correct?: boolean
+	feedback?: string
+}
+
+export const TRACKED_GAME_MODES: TrackedGameModeConfig[] = [
 	{ mode: "translate", label: "Translate" },
 	{ mode: "conjugations", label: "Conjugate" },
 	{ mode: "fix sentence", label: "Fix mistakes" },
 	{ mode: "particles", label: "Particles" },
 	{ mode: "reorder", label: "Word order" },
 ]
-export const GAME_DIFFICULTIES = ["easy", "medium", "hard"]
-export const GAME_STAT_FILTERS = ["all", ...GAME_DIFFICULTIES]
+export const GAME_DIFFICULTIES: PromptDifficulty[] = ["easy", "medium", "hard"]
+export const GAME_STAT_FILTERS: StatsDifficulty[] = ["all", ...GAME_DIFFICULTIES]
 export const GAME_RECENT_FILTERS = [
 	{ value: "all", label: "all" },
 	{ value: "10", label: "past 10" },
@@ -16,29 +98,29 @@ export const GAME_RECENT_FILTERS = [
 	{ value: "50", label: "past 50" },
 ]
 
-const trackedModeLabels = new Map(
+const trackedModeLabels: Map<string, string> = new Map(
 	TRACKED_GAME_MODES.map((gameMode) => [gameMode.mode, gameMode.label]),
 )
-const validDifficulties = new Set(GAME_DIFFICULTIES)
+const validDifficulties = new Set<string>(GAME_DIFFICULTIES)
 const HISTORY_PAGE_SIZE = 50
 
-function storageKey(userId) {
+function storageKey(userId: UserId) {
 	return `${STORAGE_KEY_PREFIX}:${userId}`
 }
 
-function readStoredResults(userId) {
+function readStoredResults(userId: UserId): StoredResults {
 	if (!userId) return {}
 
 	try {
 		const storedValue = window.localStorage.getItem(storageKey(userId))
-		const parsedValue = storedValue ? JSON.parse(storedValue) : null
+		const parsedValue = storedValue ? (JSON.parse(storedValue) as { results?: StoredResults }) : null
 		return parsedValue && typeof parsedValue.results === "object" ? parsedValue.results : {}
 	} catch {
 		return {}
 	}
 }
 
-function writeStoredResults(userId, results) {
+function writeStoredResults(userId: UserId, results: StoredResults) {
 	window.localStorage.setItem(storageKey(userId), JSON.stringify({ results }))
 }
 
@@ -51,7 +133,7 @@ function utcDayRange(date = new Date()) {
 	return { start, end }
 }
 
-function isFromCurrentUtcDay(value, now = new Date()) {
+function isFromCurrentUtcDay(value: string | undefined, now = new Date()) {
 	const time = Date.parse(value)
 	if (!time) return false
 
@@ -59,18 +141,25 @@ function isFromCurrentUtcDay(value, now = new Date()) {
 	return time >= start.getTime() && time < end.getTime()
 }
 
-function filterTodayResults(results, { todayOnly = false, now = new Date() } = {}) {
+function filterTodayResults(
+	results: LocalGameResult[],
+	{ todayOnly = false, now = new Date() }: TodayFilterOptions = {},
+) {
 	if (!todayOnly) return results
 
 	return results.filter((result) => isFromCurrentUtcDay(result.recordedAt, now))
 }
 
-function calculateAccuracy(correct, totalGames) {
+function calculateAccuracy(correct: number, totalGames: number) {
 	if (!totalGames) return 0
 	return Math.round((correct / totalGames) * 100)
 }
 
-function createStats({ totalGames = 0, correct = 0, incorrect = 0 } = {}) {
+function createStats({
+	totalGames = 0,
+	correct = 0,
+	incorrect = 0,
+}: Partial<StatsAccumulator> = {}): NormalizedGameStats {
 	return {
 		totalGames,
 		correct,
@@ -79,7 +168,7 @@ function createStats({ totalGames = 0, correct = 0, incorrect = 0 } = {}) {
 	}
 }
 
-export function normalizeGameStats(stats) {
+export function normalizeGameStats(stats?: StatsLike | null): NormalizedGameStats {
 	return {
 		totalGames: Number(stats?.totalGames || 0),
 		correct: Number(stats?.correct || 0),
@@ -88,7 +177,9 @@ export function normalizeGameStats(stats) {
 	}
 }
 
-export function getGameStatsFromHistoryItems(items = []) {
+export function getGameStatsFromHistoryItems(
+	items: Pick<GameHistoryItem, "correct">[] = [],
+): NormalizedGameStats {
 	const totalGames = items.length
 	const correct = items.filter((item) => item.correct).length
 	const incorrect = totalGames - correct
@@ -96,7 +187,9 @@ export function getGameStatsFromHistoryItems(items = []) {
 	return createStats({ totalGames, correct, incorrect })
 }
 
-export function getGameStatsGroupFromHistoryItems(items = []) {
+export function getGameStatsGroupFromHistoryItems(
+	items: Pick<GameHistoryItem, "mode" | "correct">[] = [],
+): NormalizedGameStatsGroup {
 	const statsByMode = createModeAccumulator()
 
 	for (const item of items) {
@@ -109,18 +202,18 @@ export function getGameStatsGroupFromHistoryItems(items = []) {
 	return createStatsGroup(statsByMode)
 }
 
-export function parseGameRecentLimit(value) {
+export function parseGameRecentLimit(value: string | number | null | undefined) {
 	if (value === "all") return null
 
 	const limit = Number(value)
 	return Number.isFinite(limit) && limit > 0 ? limit : null
 }
 
-function normalizeDifficulty(difficulty) {
-	return validDifficulties.has(difficulty) ? difficulty : null
+function normalizeDifficulty(difficulty?: string | null): PromptDifficulty | null {
+	return difficulty && validDifficulties.has(difficulty) ? (difficulty as PromptDifficulty) : null
 }
 
-function createModeAccumulator() {
+function createModeAccumulator(): StatsByMode {
 	return new Map(
 		TRACKED_GAME_MODES.map(({ mode }) => [
 			mode,
@@ -129,7 +222,12 @@ function createModeAccumulator() {
 	)
 }
 
-function addStats(statsByMode, { mode, correct }) {
+function addStats(
+	statsByMode: StatsByMode | undefined,
+	{ mode, correct }: { mode?: string; correct: boolean },
+) {
+	if (!statsByMode || !mode) return
+
 	const stats = statsByMode.get(mode)
 	if (!stats) return
 
@@ -141,7 +239,7 @@ function addStats(statsByMode, { mode, correct }) {
 	}
 }
 
-function createStatsGroup(statsByMode = createModeAccumulator()) {
+function createStatsGroup(statsByMode = createModeAccumulator()): NormalizedGameStatsGroup {
 	const games = TRACKED_GAME_MODES.map(({ mode, label }) => ({
 		mode,
 		label,
@@ -162,7 +260,10 @@ function createStatsGroup(statsByMode = createModeAccumulator()) {
 	}
 }
 
-export function normalizeGameStatsGroup(statsGroup, fallbackStatsGroup = createStatsGroup()) {
+export function normalizeGameStatsGroup(
+	statsGroup?: GameStatsGroup | null,
+	fallbackStatsGroup = createStatsGroup(),
+): NormalizedGameStatsGroup {
 	const statsByMode = new Map((statsGroup?.games || []).map((game) => [game.mode, game]))
 	const fallbackByMode = new Map(
 		(fallbackStatsGroup?.games || createStatsGroup().games).map((game) => [
@@ -190,7 +291,10 @@ export function normalizeGameStatsGroup(statsGroup, fallbackStatsGroup = createS
 	}
 }
 
-export function normalizeGameStatsResponse(stats, fallbackStats = emptyGameStatsResponse()) {
+export function normalizeGameStatsResponse(
+	stats?: GameStatsResponse | null,
+	fallbackStats = emptyGameStatsResponse(),
+): NormalizedGameStatsResponse {
 	const emptyStats = emptyGameStatsResponse()
 	const fallbackByDifficulty = fallbackStats.byDifficulty || emptyStats.byDifficulty
 	const sourceByDifficulty = stats?.byDifficulty || {}
@@ -212,7 +316,7 @@ export function normalizeGameStatsResponse(stats, fallbackStats = emptyGameStats
 				),
 			]
 		}),
-	)
+	) as Record<string, NormalizedGameStatsGroup>
 
 	return {
 		...byDifficulty.all,
@@ -221,9 +325,9 @@ export function normalizeGameStatsResponse(stats, fallbackStats = emptyGameStats
 }
 
 export function getGameStatsForFilter(
-	stats,
-	{ mode = "all", difficulty = "all" } = {},
-) {
+	stats?: GameStatsResponse | null,
+	{ mode = "all", difficulty = "all" }: { mode?: string; difficulty?: string } = {},
+): NormalizedGameStats {
 	const normalizedStats = normalizeGameStatsResponse(stats)
 	const statsGroup =
 		normalizedStats.byDifficulty?.[difficulty] ||
@@ -237,15 +341,15 @@ export function getGameStatsForFilter(
 	)
 }
 
-function challengeKey({ challengeId, mode, prompt }) {
+function challengeKey({ challengeId, mode, prompt }: RecordLocalGameResultInput) {
 	return challengeId || `${mode}:${prompt}`
 }
 
-function modeLabel(mode) {
+function modeLabel(mode: string) {
 	return trackedModeLabels.get(mode) || mode
 }
 
-function normalizeHistoryItem(result, key) {
+function normalizeHistoryItem(result: LocalGameResult, key: string): GameHistoryItem {
 	return {
 		id: key,
 		challengeId: result.challengeId || key,
@@ -260,10 +364,10 @@ function normalizeHistoryItem(result, key) {
 	}
 }
 
-export function emptyGameStatsResponse() {
+export function emptyGameStatsResponse(): NormalizedGameStatsResponse {
 	const byDifficulty = Object.fromEntries(
 		GAME_STAT_FILTERS.map((difficulty) => [difficulty, createStatsGroup()]),
-	)
+	) as Record<string, NormalizedGameStatsGroup>
 
 	return {
 		...byDifficulty.all,
@@ -271,7 +375,10 @@ export function emptyGameStatsResponse() {
 	}
 }
 
-export function getLocalGameStats(userId, options = {}) {
+export function getLocalGameStats(
+	userId: UserId,
+	options: TodayFilterOptions = {},
+): NormalizedGameStatsResponse {
 	const results = filterTodayResults(Object.values(readStoredResults(userId)), options)
 	const statsByFilter = new Map(
 		GAME_STAT_FILTERS.map((difficulty) => [difficulty, createModeAccumulator()]),
@@ -295,7 +402,7 @@ export function getLocalGameStats(userId, options = {}) {
 			difficulty,
 			createStatsGroup(statsByFilter.get(difficulty)),
 		]),
-	)
+	) as Record<string, NormalizedGameStatsGroup>
 
 	return {
 		...byDifficulty.all,
@@ -303,15 +410,15 @@ export function getLocalGameStats(userId, options = {}) {
 	}
 }
 
-export function hasRecordedStats(stats) {
+export function hasRecordedStats(stats?: GameStatsResponse | null) {
 	return Number(stats?.total?.totalGames || stats?.byDifficulty?.all?.total?.totalGames || 0) > 0
 }
 
 export function recordLocalGameResult(
-	userId,
-	{ challengeId, mode, difficulty = "easy", prompt, answer, correct, feedback },
+	userId: UserId,
+	{ challengeId, mode, difficulty = "easy", prompt, answer, correct, feedback }: RecordLocalGameResultInput,
 ) {
-	if (!userId || !trackedModeLabels.has(mode)) return false
+	if (!userId || !mode || !trackedModeLabels.has(mode)) return false
 
 	const key = challengeKey({ challengeId, mode, prompt })
 	if (!key) return false
@@ -321,7 +428,7 @@ export function recordLocalGameResult(
 
 	results[key] = {
 		challengeId: challengeId || "",
-		mode,
+		mode: mode as TrackedGameMode,
 		difficulty: normalizeDifficulty(difficulty) || "easy",
 		prompt: prompt || "",
 		answer: answer || "",
@@ -335,19 +442,19 @@ export function recordLocalGameResult(
 }
 
 export function getLocalGameHistory(
-	userId,
-	{ mode = "all", difficulty = "all", limit = HISTORY_PAGE_SIZE, offset = 0 } = {},
-	options = {},
-) {
+	userId: UserId,
+	{ mode = "all", difficulty = "all", limit = HISTORY_PAGE_SIZE, offset = 0 }: GameHistoryQuery = {},
+	options: TodayFilterOptions = {},
+): GameHistoryResponse {
 	const normalizedLimit = Math.min(Math.max(Number(limit) || HISTORY_PAGE_SIZE, 1), 100)
 	const normalizedOffset = Math.max(Number(offset) || 0, 0)
 	const items = Object.entries(readStoredResults(userId))
 		.filter(
 			([, result]) =>
 				!options.todayOnly || isFromCurrentUtcDay(result.recordedAt, options.now),
-		)
-		.map(([key, result]) => normalizeHistoryItem(result, key))
-		.filter((item) => trackedModeLabels.has(item.mode))
+			)
+			.map(([key, result]) => normalizeHistoryItem(result, key))
+			.filter((item) => trackedModeLabels.has(item.mode || ""))
 		.filter((item) => mode === "all" || item.mode === mode)
 		.filter((item) => difficulty === "all" || item.difficulty === difficulty)
 		.sort((firstItem, secondItem) => {

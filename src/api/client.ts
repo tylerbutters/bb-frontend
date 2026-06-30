@@ -1,4 +1,5 @@
 import { notifyApiErrorToast } from "./apiErrorToasts"
+import type { ApiErrorData } from "./types"
 
 const DEFAULT_API_BASE_URL = "/api/v1"
 
@@ -7,8 +8,16 @@ export const API_BASE_URL = (process.env.REACT_APP_API_URL || DEFAULT_API_BASE_U
 	"",
 )
 
+interface ApiErrorOptions {
+	status?: number
+	data?: unknown
+}
+
 export class ApiError extends Error {
-	constructor(message, { status, data } = {}) {
+	status?: number
+	data?: unknown
+
+	constructor(message: string, { status, data }: ApiErrorOptions = {}) {
 		super(message)
 		this.name = "ApiError"
 		this.status = status
@@ -16,11 +25,18 @@ export class ApiError extends Error {
 	}
 }
 
-function apiPath(path) {
+interface ApiRequestOptions {
+	method?: string
+	body?: unknown
+	headers?: Record<string, string>
+	signal?: AbortSignal
+}
+
+function apiPath(path: string) {
 	return path.startsWith("/") ? path : `/${path}`
 }
 
-async function readResponseData(response) {
+async function readResponseData(response: Response) {
 	if (typeof response.json !== "function") return null
 
 	try {
@@ -30,9 +46,10 @@ async function readResponseData(response) {
 	}
 }
 
-function responseErrorMessage(data, fallback) {
+function responseErrorMessage(data: unknown, fallback: string) {
 	if (data && typeof data === "object") {
-		return data.error?.message || data.message || fallback
+		const errorData = data as ApiErrorData
+		return errorData.error?.message || errorData.message || fallback
 	}
 
 	if (typeof data === "string" && data) {
@@ -42,9 +59,12 @@ function responseErrorMessage(data, fallback) {
 	return fallback
 }
 
-export async function apiRequest(path, { method = "GET", body, headers = {}, signal } = {}) {
+export async function apiRequest<T = unknown>(
+	path: string,
+	{ method = "GET", body, headers = {}, signal }: ApiRequestOptions = {},
+): Promise<T> {
 	const hasBody = body !== undefined
-	const requestOptions = {
+	const requestOptions: RequestInit = {
 		method,
 		credentials: "include",
 		headers: {
@@ -73,11 +93,11 @@ export async function apiRequest(path, { method = "GET", body, headers = {}, sig
 			{
 				status: response.status,
 				data,
-			},
-		)
-		notifyApiErrorToast(error)
-		throw error
-	}
+		},
+	)
+	notifyApiErrorToast(error)
+	throw error
+}
 
-	return data
+	return data as T
 }
